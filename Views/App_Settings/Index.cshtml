@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "القيم المرجعية";
+}
+
+@(Html.Kendo().Grid<Proced.DataAccess.Models.CF.APP_SETTINGS>()
+      .Name("grid")
+      .AutoBind(false)
+      .Columns(columns =>
+      {
+          columns.Bound(c => c.NAME).Title("الاسم");
+          columns.Bound(c => c.ANAME).Title("الدلالة");
+          columns.Bound(c => c.VAL).Title("القيمة");
+          columns.Command(command =>
+          {
+              command.Custom("Edit").Click("Edit").Text(" ");
+          }).Width(300);
+      })
+    //arabic from here
+    .ToolBar(toolbar =>
+    {
+    toolbar.Excel().Text(HelperLib.ControlLabelsAR.ExcelExport);
+    toolbar.Template(@<text>
+            <div class="toolbar">
+                <div class="btn-group">
+                    <label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
+                    <label id="ROWSCOUNT" style="font-size: 20px;"></label>
+                </div>
+            </div>
+        </text>);
+  })
+    .ColumnMenu(c =>
+                    c
+                    .Messages(m => m.Columns(HelperLib.ControlLabelsAR.KendoGridColumns)
+                    .Done(HelperLib.ControlLabelsAR.Done)
+                    .Filter(HelperLib.ControlLabelsAR.Filter)
+                    .SortAscending(HelperLib.ControlLabelsAR.SortAscending)
+                    .SortDescending(HelperLib.ControlLabelsAR.SortDescending)
+                )
+        )
+      
+      .Selectable(selectable =>
+      {
+          selectable.Mode(GridSelectionMode.Single);
+          selectable.Type(GridSelectionType.Row);
+      })
+      .Sortable(sortable =>
+      {
+          sortable.SortMode(GridSortMode.SingleColumn);
+      })
+      //arabic to here
+      .Filterable()
+      .Scrollable()
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Model(model => model.Id(p => p.NB))
+          .Read(read => read.Action("APP_SETTINGS_Read", "APP_SETTINGS"))
+          .Update(update => update.Action("APP_SETTINGS_Update", "APP_SETTINGS"))
+      .Events(events => events.RequestEnd("onRequestEnd").Sync("sync_handler"))
+       ).Events(events => events
+            .Change("setIcons")
+            .DataBound("setIcons")
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Edit("hideIdField")
+        )
+)

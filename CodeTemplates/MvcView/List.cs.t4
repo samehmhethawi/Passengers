@@ -1,0 +1,297 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+@model <#= ViewDataTypeName #>
+<#
+// "form-control" attribute is only supported for all EditorFor() in System.Web.Mvc 5.1.0.0 or later versions, except for checkbox, which uses a div in Bootstrap
+string boolType = "System.Boolean";
+Version requiredMvcVersion = new Version("5.1.0.0");
+bool isControlHtmlAttributesSupported = MvcVersion >= requiredMvcVersion;
+    string normalizedModelControllerName = GetNormalizedModelControllerName(ViewDataTypeShortName);
+#>
+<#
+// The following chained if-statement outputs the file header code and markup for a partial view, a view using a layout page, or a regular view.
+if(IsPartialView) {
+#>
+
+<#
+} else if(IsLayoutPageSelected) {
+#>
+
+@{
+    ViewBag.Title = "<#= ViewDataTypeShortName#>";
+<#
+if (!String.IsNullOrEmpty(LayoutPageFile)) {
+#>
+    Layout = "<#= LayoutPageFile#>";
+<#
+}
+#>
+}
+
+
+
+<#
+} else {
+#>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title><#= ViewDataTypeShortName #></title>
+</head>
+<body>
+<#
+    PushIndent("    ");
+}
+#>
+
+<div id="<#= ViewDataTypeShortName #>-modal-container"></div>
+<div class='panel panel-default'>
+    <div class = 'panel-body'>
+<p class='no-margin no-padding'>
+    <button class="btn btn-primary add-new-<#= ViewDataTypeShortName #>"><i class="fa fa-plus"></i> إضافة <#= ViewDataTypeShortName #> جديد</button>
+</p>
+<table class="table table-bordered table-hover table-striped" id="<#= ViewDataTypeShortName #>-table" width="100%">
+    <thead>
+        <tr>
+<#
+IEnumerable<PropertyMetadata> properties = ModelMetadata.Properties;
+foreach (PropertyMetadata property in properties) {
+    if (property.Scaffold /*&& !property.IsPrimaryKey*/ && !property.IsForeignKey) {
+#>
+<#
+        // We do not want to show any association properties for which there is
+        // no associated foreign key.
+        if (property.IsAssociation && GetRelatedModelMetadata(property) == null) {
+            continue;
+        }
+#>
+            <th></th>
+<#
+    }
+}
+#>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+
+    <tfoot>
+        <tr>
+<#
+//IEnumerable<PropertyMetadata> properties = ModelMetadata.Properties;
+foreach (PropertyMetadata property in properties) 
+{
+	bool isCheckbox = property.TypeName.Equals(boolType);
+	if (property.IsAssociation) 
+	{
+            continue;
+	}
+	else if (property.Scaffold && property.IsPrimaryKey) 
+	{
+#>
+			<th data-render-search="false"></th>
+<# 
+	}
+	else if (property.IsForeignKey)
+	{
+		if (isControlHtmlAttributesSupported) 
+		{
+#>
+			<th data-render-search="false">
+				@Html.DropDownList("<#= property.PropertyName #>", null, "-- الكل --", new { @class = "form-control filter_ddl" })
+                @*@Html.DropDownList("<#= property.PropertyName #>", ViewBag.<#= GetAssociationName(property) #>s as SelectList, " ", new { @class = "form-control filter_ddl" })*@
+			</th>
+<#
+		} 
+		else 
+		{
+#>
+			<th data-render-search="false">
+				@Html.DropDownList("<#= property.PropertyName #>", String.Empty)
+			</th>
+<#
+        }
+	}
+	else if(isCheckbox)
+	{
+#>
+			<th data-render-search="false">
+				<select id="<#= property.PropertyName #>" class="form-control filter_ddl">
+                    <option>All</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+			</th>
+<#
+	}
+	else 
+	{
+#>
+            <th></th>
+<#
+    }
+}
+#>
+            <th data-render-search="false"></th>
+        </tr>
+    </tfoot>
+</table>
+    </div>
+</div>
+@section Scripts{
+<script>
+    var <#= ViewDataTypeShortName #>List;
+<#
+		foreach (PropertyMetadata property in properties) {
+			bool isCheckbox = property.TypeName.Equals(boolType);
+            if (property.IsAssociation) 
+	        {
+                continue;
+	        }
+			else if (property.IsForeignKey || isCheckbox) {
+#>
+				var selected_<#= property.PropertyName #> = $("#<#= property.PropertyName #>").find(":selected").val();
+<#
+					}
+				}
+#>
+    $(document).ready(function () {
+        $('#<#= ViewDataTypeShortName #>-table tfoot th').each(function (index, element) {
+            var isColumnSearchable = $(this).data("render-search");
+            if (isColumnSearchable != undefined && isColumnSearchable == false) {
+            }
+            else {
+                $(this).html('<input type="text" placeholder="بحث..." class="form-control"/>');
+            }
+        });
+        
+        <#= ViewDataTypeShortName #>List = $('#<#= ViewDataTypeShortName #>-table').ServerDataTable({
+            editBtn: { show: true, clickHandler: function (rowData) { return editFunc(rowData); } },
+            infoBtn: { show: true, clickHandler: function (rowData) { return infoFunc(rowData); } },
+            deleteBtn: { show: true, clickHandler: function (rowData) { return deleteFunc(rowData); } },
+
+            ajaxReadUrl: "@Url.Action("Read", "<#= normalizedModelControllerName #>")",
+            editUrl: "@Url.Action("Edit", "<#= normalizedModelControllerName #>")",
+            infoUrl: "@Url.Action("Details", "<#= normalizedModelControllerName #>")",
+            deleteUrl: "@Url.Action("Delete", "<#= normalizedModelControllerName #>")",
+            containerModalId: "#<#= ViewDataTypeShortName #>-modal-container",
+            modalId: "#<#= ViewDataTypeShortName #>-modal",
+            data: function (data) { 
+<#
+				foreach (PropertyMetadata property in properties) {
+                    if (property.IsAssociation) 
+	                {
+                        continue;
+	                }
+					bool isCheckbox = property.TypeName.Equals(boolType);
+					if (property.IsForeignKey || isCheckbox) {
+#>
+				data.<#= property.PropertyName #> = selected_<#= property.PropertyName #>;
+<#
+					}
+				}
+#>
+				return data; 
+			},
+            columns: [
+<# 
+                    foreach (PropertyMetadata property in properties) {
+                        if (property.IsAssociation) {
+                            continue;
+                        }
+						bool isCheckbox = property.TypeName.Equals(boolType);
+                        if(property.IsPrimaryKey){                
+#>
+                        { data: '<#= GetValueExpression(property) #>', title: "@Html.DisplayNameFor(m=>Model.<#= GetValueExpression(property) #>)", searchable: false, visible: false },
+<#
+                        }
+                        else if(isCheckbox){
+#>
+                        { data: '<#= GetValueExpression(property) #>', title: "@Html.DisplayNameFor(m=>Model.<#= GetValueExpression(property) #>)", searchable: false, /*render: renderDataTableCheckBox*/ },
+<#        
+			            }
+			            else if(property.IsForeignKey)
+                        {
+#>
+                        { data: '<#= GetValueExpression(property) #>', title: "@Html.DisplayNameFor(m=>Model.<#= GetValueExpression(property) #>)", searchable: false },
+<#        
+			            }
+			            else{
+#>
+                        { data: '<#= GetValueExpression(property) #>', title: "@Html.DisplayNameFor(m=>Model.<#= GetValueExpression(property) #>)" },
+<#        
+			            }
+        //}//end if
+                    }//end foreach
+                #>
+                        { data: null, title: "", searchable: false, "orderable": false, }
+            ],
+        });
+
+		try{<#= ViewDataTypeShortName #>List.columns.adjust();}catch(ex){}
+
+        $(".add-new-<#= ViewDataTypeShortName #>").click(function (e) {
+            e.preventDefault();
+            showLoading();
+            $.ajax({
+                url: "@Url.Action("Create", "<#= normalizedModelControllerName #>")",
+                type: "GET",
+                data: { },
+                success: function (response) {
+                    $("#<#= ViewDataTypeShortName #>-modal-container").html(response);
+                    stopLoading();
+                    $("#<#= ViewDataTypeShortName #>-modal").modal();
+                },
+                error: function (e1, e2, e3) {
+                    stopLoading();
+                }
+            });
+        });
+
+		// Apply the search
+        <#= ViewDataTypeShortName #>List.columns().every(function () {
+            var that = this;
+            $('.filter_ddl', this.footer()).on('change', function () {
+                
+                switch (this.id) {
+<#
+		foreach (PropertyMetadata property in properties) {
+			bool isCheckbox = property.TypeName.Equals(boolType);
+			if (property.IsForeignKey || isCheckbox) {
+#>
+					case "<#= property.PropertyName #>":
+						selected_<#= property.PropertyName #> = this.value;
+						break;
+<#
+			}
+		}
+#>
+                }
+                <#= ViewDataTypeShortName #>List.ajax.reload(null, false);
+                <#= ViewDataTypeShortName #>List.columns.adjust();
+            });
+        });
+    });
+</script>
+}
+<#
+// The following code closes the tag used in the case of a view using a layout page and the body and html tags in the case of a regular view page
+#>
+<#
+if(!IsPartialView && !IsLayoutPageSelected) {
+    ClearIndent();
+#>
+</body>
+</html>
+<#
+}
+#>
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

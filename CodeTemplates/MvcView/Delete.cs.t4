@@ -1,0 +1,160 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+@model <#= ViewDataTypeName #>
+<#
+// "form-control" attribute is only supported for all EditorFor() in System.Web.Mvc 5.1.0.0 or later versions, except for checkbox, which uses a div in Bootstrap
+string boolType = "System.Boolean";
+Version requiredMvcVersion = new Version("5.1.0.0");
+bool isControlHtmlAttributesSupported = MvcVersion >= requiredMvcVersion;
+// The following chained if-statement outputs the file header code and markup for a partial view, a view using a layout page, or a regular view.
+if(IsPartialView) {
+#>
+
+<#
+} else if(IsLayoutPageSelected) {
+#>
+
+@{
+    ViewBag.Title = "<#= ViewName#>";
+<#
+if (!String.IsNullOrEmpty(LayoutPageFile)) {
+#>
+    Layout = "<#= LayoutPageFile#>";
+<#
+}
+#>
+}
+
+<#
+} else {
+#>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title><#= ViewName #></title>
+</head>
+<body>
+<#
+    PushIndent("    ");
+}
+#>
+<#
+if (ReferenceScriptLibraries) {
+#>
+<#
+    if (!IsLayoutPageSelected && IsBundleConfigPresent) {
+#>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+
+<#
+    }
+#>
+<#
+    else if (!IsLayoutPageSelected) {
+#>
+
+<#
+    }
+#>
+
+<#
+}
+#>
+
+@{ 
+    var ajaxOptions = new AjaxOptions
+    {
+        HttpMethod = "POST",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "<#= ViewDataTypeShortName #>-ajax-update-panel",
+        OnBegin = "showLoading",
+        OnComplete = "stopLoading",
+        OnFailure = "stopLoading",
+        OnSuccess = "stopLoading",
+    };
+}
+<div class="modal fade" id="<#= ViewDataTypeShortName #>-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        @using (Ajax.BeginForm("Delete", ajaxOptions))
+        {
+			@Html.AntiForgeryToken()
+            <div class="modal-content panel panel-danger">
+                <div class="modal-header panel-heading bg-danger">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h3 class="modal-title">حذف <#= ViewDataTypeShortName #></h3>
+                </div>
+                <div class="modal-body panel-body" id="<#= ViewDataTypeShortName #>-ajax-update-panel">
+					<h4>هل أنت متأكد من حذف هذا الـ <#= ViewDataTypeShortName #>؟</h4>
+					<hr />
+<#
+foreach (PropertyMetadata property in ModelMetadata.Properties) {
+    if (property.Scaffold && !property.IsAssociation && property.IsPrimaryKey) {
+       
+#>
+					@Html.HiddenFor(model => model.<#= property.PropertyName #>)
+<#
+    }
+}
+#>
+                    @Html.Partial("_<#= ViewDataTypeShortName #>DetailsPartial", Model)
+                </div>
+                <div class="modal-footer panel-footer">
+                    <button type="submit" class="btn btn-danger save-btn">
+                        <i class='fa fa-trash'></i>
+                        حذف
+                    </button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        <i class='fa fa-close'></i>
+                        إغلاق
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<#
+if(IsLayoutPageSelected && ReferenceScriptLibraries && IsBundleConfigPresent) {
+#>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<#
+}
+#>
+<#
+else if(IsLayoutPageSelected && ReferenceScriptLibraries) {
+#>
+
+<script src="~/Scripts/jquery-<#= JQueryVersion #>.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<#
+}
+#>
+<#
+// The following code closes the tag used in the case of a view using a layout page and the body and html tags in the case of a regular view page
+#>
+<#
+if(!IsPartialView && !IsLayoutPageSelected) {
+    ClearIndent();
+#>
+</body>
+</html>
+<#
+}
+#>
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

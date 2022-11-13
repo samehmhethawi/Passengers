@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title - المركبات</title>
+
+    @* Content-box fixes as per http://docs.telerik.com/kendo-ui/third-party/using-kendo-with-twitter-bootstrap article  *@
+
+    
+
+    <link href="@Url.Content("~/Content/box-sizing-fixes.css")" rel="stylesheet" type="text/css" />
+
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.common-material.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.mobile.all.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.dataviz.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.material.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.dataviz.material.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.rtl.min.css")" rel="stylesheet" type="text/css" />
+
+    
+
+    <link href="@Url.Content("~/Content/bootstrap.css")" rel="stylesheet" type="text/css" />
+
+
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/jquery.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/kendo.all.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/kendo.aspnetmvc.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo.modernizr.custom.js")"></script>
+
+	<script src="@Url.Content("~/Scripts/kendo.modernizr.custom.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo.ar.controls.js")"></script>
+    <link href="~/Content/Custom.css" rel="stylesheet" />
+</head>
+<body class="k-rtl">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button id="configure" class="k-rpanel-toggle k-button btn-toggle"><span class="k-icon k-i-hbars"></span></button>
+                @Html.ActionLink("المركبات", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+
+            <div id="responsive-panel" class="navbar-left k-rtl">
+                @(Html.Kendo().Menu()
+                                .Name("Menu")
+                                .Items(items =>
+                                {
+                                    //items.Add().Text("Home").Action("Index", "Home", new { area = "" });
+                                    //items.Add().Text("About").Action("About", "Home", new { area = "" });
+                                    //items.Add().Text("Contact").Action("Contact", "Home", new { area = "" });
+                                    items.Add().Text("الفهارس").Items(indexes=>
+                                    {
+                                        indexes.Add().Text(" فئات الصفات").Action("Index", "AttribCategories", new { area = "Indexes" });
+                                        indexes.Add().Text("المدن").Action("Index", "Cities", new { area = "Indexes" });
+                                        indexes.Add().Text("الجنسيات").Action("Index", "Znationalitys", new { area = "Indexes" });
+                                        indexes.Add().Text(" العقود").Action("Index", "ContractTypes", new { area = "Indexes" });
+                                        indexes.Add().Text(" الصفات").Action("Index", "Attribs", new { area = "Indexes" });
+                                        indexes.Add().Text(" أنواع المركبات").Action("Index", "CarCategories", new { area = "Indexes" });
+                                        indexes.Add().Text(" صفات التبدلات الفنية").Action("Index", "CarCategoryAttribs", new { area = "Indexes" });
+                                        indexes.Add().Text("ترمز التبدلات الفنية").Action("Index", "CarChanges", new { area = "Indexes" });
+                                        indexes.Add().Text("أنواع العربات").Action("Index", "CarKinds", new { area = "Indexes" });
+                                        indexes.Add().Text("CAR CHANGE ATTRIB NEWS").Action("Index", "CarCategoryAttribNews", new { area = "Indexes" });
+
+                                        indexes.Add().Text(" أنواع التسجيل").Action("Index", "CarRegs", new { area = "Indexes" });
+                                        indexes.Add().Text(" الغاء التسجيل").Action("Index", "CarUnRegs", new { area = "Indexes" });
+                                        indexes.Add().Text("أنواع العربات").Action("Index", "CarKinds", new { area = "Indexes" });
+                                    });
+                                })
+                )
+            </div>
+        </div>
+    </div>
+    <div class="body-content">
+        <div class="container k-rtl">
+            <br />
+            <div class="panel panel-material-blue">
+                <div class="panel-heading">
+                    <h3>@ViewBag.Title</h3>
+                </div>
+                <div class="panel-body">
+                    @RenderBody()
+                </div>
+            </div>
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - وزارة النقل | إدارة المركبات</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#responsive-panel").kendoResponsivePanel({
+                breakpoint: 768,
+                autoClose: false,
+                orientation: "top"
+            });
+        });
+        function onclick(e) {
+            $("#responsive-panel").getKendoResponsivePanel().toggle();
+        }
+
+
+    </script>
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    
+</body>
+</html>

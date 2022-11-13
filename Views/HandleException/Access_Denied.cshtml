@@ -1,0 +1,70 @@
+@{if (IsAjax) {
+
+
+
+        Layout = null;
+
+    }  }
+
+
+
+
+
+<script>
+
+    toastr.warning(" <h4>·«  „·ﬂ ’·«ÕÌ… ··⁄„·Ì… «· Ì «Œ — Â«</h4>", "", { "positionClass": "toast-top-full-width", "progressBar": true, "timeOut": "3500", });
+    try {
+        SearchForCarTablueDialog.close();
+    } catch { }
+</script>
+@{
+        ViewBag.Title = "„⁄«·Ã «·√Œÿ«¡";
+        if (!IsAjax)
+        {
+            Layout = "~/Views/Shared/_Layout.cshtml";
+        }
+    }
+
+    @if (ViewBag.ReturnUrl != null)
+    {
+        <div class="row">
+
+            <div class="col-sm-4 pull-left text-left">
+                <a href="@(ViewBag.ReturnUrl)" class="btn btn-default" style="border-radius:0;"><i class="fa fa-refresh"></i> ≈⁄«œ… «·„Õ«Ê·…</a>
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+
+    }
+    <table  width="100%" dir="rtl" style="text-align:center">
+
+
+        <tr style="text-align:center" >
+
+            <td   style="text-align:center  !important;padding:50px;">
+
+                <img src="~/Content/images/Access_Denied.jpg" />     <span style=" font-weight:bolder;font-size:x-large; color: #db0a0a"><b> @Html.Encode(TempData["Error"])</b></span>
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                <button type="button" class="btn btn-lg btn-primary hvr-box-shadow-outset" onclick="canceldialog();">
+                    <i class="fa fa-close"></i>
+                    ≈€·«ﬁ
+                </button>
+
+
+            </td>
+
+        </tr>
+    </table>
+    <script>
+        function canceldialog() {
+            this.close();
+        }
+    </script>

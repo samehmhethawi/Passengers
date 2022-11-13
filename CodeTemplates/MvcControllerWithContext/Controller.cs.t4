@@ -1,0 +1,355 @@
+﻿<#@ template language="C#" HostSpecific="True" Debug="True" #>
+<#@ output extension="cs" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data.Linq" #>
+<#@ ScaffoldingAssembly Processor="ScaffoldingAssemblyLoader" #>
+<#
+string routePrefix;
+if (String.IsNullOrEmpty(AreaName)) 
+{
+    routePrefix = ControllerRootName;
+}
+else
+{
+    routePrefix = AreaName + "/" + ControllerRootName;
+}
+#>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="Microsoft.AspNet.Scaffolding.Core.Metadata" #>
+<#@ parameter type="System.String" name="ControllerName" #>
+<#@ parameter type="System.String" name="ControllerRootName" #>
+<#@ parameter type="System.String" name="Namespace" #>
+<#@ parameter type="System.String" name="AreaName" #>
+<#@ parameter type="System.String" name="ContextTypeName" #>
+<#@ parameter type="System.String" name="ModelTypeName" #>
+<#@ parameter type="System.String" name="ModelVariable" #>
+<#@ parameter type="Microsoft.AspNet.Scaffolding.Core.Metadata.ModelMetadata" name="ModelMetadata" #>
+<#@ parameter type="System.String" name="EntitySetVariable" #>
+<#@ parameter type="System.Boolean" name="UseAsync" #>
+<#@ parameter type="System.Boolean" name="IsOverpostingProtectionRequired" #>
+<#@ parameter type="System.String" name="BindAttributeIncludeText" #>
+<#@ parameter type="System.String" name ="OverpostingWarningMessage" #>
+<#@ parameter type="System.Collections.Generic.HashSet<System.String>" name="RequiredNamespaces" #>
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+<# if (UseAsync) { #>
+using System.Threading.Tasks;
+<# } #>
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Emdad.Controllers;
+using DataTablesParser;
+<# foreach (var namespaceName in RequiredNamespaces) { #>
+using <#= namespaceName #>;
+<# } #>
+
+namespace <#= Namespace #>
+{
+<#
+    var contextTypeName = ContextTypeName;
+    var entitySetName = ModelMetadata.EntitySetName;
+    var entitySetVar = EntitySetVariable ?? (String.IsNullOrEmpty(entitySetName) ? entitySetName : (entitySetName.Substring(0, length:1).ToLowerInvariant() + entitySetName.Substring(1)));
+    var primaryKeyName = ModelMetadata.PrimaryKeys[0].PropertyName;
+    var primaryKeyShortTypeName = ModelMetadata.PrimaryKeys[0].ShortTypeName;
+    var primaryKeyDefaultValue = ModelMetadata.PrimaryKeys[0].DefaultValue;
+    var primaryKeyType = ModelMetadata.PrimaryKeys[0].TypeName;
+    var primaryKeyNullableTypeName = GetNullableTypeName(primaryKeyType, primaryKeyShortTypeName);
+    var lambdaVar = ModelVariable[0];
+    var relatedProperties = ModelMetadata.RelatedEntities.ToDictionary(item => item.AssociationPropertyName);
+    IEnumerable<PropertyMetadata> properties = ModelMetadata.Properties;
+
+    string bindAttribute;
+    if (IsOverpostingProtectionRequired)
+    {
+        bindAttribute = String.Format("[Bind(Include = \"{0}\")] ", BindAttributeIncludeText);
+    }
+    else
+    {
+        bindAttribute = String.Empty;
+    }
+#>
+    public class <#= ControllerName #> : BaseCRUDController<<#= ModelTypeName #>>
+    {
+<# if (UseAsync) { #>
+        public async Task<ActionResult> Index()
+<# } else { #>
+        public ActionResult Index()
+<# } #>
+        {
+<# foreach (var property in relatedProperties.Values) { #>
+            ViewBag.<#= property.ForeignKeyPropertyNames[0] #> = new SelectList(db.<#= property.EntitySetName #>, "<#= property.PrimaryKeyNames[0] #>", "<#= property.DisplayPropertyName #>");
+<# } #>
+            <#= ModelTypeName #> <#= ModelVariable #>ForColsNames = new <#= ModelTypeName #>();
+<#		if (UseAsync) { #>
+            return View(<#= ModelVariable #>ForColsNames);
+<#		} else { #>
+            return View(<#= ModelVariable #>ForColsNames);
+<#		} #>
+
+        }
+
+        [HttpPost]
+        public override JsonResult Read(Dictionary<string, string> parameters)
+        {
+            var <#= ModelTypeName #>s = this.Repository.GetItemsQuarable();
+
+<# 
+foreach (var property in properties) 
+{ 
+        if(property.IsForeignKey || property.TypeName.Equals("System.Boolean")){
+        
+        if(property.TypeName.Equals("System.Boolean")){
+#>
+            if(!string.IsNullOrEmpty(Request.Form["<#= property.PropertyName #>"])){
+                bool _active;
+                if(bool.TryParse(Request.Form["<#= property.PropertyName #>"], out _active)){
+                    <#= ModelTypeName #>s = <#= ModelTypeName #>s.Where(x => x.<#= property.PropertyName #> == _active); /*<#= property.PropertyName #> Must Be Updated To the boolean type column if it's wrong*/
+                }
+            }
+<#        } else if(property.TypeName.Equals("System.Int32")){#>  
+            if(!string.IsNullOrEmpty(Request.Form["<#= property.PropertyName #>"])){
+                int _id_fk;
+                if(int.TryParse(Request.Form["<#= property.PropertyName #>"], out _id_fk)){
+                    <#= ModelTypeName #>s = <#= ModelTypeName #>s.Where(x => x.<#= property.PropertyName #> == _id_fk);
+                }
+            }
+<#        } else if(property.TypeName.Equals("System.Int64")){#>  
+            if(!string.IsNullOrEmpty(Request.Form["<#= property.PropertyName #>"])){
+                long _id_fk;
+                if(long.TryParse(Request.Form["<#= property.PropertyName #>"], out _id_fk)){
+                    <#= ModelTypeName #>s = <#= ModelTypeName #>s.Where(x => x.<#= property.PropertyName #> == _id_fk);
+                }
+            }
+<#        } else if(property.TypeName.Equals("System.String")){#>  
+            if(!string.IsNullOrEmpty(Request.Form["<#= property.PropertyName #>"])){
+                string _id_fk = Request.Form["<#= property.PropertyName #>"];
+                <#= ModelTypeName #>s = <#= ModelTypeName #>s.Where(x => x.<#= property.PropertyName #> == _id_fk);
+            }
+<#        } #>  
+<# } #>  
+<# 
+} 
+#>
+            var parser = new Parser<<#= ModelTypeName #>>(Request.Form, <#= ModelTypeName #>s);
+            this.Result = parser.Parse();
+            this.Result.data = new List<dynamic>();
+            if (this.Result.data1 != null)
+            {
+                foreach (var item in this.Result.data1)
+                {
+                    var temp = new
+                    {
+<# 
+foreach (var property in properties) 
+{ 
+        if(property.IsAssociation){
+            continue;
+        }
+#>
+                        item.<#= property.PropertyName #>,
+<# 
+} 
+#>
+                    };
+                    this.Result.data.Add(temp);
+                }
+                this.Result.data1.Clear();
+                this.Result.data1 = null;
+            }
+            return Json(this.Result);
+        }
+
+		
+<# if (UseAsync) { #>
+        public async Task<ActionResult> Details(string id)
+<# } else { #>
+        public override ActionResult Details(string id, Dictionary<string, string> parameters)
+<# } #>
+        {
+            return base.Details(id);
+        }
+
+        
+        public override ActionResult Create(Dictionary<string, string> parameters)
+        {
+<# foreach (var property in relatedProperties.Values) { #>
+            ViewBag.<#= property.ForeignKeyPropertyNames[0] #> = new SelectList(db.<#= property.EntitySetName #>, "<#= property.PrimaryKeyNames[0] #>", "<#= property.DisplayPropertyName #>");
+<# } #>
+            return base.Create();
+        }
+
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+<# if (UseAsync) { #>
+        public async Task<ActionResult> Create(<#= ModelTypeName #> <#= ModelVariable #>)
+<# } else { #>
+        public override ActionResult Create(<#= ModelTypeName #> <#= ModelVariable #>, Dictionary<string, string> parameters)
+<# } #>
+        {
+            bool success = false;
+            if (ModelState.IsValid)
+            {
+<# if(!String.IsNullOrEmpty(primaryKeyType) && String.Equals("System.Guid", primaryKeyType, StringComparison.OrdinalIgnoreCase)) { #>
+                <#= ModelVariable #>.<#= primaryKeyName #> = Guid.NewGuid();
+<# } #>
+                db.<#= entitySetName #>.Add(<#= ModelVariable #>);
+<# if (UseAsync) {#>
+                await db.SaveChangesAsync();
+<# } else { #>
+                try{
+                    SaveChanges();
+                    success = true;
+                }
+                catch(Exception e){
+                    
+                }
+<# } #>
+            }
+            ViewBag.Success = success;
+<# foreach (var property in relatedProperties.Values) { #>
+            ViewBag.<#= property.ForeignKeyPropertyNames[0] #> = new SelectList(db.<#= property.EntitySetName #>, "<#= property.PrimaryKeyNames[0] #>", "<#= property.DisplayPropertyName #>", <#= ModelVariable #>.<#= property.ForeignKeyPropertyNames[0] #>);
+<# } #>
+            return base.Create(<#= ModelVariable #>);
+        }
+
+        
+<# if (UseAsync) { #>
+        public async Task<ActionResult> Edit(<#= primaryKeyNullableTypeName #> id)
+<# } else { #>
+        public override ActionResult Edit(string id, Dictionary<string, string> parameters)
+<# } #>
+        {
+if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            <#= ModelTypeName #> model = null;
+            try
+            {
+                model = Repository.GetById(int.Parse(id));
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    model = Repository.GetById(id);
+                }
+                catch (Exception)
+                {
+                }
+            }
+            if (model == null)
+            {
+                return HttpNotFound();
+            }
+            
+<# foreach (var property in relatedProperties.Values) { #>
+            ViewBag.<#= property.ForeignKeyPropertyNames[0] #> = new SelectList(db.<#= property.EntitySetName #>, "<#= property.PrimaryKeyNames[0] #>", "<#= property.DisplayPropertyName #>", model.<#= property.ForeignKeyPropertyNames[0] #>);
+<# } #>
+            return PartialView(model);
+        }
+
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+<# if (UseAsync) { #>
+        public async Task<ActionResult> Edit(<#= ModelTypeName #> <#= ModelVariable #>)
+<# } else { #>
+        public override ActionResult Edit(<#= ModelTypeName #> <#= ModelVariable #>, Dictionary<string, string> parameters)
+<# } #>
+        {
+            bool success = false;
+            if (ModelState.IsValid)
+            {
+                db.Entry(<#= ModelVariable #>).State = EntityState.Modified;
+<# if (UseAsync) { #>
+                await db.SaveChangesAsync();
+<# } else { #>
+                try{
+                    SaveChanges();
+                    success = true;
+                }
+                catch(Exception e){
+                    
+                }
+<# } #>
+            }
+            ViewBag.Success = success;
+<# foreach (var property in relatedProperties.Values) { #>
+            ViewBag.<#= property.ForeignKeyPropertyNames[0] #> = new SelectList(db.<#= property.EntitySetName #>, "<#= property.PrimaryKeyNames[0] #>", "<#= property.DisplayPropertyName #>", <#= ModelVariable #>.<#= property.ForeignKeyPropertyNames[0] #>);
+<# } #>
+            return base.Edit(<#= ModelVariable #>);
+        }
+
+        
+<# if (UseAsync) { #>
+        public async Task<ActionResult> Delete(<#= primaryKeyNullableTypeName #> id)
+<# } else { #>
+        public override ActionResult Delete(string id, Dictionary<string, string> parameters)
+<# } #>
+        {
+            return base.Delete(id);
+        }
+
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+<# if (UseAsync) { #>
+        public async Task<ActionResult> Delete(<#= primaryKeyShortTypeName #> id)
+<# } else { #>
+        public override ActionResult Delete(<#= ModelTypeName #> <#= ModelVariable #>, Dictionary<string, string> parameters)
+<# } #>
+        {
+            try
+            {
+                ModelState.Clear();
+                db.<#= entitySetName #>.Attach(<#= ModelVariable #>);
+            db.<#= entitySetName #>.Remove(<#= ModelVariable #>);
+<# if (UseAsync) { #>
+            await db.SaveChangesAsync();
+<# } else { #>
+            SaveChanges();
+            ViewBag.Success = true;
+<# } #>
+            }
+            catch
+            {
+                ViewBag.Success = false;
+            }
+            return base.Delete(<#= ModelVariable #>);
+        }
+    }
+}
+<#+
+// This function converts the primary key short type name to its nullable equivalent when possible. This is required to make
+// sure that an HTTP 400 error is thrown when the user tries to access the edit, delete, or details action with null values.
+    string GetNullableTypeName(string typeName, string shortTypeName)
+    {
+        // The exceptions are caught because if for any reason the type is user defined, then the short type name will be used.
+        // In that case the user will receive a server error if null is passed to the edit, delete, or details actions.
+        Type primaryKeyType = null;
+        try
+        {
+            primaryKeyType = Type.GetType(typeName);
+        }
+        catch
+        {
+        }
+        if (primaryKeyType != null && (primaryKeyType.IsPrimitive || IsGuid(typeName)))
+        {
+            return shortTypeName + "?";
+        }
+        return shortTypeName;
+    }
+
+    bool IsGuid(string typeName) {
+        return String.Equals("System.Guid", typeName, StringComparison.OrdinalIgnoreCase);
+    }
+#>

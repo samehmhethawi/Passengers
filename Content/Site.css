@@ -1,0 +1,191 @@
+﻿@font-face {
+    font-family: 'DroidKufi-Regular';
+    src: url('../fonts/DroidKufi-Regular.eot');
+    src: local('دبي متوسط'), local('DroidKufi-Regular'), url('../fonts/DroidKufi-Regular.woff') format('woff');
+}
+
+*:not(.fa):not(.glyphicon) {
+    font-family: DroidKufi-Regular !important;
+}
+
+.chosen-container-single .chosen-search input[type="text"] {
+    min-width: 100%;
+}
+
+.pageHeader {
+    font-size: medium;
+    text-align: center;
+    font-weight: bolder;
+}
+
+.modal .select2-container--open .select2-dropdown {
+    left: -17px;
+}
+
+.select2-container--open .select2-dropdown {
+    -webkit-box-shadow: 10px 10px 23px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 10px 23px 1px rgba(0,0,0,0.75);
+    box-shadow: 10px 10px 23px 1px rgba(0,0,0,0.75);
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    border-right: 3px solid rgba(236, 38, 38, 0.74);
+}
+
+.select2-container--default .select2-results__option[aria-selected="true"] {
+    border-right-color: #000;
+}
+
+.dataTables_filter {
+    display: none !important;
+}
+
+a.pageheader {
+    font-size: 1.2em;
+    text-decoration: none;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    transition: all ease-in-out 0.5s;
+    border-radius: 30px;
+}
+
+    a.pageheader:hover {
+        background-color: rgba(0, 148, 255, 0.50);
+    }
+
+table.table-bordered.dataTable th:last-child,
+table.table-bordered.dataTable td:last-child {
+    border-right-width: 1px;
+}
+
+table.table-bordered.dataTable th,
+table.table-bordered.dataTable td {
+    vertical-align: middle;
+}
+/*******************************************/
+.margin-bottom-10 {
+    margin-bottom: 10px !important;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+    .dropdown-submenu > .dropdown-menu {
+        top: 0;
+        right: 100%;
+        margin-top: 0;
+        margin-left: 0;
+        -webkit-border-radius: 6px 0px 6px 6px;
+        -moz-border-radius: 6px 0px 6px 6px;
+        border-radius: 6px 0px 6px 6px;
+        transition: all 1.3s cubic-bezier(.4,0,.2,1);
+        box-shadow: -5px 7px 7px #92c8f6;
+    }
+
+    .dropdown-submenu:hover > .dropdown-menu {
+        display: block;
+        transition: all 1.3s cubic-bezier(.4,0,.2,1);
+    }
+
+    .dropdown-submenu > a:after {
+        display: block;
+        content: " ";
+        float: left;
+        width: 0;
+        height: 0;
+        margin-top: 0;
+        margin-left: -15px;
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+        border-right: 7px solid #cccccc;
+    }
+
+    .dropdown-submenu:hover > a:after {
+        border-left-color: #ffffff;
+    }
+
+    .dropdown-submenu.pull-left {
+        float: none;
+    }
+
+        .dropdown-submenu.pull-left > .dropdown-menu {
+            left: -100%;
+            margin-left: 10px;
+            -webkit-border-radius: 6px 0 6px 6px;
+            -moz-border-radius: 6px 0 6px 6px;
+            border-radius: 6px 0 6px 6px;
+        }
+
+.navbar-nav .divider-vertical {
+    height: 40px;
+    margin: 0 9px;
+    border-left: 1px solid #f2f2f2;
+    border-right: 1px solid #ffffff;
+}
+
+ul.navbar-nav > li.dropdown > a.dropdown-toggle {
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+    cursor: pointer !important;
+}
+
+ul.navbar-nav > li.dropdown:hover > a.dropdown-toggle {
+    background-color: rgba(0, 148, 255, 0.50);
+}
+
+.select2-container--default .select2-results__group {
+    color: blue;
+    text-align: left;
+    background-color: #d3ebdb;
+}
+/*******************************************************/
+.jconfirm .jconfirm-box div.jconfirm-closeIcon {
+    top: 15px !important;
+    left: 15px !important;
+    right: auto !important;
+    font-size: 44px !important;
+}
+
+.clickable {
+    cursor: pointer !important;
+}
+
+td.clickable {
+    cursor: pointer !important;
+    transition: all ease-in 0.2s;
+    position: relative;
+    color: #04f;
+}
+
+    td.clickable:hover {
+        background-color: rgba(0, 191, 255, 0.39) !important;
+    }
+
+.clickable:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    display: block;
+    border-left: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-top: 7px solid #04f;
+}
+
+@media print {
+    .clickable:after {
+        display: none !important;
+    }
+
+    .clickable {
+        border: 1pt solid #000;
+    }
+}
+
+.tooltip-arrow{
+    right: auto !important;
+}

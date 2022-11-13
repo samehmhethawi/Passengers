@@ -1,0 +1,10 @@
+﻿@model bool?
+@using System.Web.Mvc
+@if (Model == true)
+{
+    <strong class="text-success"><label class="control-label"><i class="fa fa-check-circle"></i> نعم</label></strong>
+}
+else
+{
+    <strong class="text-danger"><label class="control-label"><i class="fa fa-close"></i> لا</label></strong>
+}

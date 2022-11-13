@@ -1,0 +1,69 @@
+@{
+    ViewBag.Title = "„⁄«·Ã «·√Œÿ«¡";
+    if (!IsAjax)
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = null;
+    }
+}
+
+@if (ViewBag.ReturnUrl != null)
+{
+    <div class="row">
+        <div class="col-sm-8 pull-right">
+            <h2>„⁄«·Ã «·«” À‰«¡« </h2>
+        </div>
+        <div class="col-sm-4 pull-left text-left">
+            <a href="@(ViewBag.ReturnUrl)" class="btn btn-default" style="border-radius:0;"><i class="fa fa-refresh"></i> ≈⁄«œ… «·„Õ«Ê·…</a>
+        </div>
+    </div>
+}
+else
+{
+    <h2>„⁄«·Ã «·«” À‰«¡« </h2>
+}
+<table dir="rtl">
+    <tr>
+        <td>
+            ‰Ê⁄ «·«” À‰«¡
+        </td>
+        <td>
+            <b>@Html.Encode(TempData["exception_type"])</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            «”„ «·’›
+        </td>
+        <td>
+            <b>@Html.Encode(TempData["Controller"])</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            «”„ «·Õ—ﬂ…
+        </td>
+        <td>
+            <b>@Html.Encode(TempData["Action"])</b>
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFA0A0">
+            <span style="color: #0000FF">—”«·… «·«” À‰«¡</span>
+        </td>
+        <td bgcolor="#FFA0A0" style="direction:ltr !important;padding:3px;">
+            <span style="color: #0000FF"><b> @Html.Encode(TempData["Error"])</b></span>
+        </td>
+    </tr>
+    <tr>
+        <td>
+              »⁄ «·«” À‰«¡
+        </td>
+        <td style="direction:ltr !important;padding:3px;">
+            @Html.Encode(TempData["StackTrace"])
+        </td>
+    </tr>
+</table>

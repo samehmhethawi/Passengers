@@ -1,0 +1,51 @@
+﻿@model Proced.DataAccess.Models.CF.ZATTRIBCATEGORY
+@{
+    var ajaxOptions = new AjaxOptions
+    {
+        HttpMethod = "POST",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "ajax-update-panel",
+        OnBegin = "showLoading",
+        OnComplete = "stopLoading",
+        OnFailure = "stopLoading",
+        OnSuccess = "stopLoading",
+    };
+}
+@Scripts.Render("~/bundles/jqueryval")<script src="@Url.Content("~/Scripts/indexesForModalScripts.js")"></script>
+<div class="modal fade" id="modal" role="dialog">
+    <div class="modal-dialog" role="document" style="width: 60%">
+        @using (Ajax.BeginForm("Edit", ajaxOptions))
+        {
+            @Html.AntiForgeryToken()
+            <div class="modal-content panel panel-success">
+                <div class="modal-header panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h3 class="modal-title">تعديل فئة المواصفة</h3>
+                </div>
+                @Html.HiddenFor(m => m.NB)
+                <div class="modal-body panel-body" id="ajax-update-panel">
+                    @Html.Partial("_EditePartial", Model)
+                </div>
+                <div class="modal-footer panel-footer">
+                    <button type="submit" class="btn btn-success hvr-box-shadow-outset save-btn">
+                        <i class="fa fa-pencil"></i>
+                        تعديل
+                    </button>
+                    <button type="button" class="btn btn-primary hvr-box-shadow-outset" data-dismiss="modal">
+                        <i class="fa fa-close"></i>
+                        إغلاق
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jqueryval")<script src="@Url.Content("~/Scripts/indexesForModalScripts.js")"></script>
+<script>
+    $(function () {
+        $(document).off('focusin.bs.modal');
+    });
+</script>

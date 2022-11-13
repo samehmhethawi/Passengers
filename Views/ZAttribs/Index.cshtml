@@ -1,0 +1,157 @@
+﻿@{
+    ViewBag.Title = " المواصفات الفنية";
+}
+<div id="searchPanel">
+    <div class="row alert-success" style="margin:0;">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="row" style="margin:0;">
+                <div class="col-xs-4">
+                    <label for="USERNB">الاسم:</label>
+                </div>
+                <div class="col-xs-8">
+                    <input type="text" class="form-control" id="type_name" placeholder="الاسم" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="row" style="margin:0;">
+                <div class="col-xs-4">
+                    <label for="CATEGORYNNB">فئة المواصفة:</label>
+                </div>
+                <div class="col-xs-8">
+                    @Html.DropDownList("CATEGORYNNB", ViewBag.zAttribCategories as List<SelectListItem>, "اختر فئةالمواصفة",
+                     new { @class = "form-control chosen_rtl chosen-rtl", @Name = "CATEGORYNNB" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="row" style="margin:0;">
+                <div class="col-xs-4">
+                    <label for="STYP">نوع المواصفة:</label>
+                </div>
+                <div class="col-xs-8">
+                    @Html.DropDownList("STYP", (IEnumerable<SelectListItem>)ViewBag.Typs, null, new
+                   {
+                       ID = "STYP",
+                       style = "width:150px !important;"
+                   })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12" style="margin:0px;padding:0px">
+            <div class="row" style="margin:0px;padding:0px">
+                <div class="col-xs-6" style="padding:0px;margin:0px;">
+                    <button id="btn-search" class="btn btn-info hvr-box-shadow-outset search-btn1" style="outline:0;width:100%">
+                        بحث...
+                        <span class="fa fa-search"></span>
+                    </button>
+                </div>
+                <div class="col-xs-6" style="padding:0px;margin:0px;">
+                    <button id="btn-clear" class="btn btn-danger hvr-box-shadow-outset clear-btn" style="outline:0;width:100%;">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@(Html.Kendo().Grid<Proced.DataAccess.Models.CF.ZATTRIB>()
+      .Name("grid")
+      .AutoBind(false)
+      .Columns(columns =>
+          {
+              columns.Bound(c => c.ORDR).Title("الترتيب");
+              columns.Bound(c => c.NAME).Title("اسم المواصفة");
+              columns.Bound(c => c.ZATTRIBCATEGORY.NAME).Title("فئة المواصفة");
+              columns.Bound(c => c.TYP).Title("نوع المواصفة");
+              columns.Bound(c => c.REQUIRED).Title("هل هي مطلوبة").ClientTemplate("#=REQUIRED ? 'نعم':'لا' #");
+              columns.Bound(c => c.DEFVALUE).Title("القيمة الافتراضية");
+              columns.Command(command =>
+              {
+                  command.Custom("Edit").Click("Edit").Text(" ");
+                  command.Custom("Delete").Click("Delete").Text(" ");
+              });
+          })
+      //arabic from here
+      .ToolBar(toolbar =>
+      {
+          toolbar.Excel().Text(HelperLib.ControlLabelsAR.ExcelExport);
+  toolbar.Create().Text(HelperLib.ControlLabelsAR.Create);
+  toolbar.Template(@<text>
+            <div class="toolbar">
+                <div class="btn-group">
+                    <button class="btn btn-default hvr-box-shadow-outset" id="AddNewBtn" href="#">
+                        <span class="k-icon k-i-add"></span>@(HelperLib.ControlLabelsAR.Create)
+                    </button>
+                    <label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
+                    <label id="ROWSCOUNT" style="font-size: 20px;"></label>
+                </div>
+            </div>
+</text>);
+})
+.ColumnMenu(c =>
+             c.Messages(m =>
+                         m.Columns(HelperLib.ControlLabelsAR.KendoGridColumns)
+                         .Done(HelperLib.ControlLabelsAR.Done)
+                         .Filter(HelperLib.ControlLabelsAR.Filter)
+                         .SortAscending(HelperLib.ControlLabelsAR.SortAscending)
+                         .SortDescending(HelperLib.ControlLabelsAR.SortDescending)
+                     )
+           )
+.Editable(editable => editable.Mode(GridEditMode.PopUp).Window(w => w.Width(400).Title("إضافة/تعديل")).TemplateName("AttribsTemplate").DisplayDeleteConfirmation("هل أنت متأكد من الحذف")
+                             .Window(w => w.Draggable()
+                                         .Modal(true)
+
+                                         .Resizable()
+                                         ))
+.Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                               .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                               .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                               .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                               .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                               .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                               .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                               .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                               .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                               .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                               .Display("العدد الكلي للسجلات :  {2}")
+                               )
+                             .Refresh(true)
+                             .Input(true)
+                             .Info(true)
+
+
+   )
+.Selectable(selectable =>
+{
+   selectable.Mode(GridSelectionMode.Single);
+   selectable.Type(GridSelectionType.Row);
+})
+.Sortable(sortable =>
+{
+   sortable.SortMode(GridSortMode.SingleColumn);
+})
+//arabic to here
+.Filterable()
+.Scrollable()
+.DataSource(dataSource => dataSource
+   .Ajax()
+   .Model(model => model.Id(p => p.NB))
+   .Read(read => read.Action("ZATTRIBS_Read", "ZAttribs"))
+   .Create(create => create.Action("ZATTRIBS_Create", "ZAttribs"))
+   .Update(update => update.Action("ZATTRIBS_Update", "ZAttribs"))
+   .Destroy(destroy => destroy.Action("ZATTRIBS_Destroy", "ZAttribs"))
+.Events(events => events.RequestEnd("onRequestEnd").Sync("sync_handler"))
+).Events(events => events
+     .Change("setIcons")
+     .DataBound("setIcons")
+      
+     .Sort("setIcons")
+     .Filter("setIcons")
+     .Group("setIcons")
+     .Page("setIcons")
+     .Cancel("setIcons")
+     .Edit("hideIdField")
+ )
+)

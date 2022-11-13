@@ -1,0 +1,170 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+@model <#= ViewDataTypeName #>
+<#
+// "form-control" attribute is only supported for all EditorFor() in System.Web.Mvc 5.1.0.0 or later versions, except for checkbox, which uses a div in Bootstrap
+string boolType = "System.Boolean";
+Version requiredMvcVersion = new Version("5.1.0.0");
+bool isControlHtmlAttributesSupported = MvcVersion >= requiredMvcVersion;
+// The following chained if-statement outputs the file header code and markup for a partial view, a view using a layout page, or a regular view.
+if(IsPartialView) {
+#>
+
+<#
+} else if(IsLayoutPageSelected) {
+#>
+
+@{
+    ViewBag.Title = "<#= ViewName#>";
+<#
+if (!String.IsNullOrEmpty(LayoutPageFile)) {
+#>
+    Layout = "<#= LayoutPageFile#>";
+<#
+}
+#>
+}
+
+<h2><#= ViewName#></h2>
+
+<#
+} else {
+#>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title><#= ViewName #></title>
+</head>
+<body>
+<#
+    PushIndent("    ");
+}
+#>
+<#
+if (ReferenceScriptLibraries) {
+#>
+<#
+    if (!IsLayoutPageSelected && IsBundleConfigPresent) {
+#>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+
+<#
+    }
+#>
+<#
+    else if (!IsLayoutPageSelected) {
+#>
+
+<#
+    }
+#>
+
+<#
+}
+#>
+
+
+<# 
+if (isControlHtmlAttributesSupported) {
+#>
+@if (!Html.ViewData.ModelState.IsValid)
+{
+	<div class = "alert alert-danger alert-dismissible">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+		@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+	</div>
+}
+else if(ViewBag.Success != null){
+    bool success = (bool)ViewBag.Success;
+    if(success){
+        <div class = "alert alert-success">
+		    <h4>نجحت العملية</h4>
+	    </div>
+        <script>
+            try{
+                toastr.clear();
+                toastr.success("<h4>تم تنفيذ العملية بنجاح @(ViewData["SuccessMsg"])</h4>", "<h3>نجاح</h3>");
+                $("#<#= ViewDataTypeShortName #>-modal").find('.save-btn').attr('disabled', true);
+                setTimeout(function(){
+                                $("#<#= ViewDataTypeShortName #>-modal").modal('hide');
+                                <#= ViewDataTypeShortName #>List.columns.adjust();
+                            }
+                        ,1000);
+            }catch(e){
+                console.log(e);
+            }
+
+            try{
+                <#= ViewDataTypeShortName #>List.ajax.reload(null, false);
+            }
+            catch(e){
+                console.log(e);
+            }
+        </script>
+    }
+    else
+    {
+        <script>
+            toastr.clear();
+            toastr.error("<h4>فشلت العملية @(ViewData["FailMsg"])</h4>", "<h3>فشل</h3>");
+        </script>
+    }
+}
+<#        
+} else {
+#>
+
+<#      
+}
+#>
+
+<dl class="dl-horizontal">
+<#
+foreach (PropertyMetadata property in ModelMetadata.Properties) {
+    if (property.Scaffold && !property.IsPrimaryKey && !property.IsForeignKey) {
+#>
+<#
+        // We do not want to show any association properties for which there is
+        // no associated foreign key.
+        if (property.IsAssociation && GetRelatedModelMetadata(property) == null) {
+            continue;
+        }
+#>
+    <dt>
+	    @Html.DisplayNameFor(model => model.<#= GetValueExpression(property) #>)
+    </dt>
+
+    <dd>
+	    @Html.DisplayFor(model => model.<#= GetValueExpression(property) #>)
+    </dd>
+
+<#
+    }
+}
+#>
+        
+</dl>
+
+
+<#
+// The following code closes the tag used in the case of a view using a layout page and the body and html tags in the case of a regular view page
+#>
+<#
+if(!IsPartialView && !IsLayoutPageSelected) {
+    ClearIndent();
+#>
+</body>
+</html>
+<#
+}
+#>
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

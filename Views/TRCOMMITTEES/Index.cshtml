@@ -1,0 +1,229 @@
+﻿
+@{
+    ViewBag.Title = "اللجان";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<style>
+    .k-grid .k-button .k-icon {
+        font: "normal normal normal 16px/1 FontAwesome";
+    }
+</style>*@
+<style>
+    .k-grid .k-button {
+        color: unset;
+        border-color: transparent;
+        background-color: transparent;
+        margin: 0;
+        padding: 5px 5px 4px;
+    }
+
+        .k-grid .k-button .k-icon {
+            display: inline-block;
+            font: normal normal normal 16px/1 FontAwesome;
+            font-size: inherit;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            width: 1.2em;
+        }
+
+</style>
+<div class="accordion" id="accordion2">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle alert-info" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                <span class="glyphicon glyphicon-minus"></span>
+                اظهار خيارات البحث
+            </a>
+        </div>
+        <div id="collapseOne" class="accordion accordion-body collapse in">
+            <div class="accordion-inner">
+
+                <div class="panel-body">
+
+                    <div class="row">
+                        <div class="col-sm-8">
+
+
+
+                            <table class="nav-justified">
+                                <tr>
+
+
+
+                                    <td>
+                                        <label for="template_name"> الاسم:</label>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="k-textbox input-search" id="type_name" placeholder="الاسم" style="width: 40% !important" />
+                                    </td>
+
+                                </tr>
+
+
+
+
+
+                            </table>
+
+
+                        </div>
+
+                        <div class="col-sm-4">
+
+                            <div class="pull-left">
+
+
+                                <button id="btn-search" type="button" class="k-button k-primary1 k-button-icontext">
+
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                                <button id="btn-clear" type="button" class="k-button k-primary1 k-button-icontext">
+
+                                    <span class="searchclear glyphicon glyphicon-remove-circle"></span>
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@*<script type="text/javascript">
+    $(document).ready(function () {
+        $('.collapse').on('shown.bs.collapse', function () {
+            $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+        }).on('hidden.bs.collapse', function () {
+            $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+        });
+    });
+</script>*@
+
+
+@*<script src="@Url.Content("~/Scripts/kendo.ar.controls.js")"></script>*@
+
+
+<div>
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRCOMMITTEES>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                // columns.Command(command => {
+                //command.Custom("تفاصيل").Click("details").HtmlAttributes(new { @class = "btn btn-primary" });
+                //     command.Custom("تعديل").Click("EditQuestion").HtmlAttributes(new { @class = "btn btn-primary" });
+                //    command.Custom("نسخ").Click("CopyQuestion").HtmlAttributes(new { @class = "btn btn-primary" });
+                //    command.Custom("تعطيل-تفعيل").Click("DestroyQuestion").HtmlAttributes(new { @class = "btn btn-danger" });
+                //   command.Custom("معاينة").Click("showdetails").HtmlAttributes(new {  @class = "btn btn-info"});
+                //}).Title("العمليات").Width(400);
+                columns.Bound(c => c.NB);
+                columns.Bound(c => c.COMNO);
+                columns.Bound(c => c.COMDATE).Format("{0:dd/MM/yyyy}");
+                columns.Bound(c => c.COMCITYNB);
+                columns.Bound(c => c.STATUS);
+                columns.Bound(c => c.ORDR);
+                columns.Bound(c => c.IUSER);
+                columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}");
+                columns.Command(command =>
+                {
+                    //command.Custom("Preview").Click("Preview").Text(" ");
+                    command.Custom("Edit").Click("Edit").Text(" ");
+                   // command.Custom("Details").Click("Details").Text(" ");
+                    command.Custom("Delete").Click("Delete").Text(" ");
+                  //  command.Custom("Details2").Click("Details2").Text(" ");
+                }).Width(180);
+            
+
+            })
+            .HtmlAttributes(new { style = "height: auto" })
+            .Scrollable()
+            .Sortable()
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("Read", "TRCOMMITTEES")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+               // toolbar.Custom().Name("AddNewQuest").Text(" جديد ").Url("#").HtmlAttributes(new { id = "AddNewQuest", @class = "btn btn-primary" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+
+
+          ).Events(events => events
+            .Change("setIcons")
+            .DataBound("setIcons")
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Cancel("setIcons")
+            //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+
+<script>
+    
+    function setIcons() {
+        $(".k-grid-Edit").addClass("hvr-box-shadow-outset");
+
+        $(".k-grid-Edit").kendoButton({
+            icon: " fa fa-pencil text-success"
+           
+        });
+
+        $(".k-grid-Edit").kendoTooltip({
+            content: "تعديل",
+            position: "left",
+            autoHide: true,
+        });
+
+        function Edit(e) { }
+
+        function Delete(e) { }
+        $(".k-grid-Delete").addClass(" hvr-box-shadow-outset");
+        $(".k-grid-Delete").kendoButton({
+            icon: "i fa fa-trash text-danger"
+        });
+        $(".k-grid-Delete").kendoTooltip({
+            content: "حذف",
+            position: "left",
+            autoHide: true,
+        });
+    }
+
+    
+</script>
+
+
+

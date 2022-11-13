@@ -1,0 +1,109 @@
+﻿@model Proced.DataAccess.Models.CF.TRLINE
+
+@if (!Html.ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    </div>
+}
+else if (ViewBag.Success != null)
+{
+    bool success = (bool)ViewBag.Success;
+    if (success)
+    {
+        <div class="alert alert-success alert-dismissable">
+            <h4>@(Proced.DataAccess.MetaData.ProcedSysResources.SuccessTitle)</h4>
+        </div>
+        <script>
+            try {
+                $("#modal").find(".save-btn").attr("disabled", true);
+                toastr.clear();
+                toastr.success("تمت عملية الإضافة بنجاح", "@(Proced.DataAccess.MetaData.ProcedSysResources.SuccessTitle)");
+                setTimeout(function () {
+                    $("#modal").modal('hide');
+                }, 1500);
+            } catch (e) {
+                console.log(e);
+            }
+
+            try {
+                $("#grid").data("kendoGrid").dataSource.read();
+            }
+            catch (e) {
+                console.log(e);
+            }
+        </script>
+    }
+    else
+    {
+        <script>
+            $(function () {
+                toastr.clear();
+                toastr.error("فشلت عملية الإضافة", "@(Proced.DataAccess.MetaData.ProcedSysResources.FailTitle)");
+            });
+        </script>
+    }
+}
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <table style="width:100% !important">
+            <tr>
+                <td style="text-align:left;">
+                    <label> اسم خط السير:  </label>
+                    &nbsp;&nbsp;
+                </td>
+                <td style="text-align:right" colspan="3">
+                    @Html.TextBoxFor(m => m.NAME, new { @class = "form-control", @style = "width:90% !important;" })
+                </td>
+            </tr>
+            <tr style="padding-top:10px;margin-top:10px;">
+                <td style="text-align:left;margin-top:10px;padding-top:10px">
+                    <label>هل هو متاح؟:</label>
+                    &nbsp;&nbsp;
+                <td style="text-align:right">
+                    <label>نعم</label><input type="radio" name="STATUS" value="true" checked="checked" style="height:18px; width:18px; vertical-align: middle;" />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <label>لا</label> <input type="radio" name="STATUS" value="false" style="height:18px; width:18px; vertical-align: middle;" />
+                </td>
+            </tr>
+            <tr style="padding-top:10px;margin-top:10px;">
+                <td style="text-align:left;padding-top:10px;margin-top:10px;">
+                    <label>الترتيب:</label>
+                    &nbsp;&nbsp;
+                </td>
+                <td style="text-align:right;padding-top:10px;margin-top:10px;">
+                    @Html.TextBoxFor(m => m.ORDR, new { @class = "form-control", @style = "width:150px !important;" })
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:left;margin-top:10px;padding-top:10px">
+                    <label>نوع الخط:</label>
+                    &nbsp;&nbsp;
+                <td style="text-align:right">
+                    @Html.DropDownListFor(m => m.TYP, ViewBag.zTrlinesTypes as List<SelectListItem>, "اختر نوع الخط",
+                     new { @class = "form-control chosen_rtl chosen-rtl", @Name = "TYP", @style = "width:150px" })
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:left;margin-top:10px;padding-top:10px">
+                    <label>المحافظة:</label>
+                    &nbsp;&nbsp;
+                <td style="text-align:right">
+                    @Html.DropDownListFor(m => m.CITYNB, ViewBag.zCitys as List<SelectListItem>, "اختر المحافظة",
+                             new { @class = "form-control chosen_rtl chosen-rtl", @Name = "CITYNB" })
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+    $(function () {
+        try {
+            $("#CITYNB").chosen({ "width": "150px", no_results_text: "لم يتم العثور على المحافظة" });
+        } catch (e) {
+
+        }
+    });
+</script>

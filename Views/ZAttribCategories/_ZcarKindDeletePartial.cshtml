@@ -1,0 +1,62 @@
+﻿
+@model Proced.DataAccess.Models.CF.ZATTRIBCATEGORY
+    <style>
+           .autosize {
+  width:100%;    
+  resize: none;
+  overflow: hidden;
+}
+    </style>
+@if (!Html.ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    </div>
+}
+else if (ViewBag.Success != null)
+{
+    bool success = (bool)ViewBag.Success;
+    if (success)
+    {
+        <div class="alert alert-success alert-dismissable">
+            <h4>@(Proced.DataAccess.MetaData.ProcedSysResources.SuccessTitle)</h4>
+        </div>
+        <script>
+            try {
+                $("#modal").find(".save-btn").attr("disabled", true);
+                toastr.clear();
+                toastr.success("تمت العملية بنجاح", "@(Proced.DataAccess.MetaData.ProcedSysResources.SuccessTitle)");
+                setTimeout(function () {
+                    $("#modal").modal('hide');
+                }, 1500);
+            } catch (e) {
+                console.log(e);
+            }
+
+            try {
+                $("#grid").data("kendoGrid").dataSource.read();
+            }
+            catch (e) {
+                console.log(e);
+            }
+        </script>
+    }
+    else
+    {
+        <script>
+            $(function () {
+                toastr.clear();
+                toastr.error("@(Proced.DataAccess.MetaData.ProcedSysResources.FailTitle)");
+            });
+        </script>
+    }
+}
+<div class="form-horizontal">
+    <div class="form-group">
+        <label for="NAME" class="col-md-4" style="text-align:left">اسم فئة المواصفة: </label>
+        <div class="col-md-8" style="text-align:right">
+            @(ViewBag.Name)
+        </div>
+    </div>
+</div>

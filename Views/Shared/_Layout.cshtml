@@ -1,0 +1,600 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - وزارة النقل | نظام نقل الركاب</title>
+    <link href="~/Content/v2/img/favicon.png" rel="icon">
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/v2/css")
+    @Scripts.Render("~/bundles/v2/jquery")
+    @Scripts.Render("~/bundles/v2/js")
+    @Scripts.Render("~/bundles/v2/modernizr")
+    @Scripts.Render("~/bundles/v2/dataTables")
+
+
+    @Scripts.Render("~/bundles/v2/jqueryval_unobtrusive")
+
+    <link href="~/Content/jquery-confirm.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-confirm.min.js"></script>
+    <link href="~/Content/chosen.css" rel="stylesheet" />
+    <script src="~/Scripts/chosen.jquery.js"></script>
+    @*ForKendo*@
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.common-bootstrap.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.mobile.all.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.bootstrap.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.rtl.min.css")" rel="stylesheet" type="text/css" />
+    @*<script src="@Url.Content("~/Scripts/kendo/2017.1.118/jquery.min.js")"></script>*@
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/kendo.all.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/kendo.aspnetmvc.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/kendo.ar.controls.js")"></script>
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.rtl.min.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/kendo.timezones.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/kendo.modernizr.custom.js")"></script>
+    <script src="@Url.Content("~/Scripts/indexesScripts.js")"></script>
+    @*End Kendo*@
+    @*For Kendo_Grid_Style*@
+    <style>
+        .btn-success {
+            color: #fff !important;
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+        }
+
+        .btn-danger {
+            color: #fff !important;
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: none !important;
+        }
+
+        .chosen-container-single .chosen-single div {
+            background: none !important;
+        }
+
+        .tab-content > .active {
+            display: contents !important;
+        }
+    </style>
+    <style>
+        /*        05-10*/
+        .k-grid-header, .k-grid-header tr:first-child {
+            background: 0 0;
+            padding: 0px !important;
+        }
+        /*        end*/
+        span.k-pager-sizes.k-label {
+            display: inline;
+        }
+
+        .k-grid tbody .k-button {
+            min-width: auto !important;
+        }
+
+        .k-grid tbody tr {
+            height: 38px;
+        }
+
+            .k-grid tbody tr td {
+                height: 20px;
+                padding-top: 2px;
+                padding-bottom: 2px;
+            }
+
+        .k-grid-header thead tr th > a,
+        .k-grid-header thead tr th > span {
+            color: black !important;
+            font-weight: bold !important;
+        }
+        /*.k-grid-content > table > tbody > tr > td {
+                 font-size: 14px !important;
+                 font-weight: normal !important;
+        }*/
+        .k-grid-content {
+            height: auto !important;
+            overflow-y: auto !important;
+            min-height: 150px !important;
+        }
+
+        .k-pager-info {
+            color: #4f67ea;
+        }
+    </style>
+    <style>
+        .close {
+            /*color: #fff !important;*/
+            filter: alpha(opacity=60) !important;
+            opacity: .6 !important;
+            font-size: 2.5em !important;
+        }
+
+            .close:focus, .close:hover {
+                filter: alpha(opacity=100) !important;
+                opacity: 1 !important;
+            }
+
+        .k-textbox {
+            width: 100%;
+            border-color: #cbc9c9;
+        }
+
+        .k-dropdown {
+            width: 100% !important;
+        }
+
+        .k-pager-sizes .k-dropdown {
+            width: 28% !important;
+        }
+
+        .k-pager-sizes.k-label {
+            font-size: 14px;
+        }
+
+        .pretty.p-switch .state::before {
+            left: 0;
+        }
+
+        .pretty {
+            margin-right: 0;
+        }
+
+        .modal-body {
+            /*background-color: rgba(202, 182, 221, 0.29);*/
+        }
+
+        .modal-footer {
+            margin-top: 0px;
+        }
+
+        .accordion-wrapper .accordion-panel .accordion-title {
+            border-bottom: 1px #d4d4d4 solid !important;
+        }
+
+        .dropdown-menu > li > a {
+            padding: 10px 20px;
+            transition: all ease-in-out .3s;
+        }
+
+        .dropdown-menu > li:hover > a {
+            background-color: #afd0dd;
+            color: #1209f2;
+        }
+
+        /*.k-rtl .k-filter-row th:not(:last-child),
+        .k-rtl .k-grid tbody td:not(:last-child),
+        .k-rtl .k-grid tfoot td:not(:last-child),
+        .k-rtl .k-grid-header .k-header:not(:last-child) {
+            border-left-width: 1px;
+        }*/
+        .k-filter-row > th:first-child,
+        .k-grid tbody td:first-child,
+        .k-grid tfoot td:first-child,
+        .k-grid-header th.k-header:first-child {
+            border-left-width: 1px !important;
+        }
+
+        .k-popup .k-list .k-item {
+            padding-right: 20px;
+        }
+
+        .panel {
+            margin-bottom: 2px;
+        }
+
+        .k-grid-toolbar, .k-grouping-header {
+            padding: 3px !important;
+        }
+
+        .k-grid-header th.k-header {
+            padding: 2px .6em !important;
+        }
+
+        div.k-widget.k-grid > div.k-grid-header {
+            padding-left: 0 !important;
+        }
+
+        .jconfirm {
+            bottom: 0;
+        }
+
+        .k-grid-header:nth-child(0) {
+            padding-left: 0 !important;
+        }
+    </style>
+    <style>
+        .k-button.btn-primary /*,
+        .k-button.k-primary:active*/ {
+            color: #fff !important;
+            background-color: #007bff !important;
+            border-color: #007bff !important;
+        }
+
+        .k-button.btn-info {
+            color: #fff !important;
+            background-color: #76abd9 !important;
+            border-color: #76abd9 !important;
+        }
+
+        .k-button.btn-danger {
+            color: #fff !important;
+            background-color: #d43f3a !important;
+            border-color: #d43f3a !important;
+        }
+
+        .k-button.btn-success {
+            color: #fff !important;
+            background-color: #5cb85c !important;
+            border-color: #5cb85c !important;
+        }
+
+        .k-button.btn-secondary {
+            color: #fff !important;
+            background-color: #17a2b8 !important;
+            border-color: #17a2b8 !important;
+        }
+        /*   .k-button.btn btn-primary {
+            color: #fff !important;
+            background-color: #007bff !important;
+            border-color: #007bff !important;
+        }*/
+        /* .btn-primary {
+            color: #fff !important;
+            background-color: #007bff !important;
+            border-color: #007bff !important;
+        }*/
+    </style>
+    @*End*@
+    <script>
+
+        function showLoading() {
+            $("#loadingContainer").fadeIn();
+        }
+        function stopLoading() {
+            $("#loadingContainer").fadeOut(250);
+        }
+        $(document).ajaxStart(function () {
+            showLoading();
+        });
+        $(document).ajaxError(function () {
+            stopLoading();
+        });
+        $(document).ajaxStop(function () {
+            stopLoading();
+        });
+    </script>
+    @*<link href="@Url.Content("~/Content/themes/base/all.css")" rel="stylesheet" />
+        <link href="@Url.Content("~/Content/pretty-checkbox.min.css")" rel="stylesheet" />*@
+
+    <!-------------------------Site Theme Styles------------------------->
+    @*<link href="@Url.Content("~/Content/site_theme/animate/animate.min.css")" rel="stylesheet" />
+        <link href="@Url.Content("~/Content/site_theme/ionicons/css/ionicons.min.css")" rel="stylesheet" />*@
+    <!--Main Stylesheet File-->
+    @*<link href="@Url.Content("~/Content/site_theme/style.css")" rel="stylesheet" />*@
+    <!--/Main Stylesheet File-->
+    <!------------------------/Site Theme Styles------------------------->
+    @*<link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" />*@
+</head>
+<body>
+    <kendo:dataSource pageSize="20" requestEnd="onRequestEnd">
+        <kendo:dataSource-transport>
+
+            <script>
+                function onRequestEnd(e) {
+                    $("#notification").kendoNotification({
+                        templates: [{
+                            type: "error",
+                            template: "<div class='myWarning'> #= myMessage #</div>"
+                        }, {
+                            // define a template for the custom "timeAlert" notification type
+                            type: "success",
+                            template: "<div class='myWarning'> #= myMessage #</div>"
+                        }],
+                        position: {
+                            // notification popup will scroll together with the other content
+                            pinned: true,
+                            // the first notification popup will appear 30px from the viewport's top and right edge
+                            top: 50,
+                            right: 25
+
+                        },
+                        autoHideAfter: 3000,
+                        allowHideAfter: 1000,
+
+                        // show a hide button
+                        button: true,
+                        // prevent hiding by clicking on the notification content
+                        hideOnClick: true,
+                        //color: blue,
+                        // new notifications will appear below old ones
+                        stacking: "down",
+                        // set appropriate size
+                        width: 450,
+                        height: 50,
+
+                    });
+                    var notificationElement = $("#notification");
+
+                    var notificationWidget = notificationElement.data("kendoNotification");
+                    if (e.type == "create" && !e.response.Errors) {
+                        notificationWidget.getNotifications().parent().remove();
+
+                        notificationWidget.show({ myMessage: "تمت عملية الإضافة بنجاح" }, "success");
+
+
+                    }
+                    if (e.type == "update" && !e.response.Errors) {
+                        notificationWidget.getNotifications().parent().remove();
+
+                        notificationWidget.show({ myMessage: "تمت عملية التعديل بنجاح" }, "success");
+
+                    }
+                    if (e.type == "destroy" && !e.response.Errors) {
+                        notificationWidget.getNotifications().parent().remove();
+
+                        notificationWidget.show({ myMessage: "تمت عملية الحذف بنجاح" }, "success");
+
+                    }
+
+
+                    if (e.type == "create" && e.response.Errors) {
+                        notificationWidget.getNotifications().parent().remove();
+
+                        $("#loadingContainer").fadeOut();
+
+                        notificationWidget.show({ myMessage: e.response.Errors }, "error");
+                        $("#grid_11").data("kendoGrid").dataSource.read();
+
+
+                    }
+                    if (e.type == "update" && e.response.Errors) {
+                        notificationWidget.getNotifications().parent().remove();
+
+
+                        $("#loadingContainer").fadeOut();
+
+                        notificationWidget.show({ myMessage: e.response.Errors }, "error");
+                        $("#grid_11").data("kendoGrid").dataSource.read();
+
+
+                    }
+                    if (e.type == "destroy" && e.response.Errors) {
+
+                        notificationWidget.getNotifications().parent().remove();
+
+                        $("#loadingContainer").fadeOut();
+
+                        notificationWidget.show({ myMessage: e.response.Errors }, "error");
+                        $("#grid_11").data("kendoGrid").dataSource.read();
+                    }
+
+                }
+
+            </script>
+        </kendo:dataSource-transport>
+    </kendo:dataSource>
+    <div id="globalModalContainer"></div>
+
+    <main id="main-page">
+        <header id="header">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div id="logo" class="pull-right">
+                    <a href="@Url.Action("Index", "Home", new { Area = "" })" class="scrollto"><img src="@Url.Content("~/Content/v2/img/logo.png")" alt="" title=""></a>
+                </div>
+                <a href="#" class="nav-item nav-link" data-toggle="modal" data-target="#grid"><i class="fa fa-th"></i></a>
+                <a href="#" class="navbar-brand hidden-sm">نقل الركاب</a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                    @Html.Partial("_TopNavMenuPartial")
+                    <div class="form-inline">
+                        <h3 class="navbar-brand" style="margin:0;">
+                            @ViewBag.Title
+                            @if (ViewBag.Description != null)
+                            {
+                                <span class="pageDescription">@ViewBag.Description</span>
+                            }
+                        </h3>
+                    </div>
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </nav>
+            <!-- #nav-menu-container -->
+
+        </header><!-- #header -->
+        <!--==========================
+            Home Page
+        ============================-->
+
+        <div class="main">
+            <section id="indexes">
+                <div class="container-fluid" @*style="background-color:#fff;padding-bottom:50px !important"*@>
+                    <div class="panel-body">
+                        @Html.Hidden("myUrlForCreate", Url.Action("Create"))
+                        @Html.Hidden("myUrlForEdite", Url.Action("Edit"))
+                        @Html.Hidden("myUrlForDelete", Url.Action("Delete"))
+                        @Html.Hidden("myUrlForCreateForDetail", Url.Action("Create", new { area = "", pk = ViewBag.PK }))
+                        <div id="modalContent"></div>
+                        @*<div id="IndexSearchPanel" class="row alert-success" style="text-align:right;margin:0;display:none;">
+                            <label style="font-size:18px">خيارات البحث:</label>
+                        </div>*@
+                        @RenderBody()
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!--==========================
+    Footer
+    ============================-->
+    <footer id="footer">
+        <div class="copyright">
+            جميع الحقوق محفوظة <strong> جامعة دمشق </strong> - كلية الهندسة الميكانيكة والكهربائية - مكتب ممارسة المهنة &copy; @DateTime.Now.Year
+        </div>
+    </footer><!-- #footer -->
+
+    <a href="#" class="back-to-top"><i class="fa fa-angle-up"></i></a>
+
+    <!--==========================
+    Grid
+    ============================-->
+
+    <div class="modal fade costum" id="grid" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered costum" id="home">
+            <div class="modal-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid navyBlue">
+                                <img src="~/Content/v2/img/icon/1.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">صلاحيات المراقبة</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid coral">
+                                <img src="~/Content/v2/img/icon/2.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">الحجوزات</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid red">
+                                <img src="~/Content/v2/img/icon/3.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">الإحصائيات</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid tealGreen">
+                                <img src="~/Content/v2/img/icon/4.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">الرهونات</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid teal">
+                                <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">مولد التقارير</h5>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid teal">
+                                <img src="~/Content/v2/img/icon/6.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">إدارة المعاملات</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <a href="proced_base.html">
+                                <div class="grid tealGreen">
+                                    <img src="~/Content/v2/img/icon/7.png" class="grid-icon" alt="">
+                                    <h5 class="grid-title">المعاملات</h5>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid royalBlue">
+                                <img src="~/Content/v2/img/icon/8.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">الرسوم</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid navyBlue">
+                                <img src="~/Content/v2/img/icon/9.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">سند التمليك</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid red">
+                                <img src="~/Content/v2/img/icon/10.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">المراسلات</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid coral">
+                                <img src="~/Content/v2/img/icon/11.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">النشرات الفنية</h5>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid red">
+                                <img src="~/Content/v2/img/icon/12.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">رخص السير</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid coral">
+                                <img src="~/Content/v2/img/icon/13.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">اللوحات</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid teal">
+                                <img src="~/Content/v2/img/icon/14.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">الفحص الفني</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid royalBlue">
+                                <img src="~/Content/v2/img/icon/15.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">الفهارس</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                            <div class="grid navyBlue">
+                                <img src="~/Content/v2/img/icon/16.png" class="grid-icon" alt="">
+                                <h5 class="grid-title">الأرشفة</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+    @Html.Partial("_LoaderPartial")
+    @RenderSection("scripts", required: false)
+
+    <script src="@Url.Content("~/Scripts/deb.js")"></script>
+    <script>
+
+        var myVar = setInterval(deb, 10);
+        StopDeb();
+        function StopDeb() {
+            clearInterval(myVar);
+        }
+        var windowInitialOuterHeight = window.outerHeight;
+        var windowInnerHeight = window.innerHeight;
+
+        var i = 0;
+        window.onresize = function () {
+            windowInnerHeight = window.innerHeight;
+            if (windowInnerHeight != windowInitialOuterHeight && i == 0) {
+                //i = 1;
+                //myVar = setInterval(deb, 10);
+            } else {
+                StopDeb();
+                console.log("Stopped");
+                i = 0;
+            }
+        }
+    </script>
+    <script>
+                                //$(document).ready(function () {
+                                    //setTimeout(function () {
+                                    //var grid2 = $("#AllCarChangesGrid").data("kendoGrid");
+                                    //grid2.bind("dataBound", function () {
+                                    //    $(".k-button").removeClass("k-button-icontext");
+                                    //});
+                                    //}, 1000);
+                                //});
+    </script>
+</body>
+</html>

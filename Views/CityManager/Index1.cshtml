@@ -1,0 +1,361 @@
+﻿
+@{
+    ViewBag.Title = " مجموعات الجهات";
+}
+
+<div class="accordion" id="accordion2">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle alert-info" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                <span class="glyphicon glyphicon-minus"></span>
+                خيارات البحث
+            </a>
+        </div>
+        <div id="collapseOne" class="accordion accordion-body collapse in">
+            <div class="accordion-inner">
+
+                <div class="panel-body">
+
+                    <div class="row">
+                        <div class="col-sm-10">
+
+
+
+                            <table class="nav-justified">
+
+
+                                <tr>
+                                    <td>
+                                        <label for="ONNB" style="width:150px !important;"> اسم الجهة الخارجية:</label>
+                                    </td>
+                                    <td>
+
+                                        @(Html.Kendo().ComboBox()
+                                           .BindTo((SelectList)ViewData["Zoutacts"])
+                                            .HtmlAttributes(new { style = "width: 50%; background-color:#d9edf7", id = "ONNB", data_value_primitive = "true" })
+                                            .NoDataTemplate("لا يوجد نتائج مشابهة")
+                                            .Placeholder("بحث حسب اسم الجهة الخارجية")
+                                            .Name("ONNB")
+                                            .MinLength(1)
+                                            .Animation(false)
+                                            .Filter("contains")
+
+                                        )
+                                    </td>
+                               
+                                    <td>
+                                        <label for="GNNB" style="width:150px !important;"> اسم مجموعة الجهة:</label>
+                                    </td>
+                                    <td>
+
+                                        @(Html.Kendo().ComboBox()
+                                           .BindTo((SelectList)ViewData["Zsides"])
+                                            .HtmlAttributes(new { style = "width: 50%; background-color:#d9edf7", id = "GNNB", data_value_primitive = "true" })
+                                            .NoDataTemplate("لا يوجد نتائج مشابهة")
+                                            .Placeholder("بحث حسب اسم مجموعة الجهة")
+                                            .Name("GNNB")
+                                            .MinLength(1)
+                                            .Animation(false)
+                                            .Filter("contains")
+
+                                        )
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-sm-2">
+
+                            <div class="pull-left">
+
+
+                                <button id="btn-search" type="button" class="k-button k-primary1 k-button-icontext">
+
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                                <button id="btn-clear" type="button" class="k-button k-primary1 k-button-icontext">
+
+                                    <span class="searchclear glyphicon glyphicon-remove-circle"></span>
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.collapse').on('shown.bs.collapse', function () {
+            $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+        }).on('hidden.bs.collapse', function () {
+            $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+        });
+    });
+</script>
+<script src="@Url.Content("~/Scripts/kendo.ar.controls.js")"></script>
+
+@(Html.Kendo().Grid<Proced.DataAccess.Models.CF.ZGROUPSIDE>()
+      .Name("grid")
+      .AutoBind(false)
+      .Columns(columns =>
+      {
+          columns.Template(t => { }).Title("متسلسل").ClientTemplate("#= renderNumber(data) #").Width(100);
+          columns.Template(t =>
+          {
+          }).Title("اسم مجموعةالجهة").ClientTemplate(
+   "#= renderDemanddFullName(data) #"
+     ).Width(200);
+
+          columns.Template(t =>
+          {
+          }).Title("اسم الجهة الخارجية").ClientTemplate(
+    "#= renderDemandFullName(data) #"
+      ).Width(200);
+
+
+          columns.Command(command => { command.Edit().Text(" ").CancelText(HelperLib.ControlLabelsAR.Cancel).UpdateText(HelperLib.ControlLabelsAR.Update); command.Destroy().Text(" "); }).Width(140);
+      })
+  //arabic from here
+  .ToolBar(toolbar =>
+  {
+  toolbar.Template(@<text>
+        <div class="toolbar">
+            <div class="btn-group">
+                <!--<a class="k-grid-add btn btn-dark" href="/Indexes/PROGRAMS/PROGRAMS_Read?grid-mode=insert">
+                    <span class="k-icon k-i-add"></span>@(HelperLib.ControlLabelsAR.Create)
+                </a> -->
+                <!-- Split button -->
+                <div class="btn-group">
+                    <button class="btn btn-default hvr-box-shadow-inset k-grid-add" id="AddButton" href="/Indexes/PROGRAMS/PROGRAMS_Read?grid-mode=insert">
+                        <span class="k-icon k-i-add"></span>@(HelperLib.ControlLabelsAR.Create)
+                    </button>
+                    <button type="button" class="btn btn-info" id="defaultExportBtn">@(HelperLib.ControlLabelsAR.ExcelExport) <b id="default_export_text"></b></button>
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><button class="k-grid-excel default-print-action" data-action-id="1">ملف Excel</button></li>
+                        <li><a href="@Url.Action("Word_Export_Save", "Programs")" target="_blank" class="default-print-action" data-action-id="2">ملف Word</a></li>
+                        <li><a href="@Url.Action("PdfExport", "Programs")" target="_blank" class="default-print-action" data-action-id="3">ملف PDF</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a target="_blank" href="@Url.Action("HtmlPrint", "Programs")" class="default-print-action" data-action-id="4">طباعة فورية</a></li>
+                    </ul>
+                </div>
+                <label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
+                <label id="ROWSCOUNT" style="font-size: 20px;"></label>
+            </div>
+        </div>
+</text>);
+
+  })
+      .ColumnMenu(c =>
+                    c.Messages(m =>
+                                m.Columns(HelperLib.ControlLabelsAR.KendoGridColumns)
+                                .Done(HelperLib.ControlLabelsAR.Done)
+                                .Filter(HelperLib.ControlLabelsAR.Filter)
+                                .SortAscending(HelperLib.ControlLabelsAR.SortAscending)
+                                .SortDescending(HelperLib.ControlLabelsAR.SortDescending)
+                            )
+                  )
+      .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(w => w.Width(450).Title("إضافة/تعديل")).TemplateName("ZgroupSidesTemplate").DisplayDeleteConfirmation("هل أنت متأكد من الحذف")
+                                    .Window(w => w.Draggable()
+                                                .Modal(true)
+
+                                                .Resizable()
+                                                ))
+      .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+
+
+          )
+      .Selectable(selectable =>
+      {
+          selectable.Mode(GridSelectionMode.Single);
+          selectable.Type(GridSelectionType.Row);
+      })
+      .Sortable(sortable =>
+      {
+          sortable.SortMode(GridSortMode.SingleColumn);
+      })
+      //arabic to here
+      .Filterable()
+      .Scrollable()
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Model(model => model.Id(p => p.NB))
+          .Read(read => read.Action("ZgroupSides_Read", "ZgroupSides", new { Gnb = ViewBag.Gnb }))
+          .Create(create => create.Action("ZgroupSides_Create", "ZgroupSides", new { Gnb = ViewBag.Gnb }))
+          .Update(update => update.Action("ZgroupSides_Update", "ZgroupSides", new { Gnb = ViewBag.Gnb }))
+          .Destroy(destroy => destroy.Action("ZgroupSides_Destroy", "ZgroupSides", new { Gnb = ViewBag.Gnb }))
+      .Events(events => events.RequestEnd("onRequestEnd").Sync("sync_handler"))
+       ).Events(events => events
+
+            .Change("setIcons")
+            .DataBound("setIcons")
+             
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Cancel("setIcons")
+            .Edit("hideIdField")
+
+
+        )
+)
+
+<script>
+
+
+    function setIcons() {
+        ////$(".k-grid-delete").addClass("btn btn-danger");
+        //$(".k-grid-detiails").addClass("btn btn-info");
+        ////$(".k-grid-edit").addClass("btn btn-success");
+        //$(".k-grid-copy").addClass("btn btn-warning");
+        //$(".k-grid-content").find("table").addClass("table-striped table-hover");
+
+
+        //$(".k-grid-EditTax").kendoButton({
+        //    icon: "k-icon k-i-edit"
+        //});
+
+        //$(".k-grid-Detiails").kendoButton({
+        //    icon: "k-icon k-i-info"
+        //});
+        //$(".k-grid-Copy").kendoButton({
+        //    icon: "k-icon k-i-copy"
+        //});
+
+
+        var grid = $("#grid").data("kendoGrid");
+        var dataSource = grid.dataSource;
+
+        //records on current view / page
+        var recordsOnCurrentView = dataSource.view().length;
+        //total records
+        var totalRecords = dataSource.total();
+
+        document.getElementById('ROWSCOUNTLABEL').innerHTML = "عدد السجلات : ";
+        document.getElementById('ROWSCOUNT').innerHTML = totalRecords;
+
+    }
+    var rowNumber = 0;
+    function renderNumber(data) {
+        return rowNumber++;
+
+
+    }
+
+
+    $(document).ready(function () {
+        setIcons();
+    });
+    function hideIdField(e) {
+       @*
+        for hide any field
+       *@
+       e.container.find("label[for=ORDR]").parent(".editor-label").hide();
+        e.container.find("#ORDR").parent(".editor-field").hide();
+       @*
+       if the field have drop down
+       *@
+       $("#ORDR").closest(".k-widget").hide();
+
+
+    }
+
+    function sync_handler() {
+
+        this.read();
+    }
+
+
+</script>
+
+@*<script>
+
+    $("#btn-search").click(function () {
+        $filter = new Array();
+        if ($("#deptFilter1").val() != "") {
+            $filter.push({ field: "NAME", operator: "contains", value: $("#deptFilter1").val() });
+        }
+
+        $("#grid").data("kendoGrid").dataSource.filter($filter);
+        $("#grid").data("kendoGrid").dataSource.read();
+    });
+    $("#btn-clear").click(function () {
+        $filter.pop({ field: "NAME", operator: "contains", value: $("#deptFilter1").val("") });
+        $("#grid").data("kendoGrid").dataSource._filter = null;
+        $("#grid").data("kendoGrid").dataSource.data([]);
+
+    });
+    </script>
+*@
+<script>
+    $filter_main = new Array();
+    $("#btn-search").click(function () {
+        $filter_main = new Array();
+        //if ($("#type_name").val() != "") {
+        //    $filter_main.push({ field: "NAME", operator: "equal", value: $("#type_name").val() });
+        //}
+        if ($("#ONNB").val() != "") {
+            $filter_main.push({ field: "ONB", operator: "equal", value: $("#ONNB").val() });
+        }
+        if ($("#GNNB").val() != "") {
+            $filter_main.push({ field: "GNB", operator: "equal", value: $("#GNNB").val() });
+        }
+
+        $("#grid").data("kendoGrid").dataSource.filter($filter_main);
+        $("#grid").data("kendoGrid").dataSource.read();
+    });
+
+    $("#btn-clear").click(function () {
+        $filter_main.pop({ field: "ONB", operator: "contains", value: $("#ONNB").val("") });
+
+
+        $("#grid").data("kendoGrid").dataSource._filter_main = null;
+        $("#grid").data("kendoGrid").dataSource.data([]);
+
+    });
+    $(".input-search").keydown(function (e) {
+        if (e.keyCode == 13) { //13: Enter Key
+            $("#btn-search").trigger("click");
+        }
+    });
+
+    $(document).ready(function () {
+    })
+</script>
+
+<script type="text/x-kendo-template" id="Grid-Btn-template">
+    <div> #= GVELS ? 'نعم':'لا' #</div>
+
+</script>
+<script>
+    function renderDemandFullName(data) {
+        return data.DemandFullName;
+    }
+    function renderDemanddFullName(data) {
+        return data.DemanddFullName;
+    }
+</script>

@@ -1,0 +1,103 @@
+﻿@model MvcSiteMapProvider.Web.Html.Models.MenuHelperModel
+@using System.Web.Mvc.Html
+@using MvcSiteMapProvider.Web.Html.Models
+
+@helper  TopMenu(List<SiteMapNodeModel> nodeList)
+{
+    <ul class="nav navbar-nav">
+        @foreach (SiteMapNodeModel node in nodeList)
+        {
+            string url = node.IsClickable ? node.Url : "#";
+
+            if (!node.Children.Any())
+            {
+                try
+                {
+                    string permission = "";
+                    string path = url;
+                    string queryString = "";
+                    RouteData routeFromUrl = RouteTable.Routes.GetRouteData(new HttpContextWrapper(new HttpContext(new HttpRequest(null, new UriBuilder(Request.Url.Scheme, Request.Url.Host, Request.Url.Port, path).ToString(), queryString), new HttpResponse(new StringWriter()))));
+                    string controller = routeFromUrl.Values["controller"] + "";
+                    string action = routeFromUrl.Values["action"] + "";
+                    string area = routeFromUrl.Values["area"] + "";
+                    permission = area + (!string.IsNullOrEmpty(area) ? "-" : "") + controller + "-" + action;
+                    if (User.DoesUserHavePermission(permission))
+                    {
+                        <li>
+                            <a href="@url">@node.Title</a>
+                        </li>
+                    }
+                }
+                catch (Exception)
+                {
+                }
+
+            }
+            else
+            {
+                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown">@node.Title <span class="caret"></span></a>@DropDownMenu(node.Children)</li>
+            }
+
+            if (node != nodeList.Last())
+            {
+                <li class="divider-vertical"></li>
+            }
+        }
+    </ul>
+}
+
+@helper DropDownMenu(SiteMapNodeModelList nodeList)
+{
+    <ul class="dropdown-menu hidden-print" role="menu">
+        @foreach (SiteMapNodeModel node in nodeList)
+        {
+            if (node.Title == "Separator")
+            {
+                <li class="divider"></li>
+                continue;
+            }
+
+            string url = node.IsClickable ? node.Url : "#";
+
+            if (!node.Children.Any())
+            {
+                string queryString = "";
+                RouteData routeFromUrl = RouteTable.Routes.GetRouteData(new HttpContextWrapper(new HttpContext(new HttpRequest(null, new UriBuilder(Request.Url.Scheme, Request.Url.Host, Request.Url.Port, url).ToString(), queryString), new HttpResponse(new StringWriter()))));
+                string controller = routeFromUrl.Values["controller"] + "";
+                string action = routeFromUrl.Values["action"] + "";
+                string area = routeFromUrl.Values["area"] + "";
+                var permission = (!string.IsNullOrEmpty(area) ? area + "-" : "") + controller + "-" + action;
+                if (url == "#" || User.DoesUserHavePermission(permission))
+                {
+                    <li><a href="@url">@node.Title</a></li>
+                }
+            }
+            else
+            {
+                foreach (var child in node.Children)
+                {
+                    string urlTmp = node.IsClickable ? node.Url : "#";
+                    string queryString = "";
+                    RouteData routeFromUrl = RouteTable.Routes.GetRouteData(new HttpContextWrapper(new HttpContext(new HttpRequest(null, new UriBuilder(Request.Url.Scheme, Request.Url.Host, Request.Url.Port, urlTmp).ToString(), queryString), new HttpResponse(new StringWriter()))));
+                    string controller = routeFromUrl.Values["controller"] + "";
+                    string action = routeFromUrl.Values["action"] + "";
+                    string area = routeFromUrl.Values["area"] + "";
+                    var permission = (!string.IsNullOrEmpty(area) ? area + "-" : "") + controller + "-" + action;
+                    if (url == "#" || User.DoesUserHavePermission(permission))
+                    {
+                        <li class="dropdown-submenu"><a href="@url">@node.Title</a>@DropDownMenu(node.Children)</li>
+                        break;
+                    }
+                    else
+                    {
+                        @*<li class="dropdown-submenu"><a href="@url">غير مصرح</a>@DropDownMenu(node.Children)</li>*@
+                        <li class="dropdown-submenu"><a style="color:#ff6a00" href="javascript:return false;" disabled="disabled" class="disabled">@node.Title</a>@DropDownMenu(node.Children)</li>
+                        break;
+                    }
+                }
+            }
+        }
+    </ul>
+}
+
+@TopMenu(Model.Nodes)

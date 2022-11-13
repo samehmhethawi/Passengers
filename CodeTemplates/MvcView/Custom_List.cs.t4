@@ -1,0 +1,182 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+
+<#
+// The following chained if-statement outputs the file header code and markup for a partial view, a view using a layout page, or a regular view.
+if(IsPartialView) {
+#>
+
+<#
+} else if(IsLayoutPageSelected) {
+#>
+
+@{
+    ViewBag.Title = "<#= ViewName#>";
+<#
+if (!String.IsNullOrEmpty(LayoutPageFile)) {
+#>
+    Layout = "<#= LayoutPageFile#>";
+<#
+}
+#>
+}
+
+
+
+<#
+} else {
+#>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title><#= ViewName #></title>
+</head>
+<body>
+<#
+    PushIndent("    ");
+}
+#>
+
+<p>
+    <button class="btn btn-primary add-new-<#= ViewDataTypeShortName #>"><i class="fa fa-plus"></i> Add New <#= ViewDataTypeShortName #></button>
+</p>
+<div id="<#= ViewDataTypeShortName #>-modal-container"></div>
+<table class="table table-bordered table-hover table-striped" id="<#= ViewDataTypeShortName #>-table">
+    <thead>
+        <tr>
+<#
+IEnumerable<PropertyMetadata> properties = ModelMetadata.Properties;
+foreach (PropertyMetadata property in properties) {
+    if (property.Scaffold /*&& !property.IsPrimaryKey*/ && !property.IsForeignKey) {
+#>
+<#
+        // We do not want to show any association properties for which there is
+        // no associated foreign key.
+        if (property.IsAssociation && GetRelatedModelMetadata(property) == null) {
+            continue;
+        }
+#>
+            <th></th>
+<#
+    }
+}
+#>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+
+    <tfoot>
+        <tr>
+<#
+//IEnumerable<PropertyMetadata> properties = ModelMetadata.Properties;
+foreach (PropertyMetadata property in properties) {
+    if (property.Scaffold /*&& !property.IsPrimaryKey*/ && !property.IsForeignKey) {
+#>
+<#
+        // We do not want to show any association properties for which there is
+        // no associated foreign key.
+        if (property.IsAssociation && GetRelatedModelMetadata(property) == null) {
+            continue;
+        }
+#>
+            <th></th>
+<#
+    }
+}
+#>
+            <th></th>
+        </tr>
+    </tfoot>
+</table>
+
+
+<script>
+    var <#= ViewDataTypeShortName #>List;
+    $(document).ready(function () {
+        var colsLength = $('#<#= ViewDataTypeShortName #>-table tfoot th').length;
+        $('#<#= ViewDataTypeShortName #>-table tfoot th').each(function (index, element) {
+            if (index != colsLength - 1) {
+                $(this).html('<input type="text" placeholder="search.." class="form-control"/>');
+            } else {
+                $(this).html('');
+            }
+        });
+        
+        <#= ViewDataTypeShortName #>List = $('#<#= ViewDataTypeShortName #>-table').ServerDataTable({
+            editBtn: { show: true, clickHandler: function (rowData) { return editFunc(rowData); } },
+            infoBtn: { show: true, clickHandler: function (rowData) { return infoFunc(rowData); } },
+            deleteBtn: { show: true, clickHandler: function (rowData) { return deleteFunc(rowData); } },
+
+            ajaxReadUrl: "@Url.Action("Read", "<#= ViewDataTypeShortName #>s")",
+            editUrl: "@Url.Action("Edit", "<#= ViewDataTypeShortName #>s")",
+            infoUrl: "@Url.Action("Info", "<#= ViewDataTypeShortName #>s")",
+            deleteUrl: "@Url.Action("Delete", "<#= ViewDataTypeShortName #>s")",
+            containerModalId: "#<#= ViewDataTypeShortName #>-modal-container",
+            modalId: "#<#= ViewDataTypeShortName #>-modal",
+            data: function (data) { return data; },
+            columns: [
+                <# 
+                    foreach (PropertyMetadata property in properties) {
+                        if (property.Scaffold /*&& !property.IsPrimaryKey*/ && !property.IsForeignKey) {
+                            if (property.IsAssociation && GetRelatedModelMetadata(property) == null) {
+                                continue;
+                            }
+            if(property.IsPrimaryKey){
+                                
+                #>
+                        { data: '<#= GetValueExpression(property) #>', title: "<#= GetValueExpression(property) #>", searchable: false, visible: false },
+                <#
+            }else{
+                #>
+                        { data: '<#= GetValueExpression(property) #>', title: "<#= GetValueExpression(property) #>" },
+                <#        
+}
+        }//end if
+                    }//end foreach
+                #>
+                        { data: null, title: "", searchable: false, "orderable": false, }
+            ],
+        });
+
+        $(".add-new-<#= ViewDataTypeShortName #>").click(function (e) {
+            e.preventDefault();
+            showLoading();
+            $.ajax({
+                url: "@Url.Action("Create")",
+                type: "GET",
+                data: { id: rowId },
+                success: function (response) {
+                    $("#<#= ViewDataTypeShortName #>-modal-container").html(response);
+                    stopLoading();
+                    $("#<#= ViewDataTypeShortName #>-modal").modal();
+                },
+                error: function (e1, e2, e3) {
+                    stopLoading();
+                }
+            });
+        });
+    });
+</script>
+
+<#
+// The following code closes the tag used in the case of a view using a layout page and the body and html tags in the case of a regular view page
+#>
+<#
+if(!IsPartialView && !IsLayoutPageSelected) {
+    ClearIndent();
+#>
+</body>
+</html>
+<#
+}
+#>
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

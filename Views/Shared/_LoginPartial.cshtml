@@ -1,0 +1,117 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("Logout", "Account", new { Area = "" }, FormMethod.Post, new { id = "logoutForm", @class = "navbar-left" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="navbar-nav">
+            <div class="nav-item dropdown" style="margin-left: 30px;">
+                <div class="input-group">
+                    <div class="input-group-append">
+                        <button type="button" title="إظهار/إخفاء خيارات البحث" data-toggle="tooltip" class="btn bg-primary btn-search-nav"><i class="fa fa-search"></i></button>
+                        @if (ViewBag.HideFaqsButton == null || ViewBag.HideFaqsButton == false)
+                        {
+                            <button type="button" title="استعراض الأسئلة الشائعة" data-toggle="tooltip" class="btn bg-info btn-faqs-view"><i class="fa fa-question-circle"></i></button>
+                        }
+                        <button type="button" title="مساعدة" data-toggle="tooltip" class="btn btn-info-nav"><i class="fa fa-info"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-envelope">
+                        @if (ViewBag.NotSeenNotificationsCount != null)
+                        {
+                            <span class="pull-left">@(ViewBag.NotSeenNotificationsCount)</span>
+                        }
+                    </i>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="@Url.Action("Index", "Notifications", new { Area = "" })" class="dropdown-item">
+                        <i class="fa fa-globe"></i>
+                        الإشعارات
+                        @*@if (ViewBag.NotSeenNotificationsCount != null)
+                        {
+                            <span class="pull-left">@(ViewBag.NotSeenNotificationsCount)</span>
+                        }*@
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fa fa-envelope"></i>
+                        الرسائل الجديدة
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> @User.Identity.Name </a>
+                <div class="dropdown-menu" style="right:auto !important; left:0 !important">
+                    <a href="/ProcedBase/Account/ChangePassword" class="dropdown-item change-pwdBtn">تغيير كلمة المرور</a>
+                    @*<a href="/ProcedBase/UserProfile/Index" class="dropdown-item">إعدادات المستخدم</a>*@
+                    <a href="/ProcedBase/Account/Logout" class="dropdown-item">تسجيل الخروج</a>
+                </div>
+            </div>
+        </div>
+        if (ViewBag.HideFaqsButton == null || ViewBag.HideFaqsButton == false)
+        {
+            <script>
+                $(function () {
+                    $(".btn-faqs-view").click(function (e) {
+                        e.preventDefault();
+                        showLoading();
+                        $.ajax({
+                            url: "@Url.Action("Index", "FAQs", new { Area = "Indexes" })",
+                            type: "GET",
+                            data: { },
+                            success: function (response) {
+                                stopLoading();
+                                $("#globalModalContainer").html(response);
+                                $("#globalModalContainer").find(".modal").modal();
+                            },
+                            error: function (e1, e2, e3) {
+                                stopLoading();
+                            }
+                        });
+                    });
+                });
+            </script>
+        }
+    }
+    <script>
+        $(function () {
+            $("a.change-pwdBtn").click(function (e) {
+                e.preventDefault();
+                showLoading();
+                $.ajax({
+                    url: "@Url.Action("ChangePassword", "Account", new { Area = "" })",
+                    success: function (response) {
+                        stopLoading();
+                        $("#globalModalContainer").html(response);
+                        try {
+                            $("#globalModalContainer .modal").modal();
+                        } catch (ex) { }
+                    },
+                    error: function () {
+                        stopLoading();
+                    }
+                });
+            });
+            $("button.btn-search-nav").click(function (e) {
+                e.preventDefault();
+                $(".dataTables_scrollFootInner").toggleClass("hidden");
+            });
+            $(".logoutBtn").click(function (e) {
+                e.preventDefault();
+                $(this).closest("form#logoutForm").submit();
+            });
+        });
+    </script>
+}
+else
+{
+    <div class="navbar-nav">
+        <div class="nav-item dropdown">
+            <a id="loginLink" href="@Url.Action("Login", "Account", new { Area = "", returnUrl = Request.Url.PathAndQuery })">تسجيل الدخول</a>
+        </div>
+    </div>
+}

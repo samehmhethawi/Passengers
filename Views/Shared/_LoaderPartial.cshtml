@@ -1,0 +1,39 @@
+﻿
+<style>
+    .loader_ {
+        /*background: #fff no-repeat 50% 50%;
+        background-size: contain;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+        height: 50vh;
+        margin: 5vh auto;
+        position: relative;*/
+    }
+</style>
+
+<div class="loader_"></div>
+
+<script>
+    var loader_ = $('.loader_');
+    function showLoading() {
+        loader_.preloader({
+            // loading text
+            text: 'انتظر...',
+
+            // from 0 to 100
+            percent: '',
+
+            // duration in ms
+            duration: '',
+
+            // z-index property
+            zIndex: '9999',
+
+            // sets relative position to preloader's parent
+            setRelative: false
+        });
+    }
+
+    function stopLoading() {
+        loader_.preloader('remove');
+    }
+</script>

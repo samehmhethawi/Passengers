@@ -1,0 +1,128 @@
+﻿@model Proced.DataAccess.Models.CF.ZATTRIB
+
+@if (!Html.ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    </div>
+}
+else if (ViewBag.Success != null)
+{
+    bool success = (bool)ViewBag.Success;
+    if (success)
+    {
+        <div class="alert alert-success alert-dismissable">
+            <h4>@(Proced.DataAccess.MetaData.ProcedSysResources.SuccessTitle)</h4>
+        </div>
+        <script>
+            try {
+                $("#modal").find(".save-btn").attr("disabled", true);
+                toastr.clear();
+                toastr.success("تمت عملية الإضافة بنجاح", "@(Proced.DataAccess.MetaData.ProcedSysResources.SuccessTitle)");
+                setTimeout(function () {
+                    $("#modal").modal('hide');
+                }, 1500);
+            } catch (e) {
+                console.log(e);
+            }
+
+            try {
+                $("#grid").data("kendoGrid").dataSource.read();
+            }
+            catch (e) {
+                console.log(e);
+            }
+        </script>
+    }
+    else
+    {
+        <script>
+            $(function () {
+                toastr.clear();
+                toastr.error("فشلت عملية الإضافة", "@(Proced.DataAccess.MetaData.ProcedSysResources.FailTitle)");
+            });
+        </script>
+    }
+}
+
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <table style="width:100% !important">
+            <tr>
+                <td style="text-align:left">
+                    <label> اسم المواصفة:  </label>
+                    &nbsp;&nbsp;
+                </td>
+                <td style="text-align:right">
+                    @Html.TextBoxFor(m => m.NAME, new { @class = "form-control", @style = "width:300px !important;" })
+                </td>
+                <td style="text-align:left">
+                    <label> فئة المواصفة:  </label>
+                    &nbsp;&nbsp;
+                </td>
+                <td style="text-align:right">
+                    @Html.DropDownListFor(m => m.CATEGORYNB, ViewBag.zAttribCategories as List<SelectListItem>, "اختر فئة المواصفة",
+                                   new { @class = "form-control chosen_rtl chosen-rtl", @Name = "CATEGORYNB" })
+                </td>
+            </tr>
+            <tr style="padding-top:10px;margin-top:10px;">
+                <td style="text-align:left;padding-top:10px;margin-top:10px;">
+                    <label>نوع المواصفة:</label>
+                    &nbsp;&nbsp;
+                </td>
+                <td style="text-align:right;padding-top:10px;margin-top:10px;">
+                    @Html.DropDownListFor(model => model.TYP, (IEnumerable<SelectListItem>)ViewBag.Typs, null, new
+               {
+                   ID = "TYP",
+                   style = "width:150px !important;"
+               })
+                </td>
+                <td style="text-align:left;margin-top:10px;padding-top:10px">
+                    <label>هل هي مطلوبة؟:</label>
+                    &nbsp;&nbsp;
+                    @if (Model.REQUIRED.GetValueOrDefault())
+                    {
+                    <td style="text-align:right">
+                        <label>نعم</label><input type="radio" name="REQUIRED" value="true" checked="checked" style="height:18px; width:18px; vertical-align: middle;" />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label>لا</label> <input type="radio" name="REQUIRED" value="false"  style="height:18px; width:18px; vertical-align: middle;" />
+                    </td>
+                    }
+                    else {
+                    <td style="text-align:right">
+                        <label>نعم</label><input type="radio" name="REQUIRED" value="false" style="height:18px; width:18px; vertical-align: middle;" />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label>لا</label> <input type="radio" name="REQUIRED" value="true" checked="checked" style="height:18px; width:18px; vertical-align: middle;" />
+                    </td>
+                    }
+                </tr>
+                <tr style="padding-top:10px;margin-top:10px;">
+                    <td style="text-align:left;padding-top:10px;margin-top:10px;">
+                        <label>الترتيب:</label>
+                        &nbsp;&nbsp;
+                    </td>
+                    <td style="text-align:right;padding-top:10px;margin-top:10px;">
+                        @Html.TextBoxFor(m => m.ORDR, new { @class = "form-control", @style = "width:150px !important;" })
+                    </td>
+                    <td style="text-align:right;padding-top:10px;margin-top:10px;">
+                        <label>القيمة الافتراضية:</label>
+                        &nbsp;&nbsp;
+                    </td>
+                    <td style="text-align:left;padding-top:10px;margin-top:10px;">
+                        @Html.TextBoxFor(m => m.DEFVALUE, new { @class = "form-control", @style = "width:90% !important;" })
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            try {
+                $("#CATEGORYNB").chosen({ "width": "300px", no_results_text: "لم يتم العثور على فئة المواصفة" });
+            } catch (e) {
+
+            }
+        });
+    </script>
