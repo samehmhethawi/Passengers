@@ -62,6 +62,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\App_SettingsController.cs" />
     <Compile Include="Controllers\CityManagerController.cs" />
+    <Compile Include="Controllers\CodesController.cs" />
     <Compile Include="Controllers\HandleExceptionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TRCOMMITTEESController.cs" />
@@ -1197,12 +1198,14 @@
     <Content Include="Views\App_Settings\Edit.cshtml" />
     <Content Include="Views\App_Settings\Index.cshtml" />
     <Content Include="Views\TRCOMMITTEES\Index.cshtml" />
+    <Content Include="Views\Shared\_DashboardPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
     <Folder Include="Scripts\site_theme\" />
     <Folder Include="Uploads\" />
+    <Folder Include="Views\Codes\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

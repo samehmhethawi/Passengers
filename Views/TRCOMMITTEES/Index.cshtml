@@ -4,129 +4,139 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@*<style>
-    .k-grid .k-button .k-icon {
-        font: "normal normal normal 16px/1 FontAwesome";
-    }
-</style>*@
 <style>
-    .k-grid .k-button {
-        color: unset;
-        border-color: transparent;
-        background-color: transparent;
-        margin: 0;
-        padding: 5px 5px 4px;
+    .note-popover .popover-content .dropdown-menu, .panel-heading.note-toolbar .dropdown-menu,
+    .card-heaser.note-toolbar .dropdown-menu {
+        min-width: 90px;
+        width: 300px;
     }
 
-        .k-grid .k-button .k-icon {
-            display: inline-block;
-            font: normal normal normal 16px/1 FontAwesome;
-            font-size: inherit;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            width: 1.2em;
-        }
-
+    .note-table-popover,
+    .note-image-popover,
+    .note-link-popover {
+        display: none;
+    }
 </style>
-<div class="accordion" id="accordion2">
-    <div class="accordion-group">
-        <div class="accordion-heading">
-            <a class="accordion-toggle alert-info" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-                <span class="glyphicon glyphicon-minus"></span>
-                اظهار خيارات البحث
-            </a>
-        </div>
-        <div id="collapseOne" class="accordion accordion-body collapse in">
-            <div class="accordion-inner">
 
-                <div class="panel-body">
+<script>
+    function GetFillters() {
+        var fillter = {};
+        fillter.COMNO = $('#SCommNO').val();
+        fillter.COMDATESTART = $('#SComDateStart').val();
+        fillter.COMDATEEND = $('#SComDateEnd').val();
+        fillter.STATUS = $('#SComStatus').val();
+        fillter.COMCITYNB = $('#SComCity').val();
 
-                    <div class="row">
-                        <div class="col-sm-8">
+        return fillter;
 
-
-
-                            <table class="nav-justified">
-                                <tr>
-
-
-
-                                    <td>
-                                        <label for="template_name"> الاسم:</label>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="k-textbox input-search" id="type_name" placeholder="الاسم" style="width: 40% !important" />
-                                    </td>
-
-                                </tr>
-
-
-
-
-
-                            </table>
-
-
-                        </div>
-
-                        <div class="col-sm-4">
-
-                            <div class="pull-left">
-
-
-                                <button id="btn-search" type="button" class="k-button k-primary1 k-button-icontext">
-
-                                    <span class="glyphicon glyphicon-search"></span>
-                                </button>
-                                <button id="btn-clear" type="button" class="k-button k-primary1 k-button-icontext">
-
-                                    <span class="searchclear glyphicon glyphicon-remove-circle"></span>
-                                </button>
-
-                            </div>
-                        </div>
-                    </div>
+    }
+</script>
+@section PartialHeader{
+    <div class="panel-heading1 collapse" id="searchPanel">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-md-1">
+                    <label for="template_name"> رقم اللجنة</label>
+                </div>
+                <div class="col-md-2">
+                    @Html.Kendo().TextBox().Name("SCommNO").HtmlAttributes(new { placeholder = " رقم اللجنة" })
+                </div>
+                <div class="col-md-1">
+                    <label for="template_name"> المحافظة</label>
+                </div>
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر محافظة اللجنة")
+                                    .Name("SComCity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                <div class="col-md-1">
+                    <label for="template_name"> التاريخ من</label>
+                </div>
+                <div class="col-md-2">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SComDateStart")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ اللجنة من", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+                <div class="col-md-1">
+                    <label for="template_name"> التاريخ الى</label>
+                </div>
+                <div class="col-md-2">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SComDateEnd")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ اللجنة الى", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-1">
+                    <label for="template_name"> حالة اللجنة</label>
+                </div>
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر  حالة اللجنة")
+                                    .Name("SComStatus")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetStatus", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
 
                 </div>
 
-            </div>
+                <div class="col-md-offset-7">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+                </div>
+                <div class="col-md-1">
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick=""> <i class="fa fa-close"></i> </button>
 
+                </div>
+            </div>
         </div>
     </div>
-</div>
+}
 
+<script>
+    function renderNumber(data) {
 
-@*<script type="text/javascript">
-    $(document).ready(function () {
-        $('.collapse').on('shown.bs.collapse', function () {
-            $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        }).on('hidden.bs.collapse', function () {
-            $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
-        });
-    });
-</script>*@
-
-
-@*<script src="@Url.Content("~/Scripts/kendo.ar.controls.js")"></script>*@
-
+        return data.Seq;
+    }
+</script>
 
 <div>
     @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRCOMMITTEES>()
-            .Name("grid")
+            .Name("grid").AutoBind(false)
             .Columns(columns =>
             {
-                // columns.Command(command => {
-                //command.Custom("تفاصيل").Click("details").HtmlAttributes(new { @class = "btn btn-primary" });
-                //     command.Custom("تعديل").Click("EditQuestion").HtmlAttributes(new { @class = "btn btn-primary" });
-                //    command.Custom("نسخ").Click("CopyQuestion").HtmlAttributes(new { @class = "btn btn-primary" });
-                //    command.Custom("تعطيل-تفعيل").Click("DestroyQuestion").HtmlAttributes(new { @class = "btn btn-danger" });
-                //   command.Custom("معاينة").Click("showdetails").HtmlAttributes(new {  @class = "btn btn-info"});
-                //}).Title("العمليات").Width(400);
-                columns.Bound(c => c.NB);
+                columns.Template(t => { }).Title("م.").ClientTemplate(
+                 "#= renderNumber(data) #"
+               ).Width(80);
+                columns.Bound(c => c.NB).Visible(false);
                 columns.Bound(c => c.COMNO);
                 columns.Bound(c => c.COMDATE).Format("{0:dd/MM/yyyy}");
-                columns.Bound(c => c.COMCITYNB);
-                columns.Bound(c => c.STATUS);
+                columns.ForeignKey(c => c.COMCITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
+                columns.Bound(c => c.COMCITYNB).Visible(false);
+                columns.Bound(c => c.STATUS).Visible(false);
+                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150);
                 columns.Bound(c => c.ORDR);
                 columns.Bound(c => c.IUSER);
                 columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}");
@@ -134,14 +144,12 @@
                 {
                     //command.Custom("Preview").Click("Preview").Text(" ");
                     command.Custom("Edit").Click("Edit").Text(" ");
-                   // command.Custom("Details").Click("Details").Text(" ");
                     command.Custom("Delete").Click("Delete").Text(" ");
-                  //  command.Custom("Details2").Click("Details2").Text(" ");
+                    command.Custom("Details").Click("Details").Text(" ");
+                    //  command.Custom("Details2").Click("Details2").Text(" ");
                 }).Width(180);
-            
-
             })
-            .HtmlAttributes(new { style = "height: auto" })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
             .Scrollable()
             .Sortable()
             .Filterable()
@@ -150,13 +158,13 @@
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
             .PageSize(15)
             .Model(model => model.Id(p => p.NB))
-            .Read(read => read.Action("Read", "TRCOMMITTEES")))
+            .Read(read => read.Action("Read", "TRCOMMITTEES").Data("GetFillters")))
             .Resizable(resize => resize
             .Columns(true)
             )
             .ToolBar(toolbar =>
             {
-               // toolbar.Custom().Name("AddNewQuest").Text(" جديد ").Url("#").HtmlAttributes(new { id = "AddNewQuest", @class = "btn btn-primary" });
+                toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
             })
                 .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
                                       .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
@@ -174,8 +182,6 @@
                                     .Refresh(true)
                                     .Input(true)
                                     .Info(true)
-
-
           ).Events(events => events
             .Change("setIcons")
             .DataBound("setIcons")
@@ -184,7 +190,7 @@
             .Group("setIcons")
             .Page("setIcons")
             .Cancel("setIcons")
-            //.Edit("hideIdField")
+        //.Edit("hideIdField")
 
 
         )
@@ -192,38 +198,230 @@
 
 </div>
 
+<!-- Add-->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("AddCOMMITTEE")
+            .Title("اضافة لجنة جديدة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div>
+               <div class="row col-11">
+                   <div class="col-md-3" >
+                   <span>  رقم اللجنة
+                       @Html.Kendo().TextBox().Name("AddComNo").HtmlAttributes(new { placeholder = " رقم اللجنة" })</span>
+
+
+                       </div>
+                      <div class="col-md-4" >
+                   <span>  تاريخ اللجنة
+                          @(Html.Kendo().DatePicker()
+                                        .Name("AddComDate").Format("{0:dd/MM/yyyy}")
+                                        .HtmlAttributes(new { placeholder = "تاريخ اللجنة", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                                    )</span>
+
+
+                       </div>
+                      <div class="col-md-3" >
+                   <span>  محافظة اللجنة
+                          @(Html.Kendo().DropDownList()
+                                    .Name("AddComCity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )</span>
+
+
+                       </div>
+               </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveAddCommittee()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(300)
+            .Pinned()
+            )
+</div>
+
+
+<!-- Edit-->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("EditCOMMITTEE")
+            .Title("تعديل اللجنة ")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div>
+               @Html.Hidden("ComNb")
+               <div class="row col-11">
+                   <div class="col-md-3" >
+                   <span>  رقم اللجنة
+                       @Html.Kendo().TextBox().Name("EditComNo").HtmlAttributes(new { placeholder = " رقم اللجنة" })</span>
+
+
+                       </div>
+                      <div class="col-md-3" >
+                   <span>  تاريخ اللجنة
+                          @(Html.Kendo().DatePicker()
+                                        .Name("EditComDate").Format("{0:dd/MM/yyyy}")
+                                        .HtmlAttributes(new { placeholder = "تاريخ اللجنة", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                                    )</span>
+
+
+                       </div>
+                      <div class="col-md-3" >
+                   <span>  محافظة اللجنة
+                          @(Html.Kendo().DropDownList()
+                                    .Name("EditComCity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )</span>
+
+
+                       </div>
+               </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveEditCommittee()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(300)
+            .Pinned()
+            )
+</div>
+
 <script>
-    
-    function setIcons() {
-        $(".k-grid-Edit").addClass("hvr-box-shadow-outset");
+    $("#AddNew").click(function () {
 
-        $(".k-grid-Edit").kendoButton({
-            icon: " fa fa-pencil text-success"
-           
+        var wnd = $("#AddCOMMITTEE").data("kendoWindow");
+        wnd.center().open();
+    });
+
+    function SaveAddCommittee() {
+        var model = {
+            COMNO: $('#AddComNo').val(),
+            COMDATE: $('#AddComDate').val(),
+            COMCITYNB: $("#AddComCity").val(),
+            STATUS : 1
+        }
+        alert(model.COMDATE);
+         $.ajax({
+             type: "POST",
+             data: model,
+            url: "@Url.Action("Create", "TRCOMMITTEES")",
+             success: function (response) {
+                 if (response.success) {
+                     ColseWindow();
+                     $("#grid").data("kendoGrid").dataSource.read();
+                   
+                     toastr.success("تمت عملية الإضافة بنجاح");
+                 } else {
+                     toastr.error(response.responseText);
+                 }
+
+            }
         });
 
-        $(".k-grid-Edit").kendoTooltip({
-            content: "تعديل",
-            position: "left",
-            autoHide: true,
-        });
+       }
 
-        function Edit(e) { }
+    function ColseWindow() {
 
-        function Delete(e) { }
-        $(".k-grid-Delete").addClass(" hvr-box-shadow-outset");
-        $(".k-grid-Delete").kendoButton({
-            icon: "i fa fa-trash text-danger"
-        });
-        $(".k-grid-Delete").kendoTooltip({
-            content: "حذف",
-            position: "left",
-            autoHide: true,
-        });
+        $('#AddComNo').val("");
+        $('#AddComDate').val("");
+        $("#AddComCity").data("kendoDropDownList").value(1)
+
+        var wnd = $("#AddCOMMITTEE").data("kendoWindow");
+        wnd.center().close();
+
+        var wnd = $("#EditCOMMITTEE").data("kendoWindow");
+        wnd.center().close();
     }
+</script>
+<script>
+     function SaveEditCommittee() {
+         var model = {
+             NB: $('#ComNb').val(),
+            COMNO: $('#EditComNo').val(),
+            COMDATE: $('#EditComDate').val(),
+            COMCITYNB: $("#EditComCity").val(),
+            
+        }
+       
+         $.ajax({
+             type: "POST",
+             data: model,
+            url: "@Url.Action("Update", "TRCOMMITTEES")",
+             success: function (response) {
+                 if (response.success) {
+                   
+                     ColseWindow();
+                     $("#grid").data("kendoGrid").dataSource.read();
+                     toastr.success("تمت عملية التعديل بنجاح");
+                 } else {
+                     toastr.error(response.responseText);
+                 }
 
-    
+            }
+        });
+
+       }
 </script>
 
+<script>
+    function Btn_Search() {
+        $("#grid").data("kendoGrid").dataSource.read();
 
+    }
+    function Edit(e) {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        var id = item.NB;
+        $('#ComNb').val(item.NB);
+        $('#EditComNo').val(item.COMNO);
+        $("#EditComDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.COMDATE });
+        $("#EditComCity").data("kendoDropDownList").value(item.COMCITYNB);
+        
+
+        var wnd = $("#EditCOMMITTEE").data("kendoWindow");
+        wnd.center().open();
+       
+    }
+
+    function Delete(e) {
+        e.preventDefault();
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        var id = item.NB;
+
+    }
+    function Details() {
+
+    }
+</script>
 

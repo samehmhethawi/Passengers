@@ -236,17 +236,100 @@
             background-color: #17a2b8 !important;
             border-color: #17a2b8 !important;
         }
-        /*   .k-button.btn btn-primary {
-            color: #fff !important;
-            background-color: #007bff !important;
-            border-color: #007bff !important;
-        }*/
-        /* .btn-primary {
-            color: #fff !important;
-            background-color: #007bff !important;
-            border-color: #007bff !important;
-        }*/
+ 
+
+
     </style>
+    @*sameh----------------------------------script and style of the button icons--------------------------------------------------------*@
+    <style>
+        .window-footer {
+            position: absolute;
+            bottom: 0;
+            display: block;
+            width: 95%;
+            margin-top: 150px;
+            padding: 19px 0 20px;
+            text-align: center;
+            border-top: 1px solid #e5e5e5;
+        }
+        .k-grid .k-button {
+            color: unset;
+            border-color: transparent;
+            background-color: transparent;
+            margin: 0;
+            padding: 5px 5px 4px;
+        }
+
+            .k-grid .k-button .k-icon {
+                display: inline-block;
+                font: normal normal normal 16px/1 FontAwesome;
+                font-size: inherit;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                width: 1.2em;
+            }
+    </style>
+    <script>
+
+        function setIcons() {
+            $(".k-grid-Edit").addClass("hvr-box-shadow-outset");
+
+            $(".k-grid-Edit").kendoButton({
+                icon: " fa fa-pencil text-success"
+
+            });
+
+            $(".k-grid-Edit").kendoTooltip({
+                content: "تعديل",
+                position: "left",
+                autoHide: true,
+            });
+          
+
+           
+
+          
+            $(".k-grid-Delete").addClass(" hvr-box-shadow-outset");
+            $(".k-grid-Delete").kendoButton({
+                icon: "i fa fa-trash text-danger"
+            });
+            $(".k-grid-Delete").kendoTooltip({
+                content: "حذف",
+                position: "left",
+                autoHide: true,
+            });
+
+            $(".k-grid-Details").addClass("hvr-box-shadow-outset");
+
+            $(".k-grid-Details").kendoButton({
+                icon: " fa fa-info text-info"
+
+            });
+
+            $(".k-grid-Details").kendoTooltip({
+                content: "تفاصيل",
+                position: "left",
+                autoHide: true,
+            });
+
+            $(".mybuttonsearch").kendoTooltip({
+                content: "بحث",
+                position: "left",
+                autoHide: true,
+            });
+
+            $(".mybuttonsearchreset").kendoTooltip({
+                content: "تفريغ الحقول",
+                position: "left",
+                autoHide: true,
+            });
+            $('td[role="gridcell"]').find("span.k-icon").removeClass("k-i-i");
+
+        }
+
+
+    </script>
+    @*sameh------------------------------------------------------------------------------------------------------------------------*@
     @*End*@
     <script>
 
@@ -411,20 +494,15 @@
             Home Page
         ============================-->
 
-        <div class="main">
-            <section id="indexes">
-                <div class="container-fluid" @*style="background-color:#fff;padding-bottom:50px !important"*@>
-                    <div class="panel-body">
-                        @Html.Hidden("myUrlForCreate", Url.Action("Create"))
-                        @Html.Hidden("myUrlForEdite", Url.Action("Edit"))
-                        @Html.Hidden("myUrlForDelete", Url.Action("Delete"))
-                        @Html.Hidden("myUrlForCreateForDetail", Url.Action("Create", new { area = "", pk = ViewBag.PK }))
-                        <div id="modalContent"></div>
-                        @*<div id="IndexSearchPanel" class="row alert-success" style="text-align:right;margin:0;display:none;">
-                            <label style="font-size:18px">خيارات البحث:</label>
-                        </div>*@
-                        @RenderBody()
-                    </div>
+
+        <div class="main" style='margin-bottom:75px;'>
+            <section id="indexes" >
+                <div style="padding-left: 30px; padding-right: 30px"> 
+                    @RenderSection("PartialHeader", false)
+                </div>
+              
+                <div class="container-fluid">
+                    @RenderBody()
                 </div>
             </section>
         </div>
@@ -444,7 +522,9 @@
     <!--==========================
     Grid
     ============================-->
-
+    @Html.Partial("_DashboardPartial")
+    @Html.Partial("_LoaderPartial")
+    @RenderSection("scripts", required: false)
     <div class="modal fade costum" id="grid" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-dialog-centered costum" id="home">
             <div class="modal-content">
@@ -559,8 +639,8 @@
     </div>
 
 
-    @Html.Partial("_LoaderPartial")
-    @RenderSection("scripts", required: false)
+   
+  
 
     <script src="@Url.Content("~/Scripts/deb.js")"></script>
     <script>
@@ -587,14 +667,60 @@
         }
     </script>
     <script>
-                                //$(document).ready(function () {
-                                    //setTimeout(function () {
-                                    //var grid2 = $("#AllCarChangesGrid").data("kendoGrid");
-                                    //grid2.bind("dataBound", function () {
-                                    //    $(".k-button").removeClass("k-button-icontext");
-                                    //});
-                                    //}, 1000);
-                                //});
+        //$(document).ready(function () {
+        //setTimeout(function () {
+        //var grid2 = $("#AllCarChangesGrid").data("kendoGrid");
+        //grid2.bind("dataBound", function () {
+        //    $(".k-button").removeClass("k-button-icontext");
+        //});
+        //}, 1000);
+        //});
+    </script>
+    <script>
+        var myVar = setInterval(deb, 10);
+        StopDeb();
+        function StopDeb() {
+            clearInterval(myVar);
+        }
+        var windowInitialOuterHeight = window.outerHeight;
+        var windowInnerHeight = window.innerHeight;
+
+        var i = 0;
+        window.onresize = function () {
+            windowInnerHeight = window.innerHeight;
+            if (windowInnerHeight != windowInitialOuterHeight && i == 0) {
+                //i = 1;
+                //myVar = setInterval(deb, 10);
+            } else {
+                StopDeb();
+                console.log("Stopped");
+                i = 0;
+            }
+        }
+        $(function () {
+            $(".btn-search-nav").click(function () {
+                $("#searchPanel").slideToggle();
+            });
+
+            $(".search-btn").click(function () {
+                try {
+                    $("#grid").data("kendoGrid").dataSource.page(1);//.read();
+                    $("#pageHasFilteredIco").fadeIn();
+                } catch (e) {
+                    console.log(e);
+                }
+            });
+
+            $(".input-search").keydown(function (e) {
+                if (e.keyCode == 13) { //13: Enter Key
+                    $(".search-btn").trigger("click");
+                    $("#pageHasFilteredIco").fadeIn();
+                }
+
+            });
+
+        });
+        $.fn.modal.Constructor.prototype.enforceFocus = function () { };
     </script>
 </body>
 </html>

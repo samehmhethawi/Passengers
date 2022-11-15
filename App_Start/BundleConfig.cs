@@ -32,7 +32,7 @@ namespace Passengers
 
             //            "~/Scripts/moment.min.js",
             //            "~/Scripts/moment-with-langs.js",
-            //            "~/Scripts/bootstrapdtp/bootstrap-datetimepicker.js"
+               //         "~/Scripts/bootstrapdtp/bootstrap-datetimepicker.js"
             //            ));
 
             //bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
@@ -53,7 +53,7 @@ namespace Passengers
             //          "~/Content/other/toastr.min.css",
             //          "~/Content/other/select2.min.css",
             //          "~/Content/themes/base/all.css",
-            //          "~/Content/boostrapdtp/bootstrap-datetimepicker.css",
+              //       "~/Content/boostrapdtp/bootstrap-datetimepicker.css",
             //          "~/Content/site.css"));
 
             bundles.Add(new StyleBundle("~/Content/v2/css")

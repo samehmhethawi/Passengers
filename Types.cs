@@ -40,15 +40,15 @@ namespace Passengers
                 new SelectListItem() { Text ="حلب", Value="3" },
                 new SelectListItem() { Text = "طرطوس", Value="4"},
                 new SelectListItem() { Text ="اللاذقية", Value="5"  },
-                  new SelectListItem() { Text = "حمص", Value="6"},
-                    new SelectListItem() { Text = "حماه", Value="7"},
-                      new SelectListItem() { Text = "ادلب", Value="8"},
-                        new SelectListItem() { Text = "الرقة", Value="9"},
-                          new SelectListItem() { Text = "الحسكة", Value="10"},
-                            new SelectListItem() { Text = "دير الزور", Value="11"},
-                            new SelectListItem() { Text = "درعا", Value="12"},
-                            new SelectListItem() { Text = "السويداء", Value="13"},
-                            new SelectListItem() { Text = "القنيطرة", Value="14"}
+                new SelectListItem() { Text = "حمص", Value="6"},
+                new SelectListItem() { Text = "حماه", Value="7"},
+                new SelectListItem() { Text = "ادلب", Value="8"},
+                new SelectListItem() { Text = "الرقة", Value="9"},
+                new SelectListItem() { Text = "الحسكة", Value="10"},
+                new SelectListItem() { Text = "دير الزور", Value="11"},
+                new SelectListItem() { Text = "درعا", Value="12"},
+                new SelectListItem() { Text = "السويداء", Value="13"},
+                new SelectListItem() { Text = "القنيطرة", Value="14"}
             };
             if (MyOwnData.IsAdmin())
             {
@@ -86,15 +86,15 @@ namespace Passengers
                 new SelectListItem() { Text ="حلب", Value="3" },
                 new SelectListItem() { Text = "طرطوس", Value="4"},
                 new SelectListItem() { Text ="اللاذقية", Value="5"  },
-                  new SelectListItem() { Text = "حمص", Value="6"},
-                    new SelectListItem() { Text = "حماه", Value="7"},
-                      new SelectListItem() { Text = "ادلب", Value="8"},
-                        new SelectListItem() { Text = "الرقة", Value="9"},
-                          new SelectListItem() { Text = "الحسكة", Value="10"},
-                            new SelectListItem() { Text = "دير الزور", Value="11"},
-                            new SelectListItem() { Text = "درعا", Value="12"},
-                            new SelectListItem() { Text = "السويداء", Value="13"},
-                            new SelectListItem() { Text = "القنيطرة", Value="14"}
+                new SelectListItem() { Text = "حمص", Value="6"},
+                new SelectListItem() { Text = "حماه", Value="7"},
+                new SelectListItem() { Text = "ادلب", Value="8"},
+                new SelectListItem() { Text = "الرقة", Value="9"},
+                new SelectListItem() { Text = "الحسكة", Value="10"},
+                new SelectListItem() { Text = "دير الزور", Value="11"},
+                new SelectListItem() { Text = "درعا", Value="12"},
+                new SelectListItem() { Text = "السويداء", Value="13"},
+                new SelectListItem() { Text = "القنيطرة", Value="14"}
             };
             if (MyOwnData.IsAdmin())
             {
