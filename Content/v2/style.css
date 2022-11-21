@@ -89,7 +89,7 @@ button:focus{
 	display: inline-block;
 	padding: 10px 30px;
 	border-radius: 50px;
-	background: #2B6AD0;
+    background: #2B6AD0;
 	color: #EBECED;
 	border: 1px solid #2B6AD0;
 	text-transform: uppercase;
@@ -100,7 +100,10 @@ button:focus{
 	animation-delay: 0.5s;
 	margin: 5px;
 }
-
+.btn-danger {
+	background: #dc3545 !important;
+	border-color: #dc3545 !important;
+}
 .btn-default {
 	background: #2B6AD0;
 	color: #EBECED;

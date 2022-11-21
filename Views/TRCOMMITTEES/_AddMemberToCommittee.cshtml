@@ -1,0 +1,152 @@
+﻿
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("AddCOMMITTEEMEMBER")
+            .Title("اضافة عضو للجنة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_comm_Member">
+               @Html.Hidden("ComMebmerNb")
+               @Html.Hidden("OwnerNB")
+                @Html.Hidden("AddComMemberName2")
+               <div class="row col-11">
+                   <div class="col-md-3" >
+                       <button class="btn btn-primary" onclick="GetNameFromCarowners()">البحث عن اسم </button>
+                       </div>
+                   <div class="col-md-7" >
+                   <span>   @Html.Kendo().TextBox().Name("AddComMemberName").Enable(false).HtmlAttributes(new { placeholder = " اسم العضو", required = "required", data_required_msg = "هذا الحقل مطلوب"})</span>
+                       </div>
+               </div>
+               <div class="row col-11">
+                      <div class="col-md-4" >
+                            <span>  العضوية
+                               @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر نوع العضوية")
+                                    .Name("AddComMemberShip")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetMemberShip", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب", style = "width: 100%; text-align:center;" })
+                                    )
+                             </span>
+                       </div>
+                      <div class="col-md-4" >
+                         <span>  المنصب
+                           @(Html.Kendo().DropDownList()
+                                    .Name("AddComMemberPostion")
+                                    .OptionLabel("اختر المنصب")
+
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetMemberPostion", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب", style = "width: 100%; text-align:center;" })
+
+                                    )
+                          </span>
+                       </div>
+               </div>
+                <div class="row col-11">
+                      <div class="col-md-4" >
+                             <span>  الدور @Html.Kendo().TextBox().Name("AddComMemberOrder").HtmlAttributes(new { placeholder = "الدور"})</span>
+                       </div>
+                      <div class="col-md-4" >
+                             <span>  ملاحظات @Html.Kendo().TextBox().Name("AddComMemberNotes").HtmlAttributes(new { placeholder = "ملاحظات"})</span>
+                       </div>
+               </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveAddCommitteMember()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(400)
+            .Pinned()
+            )
+</div>
+<!-- Save Add Committee Members-->
+<script>
+    function SaveAddCommitteMember() {
+        var ow = $('#OwnerNB').val();
+        if (ow == "") {
+            $("#AddComMemberName").val("يرجى اختيار المالك بالبحث عنه");
+        } else {
+         var validator = $("#Add_comm_Member").kendoValidator().data("kendoValidator");
+
+
+        if (validator.validate()) {
+
+            var windowWidget = $("#AddCOMMITTEEMEMBER").data("kendoWindow");
+
+            kendo.ui.progress(windowWidget.element, true);
+            var model = {
+                COMMITTEENB: $('#ComMebmerNb').val(),
+                MEMBERSHIPNB: $('#AddComMemberShip').val(),
+                MEMBERNAME: $("#AddComMemberName2").val(),
+                ORDR: $("#AddComMemberOrder").val(),
+                NOTES: $("#AddComMemberNotes").val(),
+                MEMBERPOSITIONNB: $("#AddComMemberPostion").val(),
+                OWNERNB: $("#OwnerNB").val(),
+                STATUS : 1
+            }
+
+            $.ajax({
+                type: "POST",
+                data: model,
+                url: "@Url.Action("Create_Member", "TRCOMMITTEES")",
+                success: function (response) {
+                    if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#Detailsgrid").data("kendoGrid").dataSource.read();
+                        $('#AddComMemberName').val("");
+                        $('#AddComMemberNotes').val("");
+                        $('#AddComMemberOrder').val("");
+                        $('#OwnerNB').val("");
+                        $("#AddComMemberPostion").data("kendoDropDownList").value(-1)
+                        $("#AddComMemberShip").data("kendoDropDownList").value(-1)
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+        }}
+
+    }
+
+
+    function GetNameFromCarowners() {
+        $('#SNationno').val("");
+        $('#SNAME').val("");
+
+        $('#SLASTNAME').val("");
+        $('#SFATHER').val("");
+        $('#SMOTHER').val("");
+        $('#SOWNERNB').val("");
+        $("#Ownergrid").data("kendoGrid").dataSource.data([]);
+
+        var wnd = $("#Addownername").data("kendoWindow");
+        wnd.center().open();
+
+
+    }
+</script>

@@ -80,7 +80,27 @@ namespace Passengers.Controllers
 
         }
 
+        public ActionResult GetMemberShip()
+        {
 
+            var status = db.TRZMEMBERSHIP.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(status, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetMemberPostion()
+        {
+
+            var status = db.TRZMEMBERPOSITION.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(status, JsonRequestBehavior.AllowGet);
+        }
 
 
 

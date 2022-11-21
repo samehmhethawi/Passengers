@@ -10,6 +10,7 @@ using System.Data.Entity;
 
 namespace Passengers.Controllers
 {
+    [checksession, Authorize, RedirectOnError, CanDoIt]
     public class TRCOMMITTEESController : Controller
     {
         private ProcedContext db = new ProcedContext();
@@ -23,6 +24,16 @@ namespace Passengers.Controllers
             });
 
             ViewData["zcities"] = db.ZCITYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            ViewData["TRZMEMBERSHIP"] = db.TRZMEMBERSHIP.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            ViewData["TRZMEMBERPOSITION"] = db.TRZMEMBERPOSITION.Select(x => new
             {
                 ID = x.NB,
                 NAME = x.NAME
@@ -81,7 +92,7 @@ namespace Passengers.Controllers
                 sql += " and COMCITYNB =" + ci;
             }
 
-
+            sql += " order by nb desc";
             var data = db.Database.SqlQuery<TRCOMMITTEES>(sql).ToList();
 
             int index = 0;
@@ -106,9 +117,18 @@ namespace Passengers.Controllers
         {
             try
             {
-                db.TRCOMMITTEES.Add(model);
-                db.SaveChanges();
-                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                var is_com_exists = db.Database.SqlQuery<int>("select 1 from TRCOMMITTEES where COMCITYNB = " + model.COMCITYNB + " and STATUS = 1").FirstOrDefault();
+                if (is_com_exists == 1)
+                {
+                    return Json(new { success = false, responseText ="يوجد لجنة فعالة لهذه المحافظة " });
+                }
+                else
+                {
+                    db.TRCOMMITTEES.Add(model);
+                    db.SaveChanges();
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }
+             
             }
             catch (Exception ex)
             {
@@ -122,21 +142,71 @@ namespace Passengers.Controllers
             try
             {
                 var dd = db.TRCOMMITTEES.Find(model.NB);
-                if(dd.COMNO != model.COMNO)
+                if (model.STATUS != 1)
                 {
-                    dd.COMNO = model.COMNO;
+                    if (dd.COMNO != model.COMNO)
+                    {
+                        dd.COMNO = model.COMNO;
+                    }
+                    if (dd.COMDATE != model.COMDATE)
+                    {
+                        dd.COMDATE = model.COMDATE;
+                    }
+
+                    if (dd.STATUS != model.STATUS)
+                    {
+                        dd.STATUS = model.STATUS;
+                    }
+                    db.Entry(dd).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
                 }
-                if (dd.COMDATE != model.COMDATE)
+
+                else if (dd.STATUS == model.STATUS)
                 {
-                    dd.COMDATE = model.COMDATE;
-                }
-                if (dd.COMCITYNB != model.COMCITYNB)
+                    if (dd.COMNO != model.COMNO)
+                    {
+                        dd.COMNO = model.COMNO;
+                    }
+                    if (dd.COMDATE != model.COMDATE)
+                    {
+                        dd.COMDATE = model.COMDATE;
+                    }
+
+                    db.Entry(dd).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }else
                 {
-                    dd.COMCITYNB = model.COMCITYNB;
+                    var is_com_exists = db.Database.SqlQuery<int>("select 1 from TRCOMMITTEES where COMCITYNB = " + dd.COMCITYNB + " and STATUS = 1").FirstOrDefault();
+
+                    if (is_com_exists == 1)
+                    {
+                        return Json(new { success = false, responseText = "يوجد لجنة فعالة لهذه المحافظة " });
+                    }
+                    else
+                    {
+
+                        if (dd.COMNO != model.COMNO)
+                        {
+                            dd.COMNO = model.COMNO;
+                        }
+                        if (dd.COMDATE != model.COMDATE)
+                        {
+                            dd.COMDATE = model.COMDATE;
+                        }
+
+                        if (dd.STATUS != model.STATUS)
+                        {
+                            dd.STATUS = model.STATUS;
+                        }
+                        db.Entry(dd).State = EntityState.Modified;
+                        db.SaveChanges();
+                        return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                    }
                 }
-                db.Entry(dd).State = EntityState.Modified;
-                db.SaveChanges();
-                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+   
+             
             }
             catch (Exception ex)
             {
@@ -144,7 +214,132 @@ namespace Passengers.Controllers
             }
 
         }
+
+
+
+
+        public ActionResult Read_MEMBERS([DataSourceRequest] DataSourceRequest request ,int Nb)
+        {
+            var sql = "select * from TRCOMMITTEES_MEMBERS where 1 = 1 and STATUS = 1 and  COMMITTEENB = " + Nb ;
+           
+
+            sql += " order by nb desc";
+            var data = db.Database.SqlQuery<TRCOMMITTEES_MEMBERS>(sql).ToList();
+
+            int index = 0;
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,
+                COMMITTEENB = commm.COMMITTEENB,
+                MEMBERSHIPNB = commm.MEMBERSHIPNB,
+                MEMBERNAME = commm.MEMBERNAME,
+                ORDR = commm.ORDR,
+                NOTES = commm.NOTES,
+                MEMBERPOSITIONNB = commm.MEMBERPOSITIONNB,
+                Seq = (request.Page - 1) * request.PageSize + (++index)
+            });
+            return Json(result);
+
+        }
+
+
+        public ActionResult Create_Member(TRCOMMITTEES_MEMBERS model)
+        {
+            try
+            {
+               
+              
+                    db.TRCOMMITTEES_MEMBERS.Add(model);
+                    db.SaveChanges();
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = ex.ToString() });
+            }
+
+        }
+        
+        public ActionResult Read_Carowners([DataSourceRequest] DataSourceRequest request)
+        {
+            string sql = "select * from carowners where  1 = 1 ";
+
+
+       
+           var NB = Request.Form["SOWNERNB"].Trim();
+            var NAME = Request.Form["NAME"].Trim();
+            var LASTNAME = Request.Form["LASTNAME"].Trim();
+            var FATHER = Request.Form["FATHER"].Trim();
+            var MOTHER = Request.Form["MOTHER"].Trim();
+            var NATIONNO = Request.Form["NATIONNO"].Trim();
+           
+
+            if (NB != "")
+            {
+               long NNB = long.Parse(NB); 
+                sql += " and nb = " + NNB;
+            }
+            if (NATIONNO != "")
+            {
+                
+                sql += " and NATIONNO  ='" + NATIONNO + "'";
+            }
+            if (NAME != "")
+            {
+                sql += " and NAME like '%" + NAME + "%' ";
+            }
+            if (LASTNAME != "")
+            {
+                sql += " and LASTNAME like '%" + LASTNAME + "%' ";
+            }
+            if (FATHER != "")
+            {
+                sql += " and FATHER like '%" + FATHER + "%' ";
+            }
+            if (MOTHER != "")
+            {
+                sql += " and MOTHER like '%" + MOTHER + "%' ";
+            }
+
+
+            var data = db.Database.SqlQuery<CAROWNER>(sql).ToList();
+           // int index = 0;
+            //DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            //{
+            //    NB = commm.NB,
+            //    NAME = commm.NAME,
+            //    LASTNAME = commm.LASTNAME,
+            //    FATHER = commm.FATHER,
+            //    MOTHER = commm.MOTHER,
+            //    NATIONNO = commm.NATIONNO,
+              
+            //    Seq = (request.Page - 1) * request.PageSize + (++index)
+            //});
+            return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet );
+
+        }
+
+
+        public ActionResult UpdateMemberStatus( long nb )
+        {
+            try 
+            {
+                var data = db.TRCOMMITTEES_MEMBERS.Find(nb);
+                data.STATUS = 3;
+                db.Entry(data).State = EntityState.Modified;
+                db.SaveChanges();
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = ex.ToString() });
+            }
+            
+        }
+
     }
 
-   
+
 }

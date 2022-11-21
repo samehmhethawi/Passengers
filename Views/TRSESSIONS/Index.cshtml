@@ -1,69 +1,18 @@
 ﻿
 @{
-    ViewBag.Title = "اللجان";
+    ViewBag.Title = "الجلسات";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    .note-popover .popover-content .dropdown-menu, .panel-heading.note-toolbar .dropdown-menu,
-    .card-heaser.note-toolbar .dropdown-menu {
-        min-width: 90px;
-        width: 300px;
-    }
-
-    .note-table-popover,
-    .note-image-popover,
-    .note-link-popover {
-        display: none;
-    }
-</style>
-<!-- Search  -->
-<script>
-
-    function GetFillters() {
-        var fillter = {};
-        fillter.COMNO = $('#SCommNO').val();
-        fillter.COMDATESTART = $('#SComDateStart').val();
-        fillter.COMDATEEND = $('#SComDateEnd').val();
-        fillter.STATUS = $('#SComStatus').val();
-        fillter.COMCITYNB = $('#SComCity').val();
-
-        return fillter;
-
-    }
-    iid = 0;
-    function GetCommNbRead() {
-
-        return {
-            Nb: iid
-        }
-    }
-
-
-    function Btn_Search() {
-        $("#grid").data("kendoGrid").dataSource.read();
-        debugger;
-    }
-
-    function rest_filtters() {
-        $('#SCommNO').val("");
-        $('#SComDateStart').val("");
-        $('#SComDateEnd').val("");
-        $("#SComStatus").data("kendoDropDownList").value(-1);
-        $("#SComCity").data("kendoDropDownList").value(-1);
-
-        $("#grid").data("kendoGrid").dataSource.data([]);
-    }
-</script>
 @section PartialHeader{
     <div class="panel-heading1 collapse" id="searchPanel">
         <div style="padding:10px">
             <div class="row" style="padding-bottom:10px">
                 <div class="col-md-1">
-                    <label for="template_name"> رقم اللجنة</label>
+                    <label for="template_name"> رقم الجلسة</label>
                 </div>
                 <div class="col-md-2">
-                    @Html.Kendo().TextBox().Name("SCommNO").HtmlAttributes(new { placeholder = " رقم اللجنة" })
+                    @Html.Kendo().TextBox().Name("SSESNO").HtmlAttributes(new { placeholder = " رقم اللجنة" })
                 </div>
                 <div class="col-md-1">
                     <label for="template_name"> المحافظة</label>
@@ -71,7 +20,7 @@
                 <div class="col-md-2">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر محافظة اللجنة")
-                                    .Name("SComCity")
+                                    .Name("SSESCITYNB")
                                     .DataTextField("NAME")
                                     .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
                                     .DataSource(source =>
@@ -89,7 +38,7 @@
                 </div>
                 <div class="col-md-2">
                     @(Html.Kendo().DatePicker()
-                        .Name("SComDateStart")
+                        .Name("SSESDATEStart")
                         .Format("{0:dd/MM/yyyy}")
                         .HtmlAttributes(new { placeholder = "تاريخ اللجنة من", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
                     )
@@ -99,7 +48,7 @@
                 </div>
                 <div class="col-md-2">
                     @(Html.Kendo().DatePicker()
-                        .Name("SComDateEnd")
+                        .Name("SSESDATEEnd")
                         .Format("{0:dd/MM/yyyy}")
                         .HtmlAttributes(new { placeholder = "تاريخ اللجنة الى", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
                     )
@@ -112,7 +61,7 @@
                 <div class="col-md-2">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر  حالة اللجنة")
-                                    .Name("SComStatus")
+                                    .Name("SSESStatus")
                                     .DataTextField("NAME")
                                     .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
                                     .DataSource(source =>
@@ -141,32 +90,34 @@
 
 
 
-<!-- Gridn Committee -->
+<!-- Grid Committee -->
 <div>
-    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRCOMMITTEES>()
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRSESSIONS>()
             .Name("grid").AutoBind(false)
             .Columns(columns =>
             {
                 columns.Template(t => { }).Title("م.").ClientTemplate(
                  "#= renderNumber(data) #"
                ).Width(80);
-                columns.Bound(c => c.NB);
-                columns.Bound(c => c.COMNO);
-                columns.Bound(c => c.COMDATE).Format("{0:dd/MM/yyyy}");
-                columns.ForeignKey(c => c.COMCITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
-                columns.Bound(c => c.COMCITYNB).Visible(false);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.Bound(c => c.SESNO);
+                columns.Bound(c => c.SESDATE).Format("{0:dd/MM/yyyy}");
+                columns.ForeignKey(c => c.SESCITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة");
+                columns.Bound(c => c.COMMITTEENB).Visible(false);
                 columns.Bound(c => c.STATUS).Visible(false);
-                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150);
-                columns.Bound(c => c.ORDR);
-                columns.Bound(c => c.IUSER);
+                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة");
+                columns.Bound(c => c.ORDR).Visible(false);
+                columns.Bound(c => c.COMBOSSNAME).Width(400);
+
+                columns.Bound(c => c.IUSER).Visible(false);
                 columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}");
                 columns.Command(command =>
                 {
                     //command.Custom("Preview").Click("Preview").Text(" ");
                     command.Custom("Edit").Click("Edit").Text(" ");
-                    //command.Custom("Delete").Click("Delete").Text(" ");
+                    command.Custom("Delete").Click("Delete").Text(" ");
                     command.Custom("Details").Click("Details").Text(" ");
-                   // command.Custom("Finish").Click("Finish").Text(" ");
+                      command.Custom("Details2").Click("Details2").Text(" ");
                 }).Width(180);
             })
             .HtmlAttributes(new { style = "height: aotu  !important;" })
@@ -178,7 +129,7 @@
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
             .PageSize(15)
             .Model(model => model.Id(p => p.NB))
-            .Read(read => read.Action("Read", "TRCOMMITTEES").Data("GetFillters")))
+            .Read(read => read.Action("Read", "TRSESSIONS").Data("GetFillters")))
             .Resizable(resize => resize
             .Columns(true)
             )
@@ -218,89 +169,121 @@
 
 </div>
 
+@Html.Partial("_AddSession")
+@Html.Partial("_EditSession")
+@Html.Partial("_DetailsSessionMembers")
 
 
 
 
-@Html.Partial("_AddCommittee")
-@Html.Partial("_EditCommittee")
-@Html.Partial("_AddMemberToCommittee")
-@Html.Partial("_SearchOwners")
-@Html.Partial("_DetailsMembers")
+<script>
+
+    function GetFillters() {
+        var fillter = {};
+        fillter.SESNO = $('#SSESNO').val();
+        fillter.SESDATESTART = $('#SSESDATEStart').val();
+        fillter.SESDATEEND = $('#SSESDATEEnd').val();
+        fillter.STATUS = $('#SSESStatus').val();
+        fillter.SESCITYNB = $('#SSESCITYNB').val();
+
+        return fillter;
+
+    }
+
+    function Btn_Search() {
+        $("#grid").data("kendoGrid").dataSource.read();
+    }
+
+    function rest_filtters() {
+        $('#SSESNO').val("");
+        $('#SSESDATEStart').val("");
+        $('#SSESDATEEnd').val("");
+        $("#SSESStatus").data("kendoDropDownList").value(-1);
+        $("#SSESCITYNB").data("kendoDropDownList").value(-1);
+        $("#grid").data("kendoGrid").dataSource.data([]);
+    }
+</script>
 
 
 
-
+<script>
+    var iid = 0;
+    function GetSessNbRead() {
+        return {
+            NB: iid
+        }
+    }
+</script>
 
 <!-- show and close Window-->
 <script>
 
     $("#AddNew").click(function () {
-        $('#AddComNo').val("");
-        $('#AddComDate').val("");
-        $("#AddComCity").data("kendoDropDownList").value(1)
-        $("#Add_comm span.k-tooltip-validation").hide();
-        var wnd = $("#AddCOMMITTEE").data("kendoWindow");
+        $('#AddSesNo').val("");
+        $('#AddSesDate').val("");
+        $("#AddSesCity").data("kendoDropDownList").value(1)
+        $("#Add_Session span.k-tooltip-validation").hide();
+        var wnd = $("#AddSession").data("kendoWindow");
         wnd.center().open();
     });
 
-  
+
 
     function Edit(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         var id = item.NB;
-        $('#ComNb').val(item.NB);
-        $('#EditComNo').val(item.COMNO);
-        $("#EditComDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.COMDATE });
-        $("#EditComCity").data("kendoDropDownList").value(item.COMCITYNB);
-        $("#EditComStatus").data("kendoDropDownList").value(item.STATUS);
+        alert(item.SESCITYNB);
 
+        $('#SesNb').val(item.NB);
+        $('#EditSesNo').val(item.SESNO);
 
-        
-        var wnd = $("#EditCOMMITTEE").data("kendoWindow");
+        $("#EditSesDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.SESDATE });
+
+        $("#EditSesCity").data("kendoDropDownList").value(item.SESCITYNB);
+
+        var wnd = $("#EditSession").data("kendoWindow");
         wnd.center().open();
 
     }
 
-  
+    function Delete(e) {
+        e.preventDefault();
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        var id = item.NB;
+
+    }
     function Details(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         iid = item.NB;
 
-        $('#OwnerNB').val("");
+
         $("#Detailsgrid").data("kendoGrid").dataSource.read();
-        $('#ComMebmerNb').val(item.NB)
-        var wnd = $("#DetailsCOMMITTEE").data("kendoWindow");
+
+        var wnd = $("#DetailsMemberSession").data("kendoWindow");
         wnd.center().open();
     }
 
-    
-    function Finish(e) {
+    function Details2(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
-       alert(item.NB);
+       
 
-    
-    
+
+        window.open("@Url.Action("TRSESSIONSPROCEDS", "TRSESSIONS")" + "?id=" + item.NB , "_blank");
+
+
     }
+
 
     function ColseWindow() {
 
-        $('#AddComNo').val("");
-        $('#AddComDate').val("");
-        $("#AddComCity").data("kendoDropDownList").value(1)
-        $("#Add_comm span.k-tooltip-validation").hide();
-        $('#OwnerNB').val("");
-        var wnd = $("#AddCOMMITTEE").data("kendoWindow");
+        var wnd = $("#AddSession").data("kendoWindow");
         wnd.center().close();
 
-        var wnd = $("#EditCOMMITTEE").data("kendoWindow");
-        wnd.center().close();
 
-        var wnd = $("#AddCOMMITTEEMEMBER").data("kendoWindow");
-        wnd.center().close();
 
     }
 </script>
@@ -310,5 +293,3 @@
         return data.Seq;
     }
 </script>
-
-

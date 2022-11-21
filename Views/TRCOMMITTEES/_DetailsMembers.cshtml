@@ -1,0 +1,125 @@
+﻿<!-- Details Grid Members of Committee-->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("DetailsCOMMITTEE")
+            .Title("تفاصيل اعضاء اللجنة ")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+          <div  >
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRCOMMITTEES_MEMBERS>()
+            .Name("Detailsgrid")
+            .Columns(columns =>
+            {
+                columns.Template(t => { }).Title("م.").ClientTemplate(
+                 "#= renderNumber(data) #"
+               ).Width(80);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.Bound(c => c.COMMITTEENB).Visible(false);
+                columns.Bound(c => c.MEMBERNAME).Width(500);
+                columns.ForeignKey(c => c.MEMBERSHIPNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERSHIP"], "ID", "NAME").Title("العضوية").Width(150);
+                columns.Bound(c => c.MEMBERSHIPNB).Visible(false).Title("العضوية");
+                // columns.Bound(c => c.STATUS).Visible(false);
+                columns.ForeignKey(c => c.MEMBERPOSITIONNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERPOSITION"], "ID", "NAME").Title("المنصب").Width(150);
+                //columns.Bound(c => c.ORDR);
+                //columns.Bound(c => c.NOTES);
+                columns.Bound(c => c.MEMBERPOSITIONNB).Visible(false).Title("المنصب");
+                columns.Command(command =>
+                {
+                   
+                    command.Custom("Delete").Click("Delete").Text(" ");
+                   
+                }).Width(50);
+
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(7)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("Read_MEMBERS", "TRCOMMITTEES").Data("GetCommNbRead")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+                toolbar.Custom().Name("AddNewMEMBER").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNewMEMBER", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("setIcons")
+            .DataBound("setIcons")
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Cancel("setIcons")
+        //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(1000)
+            .Height(500)
+            .Pinned()
+            )
+</div>
+
+<script>
+    $("#AddNewMEMBER").click(function () {
+        $("#Add_comm_Member span.k-tooltip-validation").hide();
+        var wnd = $("#AddCOMMITTEEMEMBER").data("kendoWindow");
+        wnd.center().open();
+    });
+
+
+    function Delete(e) {
+        e.preventDefault();
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        var NB = item.NB;
+        var windowWidget = $("#DetailsCOMMITTEE").data("kendoWindow");
+        kendo.ui.progress(windowWidget.element, true);
+          $.ajax({
+                type: "POST",
+                data: { nb : NB },
+                url: "@Url.Action("UpdateMemberStatus", "TRCOMMITTEES")",
+                success: function (response) {
+                    kendo.ui.progress(windowWidget.element, false);
+                    if (response.success) {
+
+                       
+                        $("#Detailsgrid").data("kendoGrid").dataSource.read();
+                        toastr.success("تمت عملية التعديل بنجاح");
+                    } else {
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+
+    }
+</script>

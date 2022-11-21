@@ -1,4 +1,4 @@
-/* Droid Arabic Kufi (Arabic) http://www.google.com/webfonts/earlyaccess */
+﻿/* Droid Arabic Kufi (Arabic) http://www.google.com/webfonts/earlyaccess */
 
 @font-face {
 	font-family: 'Droid Arabic Kufi';
@@ -821,7 +821,7 @@ body.mobile-nav-active #mobile-nav-toggle {
 
 #home .grid-icon {
 	height: 70px;
-	width: auto;
+	width: 70px;
 	margin-top: 55px;
 }
 

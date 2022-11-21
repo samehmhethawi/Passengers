@@ -42,11 +42,11 @@
             border-color: #28a745 !important;
         }
 
-        .btn-danger {
+     /*   .btn-danger {
             color: #fff !important;
             background-color: #dc3545 !important;
             border-color: #dc3545 !important;
-        }
+        }*/
 
         ::-webkit-scrollbar-track {
             background: none !important;
@@ -218,12 +218,12 @@
             background-color: #76abd9 !important;
             border-color: #76abd9 !important;
         }
-
+/*
         .k-button.btn-danger {
             color: #fff !important;
             background-color: #d43f3a !important;
             border-color: #d43f3a !important;
-        }
+        }*/
 
         .k-button.btn-success {
             color: #fff !important;
@@ -252,6 +252,26 @@
             text-align: center;
             border-top: 1px solid #e5e5e5;
         }
+/*-------------------------------------------------------------------*/
+        .MyButtonKendoGrid {
+            color: unset;
+            border-color: transparent;
+            background-color: transparent;
+            margin: 0;
+            padding: 5px 5px 4px;
+        }
+
+
+            .MyButtonKendoGrid .k-icon {
+                display: inline-block;
+                font: normal normal normal 16px/1 FontAwesome;
+                font-size: inherit;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                width: 1.2em;
+            }
+
+/*-----------------------------------------------------------------*/
         .k-grid .k-button {
             color: unset;
             border-color: transparent;
@@ -268,6 +288,18 @@
                 -moz-osx-font-smoothing: grayscale;
                 width: 1.2em;
             }
+
+        .padding222 {
+            padding-left: 30px !important;
+            padding-right: 30px !important;
+          
+        }
+
+        .grid-icon {
+            height: 100px;
+            width: auto;
+            margin-top: 55px;
+        }
     </style>
     <script>
 
@@ -275,7 +307,7 @@
             $(".k-grid-Edit").addClass("hvr-box-shadow-outset");
 
             $(".k-grid-Edit").kendoButton({
-                icon: " fa fa-pencil text-success"
+                icon: " fa fa-pencil  text-success"
 
             });
 
@@ -286,7 +318,7 @@
             });
           
 
-           
+      //------------------------------------------------------------------------------
 
           
             $(".k-grid-Delete").addClass(" hvr-box-shadow-outset");
@@ -298,7 +330,7 @@
                 position: "left",
                 autoHide: true,
             });
-
+  //------------------------------------------------------------------------------
             $(".k-grid-Details").addClass("hvr-box-shadow-outset");
 
             $(".k-grid-Details").kendoButton({
@@ -311,20 +343,109 @@
                 position: "left",
                 autoHide: true,
             });
+            
+            //------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
+            $(".k-grid-Details2").addClass("hvr-box-shadow-outset");
 
+            $(".k-grid-Details2").kendoButton({
+                icon: " fa fa-cogs text-info"
+
+            });
+
+            $(".k-grid-Details2").kendoTooltip({
+                content: "طلبات الجلسة",
+                position: "left",
+                autoHide: true,
+            });
+           
+            //------------------------------------------------------------------------------
+            $(".k-grid-Finish").addClass("hvr-box-shadow-outset");
+
+            $(".k-grid-Finish").kendoButton({
+                icon: " fa fa-check text-danger"
+
+            });
+
+            $(".k-grid-Finish").kendoTooltip({
+                content: "انهاء",
+                position: "left",
+                autoHide: true,
+            });
+
+              //------------------------------------------------------------------------------
+            $(".k-grid-selectit").addClass("hvr-box-shadow-outset");
+
+            $(".k-grid-selectit").kendoButton({
+                icon: " fa fa-check text-info"
+                
+
+            });
+
+            $(".k-grid-selectit").kendoTooltip({
+                content: "اختيار",
+                position: "left",
+                autoHide: true,
+            });
+
+
+  //------------------------------------------------------------------------------
             $(".mybuttonsearch").kendoTooltip({
                 content: "بحث",
                 position: "left",
                 autoHide: true,
             });
-
+  //------------------------------------------------------------------------------
             $(".mybuttonsearchreset").kendoTooltip({
                 content: "تفريغ الحقول",
                 position: "left",
                 autoHide: true,
             });
             $('td[role="gridcell"]').find("span.k-icon").removeClass("k-i-i");
+            $(".k-grid-Agree").addClass("hvr-box-shadow-outset");
 
+            $(".k-grid-Agree").kendoButton({
+                icon: " fa fa-check text-success"
+
+            });
+
+            $(".k-grid-Agree").kendoTooltip({
+                content: "موافقة",
+                position: "left",
+                autoHide: true,
+            });
+
+            //---------------------------------------
+            $(".k-grid-NotAgree").addClass("hvr-box-shadow-outset");
+            $(".k-grid-NotAgree").addClass("padding222");
+
+
+            $(".k-grid-NotAgree").kendoButton({
+                icon: " fa fa-close text-danger",
+                
+
+            });
+
+            $(".k-grid-NotAgree").kendoTooltip({
+                content: "عدم موافقة",
+                position: "left",
+                autoHide: true,
+            });
+
+
+            $(".k-grid-Delay").addClass("hvr-box-shadow-outset");
+
+            $(".k-grid-Delay").kendoButton({
+                icon: " fa fa-repeat text-info",
+
+
+            });
+
+            $(".k-grid-Delay").kendoTooltip({
+                content: "تأجيل",
+                position: "left",
+                autoHide: true,
+            });
         }
 
 
@@ -467,6 +588,11 @@
                 <div id="logo" class="pull-right">
                     <a href="@Url.Action("Index", "Home", new { Area = "" })" class="scrollto"><img src="@Url.Content("~/Content/v2/img/logo.png")" alt="" title=""></a>
                 </div>
+                <!-- Button trigger modal -->
+                @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    Launch demo modal
+                </button>*@
+                <a href="#" class="nav-item nav-link" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-window-maximize"></i></a>
                 <a href="#" class="nav-item nav-link" data-toggle="modal" data-target="#grid"><i class="fa fa-th"></i></a>
                 <a href="#" class="navbar-brand hidden-sm">نقل الركاب</a>
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
@@ -496,11 +622,11 @@
 
 
         <div class="main" style='margin-bottom:75px;'>
-            <section id="indexes" >
-                <div style="padding-left: 30px; padding-right: 30px"> 
+            <section id="indexes">
+                <div style="padding-left: 30px; padding-right: 30px">
                     @RenderSection("PartialHeader", false)
                 </div>
-              
+
                 <div class="container-fluid">
                     @RenderBody()
                 </div>
@@ -516,8 +642,7 @@
             جميع الحقوق محفوظة <strong> جامعة دمشق </strong> - كلية الهندسة الميكانيكة والكهربائية - مكتب ممارسة المهنة &copy; @DateTime.Now.Year
         </div>
     </footer><!-- #footer -->
-
-    <a href="#" class="back-to-top"><i class="fa fa-angle-up"></i></a>
+    @* <a href="#" class="back-to-top"><i class="fa fa-angle-up"></i></a>*@
 
     <!--==========================
     Grid
@@ -525,6 +650,35 @@
     @Html.Partial("_DashboardPartial")
     @Html.Partial("_LoaderPartial")
     @RenderSection("scripts", required: false)
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">التقارير</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                                <div class="grid">
+                                    <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="">
+                                    <h5 class="grid-title">تقرير 1</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+                </div>
+    </div>
     <div class="modal fade costum" id="grid" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-dialog-centered costum" id="home">
             <div class="modal-content">
@@ -633,14 +787,14 @@
                     </div>
                 </div>
             </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
+   
+    </div>
+    
     </div>
 
 
-   
-  
+
+
 
     <script src="@Url.Content("~/Scripts/deb.js")"></script>
     <script>

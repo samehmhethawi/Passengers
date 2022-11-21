@@ -1,0 +1,173 @@
+﻿<!-- Details Grid Members of Committee-->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("DetailsMemberSession")
+            .Title("الاعضاء الحاضرين / الغائبين")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+          <div  >
+    @(Html.Kendo().Grid <Passengers.ViewModel.TRSESSIONS_MEMBERS_PRESENTVM>()
+            .Name("Detailsgrid")
+            .Columns(columns =>
+            {
+                
+                columns.Bound(c => c.ISPRESENT).ClientTemplate(" # if (SESSIONSTATUS == 1) if (ISPRESENT == 1){ #<button  onclick='NotPRESENT(#=NB#)' class='btn btn-danger'  >غائب</button> # }else{ #<button  onclick='YesPRESENT(#=NB#)' class='btn btn-success'  >حاضر</button> # } #").Sortable(false).Title(" ").Width(100);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.Bound(c => c.SESSIONSTATUS).Visible(false);
+                columns.Bound(c => c.SESSIONNB).Visible(false);
+                columns.Bound(c => c.MEMBERNB).Visible(false);
+                columns.Bound(c => c.MEMBERNAME).Title("الاسم");
+                columns.ForeignKey(c => c.MEMBERSHIPNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERSHIP"], "ID", "NAME").Title("العضوية").Width(150);
+                columns.Bound(c => c.ISPRESENT).Visible(false).Title("العضوية");
+                columns.ForeignKey(c => c.MEMBERPOSITIONNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERPOSITION"], "ID", "NAME").Title("المنصب").Width(150);
+
+
+
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            //.Scrollable()
+            //.Sortable()
+            //.Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(7)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("Read_Member_Session", "TRSESSIONS").Data("GetSessNbRead")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+                //   toolbar.Custom().Name("AddNewMEMBER").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNewMEMBER", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("getcolor")
+            .DataBound("getcolor")
+            .Sort("getcolor")
+            .Filter("getcolor")
+            .Group("getcolor")
+            .Page("getcolor")
+            .Cancel("getcolor")
+        //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(1000)
+            .Height(500)
+            .Pinned()
+            )
+</div>
+
+<script>
+
+    function NotPRESENT(id)
+    {
+        var windowWidget = $("#DetailsMemberSession").data("kendoWindow");
+        kendo.ui.progress(windowWidget.element, true);
+          $.ajax({
+                type: "POST",
+                data: { nb : id },
+                url: "@Url.Action("NotPRESENT", "TRSESSIONS")",
+                success: function (response) {
+                    kendo.ui.progress(windowWidget.element, false);
+                    if (response.success) {
+
+
+                        $("#Detailsgrid").data("kendoGrid").dataSource.read();
+                        toastr.success("تمت عملية التعديل بنجاح");
+                    } else {
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+    }
+
+    function YesPRESENT(id)
+    {
+
+        var windowWidget = $("#DetailsMemberSession").data("kendoWindow");
+        kendo.ui.progress(windowWidget.element, true);
+          $.ajax({
+                type: "POST",
+                data: { nb : id },
+                url: "@Url.Action("YesPRESENT", "TRSESSIONS")",
+                success: function (response) {
+                    kendo.ui.progress(windowWidget.element, false);
+                    if (response.success) {
+
+
+                        $("#Detailsgrid").data("kendoGrid").dataSource.read();
+                        toastr.success("تمت عملية التعديل بنجاح");
+                    } else {
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+    }
+
+    function Delete(e) {
+        //e.preventDefault();
+        //var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        //var item = this.dataItem(tr);          // get the date of this row
+        //var NB = item.NB;
+        //var windowWidget = $("#DetailsCOMMITTEE").data("kendoWindow");
+        //kendo.ui.progress(windowWidget.element, true);
+        //  $.ajax({
+        //        type: "POST",
+        //        data: { nb : NB },
+        //        url: "Url.Action("UpdateMemberStatus", "TRCOMMITTEES")",
+        //        success: function (response) {
+        //            kendo.ui.progress(windowWidget.element, false);
+        //            if (response.success) {
+
+
+        //                $("#Detailsgrid").data("kendoGrid").dataSource.read();
+        //                toastr.success("تمت عملية التعديل بنجاح");
+        //            } else {
+        //                toastr.error(response.responseText);
+        //            }
+
+        //        }
+        //    });
+
+    }
+
+    function getcolor() {
+        
+        var grid = $("#Detailsgrid").data("kendoGrid");
+                var data = grid.dataSource.data();
+                $.each(data, function (i, row) {
+                   
+                    if (row.ISPRESENT == "1")
+                        $('tr[data-uid="' + row.uid + '"] ').css("background-color", "#dff0d8");
+                    if (row.ISPRESENT == "0")
+                        $('tr[data-uid="' + row.uid + '"] ').css("background-color", "#f2dede");
+                    
+                })
+    }
+</script>

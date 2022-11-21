@@ -1,0 +1,125 @@
+﻿<div class="k-rtl">
+    @(Html.Kendo().Window().Name("EditCOMMITTEE")
+            .Title("تعديل اللجنة ")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Edit_comm">
+               @Html.Hidden("ComNb")
+               <div class="row col-11">
+                       <div class="col-md-3" >
+                          <span>  رقم اللجنة
+                                  @Html.Kendo().TextBox().Name("EditComNo").HtmlAttributes(new { placeholder = " رقم اللجنة", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                          </span>
+
+
+                       </div>
+                       <div class="col-md-3" >
+                           <span>  تاريخ اللجنة
+                              @(Html.Kendo().DatePicker()
+                                        .Name("EditComDate").Format("{0:dd/MM/yyyy}")
+                                        .HtmlAttributes(new { placeholder = "تاريخ اللجنة", required = "required", data_required_msg = "هذا الحقل مطلوب", style = "width: 100%; text-align:center;" })
+                                    )
+                           </span>
+
+
+                       </div>
+                       <div class="col-md-3" >
+                            <span>  محافظة اللجنة
+
+               
+                           @(Html.Kendo().DropDownList()
+                                    .Name("EditComCity").Enable(false)
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                           </span>
+
+
+                       </div>
+               </div>
+               <div  class="row col-11">
+                          <div class="col-md-3" >
+                            <span>  حالة اللجنة
+                          @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر  حالة اللجنة")
+                                    .Name("EditComStatus")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetStatus", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                           </span>
+
+
+                       </div>
+               </div>
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveEditCommittee()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(300)
+            .Pinned()
+            )
+</div>
+
+<!-- Save Edit Committee-->
+<script>
+    function SaveEditCommittee() {
+        var validator = $("#Edit_comm").kendoValidator().data("kendoValidator");
+        var windowWidget = $("#EditCOMMITTEE").data("kendoWindow");
+
+        if (validator.validate()) {
+            kendo.ui.progress(windowWidget.element, true);
+            var model = {
+                NB: $('#ComNb').val(),
+                COMNO: $('#EditComNo').val(),
+                COMDATE: $('#EditComDate').val(),
+               // COMCITYNB: $("#EditComCity").val(),
+                STATUS: $("#EditComStatus").val(),
+
+            }
+
+            $.ajax({
+                type: "POST",
+                data: model,
+                url: "@Url.Action("Update", "TRCOMMITTEES")",
+                success: function (response) {
+                    kendo.ui.progress(windowWidget.element, false);
+                    if (response.success) {
+
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.read();
+                        toastr.success("تمت عملية التعديل بنجاح");
+                    } else {
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+        }
+
+       }
+</script>
+

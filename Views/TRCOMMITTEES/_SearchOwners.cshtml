@@ -1,0 +1,184 @@
+﻿<!-- Get Owners name-->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("Addownername")
+            .Title("البحث عن اسم")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div>
+               <div class="row">
+                   <div class="col-md-1">
+                       الرقم الوطني
+                   </div>
+                   <div class="col-md-2">
+                          @Html.Kendo().TextBox().Name("SNationno").HtmlAttributes(new { placeholder = "الرقم الوطني" })
+                   </div>
+
+                   <div class="col-md-1">
+                      الاسم
+                   </div>
+                   <div class="col-md-2">
+                          @Html.Kendo().TextBox().Name("SNAME").HtmlAttributes(new { placeholder = "الاسم" })
+                   </div>
+                    <div class="col-md-1">
+                      الكنية
+                   </div>
+                   <div class="col-md-2">
+                          @Html.Kendo().TextBox().Name("SLASTNAME").HtmlAttributes(new { placeholder = "الكنية" })
+                   </div>
+                    <div class="col-md-1">
+                           <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search_owners()"> <i class="fa fa-search"></i> </button>
+                   </div>
+
+               </div>
+                   <div class="row">
+                   <div class="col-md-1">
+                     الاب
+                   </div>
+                   <div class="col-md-2">
+                          @Html.Kendo().TextBox().Name("SFATHER").HtmlAttributes(new { placeholder = "الاب" })
+                   </div>
+
+                   <div class="col-md-1">
+                     الام
+                   </div>
+                   <div class="col-md-2">
+                          @Html.Kendo().TextBox().Name("SMOTHER").HtmlAttributes(new { placeholder = "الام" })
+                   </div>
+                    <div class="col-md-1">
+                     رمز المالك
+                   </div>
+                   <div class="col-md-2">
+                          @Html.Kendo().NumericTextBox().Format("0").Name("SOWNERNB").HtmlAttributes(new { placeholder = "رمز المالك" })
+                   </div>
+                         <div class="col-md-1">
+                                <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_Owners()"> <i class="fa fa-close"></i> </button>
+                   </div>
+
+               </div>
+
+
+
+               <div>
+                         @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.CAROWNER>()
+                                .Name("Ownergrid").AutoBind(false)
+                                .Columns(columns =>
+                                {
+                                    columns.Bound(c => c.NB).Title("رمز المالك");
+                                    columns.Bound(c => c.NAME).Title("الاسم");
+                                    columns.Bound(c => c.LASTNAME).Title("الكنية");
+                                    columns.Bound(c => c.FATHER).Title("الاب");
+                                    columns.Bound(c => c.MOTHER).Title("الام");
+                                    columns.Bound(c => c.NATIONNO).Title("الرقم الوطني");
+                                    columns.Command(command =>
+                                    {
+                                        command.Custom("selectit").Click("selectit").Text(" ");
+                                    }).Width(60);
+                                })
+                                .HtmlAttributes(new { style = "height: aotu  !important;" })
+                                .Scrollable()
+                                .Sortable()
+                                .Filterable()
+                                .DataSource(dataSource => dataSource
+                                .Ajax()
+
+                                .PageSize(7)
+                                .Model(model => model.Id(p => p.NB))
+                                .Read(read => read.Action("Read_Carowners", "TRCOMMITTEES").Data("GetFilltersOwners")))
+                                .Resizable(resize => resize
+                                .Columns(true)
+                                )
+                                .ToolBar(toolbar =>
+                                {
+                                    toolbar.Custom().Name("AddNewowner").Text(" إضافة مالك جديد ").Url("#").HtmlAttributes(new { id = "AddNewowner", @class = "btn btn-primary hvr-box-shadow-outset" });
+                                })
+                                    .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                                          .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                                          .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                                          .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                                           .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                                          .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                                          .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                                          .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                                          .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                                          .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                                          .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                                          .Display("العدد الكلي للسجلات :  {2}")
+                                                          )
+                                                        .Refresh(true)
+                                                        .Input(true)
+                                                        .Info(true)
+                              ).Events(events => events
+                                .Change("setIcons")
+                                .DataBound("setIcons")
+                                .Sort("setIcons")
+                                .Filter("setIcons")
+                                .Group("setIcons")
+                                .Page("setIcons")
+                                .Cancel("setIcons")
+                            )
+                    )
+                </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(1300)
+            .Height(400)
+            .Pinned()
+            )
+</div>
+
+
+<script>
+    function selectit(e) {
+        e.preventDefault();
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        var id = item.NB;
+        $('#OwnerNB').val(item.NB);
+        var fullname = item.NAME + " " + item.LASTNAME + " بن " + item.FATHER + " الرقم الوطني :" + item.NATIONNO;
+        alert(fullname);
+        $('#AddComMemberName').val(fullname);
+        $('#AddComMemberName2').val(fullname);
+        var wnd = $("#Addownername").data("kendoWindow");
+        wnd.center().close();
+
+        alert(item.NB)
+    }
+
+
+</script>
+
+<script>
+
+
+    function rest_Owners() {
+
+    }
+    function Btn_Search_owners() {
+        $("#Ownergrid").data("kendoGrid").dataSource.read();
+
+    }
+
+    function GetFilltersOwners() {
+        var fillter2 = {};
+        fillter2.SOWNERNB = $('#SOWNERNB').val();
+        fillter2.NAME = $('#SNAME').val();
+        fillter2.LASTNAME = $('#SLASTNAME').val();
+        fillter2.FATHER = $('#SFATHER').val();
+        fillter2.MOTHER = $('#SMOTHER').val();
+        fillter2.NATIONNO = $('#SNationno').val();
+
+        return fillter2;
+
+    }
+
+    $("#AddNewowner").click(function () {
+
+
+        window.open("/Procedbase/CarOwnersJ/AddNewCarOwnerView", "_blank");
+    
+});
+
+</script>

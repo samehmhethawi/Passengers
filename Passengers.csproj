@@ -67,6 +67,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TRCOMMITTEESController.cs" />
     <Compile Include="Controllers\TRLINESController.cs" />
+    <Compile Include="Controllers\TRSESSIONSController.cs" />
     <Compile Include="Controllers\ZAttribCategoriesController.cs" />
     <Compile Include="Controllers\ZAttribIndexsController.cs" />
     <Compile Include="Controllers\ZAttribsController.cs" />
@@ -88,6 +89,9 @@
     <Compile Include="Security\UserAccountManager.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Types.cs" />
+    <Compile Include="ViewModel\CountTotal.cs" />
+    <Compile Include="ViewModel\TRSESSIONS_MEMBERS_PRESENTVM.cs" />
+    <Compile Include="ViewModel\TRSESSIONS_PROCEDS_VM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -1199,6 +1203,16 @@
     <Content Include="Views\App_Settings\Index.cshtml" />
     <Content Include="Views\TRCOMMITTEES\Index.cshtml" />
     <Content Include="Views\Shared\_DashboardPartial.cshtml" />
+    <Content Include="Views\TRSESSIONS\Index.cshtml" />
+    <Content Include="Views\TRCOMMITTEES\_AddCommittee.cshtml" />
+    <Content Include="Views\TRCOMMITTEES\_EditCommittee.cshtml" />
+    <Content Include="Views\TRCOMMITTEES\_AddMemberToCommittee.cshtml" />
+    <Content Include="Views\TRCOMMITTEES\_SearchOwners.cshtml" />
+    <Content Include="Views\TRCOMMITTEES\_DetailsMembers.cshtml" />
+    <Content Include="Views\TRSESSIONS\_AddSession.cshtml" />
+    <Content Include="Views\TRSESSIONS\_EditSession.cshtml" />
+    <Content Include="Views\TRSESSIONS\_DetailsSessionMembers.cshtml" />
+    <Content Include="Views\TRSESSIONS\TRSESSIONSPROCEDS.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

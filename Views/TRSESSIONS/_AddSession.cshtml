@@ -1,0 +1,97 @@
+﻿<!-- Add Committee-->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("AddSession")
+            .Title("اضافة جلسة جديدة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_Session">
+               <div class="row col-11">
+                   <div class="col-md-3" >
+                   <span>  رقم الجلسة
+                       @Html.Kendo().TextBox().Name("AddSesNo").HtmlAttributes(new { placeholder = " رقم اللجنة", required = "required", data_required_msg = "هذا الحقل مطلوب"})</span>
+
+
+                       </div>
+                      <div class="col-md-4" >
+                   <span>  تاريخ الجلسة
+                          @(Html.Kendo().DatePicker()
+                                        .Name("AddSesDate").Format("{0:dd/MM/yyyy}")
+                                        .HtmlAttributes(new { placeholder = "تاريخ اللجنة", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    )</span>
+
+
+                       </div>
+                      <div class="col-md-3" >
+                   <span>  محافظة الجلسة
+                          @(Html.Kendo().DropDownList()
+                                    .Name("AddSesCity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )</span>
+
+
+                       </div>
+               </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveAddSession()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(300)
+            .Pinned()
+            )
+</div>
+
+<!-- Save Add Committee-->
+<script>
+    function SaveAddSession() {
+
+
+        var windowWidget = $("#AddSession").data("kendoWindow");
+
+
+        var validator = $("#Add_Session").kendoValidator().data("kendoValidator");
+        if (validator.validate()) {
+            kendo.ui.progress(windowWidget.element, true);
+            var model = {
+                SESNO: $('#AddSesNo').val(),
+                SESDATE: $('#AddSesDate').val(),
+                SESCITYNB: $("#AddSesCity").val(),
+                STATUS: 1
+            }
+
+            $.ajax({
+                type: "POST",
+                data: model,
+                url: "@Url.Action("Create", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+        }
+       }
+</script>

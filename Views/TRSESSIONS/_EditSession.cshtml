@@ -1,0 +1,79 @@
+﻿
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("EditSession")
+            .Title("تعديل الجلسة ")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Edit_Session">
+               @Html.Hidden("SesNb")
+               <div class="row col-11">
+                   <div class="col-md-3" >
+                   <span>  رقم الجلسة
+                       @Html.Kendo().TextBox().Name("EditSesNo").HtmlAttributes(new { placeholder = " رقم الجلسة", required = "required", data_required_msg = "هذا الحقل مطلوب" })</span>
+                       </div>
+                      <div class="col-md-3" >
+                   <span>  تاريخ الجلسة
+                          @(Html.Kendo().DatePicker()
+                                        .Name("EditSesDate").Format("{0:dd/MM/yyyy}")
+                                        .HtmlAttributes(new { placeholder = "تاريخ الجلسة", required = "required", data_required_msg = "هذا الحقل مطلوب", style = "width: 100%; text-align:center;" })
+                                    )</span>
+
+
+                       </div>
+                      <div class="col-md-3" >
+                   <span>  محافظة الجلسة
+                          @(Html.Kendo().DropDownList()
+                                    .Name("EditSesCity")
+                                    .Enable(false)
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )</span>
+
+
+                       </div>
+               </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveEditSession()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(300)
+            .Pinned()
+            )
+</div>
+
+<!-- Save Edit Committee-->
+<script>
+    function SaveEditSession() {
+        var validator = $("#Edit_Session").kendoValidator().data("kendoValidator");
+
+
+        if (validator.validate()) {
+            var model = {
+                NB: $('#SesNb').val(),
+                SESNO: $('#EditSesNo').val(),
+                SESDATE: $('#EditSesDate').val(),
+               // SESCITYNB: $("#EditSesCity").val(),
+
+            }
+
+           
+        }
+
+       }
+</script>
+

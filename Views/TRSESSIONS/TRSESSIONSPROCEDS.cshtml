@@ -1,0 +1,400 @@
+﻿
+@{
+    ViewBag.Title = "طلبات الجلسة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .myborder {
+        border: dashed;
+        border-color: aquamarine;
+        width: 25%;
+        padding-top: 5px;
+        padding-right: 5px;
+    }
+</style>
+
+<style>
+    .bordered {
+        border: 1px dashed #a0ddd8;
+        transition: all ease-in-out 0.3s;
+    }
+
+    .row.SessionInfo > .bordered {
+        border: 1px dashed #ccc;
+    }
+
+        .row.SessionInfo > .bordered:hover {
+            border: 2px dashed #5264f3;
+            background-color: #bbc6cc;
+        }
+
+    .row.SessionInfo {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+        .row.SessionInfo > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+            padding-top: 7px;
+        }
+</style>
+
+@section PartialHeader{
+    <!--Session Info -->
+    <div class="panel-heading1 collapse" id="searchPanel">
+        <div>
+            <table width="100%">
+                <tr>
+                    <td width="80%">
+                        <div class="row SessionInfo" style="margin:0;">
+                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                                <span><label>رقم الجلسة:</label> <span class="text-primary" id="currentCarProcedIdMoz">@ViewBag.SessionNo</span></span>
+                            </div>
+                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                                <span><label>تاريخ الجلسة:</label> <span class="text-primary" id="currentCarProcedIdMoz">@ViewBag.SessionDate</span></span>
+                            </div>
+                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                                <span><label>رئيس الجلسة:</label> <span class="text-primary" id="currentCarProcedIdMoz">@ViewBag.SessionBossName</span></span>
+                            </div>
+                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                                <span><label>حالة الجلسة:</label> <span class="text-primary" id="currentCarProcedIdMoz">@ViewBag.SessionStatus</span></span>
+                            </div>
+                        </div>
+                    </td>
+                    <td rowspan="2" width="20%">
+                        <div class="row SessionInfo" style="margin:0;">
+                            <div class="col-md-12 col-sm-12 col-xs-12 bordered">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <label>مجموع الطلبات</label>
+                                        </td>
+                                        <td>
+                                            <label id="totalcount"></label>
+                                        </td>
+                                    </tr>
+                                    <tr class="alert-success">
+                                        <td>
+                                            <label>الموافقة</label>
+                                        </td>
+                                        <td>
+                                            <label id="AGREE"></label>
+                                        </td>
+                                    </tr>
+
+
+
+
+                                    <tr class="alert-danger">
+                                        <td>
+                                            <label>المرفوضة</label>
+                                        </td>
+                                        <td>
+                                            <label id="NOTAGREE"></label>
+                                        </td>
+                                    </tr>
+                                    <tr class="alert-info">
+                                        <td>
+                                            <label>المؤجلة</label>
+                                        </td>
+                                        <td>
+                                            <label id="DELAYED"></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <label>قيد الدراسة</label>
+                                        </td>
+                                        <td>
+                                            <label id="UNANSWERED"></label>
+                                        </td>
+                                    </tr>
+                                </table>
+
+
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="80%">
+                        <div class="row SessionInfo" style="margin:0;">
+                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                                <span><label>رقم الجلسة:</label> <span class="text-primary" id="currentCarProcedIdMoz">@ViewBag.SessionNo</span></span>
+                            </div>
+                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                                <button id="PrintSession" onclick="PrintSession()" class="btn btn-primary">طباعة المحضر</button>
+                            </div>
+                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                                @if (ViewBag.SessionStatus == "فعال")
+                                {
+                                    <button id="CloseSession" onclick="CloseSession()" class="btn btn-danger">الغاء الجلسة</button>
+                                }
+                                </div>
+
+                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                                @if (ViewBag.SessionStatus == "فعال")
+                                {
+                                <button id="FinishSession" onclick="FinishSession()" class="btn btn-success">انهاء الجلسة</button>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+              </table>
+            </div>
+        </div>
+}
+
+<!-- Grid Committee -->
+<div style="padding-top:20px">
+    @(Html.Kendo().Grid <Passengers.ViewModel.TRSESSIONS_PROCEDS_VM>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.NB);
+                columns.Bound(c => c.ORDR).Title("الترتيب");
+                columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة");
+                columns.Bound(c => c.SESSIONNB).Title("رمز الجلسة").Visible(false);
+                columns.Bound(c => c.RECDAT).Format("{0:dd/MM/yyyy}").Title("تاريخ المعاملة");
+
+                columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة");
+                columns.Bound(c => c.CARNB).Title("رمز المركبة");
+                columns.Bound(c => c.CARPROCEDSTEPNB).Title("رمز الخطوة").Visible(false);
+                columns.ForeignKey(c => c.PSTATUS, (System.Collections.IEnumerable)ViewData["TRSESSIONSPROCEDSTATUS"], "ID", "NAME").Title("حالة الطلب");
+
+                if (@ViewBag.SessionStatus == "فعال")
+                { 
+                    columns.Bound(c => c.PSTATUS).ClientTemplate
+                  (" # if (PSTATUS == 4) if " +
+                  "(PSTATUS == 4)" +
+                  "{#<button id='' class='btn btn-success' onclick='Agree(#=NB#)'> <i  class='fa fa-check'></i> </button> #" +
+                  " #<button id='' class='btn btn-danger' onclick='NotAgree(#=NB#)'> <i  class='fa fa-close'></i> </button>  # " +
+                  " #<button id='' class='btn btn-text-info' onclick='Delay(#=NB#)'> <i  class='fa fa-repeat'></i> </button># " +
+                  "} #")
+                .Sortable(false).Title(" ").Width(200);
+
+                 }
+            })
+            .Filterable()
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("TRSESSIONSPROCEDS_Read", "TRSESSIONS").Data("GETSESSIONNB")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+             })
+
+                //      .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                //                            .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                //                            .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                //                            .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                //                             .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                //                            .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                //                            .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                //                            .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                //                            .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                //                            .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                //                            .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                //                            .Display("العدد الكلي للسجلات :  {2}")
+                //                            )
+                //                          .Refresh(true)
+                //                          .Input(true)
+                //                          .Info(true)
+                //)
+                .Events(events => events
+            .Change("getcolor")
+            .DataBound("getcolor")
+            .Sort("getcolor")
+            .Filter("getcolor")
+            .Group("getcolor")
+            .Page("getcolor")
+            .Cancel("getcolor")
+        //.Edit("hideIdField")
+        )
+
+
+)
+
+</div>
+
+<script>
+    function GETSESSIONNB() {
+        return {nb : @ViewBag.SessionID}
+    }
+    function getcolor() {
+        
+        var grid = $("#grid").data("kendoGrid");
+        var data = grid.dataSource.data();
+        $.each(data, function (i, row) {
+            if (row.PSTATUS == "1")
+                $('tr[data-uid="' + row.uid + '"] ').css("background-color", "#dff0d8");
+            if (row.PSTATUS == "2")
+                $('tr[data-uid="' + row.uid + '"] ').css("background-color", "#f2dede");
+            if (row.PSTATUS == "3")
+                $('tr[data-uid="' + row.uid + '"] ').css("background-color", "#bee5eb");
+        })
+        setIcons();
+        GetCount();
+        
+
+    }
+</script>
+<script>
+    function Agree(id) {
+ 
+        var model = {
+            nb: id
+
+        }
+           $.ajax({
+                type: "POST",
+               data: model,
+                url: "@Url.Action("Agree", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت العملية  بنجاح");
+                    } else {
+
+                    }
+
+                }
+            });
+
+    }
+    function NotAgree(id) {
+ 
+        var model = {
+            nb: id
+
+        }
+           $.ajax({
+                type: "POST",
+               data: model,
+                url: "@Url.Action("NotAgree", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت العملية  بنجاح");
+                    } else {
+
+                    }
+
+                }
+            });
+    }
+
+    function Delay(id) {
+
+        var model = {
+            nb: id
+
+        }
+           $.ajax({
+                type: "POST",
+               data: model,
+                url: "@Url.Action("Delay", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت العملية  بنجاح");
+                    } else {
+
+                    }
+
+                }
+            });
+    }
+</script>
+
+
+<script>
+    function GetCount() {
+        var model = {
+            ID: @ViewBag.SessionID
+
+        }
+        $.ajax({
+                type: "GET",
+            data: model,
+                url: "@Url.Action("GetCount555", "TRSESSIONS")",
+            success: function (response) {
+                document.getElementById('totalcount').innerHTML = response.TOTALCOUNT;
+                document.getElementById('DELAYED').innerHTML = response.DELAYED;
+                document.getElementById('AGREE').innerHTML = response.AGREE;
+                document.getElementById('NOTAGREE').innerHTML = response.NOTAGREE;
+                document.getElementById('UNANSWERED').innerHTML = response.UNANSWERED;
+                  
+
+                }
+            });}
+
+</script>
+
+<script>
+    function CloseSession() {
+        var id = @ViewBag.SessionID;
+        var model = {
+           ID :id
+        }
+     $.ajax({
+                type: "POST",
+               data: model,
+                url: "@Url.Action("CloseSession", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت العملية  بنجاح");
+                    } else {
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+    }
+
+    function FinishSession() {
+         var id = @ViewBag.SessionID;
+        var model = {
+           ID :id
+        }
+     $.ajax({
+                type: "POST",
+               data: model,
+                url: "@Url.Action("FinishSession", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت العملية  بنجاح");
+                    } else {
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+    }
+
+    function PrintSession() {
+
+    }
+</script>
