@@ -343,6 +343,19 @@
                 position: "left",
                 autoHide: true,
             });
+
+            $(".k-grid-DetailsMembers").addClass("hvr-box-shadow-outset");
+
+            $(".k-grid-DetailsMembers").kendoButton({
+                icon: " fa fa-info text-info"
+
+            });
+
+            $(".k-grid-DetailsMembers").kendoTooltip({
+                content: "الاعضاء",
+                position: "left",
+                autoHide: true,
+            });
             
             //------------------------------------------------------------------------------
             //------------------------------------------------------------------------------
@@ -664,10 +677,12 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                                <a href="@Url.Action("CommittesAndMembers", "PassengersReport")">
                                 <div class="grid">
                                     <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="">
-                                    <h5 class="grid-title">تقرير 1</h5>
+                                    <h5 class="grid-title">اللجان واعضائها</h5>
                                 </div>
+                                    </a>
                             </div>
                         </div>
                     </div>

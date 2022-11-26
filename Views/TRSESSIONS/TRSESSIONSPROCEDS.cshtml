@@ -159,10 +159,10 @@
             {
                 columns.Bound(c => c.NB);
                 columns.Bound(c => c.ORDR).Title("الترتيب");
+                columns.Bound(c => c.NB).Title("رمز المركبة").ClientTemplate("#= renderCarLink1(data) #").Width(130);
                 columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة");
                 columns.Bound(c => c.SESSIONNB).Title("رمز الجلسة").Visible(false);
                 columns.Bound(c => c.RECDAT).Format("{0:dd/MM/yyyy}").Title("تاريخ المعاملة");
-
                 columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة");
                 columns.Bound(c => c.CARNB).Title("رمز المركبة");
                 columns.Bound(c => c.CARPROCEDSTEPNB).Title("رمز الخطوة").Visible(false);
@@ -226,7 +226,30 @@
 )
 
 </div>
+<!-- PROCED INFO  -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("ProcedInfo")
+            .Title("تفاصيل")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Proced_Info">
+              
+              
+               <div class="window-footer">
+                 
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
 
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(1000)
+            .Height(600)
+            .Pinned()
+            )
+</div>
 <script>
     function GETSESSIONNB() {
         return {nb : @ViewBag.SessionID}
@@ -395,6 +418,34 @@
     }
 
     function PrintSession() {
+        var id = @ViewBag.SessionID;
+        window.open("PrintReportSession/" + id, "_blank");
+
+    }
+</script>
+
+<script>
+
+    function renderCarLink1(data) {
+
+
+
+        return "<button  onclick='ShowProcedInfo(" + data.NB + ")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button>";
+    }
+
+    function ShowProcedInfo(nb) {
+
+        alert(nb);
+        var wnd = $("#ProcedInfo").data("kendoWindow");
+        wnd.center().open();
+    }
+
+    function ColseWindow() {
+
+        var wnd = $("#ProcedInfo").data("kendoWindow");
+        wnd.center().close();
+
+
 
     }
 </script>

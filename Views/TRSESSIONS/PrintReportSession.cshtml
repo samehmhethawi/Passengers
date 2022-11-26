@@ -1,0 +1,171 @@
+﻿
+@{
+    ViewBag.Title = "طباعة محضر الجلسة";
+    Layout = null;
+ 
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/bootstrap.rtl.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+    <script src="~/Scripts/toastr.min.js"></script>
+</head>
+<style>
+    #toast-container {
+        z-index: 9999999999999999999 !important;
+        position: fixed;
+        font-family: FontAwesome;
+        font-size: 24px;
+        float: left;
+        color: #FFF;
+        padding-right: 0.5em;
+        margin: auto 0.5em auto -1.5em;
+    }
+</style>
+<style>
+    #bg-text {
+        color: rgba(128, 128, 128, 0.43) !important;
+        font-size: 70px;
+        transform: rotate(300deg);
+        -webkit-transform: rotate(300deg);
+        z-index: 100 !important;
+    }
+
+    #rm-text {
+        color: lightgrey !important;
+        font-size: 22px;
+        /*transform: rotate(300deg);
+        -webkit-transform: rotate(300deg);*/
+    }
+
+    #table55 {
+        z-index: 999999999999999999999999 !important;
+    }
+
+    #background {
+        position: absolute;
+        top: 40%;
+        right: 30%;
+        background: rgba(136, 136, 136, 0.00);
+        display: block;
+        min-height: 50%;
+        min-width: 50%;
+        color: yellow;
+        opacity: 0.5;
+    }
+
+    #backgroundForUserName {
+        position: absolute;
+        top: 7%;
+        left: 10%;
+        background: rgba(136, 136, 136, 0.00);
+        display: block;
+        min-height: 20%;
+        min-width: 20%;
+        color: yellow;
+    }
+    /*.visible-print {
+        display: none;
+    }*/
+    @@page {
+        size: auto; /* auto is the initial value */
+      /*  margin: 5mm 6mm 10mm 5mm; *//* this affects the margin in the printer settings */
+    }
+
+    body {
+        background-color: #FFFFFF;
+        border: solid 1px black;
+        margin: 2px; /* this affects the margin on the content before sending to printer */
+    }
+
+    #fallPage {
+        z-index: 999999999999999999999999 !important;
+    }
+    /*@@media print {
+         .visible-print {
+            display: block;
+        }
+        .hidden-print {
+            display: none !important;
+        }
+        #footer {
+            position: absolute;
+            bottom: 50px;
+        }
+    }*/
+   /* .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+        padding: 3px !important;
+        line-height: 1.2 !important;
+    }*/
+</style>
+<script>
+    $(function () {
+        window.focus();
+        window.print();
+       
+        try {
+                setTimeout(function () {
+                    window.close();
+                }, 2000);
+            } catch (e) {
+            }
+        });
+</script>
+<header></header>
+
+
+<body>
+    <table width="100%" height="100%" style="padding:20px">
+        <tr height="25%">
+            <td>
+                <label>الجمهورية العربية السورية</label><br />
+                <label>مديرية نقل </label><br />
+                <label>لجنة تنظيم نقل الركاب المشترك</label><br />
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+        </tr>
+        <tr   height="25%">
+            <td colspan="3" style="text-align:center;">
+                <p>محضر جلسة رقم /  @ViewBag.SessionNo / تاريخ :  @ViewBag.SessionDate/</p>
+                <p>
+                    عقد لجنة نقل الركاب المشترك ريف دمشق اجتماعاً بجلستها رقم / @ViewBag.SessionNo / تاريخ @ViewBag.SessionDate برئاسة:
+                </p>
+                <p>
+                    @ViewBag.SessionBossName 
+                </p>
+            </td>
+        </tr>
+        <tr   height="50%">
+            <td colspan="2">
+               <p>وعضوية السادة:</p>
+                @foreach(var item in ViewBag.SessionMemers)
+            {
+                <p>@item</p>
+            }
+                
+            </td>
+            <td>
+            </td>
+        </tr>
+    </table>
+</body>
+
+   
+
+
+<script>
+    $(function () {
+        //window.print();
+        //window.onafterprint = function () {
+        //    window.close();
+        //}
+    })
+</script>

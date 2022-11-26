@@ -330,6 +330,39 @@ namespace Passengers.Controllers
             }
         }
 
-   
+        public ActionResult PrintReportSession(long? ID)
+        {
+            var ses = db.TRSESSIONS.Find(ID);
+
+            var temp = DateTime.Parse(ses.SESDATE.ToString()).ToString("dd/MM/yyyy");
+            ViewBag.SessionID = ID;
+            ViewBag.SessionNo = ses.SESNO;
+            ViewBag.SessionDate = temp;
+            ViewBag.SessionStatus = ses.TRSTATUS.NAME;
+           
+
+            //  var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + ID;
+           // var data = db.Database.SqlQuery<TRSESSIONS_MEMBERS_PRESENT>("select * from TRSESSIONS_MEMBERS_PRESENT where SESSIONNB =" + ID).ToList();
+            var data = db.TRSESSIONS_MEMBERS_PRESENT.Where(x=>x.SESSIONNB == ID);
+            List<string> Members = new List<string>();
+         
+          
+            foreach (var member in data)
+            {
+                if (member.TRCOMMITTEES_MEMBERS.MEMBERSHIPNB != 1) {
+
+                    var temp3 = "";
+                    temp3 += "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERSHIP.NAME;
+                    Members.Add(temp3);
+                }
+                else
+                {
+                    ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERSHIP.NAME;
+                }
+                
+            }
+            ViewBag.SessionMemers = Members;
+            return View();
+        }
     }
 }

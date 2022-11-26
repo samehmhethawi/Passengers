@@ -4,6 +4,7 @@ D:\sit\Passengers\bin\Passengers.pdb
 D:\sit\Passengers\bin\HelperLib.dll
 D:\sit\Passengers\bin\Kendo.Mvc.dll
 D:\sit\Passengers\bin\Proced.DataAccess.dll
+D:\sit\Passengers\bin\Rotativa.dll
 D:\sit\Passengers\bin\Syncfusion.Pdf.Base.dll
 D:\sit\Passengers\bin\Syncfusion.HtmlConverter.Base.dll
 D:\sit\Passengers\bin\Telerik.Windows.Documents.Flow.dll
@@ -22,3 +23,19 @@ D:\sit\Passengers\obj\Debug\Passengers.csproj.CoreCompileInputs.cache
 D:\sit\Passengers\obj\Debug\Passengers.csproj.CopyComplete
 D:\sit\Passengers\obj\Debug\Passengers.dll
 D:\sit\Passengers\obj\Debug\Passengers.pdb
+D:\sit\Passengers\bin\ClosedXML.dll
+D:\sit\Passengers\bin\DocumentFormat.OpenXml.dll
+D:\sit\Passengers\bin\ExcelNumberFormat.dll
+D:\sit\Passengers\bin\FastMember.Signed.dll
+D:\sit\Passengers\bin\MoreLinq.dll
+D:\sit\Passengers\bin\System.IO.Packaging.dll
+D:\sit\Passengers\bin\System.Linq.Dynamic.Core.dll
+D:\sit\Passengers\bin\System.ValueTuple.dll
+D:\sit\Passengers\bin\ClosedXML.pdb
+D:\sit\Passengers\bin\ClosedXML.xml
+D:\sit\Passengers\bin\DocumentFormat.OpenXml.xml
+D:\sit\Passengers\bin\ExcelNumberFormat.xml
+D:\sit\Passengers\bin\MoreLinq.xml
+D:\sit\Passengers\bin\System.Linq.Dynamic.Core.pdb
+D:\sit\Passengers\bin\System.Linq.Dynamic.Core.xml
+D:\sit\Passengers\bin\System.ValueTuple.xml
