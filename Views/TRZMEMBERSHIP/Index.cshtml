@@ -1,0 +1,315 @@
+﻿
+@{
+    ViewBag.Title = "العضوية";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<!-- Grid  -->
+<div>
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRZMEMBERSHIP>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Template(t => { }).Title("م.").ClientTemplate(
+                 "#= renderNumber(data) #"
+               ).Width(80);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.Bound(c => c.NAME);
+                columns.Bound(c => c.ORDR);
+                columns.Bound(c => c.NOTES);
+
+
+
+                columns.Command(command =>
+                {
+                //    //command.Custom("Preview").Click("Preview").Text(" ");
+                   command.Custom("Edit").Click("Edit").Text(" ");
+                 //   command.Custom("Delete").Click("Delete").Text(" ");
+                //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
+                //      command.Custom("Details2").Click("Details2").Text(" ");
+                }).Width(180);
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("Read", "TRZMEMBERSHIP")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+                toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("setIcons")
+            .DataBound("setIcons")
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Cancel("setIcons")
+        //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+<!-- Add -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("Add")
+            .Title("اضافة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_S">
+               <div class="row col-11">
+                   <div class="col-md-5" >
+                   <span>  الاسم
+                       @Html.Kendo().TextBox().Name("AddName").HtmlAttributes(new { placeholder = " الاسم", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+                       </span>
+
+
+                       </div>
+                    <div class="col-md-5" >
+                   <span>  الترتيب<br />
+                       @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("AddOrdr").HtmlAttributes(new { placeholder = "الترتيب", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+
+                       </span>
+
+
+                       </div>
+
+               </div>
+               <div class="row col-11">
+                   <div class="col-10">
+                   <span>  ملاحظات
+                       @Html.Kendo().TextBox().Name("AddNotes").HtmlAttributes(new { placeholder = " ملاحظات"})
+                       </span>
+
+
+                       </div>
+                 </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveAddSession()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(300)
+            .Pinned()
+            )
+</div>
+
+
+
+<!-- Edit -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("Edit")
+            .Title("تعديل")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_E">
+                  @Html.Hidden("NBB")
+               <div class="row col-11">
+                   <div class="col-md-5" >
+                   <span>  الاسم
+                       @Html.Kendo().TextBox().Name("EditName").HtmlAttributes(new { placeholder = " الاسم", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+                       </span>
+
+
+                       </div>
+                    <div class="col-md-5" >
+                   <span>  الترتيب<br />
+                       @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("EditOrdr").HtmlAttributes(new { placeholder = "الترتيب", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+
+                       </span>
+
+
+                       </div>
+
+               </div>
+               <div class="row col-11">
+                   <div class="col-10">
+                   <span>  ملاحظات
+                       @Html.Kendo().TextBox().Name("EditNotes").HtmlAttributes(new { placeholder = " ملاحظات"})
+                       </span>
+
+
+                       </div>
+                 </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveEdit()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(300)
+            .Pinned()
+            )
+</div>
+<!-- Save Add-->
+<script>
+    function SaveAdd() {
+
+
+        var windowWidget = $("#Add").data("kendoWindow");
+
+
+        var validator = $("#Add_S").kendoValidator().data("kendoValidator");
+        if (validator.validate()) {
+            kendo.ui.progress(windowWidget.element, true);
+            var model = {
+                NAME: $('#AddName').val(),
+                ORDR: $('#AddOrdr').val(),
+                NOTES: $('#AddNotes').val()
+
+            }
+
+            $.ajax({
+                type: "POST",
+                data: model,
+                url: "@Url.Action("Create", "TRZMEMBERSHIP")",
+                success: function (response) {
+                    if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+        }
+       }
+</script>
+<script>
+    function renderNumber(data) {
+
+        return data.Seq;
+    }
+
+    $("#AddNew").click(function () {
+        $('#AddName').val("");
+        $('#AddOrdr').val("");
+        $('#AddNotes').val("");
+    $.ajax({
+                type: "GET",
+
+                url: "@Url.Action("GetMaxOrdr", "Codes" , new { TableName = "TRZMEMBERSHIP" })",
+        success: function (response) {
+
+
+
+            $("#AddOrdr").data("kendoNumericTextBox").value(response);
+
+                    var wnd = $("#Add").data("kendoWindow");
+                    wnd.center().open();
+                }
+            });
+
+    });
+
+        function ColseWindow() {
+
+            var wnd = $("#Add").data("kendoWindow");
+            wnd.center().close();
+
+            var wnd = $("#Edit").data("kendoWindow");
+            wnd.center().close();
+
+
+
+        }
+
+        function Edit(e) {
+            var tr = $(e.target).closest("tr");    // get the current table row (tr)
+            var item = this.dataItem(tr);          // get the date of this row
+          
+            $('#NBB').val(item.NB);
+            $('#EditName').val(item.NAME);
+            $("#EditOrdr").data("kendoNumericTextBox").value(item.ORDR);
+
+            $('#EditNotes').val(item.NOTES);
+            var wnd = $("#Edit").data("kendoWindow");
+            wnd.center().open();
+
+        }
+
+
+             function SaveEdit() {
+                   var windowWidget = $("#Edit").data("kendoWindow");
+
+
+                   var validator = $("#Add_E").kendoValidator().data("kendoValidator");
+                        if (validator.validate()) {
+                            kendo.ui.progress(windowWidget.element, true);
+                            var model = {
+                                NB: $('#NBB').val(),
+                                NAME: $('#EditName').val(),
+                                ORDR: $('#EditOrdr').val(),
+                                NOTES: $('#EditNotes').val()
+                            }
+
+                            $.ajax({
+                                type: "POST",
+                                data: model,
+                                url: "@Url.Action("Update", "TRZMEMBERSHIP")",
+                                success: function (response) {
+                                    if (response.success) {
+                                        kendo.ui.progress(windowWidget.element, false);
+                                        ColseWindow();
+                                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                                        toastr.success("تمت عملية الإضافة بنجاح");
+                                    } else {
+                                        kendo.ui.progress(windowWidget.element, false);
+                                        toastr.error(response.responseText);
+                                    }
+
+                                }
+                            });
+                        }
+             }
+
+        function Delete() {}
+</script>
+

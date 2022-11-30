@@ -103,6 +103,37 @@ namespace Passengers.Controllers
         }
 
 
+        public int GetMaxOrdr(string TableName)
+        {
+           var sql = "SELECT NVL(MAX(ORDR),0) FROM " + TableName;
+            var data = db.Database.SqlQuery<int>(sql).FirstOrDefault();  
+            return data +1;
+        }
 
+        public ActionResult GetProced()
+        {
+
+            var status = db.ZPROCEDTYPS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(status, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetCarCat()
+        {
+
+            var status = db.ZCARCATEGORYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(status, JsonRequestBehavior.AllowGet);
+        }
+
+
+        
     }
 }
+

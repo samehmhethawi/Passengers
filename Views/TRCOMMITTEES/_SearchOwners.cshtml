@@ -157,7 +157,12 @@
 
     }
     function Btn_Search_owners() {
-        $("#Ownergrid").data("kendoGrid").dataSource.read();
+        var nationno = $('#SNationno').val();
+        var ownernb = $('#SOWNERNB').val();
+        if (nationno == null && ownernb == null)
+        { alert("dd"); }
+
+       // $("#Ownergrid").data("kendoGrid").dataSource.read();
 
     }
 

@@ -69,6 +69,10 @@
     <Compile Include="Controllers\TRCOMMITTEESController.cs" />
     <Compile Include="Controllers\TRLINESController.cs" />
     <Compile Include="Controllers\TRSESSIONSController.cs" />
+    <Compile Include="Controllers\TRZMEMBERPOSITIONController.cs" />
+    <Compile Include="Controllers\TRZMEMBERSHIPController.cs" />
+    <Compile Include="Controllers\TRZPROCEDSCARCATController.cs" />
+    <Compile Include="Controllers\TRZPROCEDTYPSALLOWController.cs" />
     <Compile Include="Controllers\ZAttribCategoriesController.cs" />
     <Compile Include="Controllers\ZAttribIndexsController.cs" />
     <Compile Include="Controllers\ZAttribsController.cs" />
@@ -1223,6 +1227,10 @@
     <Content Include="Views\PassengersReport\CommittesAndMembers.cshtml" />
     <Content Include="Views\PassengersReport\CommittesAndMembers_PDF.cshtml" />
     <Content Include="Views\TRSESSIONS\PrintReportSession.cshtml" />
+    <Content Include="Views\TRZPROCEDSCARCAT\Index.cshtml" />
+    <Content Include="Views\TRZPROCEDTYPSALLOW\Index.cshtml" />
+    <Content Include="Views\TRZMEMBERSHIP\Index.cshtml" />
+    <Content Include="Views\TRZMEMBERPOSITION\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Kendo.Mvc.UI;
+using Kendo.Mvc.Extensions;
+using Passengers.ViewModel;
+using System.Data.Entity;
+using Proced.DataAccess.Models.CF;
+namespace Passengers.Controllers
+{
+    [checksession, Authorize, RedirectOnError, CanDoIt]
+    public class TRZPROCEDSCARCATController : Controller
+    {
+        private ProcedContext db = new ProcedContext();
+        // GET: TRZPROCEDSCARCAT
+        public ActionResult Index()
+        {
+            ViewData["STATUS"] = db.TRSTATUS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+
+            ViewData["PROCEDS"] = db.ZPROCEDTYPS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            ViewData["CARCAT"] = db.ZCARCATEGORYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            return View();
+        }
+
+        public ActionResult Read([DataSourceRequest] DataSourceRequest request)
+        {
+            var sql = "SELECT * FROM TRZPROCEDS_CARCAT WHERE 1 = 1 ";
+            var data = db.Database.SqlQuery<TRZPROCEDS_CARCAT>(sql).ToList();
+            int index = 0;
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,
+                PROCEDNB = commm.PROCEDNB,
+                CARCATNB = commm.CARCATNB,
+                STATUS = commm.STATUS,
+
+
+                Seq = (request.Page - 1) * request.PageSize + (++index)
+            });
+            return Json(result);
+        }
+
+        public ActionResult Create(TRZPROCEDS_CARCAT model)
+        {
+            db.TRZPROCEDS_CARCAT.Add(model);
+            db.SaveChanges();
+            return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Update(TRZPROCEDS_CARCAT model)
+        {
+           try
+            {
+
+                var dd = db.TRZPROCEDS_CARCAT.Find(model.NB);
+               
+                    if (dd.CARCATNB != model.CARCATNB)
+                    {
+                        dd.CARCATNB = model.CARCATNB;
+                    }
+                    if (dd.STATUS != model.STATUS)
+                    {
+                        dd.STATUS = model.STATUS;
+                    }
+
+                    if (dd.PROCEDNB != model.PROCEDNB)
+                    {
+                        dd.PROCEDNB = model.PROCEDNB;
+                    }
+                    db.Entry(dd).State = EntityState.Modified;
+                    db.SaveChanges();
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+              
+                return Json(new { success = false, responseText = ex }, JsonRequestBehavior.AllowGet);
+            }
+           
+        }
+    }
+}

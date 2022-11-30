@@ -35,18 +35,18 @@
 </div>
 @(Html.Kendo().Grid<Proced.DataAccess.Models.CF.TRLINE>()
       .Name("grid")
-      .AutoBind(false)
+      
       .Columns(columns =>
           {
-              columns.Bound(c => c.ORDR).Title("الترتيب");
+            
               columns.Bound(c => c.NAME).Title("اسم خط السير");
-              columns.Bound(c => c.ZTRLINETYPE.NAME).Title("نوع خط السير");
-              columns.Bound(c => c.ZCITY.NAME).Title("المحافظة");
+              columns.Bound(c => c.TYP).Title("نوع خط السير");
+              columns.Bound(c => c.CITYNB).Title("المحافظة");
               columns.Bound(c => c.STATUS).Title("هل هو متاح؟").ClientTemplate("#=STATUS ? 'نعم':'لا' #");
                columns.Command(command =>
           {
-              command.Custom("Edit").Click("Edit").Text(" ");
-              command.Custom("Delete").Click("Delete").Text(" ");
+            //  command.Custom("Edit").Click("Edit").Text(" ");
+            //  command.Custom("Delete").Click("Delete").Text(" ");
           }).Width(150);
           })
   //arabic from here
@@ -120,7 +120,7 @@ sortable.SortMode(GridSortMode.SingleColumn);
 .Create(create => create.Action("TrLines_Read", "TrLines"))
 .Update(update => update.Action("TrLines_Read", "TrLines"))
 .Destroy(destroy => destroy.Action("TrLines_Read", "TrLines"))
-.Events(events => events.RequestEnd("onRequestEnd").Sync("sync_handler"))
+//.Events(events => events.RequestEnd("onRequestEnd").Sync("sync_handler"))
 ).Events(events => events
 
 .Change("setIcons")
@@ -131,6 +131,6 @@ sortable.SortMode(GridSortMode.SingleColumn);
 .Group("setIcons")
 .Page("setIcons")
 .Cancel("setIcons")
-.Edit("hideIdField")
+//.Edit("hideIdField")
 )
 )

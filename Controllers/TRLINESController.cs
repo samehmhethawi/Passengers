@@ -17,6 +17,8 @@ namespace Passengers.Controllers
         {
             return View();
         }
+
+
         public JsonResult GetZOUTACT(string text)
         {
             // int userCity = int.Parse(Session["UserCity"].ToString());
@@ -44,21 +46,37 @@ namespace Passengers.Controllers
         {
             //IQueryable<TRLINE> zcarregs = db.TRLINES.OrderBy(c => c.ORDR);
             IQueryable<TRLINE> zcarregs = db.TRLINES.SqlQuery("select * from TRLINES order by ORDR").AsQueryable();
-            DataSourceResult result = zcarregs.ToDataSourceResult(request, trLine => new
+            int index = 0;
+            DataSourceResult result = zcarregs.ToDataSourceResult(request, commm => new
             {
-                trLine.NB,
-                trLine.NAME,
-                trLine.ORDR,
-                trLine.STATUS,
-                ZCITY = new {
-                    NAME= trLine.ZCITY != null? trLine.ZCITY.NAME :db.ZCITYS.Find(trLine.CITYNB) != null ? db.ZCITYS.Find(trLine.CITYNB).NAME:"",
-                },
-                ZTRLINETYPE = new
-                {
-                    NAME = trLine.ZTRLINETYPE != null ? trLine.ZTRLINETYPE.NAME : db.ZTRLINETYPES.Find(trLine.TYP) != null ?  db.ZTRLINETYPES.Find(trLine.TYP).NAME: "",
-                },
+                NB = commm.NB,
+                NAME = commm.NAME,
+                ORDR = commm.ORDR,
+                STATUS = commm.STATUS,
+                CITYNB = commm.CITYNB,
+            
+                //MINCARS = commm.MINCARS,
+                //MAXCARS = commm.MAXCARS,
+              
+
+                Seq = (request.Page - 1) * request.PageSize + (++index)
             });
             return Json(result);
+            //DataSourceResult result = zcarregs.ToDataSourceResult(request, trLine => new
+            //{
+            //    trLine.NB,
+            //    trLine.NAME,
+            //    trLine.ORDR,
+            //    trLine.STATUS,
+            //    ZCITY = new {
+            //        NAME= trLine.ZCITY != null? trLine.ZCITY.NAME :db.ZCITYS.Find(trLine.CITYNB) != null ? db.ZCITYS.Find(trLine.CITYNB).NAME:"",
+            //    },
+            //    ZTRLINETYPE = new
+            //    {
+            //        NAME = trLine.ZTRLINETYPE != null ? trLine.ZTRLINETYPE.NAME : db.ZTRLINETYPES.Find(trLine.TYP) != null ?  db.ZTRLINETYPES.Find(trLine.TYP).NAME: "",
+            //    },
+            //});
+            //return Json(result);
         }
 
         [AcceptVerbs(HttpVerbs.Get)]

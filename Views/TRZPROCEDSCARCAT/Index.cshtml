@@ -1,0 +1,336 @@
+﻿
+@{
+    ViewBag.Title = "الانواع المرتبطة بمعاملة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<!-- Grid  -->
+<div>
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRZPROCEDS_CARCAT>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Template(t => { }).Title("م.").ClientTemplate(
+                 "#= renderNumber(data) #"
+               ).Width(80);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.Bound(c => c.PROCEDNB).Visible(false);
+                columns.ForeignKey(c => c.PROCEDNB, (System.Collections.IEnumerable)ViewData["PROCEDS"], "ID", "NAME");
+
+                columns.Bound(c => c.CARCATNB).Visible(false);
+                columns.ForeignKey(c => c.CARCATNB, (System.Collections.IEnumerable)ViewData["CARCAT"], "ID", "NAME");
+
+                columns.Bound(c => c.STATUS).Visible(false);
+                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(100);
+
+
+                columns.Command(command =>
+                {
+                //    //command.Custom("Preview").Click("Preview").Text(" ");
+                    command.Custom("Edit").Click("Edit").Text(" ");
+                  // command.Custom("Delete").Click("Delete").Text(" ");
+                //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
+                //      command.Custom("Details2").Click("Details2").Text(" ");
+                }).Width(180);
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("Read", "TRZPROCEDSCARCAT")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+               toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("setIcons")
+            .DataBound("setIcons")
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Cancel("setIcons")
+        //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+
+
+<!-- Add -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("Add")
+            .Title("اضافة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_S">
+               <div>
+                   <div class="col-md-11" >
+                   <span>  نوع المعاملة 
+                          @(Html.Kendo().DropDownList()
+                                    .Name("PROCEDNB").Filter("contains")
+                                    .DataTextField("NAME").OptionLabel("اختر نوع المعاملة")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetProced", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )</span>
+
+
+                       </div>
+                    <div class="col-md-11" style="padding:15px" >
+                   <span>  نوع المركبة 
+                          @(Html.Kendo().DropDownList().Filter("contains")
+                                    .Name("CARCATNB").OptionLabel("اختر نوع المركبة")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCarCat", "Codes");
+                                        });
+
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )</span>
+
+
+                       </div>
+
+               </div>
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveAdd()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(300)
+            .Pinned()
+            )
+</div>
+
+<!-- Edit -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("Edit")
+            .Title("تعديل")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_E">
+               @Html.Hidden("NBB")
+                 <div class="col-md-11" >
+                         <span>  المعاملة الاساسية
+                          @(Html.Kendo().DropDownList()
+                                    .Name("EditPROCEDNB").Filter("contains")
+                                    .DataTextField("NAME").OptionLabel("اختر نوع المعاملة")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetProced", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                           </span>
+
+
+                  </div>
+                 <div class="col-md-11" style="padding:15px" >
+                       <span>  المعاملة المطلوب وجودها
+                              @(Html.Kendo().DropDownList().Filter("contains")
+                                        .Name("EditCARCATNB").OptionLabel("اختر نوع المركبة")
+                                        .DataTextField("NAME")
+                                        .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                        .DataSource(source =>
+                                        {
+                                            source.Read(read =>
+                                            {
+                                                read.Action("GetCarCat", "Codes");
+                                            });
+
+                                        })
+                                        .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                        )
+                         </span>
+
+
+                 </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveEdit()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+
+               </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(300)
+            .Pinned()
+            )
+    </div>
+
+
+
+
+
+    <!-- Save Add-->
+    <script>
+    function SaveAdd() {
+
+
+        var windowWidget = $("#Add").data("kendoWindow");
+
+
+        var validator = $("#Add_S").kendoValidator().data("kendoValidator");
+        if (validator.validate()) {
+            kendo.ui.progress(windowWidget.element, true);
+            var model = {
+                PROCEDNB: $('#PROCEDNB').val(),
+                CARCATNB: $('#CARCATNB').val(),
+                STATUS: 1
+            }
+
+            $.ajax({
+                type: "POST",
+                data: model,
+                url: "@Url.Action("Create", "TRZPROCEDSCARCAT")",
+                success: function (response) {
+                    if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+        }
+       }
+    </script>
+    <script>
+        function renderNumber(data) {
+
+            return data.Seq;
+        }
+
+
+        $("#AddNew").click(function () {
+            $("#CARCATNB").data("kendoDropDownList").value(-1);
+            $("#PROCEDNB").data("kendoDropDownList").value(-1);
+            var wnd = $("#Add").data("kendoWindow");
+            wnd.center().open();
+        });
+
+        function ColseWindow() {
+
+            var wnd = $("#Add").data("kendoWindow");
+            wnd.center().close();
+
+            var wnd = $("#Edit").data("kendoWindow");
+            wnd.center().close();
+
+
+
+        }
+
+        function Edit(e) {
+            var tr = $(e.target).closest("tr");    // get the current table row (tr)
+            var item = this.dataItem(tr);          // get the date of this row
+            var id = item.NB;
+            $('#NBB').val(item.NB);
+            $("#EditCARCATNB").data("kendoDropDownList").value(item.CARCATNB);
+
+            $("#EditPROCEDNB").data("kendoDropDownList").value(item.PROCEDNB);
+
+
+            var wnd = $("#Edit").data("kendoWindow");
+            wnd.center().open();
+
+        }
+
+        function SaveEdit() {
+            var windowWidget = $("#Edit").data("kendoWindow");
+
+
+        var validator = $("#Add_E").kendoValidator().data("kendoValidator");
+        if (validator.validate()) {
+            kendo.ui.progress(windowWidget.element, true);
+            var model = {
+                NB: $('#NBB').val(),
+                PROCEDNB: $('#EditPROCEDNB').val(),
+                CARCATNB: $('#EditCARCATNB').val(),
+                STATUS: 1
+            }
+
+            $.ajax({
+                type: "POST",
+                data: model,
+                url: "@Url.Action("Update", "TRZPROCEDSCARCAT")",
+                success: function (response) {
+                    if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+        }
+        }
+
+        function Delete() { }
+    </script>
