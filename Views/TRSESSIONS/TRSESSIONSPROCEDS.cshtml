@@ -135,21 +135,43 @@
                                 {
                                     <button id="CloseSession" onclick="CloseSession()" class="btn btn-danger">الغاء الجلسة</button>
                                 }
-                                </div>
+                            </div>
 
                             <div class="col-md-3 col-sm-4 col-xs-6 bordered">
                                 @if (ViewBag.SessionStatus == "فعال")
                                 {
-                                <button id="FinishSession" onclick="FinishSession()" class="btn btn-success">انهاء الجلسة</button>
+                                    <button id="FinishSession" onclick="FinishSession()" class="btn btn-success">انهاء الجلسة</button>
                                 }
                             </div>
                         </div>
                     </td>
                 </tr>
-              </table>
-            </div>
+            </table>
         </div>
+    </div>
 }
+
+<fieldset>
+
+    <div id="divPartial">
+        <div class="k-rtl">
+            @(Html.Kendo().Window().Name("ProcedInfo")
+            .Title("تفاصيل")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Proced_Info">
+            </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(1000)
+            .Height(600)
+            .Pinned()
+            )
+        </div>
+        </div>
+  </fieldset>
 
 <!-- Grid Committee -->
 <div style="padding-top:20px">
@@ -159,21 +181,22 @@
             {
                 columns.Bound(c => c.NB);
                 columns.Bound(c => c.ORDR).Title("الترتيب");
-                columns.Bound(c => c.NB).Title("رمز المركبة").ClientTemplate("#= renderCarLink1(data) #").Width(130);
-                columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة");
+                columns.Bound(c => c.CARNB).Title("رمز المركبة");
+                columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة").ClientTemplate("#= renderCarLink1(data) #").Width(130);
+                columns.Bound(c => c.PROCEDNB).Title("نوع المعاملة").Visible(false);
                 columns.Bound(c => c.SESSIONNB).Title("رمز الجلسة").Visible(false);
                 columns.Bound(c => c.RECDAT).Format("{0:dd/MM/yyyy}").Title("تاريخ المعاملة");
                 columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة");
-                columns.Bound(c => c.CARNB).Title("رمز المركبة");
+                //columns.Bound(c => c.CARNB).Title("رمز المركبة");
                 columns.Bound(c => c.CARPROCEDSTEPNB).Title("رمز الخطوة").Visible(false);
                 columns.ForeignKey(c => c.PSTATUS, (System.Collections.IEnumerable)ViewData["TRSESSIONSPROCEDSTATUS"], "ID", "NAME").Title("حالة الطلب");
 
                 if (@ViewBag.SessionStatus == "فعال")
-                { 
+                {
                     columns.Bound(c => c.PSTATUS).ClientTemplate
                   (" # if (PSTATUS == 4) if " +
                   "(PSTATUS == 4)" +
-                  "{#<button id='' class='btn btn-success' onclick='Agree(#=NB#)'> <i  class='fa fa-check'></i> </button> #" +
+                  "{#<button id='' class='btn btn-success' onclick='Agree(#=NB# , #=PROCEDNB# , #=CARPROCEDSTEPNB#)'> <i  class='fa fa-check'></i> </button> #" +
                   " #<button id='' class='btn btn-danger' onclick='NotAgree(#=NB#)'> <i  class='fa fa-close'></i> </button>  # " +
                   " #<button id='' class='btn btn-text-info' onclick='Delay(#=NB#)'> <i  class='fa fa-repeat'></i> </button># " +
                   "} #")
@@ -226,36 +249,13 @@
 )
 
 </div>
-<!-- PROCED INFO  -->
-<div class="k-rtl">
-    @(Html.Kendo().Window().Name("ProcedInfo")
-            .Title("تفاصيل")
-            .Visible(false)
-            .Modal(true)
-            .Content(@<text>
-           <div id="Proced_Info">
-              
-              
-               <div class="window-footer">
-                 
-                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
 
-               </div>
-           </div>
-            </text>)
-            .Draggable(true)
-            .Resizable()
-            .Width(1000)
-            .Height(600)
-            .Pinned()
-            )
-</div>
 <script>
     function GETSESSIONNB() {
         return {nb : @ViewBag.SessionID}
     }
     function getcolor() {
-        
+
         var grid = $("#grid").data("kendoGrid");
         var data = grid.dataSource.data();
         $.each(data, function (i, row) {
@@ -268,13 +268,16 @@
         })
         setIcons();
         GetCount();
-        
+
 
     }
 </script>
 <script>
-    function Agree(id) {
- 
+    function Agree(id, PROCEDNB, CARPROCEDSTEPNB) {
+        alert(id);
+        alert(PROCEDNB);
+        alert(CARPROCEDSTEPNB);
+        debugger;
         var model = {
             nb: id
 
@@ -285,7 +288,7 @@
                 url: "@Url.Action("Agree", "TRSESSIONS")",
                 success: function (response) {
                     if (response.success) {
-
+                       // GetPartial();
                         $("#grid").data("kendoGrid").dataSource.page(1);
 
                         toastr.success("تمت العملية  بنجاح");
@@ -298,7 +301,7 @@
 
     }
     function NotAgree(id) {
- 
+
         var model = {
             nb: id
 
@@ -363,7 +366,7 @@
                 document.getElementById('AGREE').innerHTML = response.AGREE;
                 document.getElementById('NOTAGREE').innerHTML = response.NOTAGREE;
                 document.getElementById('UNANSWERED').innerHTML = response.UNANSWERED;
-                  
+
 
                 }
             });}
@@ -399,22 +402,22 @@
         var model = {
            ID :id
         }
-     $.ajax({
-                type: "POST",
-               data: model,
-                url: "@Url.Action("FinishSession", "TRSESSIONS")",
-                success: function (response) {
-                    if (response.success) {
+                 $.ajax({
+                            type: "POST",
+                           data: model,
+                            url: "@Url.Action("FinishSession", "TRSESSIONS")",
+                            success: function (response) {
+                                if (response.success) {
 
-                        $("#grid").data("kendoGrid").dataSource.page(1);
+                                    $("#grid").data("kendoGrid").dataSource.page(1);
 
-                        toastr.success("تمت العملية  بنجاح");
-                    } else {
-                        toastr.error(response.responseText);
-                    }
+                                    toastr.success("تمت العملية  بنجاح");
+                                } else {
+                                    toastr.error(response.responseText);
+                                }
 
-                }
-            });
+                            }
+                  });
     }
 
     function PrintSession() {
@@ -430,13 +433,13 @@
 
 
 
-        return "<button  onclick='ShowProcedInfo(" + data.NB + ")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button>";
+        return "<button  onclick='GetPartialProcedinfo(" + data.CARPROCEDSTEPNB + "," + data.PROCEDNB +")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button>";
     }
 
     function ShowProcedInfo(nb) {
-
-        alert(nb);
+      
         var wnd = $("#ProcedInfo").data("kendoWindow");
+        
         wnd.center().open();
     }
 
@@ -448,4 +451,43 @@
 
 
     }
+
+
+</script>
+
+<script>
+    function GetPartialProcedinfo(CARPROCEDSTEPNB, PROCEDNB) {
+       
+        var model = {
+            NB: CARPROCEDSTEPNB,
+            PRONB :PROCEDNB
+        };
+       
+        var url = "@Url.Action("GetProcedinfo", "TRSESSIONS")";
+
+        $.ajax({
+            url: url,
+            cache: false,
+            type: "POST",
+            data: model,
+            success: function (data) {
+               
+                $.when(ss(data)).then(function () {
+                    ShowProcedInfo();
+                })
+            },
+            error: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+    }
+    function ss(data) {
+       
+       // document.getElementById('Proced_Info').innerHTML = data;
+       $('#Proced_Info').html(data);
+        
+        /* little fade in effect */
+       // $('#divPartial').fadeIn('fast');
+    }
+ 
 </script>

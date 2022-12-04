@@ -1,0 +1,79 @@
+﻿<!-- PROCED INFO  -->
+
+<div id="Proced_Info1">
+    <h1>
+        معاملة: @ViewBag.ProcedName
+    </h1>
+
+    @if (ViewBag.ProcedNb == 2002)
+    {
+        <p>الخط المراد الغائه</p>
+        foreach (var item7 in ViewBag.LineName)
+        {
+            <p>@item7.NAME</p>
+        }
+        <label>المحافظات المرتبطة بالخط:</label>
+        <table>
+            <tr>
+                <td>
+                    @foreach (var city in ViewBag.LineCity)
+                    {
+
+                    <td> @city &nbsp; &nbsp; &nbsp; </td>
+                }
+                </tr>
+            </table>
+        }
+    @if (ViewBag.ProcedNb == 2001)
+    {
+        <p>الخط المراد انشائه </p>
+
+        <p> @ViewBag.LineName </p>
+
+        <label>المحافظات المرتبطة بالخط:</label>
+        <table>
+
+            <tr>
+
+                <td>
+                    @foreach (var city in ViewBag.LineCity)
+                    {
+
+                    <td> @city &nbsp; &nbsp; &nbsp; </td>
+                }
+                </tr>
+            </table>
+        }
+
+    @if (ViewBag.ProcedNb == 2004)
+    {
+        <p>الخط الاول المراد دمجه</p>
+        foreach (var item7 in ViewBag.LineName1)
+        {
+            <p>@item7.NAME</p>
+        }
+
+
+
+        <label>المحافظات المرتبطة بالخط:</label>
+        
+
+            <p>الخط الاول المراد دمجه</p>
+            foreach (var item7 in ViewBag.LineName2)
+            {
+                <p>@item7.NAME</p>
+            }
+            <label>المحافظات المرتبطة بالخط:</label>
+            
+
+
+            }
+
+
+
+
+
+    <div class="window-footer">
+        <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+    </div>
+</div>

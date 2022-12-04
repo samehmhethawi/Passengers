@@ -1,12 +1,12 @@
 .preloader {
   background: #ffffff;
-  position: absolute;
+  position:fixed /*absolute*/;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   width: 100%;
-  min-height: 100%;
+  min-height: auto;
   z-index: 1;
   opacity: .8; }
   .preloader.full-preloader {

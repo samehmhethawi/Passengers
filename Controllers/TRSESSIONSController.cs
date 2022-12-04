@@ -217,7 +217,7 @@ namespace Passengers.Controllers
         public ActionResult TRSESSIONSPROCEDS_Read([DataSourceRequest] DataSourceRequest request ,long nb)
         {
 
-            string sql = "SELECT TSP.NB AS NB ,ZP.NAME  AS PROCEDNAME, TSP.SESSIONNB  AS SESSIONNB, TSP.CARPROCEDNB AS CARPROCEDNB, CP.RECDAT  AS RECDAT, TSP.PSTATUS   AS PSTATUS, CP.CARNB  AS CARNB, TSP.ORDR AS ORDR, TSP.CARPROCEDSTEPNB  AS CARPROCEDSTEPNB  FROM TRSESSIONS_PROCEDS  TSP JOIN CARPROCEDS CP ON CP.NB = TSP.CARPROCEDNB JOIN ZPROCEDTYPS ZP ON ZP.NB = CP.PROCEDNB where TSP.SESSIONNB = " + nb + " ORDER BY TSP.ORDR ASC";
+            string sql = "SELECT TSP.NB AS NB ,ZP.NAME  AS PROCEDNAME , ZP.NB AS PROCEDNB, TSP.SESSIONNB  AS SESSIONNB, TSP.CARPROCEDNB AS CARPROCEDNB, CP.RECDAT  AS RECDAT, TSP.PSTATUS   AS PSTATUS, CP.CARNB  AS CARNB, TSP.ORDR AS ORDR, TSP.CARPROCEDSTEPNB  AS CARPROCEDSTEPNB  FROM TRSESSIONS_PROCEDS  TSP JOIN CARPROCEDS CP ON CP.NB = TSP.CARPROCEDNB JOIN ZPROCEDTYPS ZP ON ZP.NB = CP.PROCEDNB where TSP.SESSIONNB = " + nb + " ORDER BY TSP.ORDR ASC";
             var data = db.Database.SqlQuery<TRSESSIONS_PROCEDS_VM>(sql).ToList();
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
@@ -237,6 +237,14 @@ namespace Passengers.Controllers
             try
             {
                 var data = db.TRSESSIONS_PROCEDS.Find(nb);
+
+                var sesnb = data.SESSIONNB;
+                var stepnb = data.CARPROCEDSTEPNB;
+                string sql = " DECLARE PSTATUS NUMBER; BEGIN VEHICLES.PASSENGERS_PKG.ACCEPT_PROCED(:PSESNB,:PSTEPNB ,PSTATUS); END;";
+                db.Database.ExecuteSqlCommand(sql, sesnb, stepnb);
+
+
+
                 data.PSTATUS = 1;
                 db.Entry(data).State = EntityState.Modified;
                 db.SaveChanges();
@@ -363,6 +371,56 @@ namespace Passengers.Controllers
             }
             ViewBag.SessionMemers = Members;
             return View();
+        }
+
+
+        public ActionResult GetProcedinfo(long NB , long PRONB)
+        {
+            // حالة الغاء خط
+            if (PRONB == 2002)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var LINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+             //   var data = db.TRLINES.Find(LINENB);
+                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = "+ LINENB).ToList();
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                
+                ViewBag.LineCity = db.Database.SqlQuery<string>("select zc.name from TRLINE_CITY tr join zcitys zc on zc.nb = tr.CITYNB where  tr.LINENB = " + LINENB).ToList();
+                return PartialView("_ProcedInfo");
+            }
+            //معاملة احداث خط
+           else if (PRONB == 2001)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var data = db.Database.SqlQuery<string>("select NAME from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.LineName = data;
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                ViewBag.LineCity = db.Database.SqlQuery<string>("select zc.name from PROCED_LINES pl join PROCED_LINES_CITY pc on pc.PROCEDLINENB = pl.nb join zcitys zc on zc.nb = pc.CITYNB where pl.CARPROCEDNB =  " + pro).ToList();
+                return PartialView("_ProcedInfo");
+            }
+            // معاملة دمج خطين
+            else if (PRONB == 2004)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var LINENB1 = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                var LINENB2 = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.LineName1 = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + LINENB1).ToList();
+                ViewBag.LineName2 = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + LINENB2).ToList();
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+              //  ViewBag.LineCity = db.Database.SqlQuery<string>("select zc.name from PROCED_LINES pl join PROCED_LINES_CITY pc on pc.PROCEDLINENB = pl.nb join zcitys zc on zc.nb = pc.CITYNB where pl.CARPROCEDNB =  " + pro).ToList();
+                return PartialView("_ProcedInfo");
+            }
+
+            else
+            {
+                return PartialView("_ProcedInfo");
+            }
+         
+
+            
         }
     }
 }

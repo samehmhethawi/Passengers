@@ -9,6 +9,8 @@ namespace Passengers.ViewModel
     {
         public long NB { get; set; }
        public string PROCEDNAME { get; set; }
+        public int PROCEDNB { get; set; }
+
         public long SESSIONNB { get; set; }
 
         public long CARPROCEDNB { get; set; }
