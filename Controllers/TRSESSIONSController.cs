@@ -381,7 +381,7 @@ namespace Passengers.Controllers
             {
                 var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
                 var LINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
-             //   var data = db.TRLINES.Find(LINENB);
+             // var data = db.TRLINES.Find(LINENB);
                 ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = "+ LINENB).ToList();
                 ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
                 ViewBag.ProcedNb = PRONB;
@@ -405,15 +405,27 @@ namespace Passengers.Controllers
             {
                 var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
                 var LINENB1 = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
-                var LINENB2 = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                var LINENB2 = db.Database.SqlQuery<long>("select LINENB2 from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
                 ViewBag.LineName1 = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + LINENB1).ToList();
                 ViewBag.LineName2 = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + LINENB2).ToList();
+                ViewBag.LineNew = db.Database.SqlQuery<string>("select NAME from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
                 ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
                 ViewBag.ProcedNb = PRONB;
-              //  ViewBag.LineCity = db.Database.SqlQuery<string>("select zc.name from PROCED_LINES pl join PROCED_LINES_CITY pc on pc.PROCEDLINENB = pl.nb join zcitys zc on zc.nb = pc.CITYNB where pl.CARPROCEDNB =  " + pro).ToList();
+              //ViewBag.LineCity = db.Database.SqlQuery<string>("select zc.name from PROCED_LINES pl join PROCED_LINES_CITY pc on pc.PROCEDLINENB = pl.nb join zcitys zc on zc.nb = pc.CITYNB where pl.CARPROCEDNB =  " + pro).ToList();
                 return PartialView("_ProcedInfo");
             }
-
+            // تغير اسم او مسار خط
+            else if (PRONB == 2003)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var LINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + LINENB).ToList();
+                ViewBag.LineNew = db.Database.SqlQuery<string>("select NAME from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                //ViewBag.LineCity = db.Database.SqlQuery<string>("select zc.name from PROCED_LINES pl join PROCED_LINES_CITY pc on pc.PROCEDLINENB = pl.nb join zcitys zc on zc.nb = pc.CITYNB where pl.CARPROCEDNB =  " + pro).ToList();
+                return PartialView("_ProcedInfo");
+            }
             else
             {
                 return PartialView("_ProcedInfo");

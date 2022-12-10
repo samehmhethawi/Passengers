@@ -18,7 +18,6 @@
                 <td>
                     @foreach (var city in ViewBag.LineCity)
                     {
-
                     <td> @city &nbsp; &nbsp; &nbsp; </td>
                 }
                 </tr>
@@ -27,50 +26,63 @@
     @if (ViewBag.ProcedNb == 2001)
     {
         <p>الخط المراد انشائه </p>
-
         <p> @ViewBag.LineName </p>
-
         <label>المحافظات المرتبطة بالخط:</label>
         <table>
-
             <tr>
-
                 <td>
                     @foreach (var city in ViewBag.LineCity)
                     {
-
                     <td> @city &nbsp; &nbsp; &nbsp; </td>
-                }
+                      }
                 </tr>
             </table>
         }
 
     @if (ViewBag.ProcedNb == 2004)
     {
-        <p>الخط الاول المراد دمجه</p>
+        <label>الخط الاول المراد دمجه:</label><br />
         foreach (var item7 in ViewBag.LineName1)
         {
-            <p>@item7.NAME</p>
+            <label>@item7.NAME</label>
         }
-
-
-
+        <br />
         <label>المحافظات المرتبطة بالخط:</label>
+
+        <div class="row" style="background-color:darkgrey; height:1px; margin:10px; opacity:0.5;">
+        </div>
+        <label>الخط الثاني المراد دمجه:</label>
+        <br />
+        foreach (var item7 in ViewBag.LineName2)
+        {
+            <label>@item7.NAME</label>
+        }
+        <br />
+        <label>المحافظات المرتبطة بالخط:</label>
+        <div class="row" style="background-color:darkgrey; height:1px; margin:10px; opacity:0.5;">
+        </div>
+        <label>الخط الجديد الناتج عن الدمج</label>
+        <br />
+        <label>  @ViewBag.LineNew</label>
+    }
+
+    @if (ViewBag.ProcedNb == 2003)
+    {
+        <label>الخط المراد تغيير اسمه او مساره:</label><br />
+        foreach (var item7 in ViewBag.LineName)
+        {
+            <label>@item7.NAME</label>
+        }
+        <br />
+        <label>المحافظات المرتبطة بالخط:</label>
+
+        <div class="row" style="background-color:darkgrey; height:1px; margin:10px; opacity:0.5;">
+        </div>
         
-
-            <p>الخط الاول المراد دمجه</p>
-            foreach (var item7 in ViewBag.LineName2)
-            {
-                <p>@item7.NAME</p>
-            }
-            <label>المحافظات المرتبطة بالخط:</label>
-            
-
-
-            }
-
-
-
+        <label>الخط الجديد: </label>
+        <br />
+        <label>  @ViewBag.LineNew</label>
+    }
 
 
     <div class="window-footer">

@@ -12,14 +12,14 @@
                     <label for="template_name"> رقم الجلسة</label>
                 </div>
                 <div class="col-md-2">
-                    @Html.Kendo().TextBox().Name("SSESNO").HtmlAttributes(new { placeholder = " رقم اللجنة" })
+                    @Html.Kendo().TextBox().Name("SSESNO").HtmlAttributes(new { placeholder = " رقم الجلسة" })
                 </div>
                 <div class="col-md-1">
                     <label for="template_name"> المحافظة</label>
                 </div>
                 <div class="col-md-2">
                     @(Html.Kendo().DropDownList()
-                                    .OptionLabel("اختر محافظة اللجنة")
+                                    .OptionLabel("اختر محافظة الجلسة")
                                     .Name("SSESCITYNB")
                                     .DataTextField("NAME")
                                     .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
@@ -40,7 +40,7 @@
                     @(Html.Kendo().DatePicker()
                         .Name("SSESDATEStart")
                         .Format("{0:dd/MM/yyyy}")
-                        .HtmlAttributes(new { placeholder = "تاريخ اللجنة من", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                        .HtmlAttributes(new { placeholder = "تاريخ الجلسة من", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
                     )
                 </div>
                 <div class="col-md-1">
@@ -50,7 +50,7 @@
                     @(Html.Kendo().DatePicker()
                         .Name("SSESDATEEnd")
                         .Format("{0:dd/MM/yyyy}")
-                        .HtmlAttributes(new { placeholder = "تاريخ اللجنة الى", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                        .HtmlAttributes(new { placeholder = "تاريخ الجلسة الى", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
                     )
                 </div>
             </div>
@@ -60,7 +60,7 @@
                 </div>
                 <div class="col-md-2">
                     @(Html.Kendo().DropDownList()
-                                    .OptionLabel("اختر  حالة اللجنة")
+                                    .OptionLabel("اختر  حالة الجلسة")
                                     .Name("SSESStatus")
                                     .DataTextField("NAME")
                                     .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
