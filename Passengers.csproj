@@ -1232,6 +1232,7 @@
     <Content Include="Views\TRZMEMBERSHIP\Index.cshtml" />
     <Content Include="Views\TRZMEMBERPOSITION\Index.cshtml" />
     <Content Include="Views\TRSESSIONS\_ProcedInfo.cshtml" />
+    <Content Include="Views\TRSESSIONS\_ProcedCount.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

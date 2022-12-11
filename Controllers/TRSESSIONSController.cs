@@ -237,14 +237,6 @@ namespace Passengers.Controllers
             try
             {
                 var data = db.TRSESSIONS_PROCEDS.Find(nb);
-
-                var sesnb = data.SESSIONNB;
-                var stepnb = data.CARPROCEDSTEPNB;
-                string sql = " DECLARE PSTATUS NUMBER; BEGIN VEHICLES.PASSENGERS_PKG.ACCEPT_PROCED(:PSESNB,:PSTEPNB ,PSTATUS); END;";
-                db.Database.ExecuteSqlCommand(sql, sesnb, stepnb);
-
-
-
                 data.PSTATUS = 1;
                 db.Entry(data).State = EntityState.Modified;
                 db.SaveChanges();
@@ -256,8 +248,26 @@ namespace Passengers.Controllers
             }
             
         }
+        public bool  AgreeAll(long Sesnb)
+        {
+            try
+            {
+                var ListOfProceds = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("SELECT * FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = " + Sesnb + " and PSTATUS = 1 ").ToList();
+                foreach (var proceds in ListOfProceds)
+                {
+                    var stepnb = proceds.CARPROCEDSTEPNB;
+                    //string sql = " DECLARE PSTATUS NUMBER; BEGIN VEHICLES.PASSENGERS_PKG.ACCEPT_PROCED(:PSESNB,:PSTEPNB ,PSTATUS); END;";
+                    //db.Database.ExecuteSqlCommand(sql, proceds, stepnb);
+                } 
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
 
-   
         public ActionResult NotAgree(long nb)
         {
             try
@@ -272,7 +282,6 @@ namespace Passengers.Controllers
             {
                 return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
             }
-
         }
         public ActionResult Delay(long nb)
         {
@@ -288,7 +297,6 @@ namespace Passengers.Controllers
             {
                 return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
             }
-
         }
 
         public ActionResult CloseSession(long ID)
@@ -307,7 +315,6 @@ namespace Passengers.Controllers
                     db.SaveChanges();
                     return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
                 }
-               
             }
             catch (Exception ex)
             {
@@ -315,22 +322,32 @@ namespace Passengers.Controllers
             }
         }
 
-        public ActionResult FinishSession(long ID)
+        public ActionResult  FinishSession  (long ID)
         {
             try
             {
-                var data = db.TRSESSIONS.Find(ID);
-                if (data.STATUS != 1)
-                {
-                    return Json(new { success = false, responseText = "حالة الجلسة ليست فعالة" }, JsonRequestBehavior.AllowGet);
+                var res  =  AgreeAll(ID);
+                if (res ==  true) {
+                    var data = db.TRSESSIONS.Find(ID);
+                    if (data.STATUS != 1)
+                    {
+                        return Json(new { success = false, responseText = "حالة الجلسة ليست فعالة" }, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        data.STATUS = 2;
+                        db.Entry(data).State = EntityState.Modified;
+                        db.SaveChanges();
+                        return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                    }
                 }
-                else
-                {
-                    data.STATUS = 2;
-                    db.Entry(data).State = EntityState.Modified;
-                    db.SaveChanges();
-                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                else {
+                    return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
                 }
+
+               
+               
+                
             }
             catch (Exception ex)
             {
@@ -347,14 +364,10 @@ namespace Passengers.Controllers
             ViewBag.SessionNo = ses.SESNO;
             ViewBag.SessionDate = temp;
             ViewBag.SessionStatus = ses.TRSTATUS.NAME;
-           
-
             //  var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + ID;
            // var data = db.Database.SqlQuery<TRSESSIONS_MEMBERS_PRESENT>("select * from TRSESSIONS_MEMBERS_PRESENT where SESSIONNB =" + ID).ToList();
             var data = db.TRSESSIONS_MEMBERS_PRESENT.Where(x=>x.SESSIONNB == ID);
-            List<string> Members = new List<string>();
-         
-          
+            List<string> Members = new List<string>(); 
             foreach (var member in data)
             {
                 if (member.TRCOMMITTEES_MEMBERS.MEMBERSHIPNB != 1) {
@@ -367,13 +380,10 @@ namespace Passengers.Controllers
                 {
                     ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERSHIP.NAME;
                 }
-                
             }
             ViewBag.SessionMemers = Members;
             return View();
         }
-
-
         public ActionResult GetProcedinfo(long NB , long PRONB)
         {
             // حالة الغاء خط
@@ -433,6 +443,11 @@ namespace Passengers.Controllers
          
 
             
+        }
+    
+        public ActionResult GetProcedCount()
+        {
+            return PartialView("_ProcedCount");
         }
     }
 }

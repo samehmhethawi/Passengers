@@ -170,8 +170,29 @@
             .Pinned()
             )
         </div>
+    </div>
+</fieldset>
+
+<fieldset>
+    <div id="divProcedCount">
+        <div class="k-rtl">
+            @(Html.Kendo().Window().Name("ProcedCount")
+            .Title("تفاصيل")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Proced_Count">
+            </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(1000)
+            .Height(600)
+            .Pinned()
+            )
         </div>
-  </fieldset>
+    </div>
+</fieldset>
 
 <!-- Grid Committee -->
 <div style="padding-top:20px">
@@ -194,8 +215,8 @@
                 if (@ViewBag.SessionStatus == "فعال")
                 {
                     columns.Bound(c => c.PSTATUS).ClientTemplate
-                  (" # if (PSTATUS == 4) if " +
-                  "(PSTATUS == 4)" +
+                  (" # if (1 == 1) if " +
+                  "(1 == 1)" +
                   "{#<button id='' class='btn btn-success' onclick='Agree(#=NB# , #=PROCEDNB# , #=CARPROCEDSTEPNB#)'> <i  class='fa fa-check'></i> </button> #" +
                   " #<button id='' class='btn btn-danger' onclick='NotAgree(#=NB#)'> <i  class='fa fa-close'></i> </button>  # " +
                   " #<button id='' class='btn btn-text-info' onclick='Delay(#=NB#)'> <i  class='fa fa-repeat'></i> </button># " +
@@ -273,11 +294,9 @@
     }
 </script>
 <script>
-    function Agree(id, PROCEDNB, CARPROCEDSTEPNB) {
-        alert(id);
-        alert(PROCEDNB);
-        alert(CARPROCEDSTEPNB);
-        debugger;
+    function Agree(id) {
+
+
         var model = {
             nb: id
 
@@ -433,13 +452,13 @@
 
 
 
-        return "<button  onclick='GetPartialProcedinfo(" + data.CARPROCEDSTEPNB + "," + data.PROCEDNB +")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button>";
+        return "<button  onclick='GetPartialProcedinfo(" + data.CARPROCEDSTEPNB + "," + data.PROCEDNB + ")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button>";
     }
 
     function ShowProcedInfo(nb) {
-      
+
         var wnd = $("#ProcedInfo").data("kendoWindow");
-        
+
         wnd.center().open();
     }
 
@@ -457,12 +476,12 @@
 
 <script>
     function GetPartialProcedinfo(CARPROCEDSTEPNB, PROCEDNB) {
-       
+
         var model = {
             NB: CARPROCEDSTEPNB,
             PRONB :PROCEDNB
         };
-       
+
         var url = "@Url.Action("GetProcedinfo", "TRSESSIONS")";
 
         $.ajax({
@@ -471,7 +490,7 @@
             type: "POST",
             data: model,
             success: function (data) {
-               
+
                 $.when(ss(data)).then(function () {
                     ShowProcedInfo();
                 })
@@ -482,12 +501,51 @@
         });
     }
     function ss(data) {
-       
+
        // document.getElementById('Proced_Info').innerHTML = data;
        $('#Proced_Info').html(data);
-        
+
         /* little fade in effect */
        // $('#divPartial').fadeIn('fast');
     }
- 
+
+</script>
+
+
+<script>
+    function GetPartialProcedCount() {
+
+       
+
+        var url = "@Url.Action("GetProcedCount", "TRSESSIONS")";
+
+        $.ajax({
+            url: url,
+            cache: false,
+            type: "POST",
+           // data: model,
+            success: function (data) {
+
+                $.when(ss2(data)).then(function () {
+                    ShowProcedCount();
+                })
+            },
+            error: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+    }
+    function ss2(data) {
+
+       // document.getElementById('Proced_Info').innerHTML = data;
+        $('#Proced_Count').html(data);
+
+        /* little fade in effect */
+       // $('#divPartial').fadeIn('fast');
+    }
+    function ShowProcedCount() {
+        var wnd = $("#ProcedCount").data("kendoWindow");
+
+        wnd.center().open();
+    }
 </script>
