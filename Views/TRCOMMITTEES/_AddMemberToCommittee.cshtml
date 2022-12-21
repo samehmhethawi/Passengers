@@ -10,11 +10,11 @@
                @Html.Hidden("OwnerNB")
                 @Html.Hidden("AddComMemberName2")
                <div class="row col-11">
-                   <div class="col-md-3" >
+                   @*<div class="col-md-3" >
                        <button class="btn btn-primary" onclick="GetNameFromCarowners()">البحث عن اسم </button>
-                       </div>
+                       </div>*@
                    <div class="col-md-7" >
-                   <span>   @Html.Kendo().TextBox().Name("AddComMemberName").Enable(false).HtmlAttributes(new { placeholder = " اسم العضو", required = "required", data_required_msg = "هذا الحقل مطلوب"})</span>
+                   <span>   @Html.Kendo().TextBox().Name("AddComMemberName").HtmlAttributes(new { placeholder = " اسم العضو", required = "required", data_required_msg = "هذا الحقل مطلوب"})</span>
                        </div>
                </div>
                <div class="row col-11">
@@ -82,10 +82,7 @@
 <!-- Save Add Committee Members-->
 <script>
     function SaveAddCommitteMember() {
-        var ow = $('#OwnerNB').val();
-        if (ow == "") {
-            $("#AddComMemberName").val("يرجى اختيار المالك بالبحث عنه");
-        } else {
+        
          var validator = $("#Add_comm_Member").kendoValidator().data("kendoValidator");
 
 
@@ -97,7 +94,7 @@
             var model = {
                 COMMITTEENB: $('#ComMebmerNb').val(),
                 MEMBERSHIPNB: $('#AddComMemberShip').val(),
-                MEMBERNAME: $("#AddComMemberName2").val(),
+                MEMBERNAME: $("#AddComMemberName").val(),
                 ORDR: $("#AddComMemberOrder").val(),
                 NOTES: $("#AddComMemberNotes").val(),
                 MEMBERPOSITIONNB: $("#AddComMemberPostion").val(),
@@ -129,7 +126,7 @@
 
                 }
             });
-        }}
+        }
 
     }
 

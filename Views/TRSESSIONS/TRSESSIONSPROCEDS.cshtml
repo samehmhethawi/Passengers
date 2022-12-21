@@ -15,6 +15,7 @@
 </style>
 
 <style>
+
     .bordered {
         border: 1px dashed #a0ddd8;
         transition: all ease-in-out 0.3s;
@@ -125,7 +126,10 @@
                     <td width="80%">
                         <div class="row SessionInfo" style="margin:0;">
                             <div class="col-md-3 col-sm-4 col-xs-6 bordered">
-                                <span><label>رقم الجلسة:</label> <span class="text-primary" id="currentCarProcedIdMoz">@ViewBag.SessionNo</span></span>
+                                @if (ViewBag.SessionStatus == "فعال")
+                                {
+                                    <button id="CloseSession" onclick="GetPartialProcedCount()" class="btn btn-danger">اعداد طلبات الجلسة</button>
+                                }
                             </div>
                             <div class="col-md-3 col-sm-4 col-xs-6 bordered">
                                 <button id="PrintSession" onclick="PrintSession()" class="btn btn-primary">طباعة المحضر</button>
@@ -141,6 +145,7 @@
                                 @if (ViewBag.SessionStatus == "فعال")
                                 {
                                     <button id="FinishSession" onclick="FinishSession()" class="btn btn-success">انهاء الجلسة</button>
+
                                 }
                             </div>
                         </div>
@@ -442,23 +447,17 @@
     function PrintSession() {
         var id = @ViewBag.SessionID;
         window.open("PrintReportSession/" + id, "_blank");
-
     }
 </script>
 
 <script>
 
     function renderCarLink1(data) {
-
-
-
         return "<button  onclick='GetPartialProcedinfo(" + data.CARPROCEDSTEPNB + "," + data.PROCEDNB + ")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button>";
     }
 
     function ShowProcedInfo(nb) {
-
         var wnd = $("#ProcedInfo").data("kendoWindow");
-
         wnd.center().open();
     }
 
@@ -515,7 +514,7 @@
 <script>
     function GetPartialProcedCount() {
 
-       
+
 
         var url = "@Url.Action("GetProcedCount", "TRSESSIONS")";
 
@@ -549,3 +548,28 @@
         wnd.center().open();
     }
 </script>
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url:"@Url.Action("GetProcedCountIstrue", "TRSESSIONS")",
+            cache: false,
+            type: "GET",
+            data: { Sesnb : @ViewBag.SessionID},
+            success: function (data) {
+               
+                if (data.success == true) {
+                    GetPartialProcedCount();
+                } else {
+
+                }
+
+            },
+            error: function (reponse) {
+
+            }
+        });
+
+    });
+</script>
+

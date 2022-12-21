@@ -97,9 +97,9 @@
                <div>
                    <div class="col-md-11" >
                    <span>  نوع المعاملة 
-                          @(Html.Kendo().DropDownList()
+                          @(Html.Kendo().MultiSelect()
                                     .Name("PROCEDNB").Filter("contains")
-                                    .DataTextField("NAME").OptionLabel("اختر نوع المعاملة")
+                                    .DataTextField("NAME")
                                     .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
                                     .DataSource(source =>
                                     {
@@ -115,8 +115,8 @@
                        </div>
                     <div class="col-md-11" style="padding:15px" >
                    <span>  نوع المركبة 
-                          @(Html.Kendo().DropDownList().Filter("contains")
-                                    .Name("CARCATNB").OptionLabel("اختر نوع المركبة")
+                          @(Html.Kendo().MultiSelect().Filter("contains")
+                                    .Name("CARCATNB")
                                     .DataTextField("NAME")
                                     .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
                                     .DataSource(source =>
@@ -222,6 +222,8 @@
     <script>
     function SaveAdd() {
 
+        var required = $("#PROCEDNB").data("kendoMultiSelect").value();
+        var CARCATNB = $("#CARCATNB").data("kendoMultiSelect").value();
 
         var windowWidget = $("#Add").data("kendoWindow");
 
@@ -229,15 +231,11 @@
         var validator = $("#Add_S").kendoValidator().data("kendoValidator");
         if (validator.validate()) {
             kendo.ui.progress(windowWidget.element, true);
-            var model = {
-                PROCEDNB: $('#PROCEDNB').val(),
-                CARCATNB: $('#CARCATNB').val(),
-                STATUS: 1
-            }
+           
 
             $.ajax({
                 type: "POST",
-                data: model,
+                data: { PROCEDNB: required, CARCATNB: CARCATNB},
                 url: "@Url.Action("Create", "TRZPROCEDSCARCAT")",
                 success: function (response) {
                     if (response.success) {
@@ -261,15 +259,12 @@
 
             return data.Seq;
         }
-
-
         $("#AddNew").click(function () {
-            $("#CARCATNB").data("kendoDropDownList").value(-1);
-            $("#PROCEDNB").data("kendoDropDownList").value(-1);
+          //  $("#CARCATNB").data("kendoDropDownList").value(-1);
+          //  $("#PROCEDNB").data("kendoDropDownList").value(-1);
             var wnd = $("#Add").data("kendoWindow");
             wnd.center().open();
         });
-
         function ColseWindow() {
 
             var wnd = $("#Add").data("kendoWindow");

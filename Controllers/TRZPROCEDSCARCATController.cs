@@ -54,9 +54,24 @@ namespace Passengers.Controllers
             return Json(result);
         }
 
-        public ActionResult Create(TRZPROCEDS_CARCAT model)
+        public ActionResult Create(List<int> PROCEDNB, List<int> CARCATNB)
         {
-            db.TRZPROCEDS_CARCAT.Add(model);
+
+            foreach (var baseitem in PROCEDNB)
+            {
+                foreach (var secitem in CARCATNB)
+                {
+                    TRZPROCEDS_CARCAT data = new TRZPROCEDS_CARCAT();
+                    data.PROCEDNB = baseitem;
+                    data.CARCATNB = secitem;
+                    data.STATUS = 1;
+                    db.TRZPROCEDS_CARCAT.Add(data);
+                   
+
+                }
+
+            }
+            
             db.SaveChanges();
             return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
         }

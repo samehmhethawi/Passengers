@@ -96,6 +96,7 @@
     <Compile Include="Types.cs" />
     <Compile Include="ViewModel\CommittesAndMembersVM.cs" />
     <Compile Include="ViewModel\CountTotal.cs" />
+    <Compile Include="ViewModel\TRPROCEDS_AVAILABLEVM.cs" />
     <Compile Include="ViewModel\TRSESSIONS_MEMBERS_PRESENTVM.cs" />
     <Compile Include="ViewModel\TRSESSIONS_PROCEDS_VM.cs" />
   </ItemGroup>

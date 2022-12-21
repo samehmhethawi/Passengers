@@ -30,7 +30,6 @@ namespace Passengers.Controllers
             }
             catch
             {
-
                 return View();
             }
             return View();
@@ -46,7 +45,6 @@ namespace Passengers.Controllers
                 string usernb = MyOwnData.MyNB().ToString();
                 string username = MyOwnData.MyFullName();
                 // ToDo
-            
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 {
                     ViewBag.ReturnUrl = returnUrl;
@@ -54,7 +52,6 @@ namespace Passengers.Controllers
             }
             catch
             {
-
                 return View();
             }
             return View();

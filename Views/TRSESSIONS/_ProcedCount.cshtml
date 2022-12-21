@@ -1,2 +1,43 @@
 ﻿
-<p>لاااااا</p>
+@(Html.Kendo().Grid<Passengers.ViewModel.TRPROCEDS_AVAILABLEVM>()
+        .Name("gridPROCEDAVAILABLE")
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.NB).Width(10).Visible(false);
+            columns.Bound(c => c.PROCEDNB).Visible(false);
+            columns.Bound(c => c.SESSIONNB).Visible(false);
+            columns.Bound(c => c.NAME).Width(300).Editable("222222222").Title("نوع المعاملة");
+            columns.Bound(c => c.COUNTAVAILABLE).Width(50).Editable("222222222").Title("عدد المعاملات الموجود");
+            columns.Bound(c => c.COUNTPROCED).Width(50).Title("عدد المعاملات المرادد راستها بالجلسة");
+        })
+        .HtmlAttributes(new { style = "height: auto;" })
+        .Editable(editable => editable.Mode(GridEditMode.InCell))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .Batch(true)
+        .PageSize(50)
+        .Model(model => model.Id(p => p.NB))
+        .Read(read => read.Action("Read_TRPROCEDS_AVAILABLE", "TRSESSIONS"))
+        .Update(update => update.Action("UpdateAll", "TRSESSIONS")))
+        .Resizable(resize => resize
+        .Columns(true)
+        )
+        .ToolBar(toolbar =>
+        {
+            toolbar.Save().CancelText("<span><i class='fa fa-close' style='font-size:30px;'></i></span>").SaveText("<span><i class='fa fa-save' style='font-size:30px;'></i></span>").HtmlAttributes(new { id = "Save"});
+        })
+        .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                .Display("العدد الكلي للسجلات :  {2}")
+                                ).Refresh(true).Input(true).Info(true).PageSizes(true))
+        
+)

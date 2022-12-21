@@ -49,9 +49,22 @@ namespace Passengers.Controllers
             return Json(result);
         }
 
-        public ActionResult Create(TRZPROCEDTYPS_ALLOW model)
+        public ActionResult Create(List<int> PROCEDNB , List<int> CHECK_PROCEDNB )
         {
-            db.TRZPROCEDTYPS_ALLOW.Add(model);
+            foreach (var baseitem in PROCEDNB)
+            {
+                foreach(var secitem in CHECK_PROCEDNB)
+                {
+                    TRZPROCEDTYPS_ALLOW data = new TRZPROCEDTYPS_ALLOW();
+                    data.PROCEDNB = baseitem;
+                    data.CHECK_PROCEDNB = secitem;
+                    data.STATUS = 1;
+                    db.TRZPROCEDTYPS_ALLOW.Add(data);
+
+                }
+
+            }
+            
             db.SaveChanges();
             return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
         }

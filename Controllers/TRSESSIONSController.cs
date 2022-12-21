@@ -447,7 +447,69 @@ namespace Passengers.Controllers
     
         public ActionResult GetProcedCount()
         {
+            var data = db.Database.SqlQuery<TRPROCEDS_AVAILABLEVM>("SELECT PV.NB, PV.PROCEDNB  ,  PV.COUNTAVAILABLE ,PV.COUNTPROCED, ZP.NAME FROM TRPROCEDS_AVAILABLE PV JOIN ZPROCEDTYPS ZP ON ZP.NB =  PV.PROCEDNB").ToList();
+           ViewBag.Listdata = data;
             return PartialView("_ProcedCount");
+        }
+
+        public ActionResult GetProcedCountIstrue(long Sesnb)
+        {
+            string sql = "SELECT COUNT(*) FROM TRPROCEDS_AVAILABLE WHERE SESSIONNB = 1 AND COUNTPROCED IS NULL";
+
+            var data = db.Database.SqlQuery<int>(sql).FirstOrDefault();
+            if (data > 0)
+            {
+                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            }else
+            {
+                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+            }
+
+            
+        }
+        public ActionResult Read_TRPROCEDS_AVAILABLE([DataSourceRequest] DataSourceRequest request)
+        {
+            var sql = "SELECT PV.NB, PV.PROCEDNB  ,  PV.COUNTAVAILABLE ,PV.COUNTPROCED, ZP.NAME ,PV.SESSIONNB FROM TRPROCEDS_AVAILABLE PV JOIN ZPROCEDTYPS ZP ON ZP.NB =  PV.PROCEDNB";
+            var data = db.Database.SqlQuery<TRPROCEDS_AVAILABLEVM>(sql).ToList();
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,
+                PROCEDNB = commm.PROCEDNB,
+                COUNTAVAILABLE = commm.COUNTAVAILABLE,
+                NAME = commm.NAME,
+                COUNTPROCED = commm.COUNTPROCED,
+                SESSIONNB = commm.SESSIONNB,
+
+
+            });
+            return Json(result);
+          
+        }
+        public ActionResult UpdateAll([Bind(Prefix = "models")] IEnumerable<TRPROCEDS_AVAILABLEVM> model)
+        {
+            if (model != null && ModelState.IsValid)
+            {
+               
+                foreach (var item in model)
+                {
+                    try
+                    {
+                    var data = db.TRPROCEDS_AVAILABLE.Find(item.NB);
+                        data.COUNTPROCED = item.COUNTPROCED;
+                        db.Entry(data).State = EntityState.Modified;
+                        db.SaveChanges();
+                       
+                       
+                    }
+                    catch (Exception ex)
+                    {
+                      
+                        return Json(new { success = false}, JsonRequestBehavior.AllowGet);
+                    }
+                   
+                }
+            }
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
     }
 }
