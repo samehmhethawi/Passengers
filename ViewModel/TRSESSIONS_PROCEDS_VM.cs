@@ -27,4 +27,28 @@ namespace Passengers.ViewModel
 
 
     }
+
+    public class TRSESSIONS_PROCEDS_Print_VM
+    {
+       
+        public string PROCEDNAME { get; set; }
+        public int PROCEDNB { get; set; }
+
+        public long CARPROCEDNB { get; set; }
+        public string TABNU { get; set; }
+        public string CATNAME { get; set; }
+
+        public string FACNAME { get; set; }
+
+        public string ENGINEFEUL { get; set; }
+
+        public string FACTYY { get; set; }
+
+        public string SITES { get; set; }
+
+
+
+
+    }
+
 }

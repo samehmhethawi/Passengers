@@ -1,8 +1,8 @@
-﻿
+﻿@model IEnumerable<Passengers.ViewModel.TRSESSIONS_PROCEDS_Print_VM>
 @{
     ViewBag.Title = "طباعة محضر الجلسة";
     Layout = null;
- 
+
 }
 <head>
     <meta charset="utf-8" />
@@ -74,10 +74,10 @@
     }*/
     @@page {
         size: auto; /* auto is the initial value */
-      /*  margin: 5mm 6mm 10mm 5mm; *//* this affects the margin in the printer settings */
+        /*  margin: 5mm 6mm 10mm 5mm; */ /* this affects the margin in the printer settings */
     }
 
-    body {
+    #botable {
         background-color: #FFFFFF;
         border: solid 1px black;
         margin: 2px; /* this affects the margin on the content before sending to printer */
@@ -98,7 +98,7 @@
             bottom: 50px;
         }
     }*/
-   /* .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+    /* .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
         padding: 3px !important;
         line-height: 1.2 !important;
     }*/
@@ -107,20 +107,20 @@
     $(function () {
         window.focus();
         window.print();
-       
+
         try {
-                setTimeout(function () {
-                    window.close();
-                }, 2000);
-            } catch (e) {
-            }
-        });
+            setTimeout(function () {
+                window.close();
+            }, 2000);
+        } catch (e) {
+        }
+    });
 </script>
 <header></header>
 
 
 <body>
-    <table width="100%" height="100%" style="padding:20px">
+    <table width="100%" height="100%" style="padding:20px" id="botable">
         <tr height="25%">
             <td>
                 <label>الجمهورية العربية السورية</label><br />
@@ -132,33 +132,81 @@
             <td>
             </td>
         </tr>
-        <tr   height="25%">
+        <tr height="25%">
             <td colspan="3" style="text-align:center;">
                 <p>محضر جلسة رقم /  @ViewBag.SessionNo / تاريخ :  @ViewBag.SessionDate/</p>
                 <p>
                     عقد لجنة نقل الركاب المشترك ريف دمشق اجتماعاً بجلستها رقم / @ViewBag.SessionNo / تاريخ @ViewBag.SessionDate برئاسة:
                 </p>
                 <p>
-                    @ViewBag.SessionBossName 
+                    @ViewBag.SessionBossName
                 </p>
             </td>
         </tr>
-        <tr   height="50%">
+        <tr height="50%">
             <td colspan="2">
-               <p>وعضوية السادة:</p>
-                @foreach(var item in ViewBag.SessionMemers)
-            {
-                <p>@item</p>
-            }
-                
+                <p>وعضوية السادة:</p>
+                @foreach (var item in ViewBag.SessionMemers)
+                {
+                    <p>@item</p>
+                }
+
             </td>
             <td>
             </td>
         </tr>
     </table>
+    @for (var i = 0; i < Model.Count(); i++)
+
+    {
+        if (i == 0)
+        {
+            <div style="text-align:center;">  <p>طلبات @Model.ToList()[i].PROCEDNAME</p></div>
+
+            <table border="1" width="100%">
+
+
+                <tr>
+                    <td>
+                        <p>  @Model.ToList()[i].TABNU</p>
+                    </td>
+                </tr>
+
+
+            </table>
+        }
+        else
+        {
+            if (@Model.ToList()[i].PROCEDNB != @Model.ToList()[i - 1].PROCEDNB)
+            {
+                <div style="text-align:center;">
+                    <p>طلبات @Model.ToList()[i].PROCEDNAME</p>
+                </div>
+                <table border="1" width="100%">
+                    <tr>
+                        <td>
+                            <p>  @Model.ToList()[i].TABNU</p>
+                        </td>
+                    </tr>
+                </table> }
+            else
+            {
+                <tr>
+                    <td>
+                        <p>  @Model.ToList()[i].TABNU</p>
+                    </td>
+                </tr>
+            }
+
+        }
+
+
+
+
+    }
 </body>
 
-   
+
 
 
 <script>

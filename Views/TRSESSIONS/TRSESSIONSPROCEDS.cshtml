@@ -126,9 +126,11 @@
                     <td width="80%">
                         <div class="row SessionInfo" style="margin:0;">
                             <div class="col-md-3 col-sm-4 col-xs-6 bordered">
-                                @if (ViewBag.SessionStatus == "فعال")
+                                @if (ViewBag.SessionStatus == "فعال" )
                                 {
-                                    <button id="CloseSession" onclick="GetPartialProcedCount()" class="btn btn-danger">اعداد طلبات الجلسة</button>
+                                    <button id="procedsetting" onclick="GetPartialProcedCount()" class="btn btn-danger">اعداد طلبات الجلسة</button>
+
+
                                 }
                             </div>
                             <div class="col-md-3 col-sm-4 col-xs-6 bordered">
@@ -385,13 +387,18 @@
             data: model,
                 url: "@Url.Action("GetCount555", "TRSESSIONS")",
             success: function (response) {
+                
                 document.getElementById('totalcount').innerHTML = response.TOTALCOUNT;
                 document.getElementById('DELAYED').innerHTML = response.DELAYED;
                 document.getElementById('AGREE').innerHTML = response.AGREE;
                 document.getElementById('NOTAGREE').innerHTML = response.NOTAGREE;
                 document.getElementById('UNANSWERED').innerHTML = response.UNANSWERED;
-
-
+                if (response.countproced > 0) {
+                   
+                    $('#procedsetting').css('display', 'none');
+                   
+                    
+                }
                 }
             });}
 

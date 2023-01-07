@@ -1,5 +1,4 @@
-﻿
-@(Html.Kendo().Grid<Passengers.ViewModel.TRPROCEDS_AVAILABLEVM>()
+﻿@(Html.Kendo().Grid<Passengers.ViewModel.TRPROCEDS_AVAILABLEVM>()
         .Name("gridPROCEDAVAILABLE")
         .Columns(columns =>
         {
@@ -15,9 +14,10 @@
         .DataSource(dataSource => dataSource
         .Ajax()
         .Batch(true)
+        .Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
         .PageSize(50)
         .Model(model => model.Id(p => p.NB))
-        .Read(read => read.Action("Read_TRPROCEDS_AVAILABLE", "TRSESSIONS"))
+        .Read(read => read.Action("Read_TRPROCEDS_AVAILABLE", "TRSESSIONS").Data("GETSESSIONNB"))
         .Update(update => update.Action("UpdateAll", "TRSESSIONS")))
         .Resizable(resize => resize
         .Columns(true)
@@ -39,5 +39,71 @@
                                 .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
                                 .Display("العدد الكلي للسجلات :  {2}")
                                 ).Refresh(true).Input(true).Info(true).PageSizes(true))
-        
+
 )
+
+
+
+<script>
+    function OnRequestEnd(e) {
+        if (e.type == "update" && e.response != null && e.response.success && !e.response.Errors) {
+            toastr.success(e.response.responseText, 'نجحت العملية');
+            alert("1");
+          
+            $.ajax({
+                type: "POST",
+                data: { Sesnb: 22 },
+                url: "@Url.Action("SetProcedCount", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+                       // GetPartial();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+                        $("#grid").data("kendoGrid").dataSource.read();
+                        $("#ProcedCount").data("kendoWindow").center().close();
+                        toastr.success("تمت العملية  بنجاح");
+
+                    } else {
+
+                    }
+
+                }
+            });
+            //$('#success_msg').show();
+            //$('#error_msg').hide();
+            //$('#labelIdd').text(e.response.responseText);
+        }
+        if (e.type == "destroy" && e.response != null && e.response.success && !e.response.Errors) {
+            toastr.success(e.response.responseText, 'نجحت العملية');
+            alert("2");
+            //$('#success_msg').show();
+            //$('#error_msg').hide();
+            //$('#labelIdd').text(e.response.responseText);
+        }
+        if (e.response != null && !e.response.success && e.response.responseText != null) {
+            toastr.success(e.response.responseText, 'نجحت العملية');
+            alert("3");
+            //$('#success_msg').hide();
+            //$('#error_msg').show();
+            //$('#errlabelIdd').text(e.response.responseText);
+        }
+    }
+
+    function sync_handler(e) {
+        this.read();
+    }
+
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            $(".errorMessage").text(message);
+            alert(message);
+        }
+    }
+</script>
