@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Passengers.ViewModel.TRSESSIONS_PROCEDS_Print_VM>
+﻿
 @{
     ViewBag.Title = "طباعة محضر الجلسة";
     Layout = null;
@@ -155,55 +155,43 @@
             <td>
             </td>
         </tr>
+
     </table>
-    @for (var i = 0; i < Model.Count(); i++)
-
-    {
-        if (i == 0)
-        {
-            <div style="text-align:center;">  <p>طلبات @Model.ToList()[i].PROCEDNAME</p></div>
-
-            <table border="1" width="100%">
-
-
-                <tr>
-                    <td>
-                        <p>  @Model.ToList()[i].TABNU</p>
-                    </td>
-                </tr>
-
-
-            </table>
-        }
-        else
-        {
-            if (@Model.ToList()[i].PROCEDNB != @Model.ToList()[i - 1].PROCEDNB)
+    <div style="text-align:center">
+     طلبات :    @ViewBag.ALLPROCEDS[0].PROCEDNAME
+    </div>
+    <table border="1" style="text-align:center">
+      
+        <tbody>
+            <tr>
+                <th>رمز المعاملة</th>
+                <th>اسم الخط</th>
+                <th>نوع الخط</th>
+                <th>مسار الخط</th>
+                <th>محافظات الخط</th>
+                <th>النتيجة</th>
+            </tr>
+            @foreach (var item in ViewBag.ALLPROCEDS)
             {
-                <div style="text-align:center;">
-                    <p>طلبات @Model.ToList()[i].PROCEDNAME</p>
-                </div>
-                <table border="1" width="100%">
-                    <tr>
-                        <td>
-                            <p>  @Model.ToList()[i].TABNU</p>
-                        </td>
-                    </tr>
-                </table> }
-            else
-            {
-                <tr>
-                    <td>
-                        <p>  @Model.ToList()[i].TABNU</p>
-                    </td>
-                </tr>
-            }
+        <tr>
+            <td width="15%">@item.CARPROCEDNB</td>
+            <td width="25%">@item.NAME</td>
+            <td width="10%">@item.TYP</td>
+            <td width="20%">@item.LINEPATH</td>
+            <td width="25%">
+                @foreach (var item2 in item.LISTCITYS)
+                {
+                    <label> @item2 -</label>
+                }
+            </td>
+            <td width="5%"></td>
+        </tr>
+             }
+            </tbody>
+       
+ 
+    </table>
 
-        }
-
-
-
-
-    }
 </body>
 
 

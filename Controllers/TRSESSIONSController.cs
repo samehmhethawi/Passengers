@@ -167,13 +167,29 @@ namespace Passengers.Controllers
 
         public ActionResult Read_Member_Session([DataSourceRequest] DataSourceRequest request , long NB)
         {
-            var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + NB; 
+            var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TSM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + NB; 
 
             var data = db.Database.SqlQuery<TRSESSIONS_MEMBERS_PRESENTVM>(sql);
 
+
+
             return Json(data.ToDataSourceResult(request),JsonRequestBehavior.AllowGet);
         }
-
+        public ActionResult EditMEMBERSHIP(long nb , long MEMBERSHIPNB)
+        {
+            try
+            {
+                var data = db.TRSESSIONS_MEMBERS_PRESENT.Find(nb);
+                data.MEMBERSHIPNB = MEMBERSHIPNB;
+                db.Entry(data).State = EntityState.Modified;
+                db.SaveChanges();
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+        }
         public ActionResult NotPRESENT(long nb) 
         {
             var data = db.TRSESSIONS_MEMBERS_PRESENT.Find(nb);
@@ -378,19 +394,37 @@ namespace Passengers.Controllers
                     ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERSHIP.NAME;
                 }
             }
-            var sql = "SELECT PT.NAME AS PROCEDNAME,CP.PROCEDNB,TP.CARPROCEDNB ,CA.TABNU , ZC.NAME AS CATNAME,ZF.NAME FACNAME,CT.ENGINEFEUL,CA.FACTYY ,CT.SITES"
-                       + " FROM TRSESSIONS_PROCEDS  TP"
-                       + " LEFT JOIN CARPROCEDS CP ON TP.CARPROCEDNB = CP.NB"
-                       + " LEFT JOIN CARS CA ON CA.NB = CP.CARNB"
-                       + " LEFT JOIN ZPROCEDTYPS PT ON CP.PROCEDNB = PT.NB"
-                       + " LEFT JOIN ZCARCATEGORYS ZC ON CA.CARCATNB = ZC.NB"
-                       + " LEFT JOIN ZFACCOMPS ZF ON CA.FACTCOMPNB = ZF.NB"
-                       + " LEFT JOIN CARATTRIBS CT ON CA.NB = CT.CARNB"
-                       + " ORDER BY CP.PROCEDNB ASC";
-            var pr = db.Database.SqlQuery<TRSESSIONS_PROCEDS_Print_VM>(sql).ToList();
-
             ViewBag.SessionMemers = Members;
-            return View(pr);
+
+
+            PROCEDS_Print_ALL ALLPROCEDS = new PROCEDS_Print_ALL();
+            var pr = db.TRSESSIONS_PROCEDS.Where(x=>x.SESSIONNB == ID);            
+            foreach (var item in pr)
+            {
+                if (item.CARPROCED.PROCEDNB == 2001)
+                {
+                    var trli = db.Database.SqlQuery<PROCEDS_2001_VM>("SELECT PL.NB ,PL.NAME , ZT.NAME AS TYP , PL.LINEPATH FROM PROCED_LINES PL JOIN ZTRLINETYPES ZT ON PL.TYP = ZT.NB  WHERE CARPROCEDNB = " + item.CARPROCEDNB).FirstOrDefault();
+                    trli.PROCEDNB = 2001;
+                    trli.PROCEDNAME = "احداث خط";
+                    trli.CARPROCEDNB = item.CARPROCEDNB;
+                    trli.LISTCITYS = db.Database.SqlQuery<string>("SELECT ZC.NAME FROM PROCED_LINES_CITY TC JOIN ZCITYS ZC ON TC.CITYNB = ZC.NB WHERE TC.PROCEDLINENB = "+ trli.NB).ToList();
+                    ALLPROCEDS.proces2001.Add(trli)  ;
+                }
+            }
+            ViewBag.ALLPROCEDS = ALLPROCEDS.proces2001;
+            //var sql = "SELECT PT.NAME AS PROCEDNAME,CP.PROCEDNB,TP.CARPROCEDNB ,CA.TABNU , ZC.NAME AS CATNAME,ZF.NAME FACNAME,CT.ENGINEFEUL,CA.FACTYY ,CT.SITES"
+            //           + " FROM TRSESSIONS_PROCEDS  TP"
+            //           + " LEFT JOIN CARPROCEDS CP ON TP.CARPROCEDNB = CP.NB"
+            //           + " LEFT JOIN CARS CA ON CA.NB = CP.CARNB"
+            //           + " LEFT JOIN ZPROCEDTYPS PT ON CP.PROCEDNB = PT.NB"
+            //           + " LEFT JOIN ZCARCATEGORYS ZC ON CA.CARCATNB = ZC.NB"
+            //           + " LEFT JOIN ZFACCOMPS ZF ON CA.FACTCOMPNB = ZF.NB"
+            //           + " LEFT JOIN CARATTRIBS CT ON CA.NB = CT.CARNB"
+            //           + " ORDER BY CP.PROCEDNB ASC";
+
+
+
+            return View(ALLPROCEDS);
         }
         public ActionResult GetProcedinfo(long NB , long PRONB)
         {
@@ -458,10 +492,10 @@ namespace Passengers.Controllers
         }
         public ActionResult GetProcedCountIstrue(long Sesnb)
         {
-            string sql = "SELECT COUNT(*) FROM TRPROCEDS_AVAILABLE WHERE SESSIONNB = 1 AND COUNTPROCED IS NULL";
+            string sql = "SELECT COUNT(*) FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = "+ Sesnb;
 
             var data = db.Database.SqlQuery<int>(sql).FirstOrDefault();
-            if (data > 0)
+            if (data == 0)
             {
                 return Json(new { success = true }, JsonRequestBehavior.AllowGet);
             }else

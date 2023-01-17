@@ -6,6 +6,43 @@
 
 
 
+<script>
+    function GetFillters() {
+        var fillter = {};
+        fillter.SPROCEDNB = $('#SPROCEDNB').val();
+        fillter.SCARCATNB = $('#SCARCATNB').val();
+        return fillter;
+    }
+</script>
+
+@section PartialHeader{
+    <div class="panel-heading1 collapse" id="searchPanel">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-md-2">
+                    <label for="template_name"> المعاملة الاساسية</label>
+                </div>
+                <div class="col-md-3">
+                    @Html.Kendo().TextBox().Name("SPROCEDNB").HtmlAttributes(new { placeholder = " المعاملة الاساسية" })
+                </div>
+                <div class="col-md-2">
+                    <label for="template_name"> النوع الثانوي</label>
+                </div>
+                <div class="col-md-3">
+                    @Html.Kendo().TextBox().Name("SCARCATNB").HtmlAttributes(new { placeholder = " النوع الثانوي" })
+                </div>
+                <div class="col-md-1">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+}
+
+
 
 <!-- Grid  -->
 <div>
@@ -45,7 +82,7 @@
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
             .PageSize(15)
             .Model(model => model.Id(p => p.NB))
-            .Read(read => read.Action("Read", "TRZPROCEDSCARCAT")))
+            .Read(read => read.Action("Read", "TRZPROCEDSCARCAT").Data("GetFillters")))
             .Resizable(resize => resize
             .Columns(true)
             )
@@ -96,7 +133,7 @@
            <div id="Add_S">
                <div>
                    <div class="col-md-11" >
-                   <span>  نوع المعاملة 
+                   <span>  نوع المعاملة
                           @(Html.Kendo().MultiSelect()
                                     .Name("PROCEDNB").Filter("contains")
                                     .DataTextField("NAME")
@@ -114,7 +151,7 @@
 
                        </div>
                     <div class="col-md-11" style="padding:15px" >
-                   <span>  نوع المركبة 
+                   <span>  نوع المركبة
                           @(Html.Kendo().MultiSelect().Filter("contains")
                                     .Name("CARCATNB")
                                     .DataTextField("NAME")
@@ -212,14 +249,14 @@
             .Height(300)
             .Pinned()
             )
-    </div>
+</div>
 
 
 
 
 
-    <!-- Save Add-->
-    <script>
+<!-- Save Add-->
+<script>
     function SaveAdd() {
 
         var required = $("#PROCEDNB").data("kendoMultiSelect").value();
@@ -231,7 +268,7 @@
         var validator = $("#Add_S").kendoValidator().data("kendoValidator");
         if (validator.validate()) {
             kendo.ui.progress(windowWidget.element, true);
-           
+
 
             $.ajax({
                 type: "POST",
@@ -253,8 +290,8 @@
             });
         }
        }
-    </script>
-    <script>
+</script>
+<script>
         function renderNumber(data) {
 
             return data.Seq;
@@ -327,5 +364,15 @@
         }
         }
 
-        function Delete() { }
-    </script>
+    function Delete() { }
+
+    function Btn_Search() {
+        $("#grid").data("kendoGrid").dataSource.read();
+    }
+    function rest_filtters() {
+        $('#SPROCEDNB').val("");
+        $('#SCARCATNB').val("");
+
+
+    }
+</script>

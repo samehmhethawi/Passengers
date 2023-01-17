@@ -6,11 +6,11 @@
             .Modal(true)
             .Content(@<text>
           <div  >
-    @(Html.Kendo().Grid <Passengers.ViewModel.TRSESSIONS_MEMBERS_PRESENTVM>()
+    @(Html.Kendo().Grid<Passengers.ViewModel.TRSESSIONS_MEMBERS_PRESENTVM>()
             .Name("Detailsgrid")
             .Columns(columns =>
             {
-                
+
                 columns.Bound(c => c.ISPRESENT).ClientTemplate(" # if (SESSIONSTATUS == 1) if (ISPRESENT == 1){ #<button  onclick='NotPRESENT(#=NB#)' class='btn btn-danger'  >غائب</button> # }else{ #<button  onclick='YesPRESENT(#=NB#)' class='btn btn-success'  >حاضر</button> # } #").Sortable(false).Title(" ").Width(100);
                 columns.Bound(c => c.NB).Visible(false);
                 columns.Bound(c => c.SESSIONSTATUS).Visible(false);
@@ -18,8 +18,22 @@
                 columns.Bound(c => c.MEMBERNB).Visible(false);
                 columns.Bound(c => c.MEMBERNAME).Title("الاسم");
                 columns.ForeignKey(c => c.MEMBERSHIPNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERSHIP"], "ID", "NAME").Title("العضوية").Width(150);
+                //columns.Bound(p => p.MEMBERSHIPNB).ClientTemplate("#=MEMBERSHIPNB#").Width(180);
+                //columns.ForeignKey(c => c.MEMBERSHIPNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERSHIP"], "ID", "NAME").Title("العضوية").Width(150);
                 columns.Bound(c => c.ISPRESENT).Visible(false).Title("العضوية");
                 columns.ForeignKey(c => c.MEMBERPOSITIONNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERPOSITION"], "ID", "NAME").Title("المنصب").Width(150);
+
+                columns.Command(command =>
+                {
+                    //    //command.Custom("Preview").Click("Preview").Text(" ");
+                    command.Custom("Edit").Click("EditMEMBERSHIP").Text("تعديل العضوية في الجلسة");
+                    //   command.Custom("Delete").Click("Delete").Text(" ");
+                    //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
+                    //      command.Custom("Details2").Click("Details2").Text(" ");
+                }).Width(180);
+                //    columns.Bound(c => c.ISPRESENT).ClientTemplate
+                //  (" # if (SESSIONSTATUS == 1) if (ISPRESENT == 1){ # @(Html.Kendo().DropDownList().OptionLabel('اختر  حالة الجلسة').Name('SSESStatus').DataTextField('NAME').DataValueField('ID').HtmlAttributes(new { required = 'required', validationmessage = '*' }).DataSource(source =>{source.Read(read =>{read.Action('GetStatus', 'Codes');});}).HtmlAttributes(new { style = 'width: 100%; text-align:center;' })) # }else{ #<button  onclick='YesPRESENT(#=NB#)' class='btn btn-success'  >حاضر</button> # } #")
+                //.Sortable(false).Title(" ").Width(200);
 
 
 
@@ -32,8 +46,17 @@
             .Ajax()
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
             .PageSize(7)
-            .Model(model => model.Id(p => p.NB))
-            .Read(read => read.Action("Read_Member_Session", "TRSESSIONS").Data("GetSessNbRead")))
+            .Model(model =>
+            {
+                model.Id(p => p.NB);
+
+            }
+            )
+
+            .Read(read => read.Action("Read_Member_Session", "TRSESSIONS").Data("GetSessNbRead"))
+            //.Update(update => update.Action("EditingPopup_Update", "Grid"))
+            )
+
             .Resizable(resize => resize
             .Columns(true)
             )
@@ -41,7 +64,8 @@
             {
                 //   toolbar.Custom().Name("AddNewMEMBER").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNewMEMBER", @class = "btn btn-primary hvr-box-shadow-outset" });
             })
-                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+            .Editable(editable => editable.Mode(GridEditMode.PopUp))
+            .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
                                       .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
                                       .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
                                       .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
@@ -81,7 +105,80 @@
             )
 </div>
 
+
+<!-- EditMEMBERSHIP -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("EditMEMBERSHIP")
+            .Title("تعديل العضوية")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="EditMEMBERSHIP_E">
+                  @Html.Hidden("NBB")
+               <div>
+                   <span>  الاسم
+                       @Html.Kendo().TextBox().Name("MEMBERName").HtmlAttributes(new { placeholder = " الاسم", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+                       </span>
+
+
+                       </div>
+
+                   <div >
+                        نوع العضوية في الجلسة
+                   @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر نوع العضوية")
+                                    .Name("EditMEMBERSHIPNB")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetMemberShip", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب", style = "width: 100%; text-align:center;" })
+                                    )
+
+                       </div>
+             
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveEditMEMBERSHIP()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(300)
+            .Pinned()
+            )
+</div>
+
+
+
 <script>
+    function EditMEMBERSHIP(e)
+    {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        if (item.SESSIONSTATUS == 1) {
+            $('#NBB').val(item.NB);
+            $('#MEMBERName').val(item.MEMBERNAME);
+            $("#EditMEMBERSHIPNB").data("kendoDropDownList").value(item.MEMBERSHIPNB);
+            var wnd = $("#EditMEMBERSHIP").data("kendoWindow");
+            wnd.center().open();
+        }
+        if (item.SESSIONSTATUS != 1)
+        {
+            toastr.error("الجلسة ليست فعالة!!");
+        }
+      
+    }
 
     function NotPRESENT(id)
     {
@@ -158,16 +255,56 @@
     }
 
     function getcolor() {
-        
+
         var grid = $("#Detailsgrid").data("kendoGrid");
                 var data = grid.dataSource.data();
                 $.each(data, function (i, row) {
-                   
+
                     if (row.ISPRESENT == "1")
                         $('tr[data-uid="' + row.uid + '"] ').css("background-color", "#dff0d8");
                     if (row.ISPRESENT == "0")
                         $('tr[data-uid="' + row.uid + '"] ').css("background-color", "#f2dede");
-                    
+
                 })
+
+        $(".k-grid-Edit").addClass("hvr-box-shadow-outset");
+
+        $(".k-grid-Edit").kendoButton({
+            icon: " fa fa-pencil  text-success"
+
+
+        });
+
+        $(".k-grid-Edit").kendoTooltip({
+            content: "تعديل",
+            position: "left",
+            autoHide: true,
+        });
     }
+
+    function SaveEditMEMBERSHIP() {
+        alert($("#EditMEMBERSHIPNB").val());
+      
+        var windowWidget = $("#EditMEMBERSHIP").data("kendoWindow");
+        kendo.ui.progress(windowWidget.element, true);
+    $.ajax({
+        type: "POST",
+        data: { nb: $('#NBB').val(), MEMBERSHIPNB: $("#EditMEMBERSHIPNB").val()},
+                url: "@Url.Action("EditMEMBERSHIP", "TRSESSIONS")",
+                success: function (response) {
+                    kendo.ui.progress(windowWidget.element, false);
+                    if (response.success) {
+
+
+                        $("#Detailsgrid").data("kendoGrid").dataSource.read();
+                        $("#EditMEMBERSHIP").data("kendoWindow").center().close();
+                        toastr.success("تمت عملية التعديل بنجاح");
+                    } else {
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+    }
+
 </script>

@@ -186,6 +186,7 @@
             @(Html.Kendo().Window().Name("ProcedCount")
             .Title("تفاصيل")
             .Visible(false)
+            
             .Modal(true)
             .Content(@<text>
            <div id="Proced_Count">
@@ -228,7 +229,7 @@
                   " #<button id='' class='btn btn-danger' onclick='NotAgree(#=NB#)'> <i  class='fa fa-close'></i> </button>  # " +
                   " #<button id='' class='btn btn-text-info' onclick='Delay(#=NB#)'> <i  class='fa fa-repeat'></i> </button># " +
                   "} #")
-                .Sortable(false).Title(" ").Width(200);
+                .Sortable(false).Title(" ").Width(200).Filterable(false);
 
                  }
             })
@@ -534,6 +535,8 @@
 
                 $.when(ss2(data)).then(function () {
                     ShowProcedCount();
+                    $("#ProcedCount").parent().find(".k-window-action").css("visibility", "block");
+
                 })
             },
             error: function (reponse) {
@@ -567,6 +570,8 @@
                
                 if (data.success == true) {
                     GetPartialProcedCount();
+                    $("#ProcedCount").parent().find(".k-window-action").css("visibility", "hidden");
+
                 } else {
 
                 }

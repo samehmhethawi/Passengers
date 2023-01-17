@@ -17,7 +17,7 @@
         .Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
         .PageSize(50)
         .Model(model => model.Id(p => p.NB))
-        .Read(read => read.Action("Read_TRPROCEDS_AVAILABLE", "TRSESSIONS").Data("GETSESSIONNB"))
+        .Read(read => read.Action("Read_TRPROCEDS_AVAILABLE", "TRSESSIONS").Data("GETSESSIONNB"))        
         .Update(update => update.Action("UpdateAll", "TRSESSIONS")))
         .Resizable(resize => resize
         .Columns(true)
@@ -46,10 +46,11 @@
 
 <script>
     function OnRequestEnd(e) {
-        if (e.type == "update" && e.response != null && e.response.success && !e.response.Errors) {
+
+        @*if (e.type == "update" && e.response != null && e.response.success && !e.response.Errors) {
             toastr.success(e.response.responseText, 'نجحت العملية');
             alert("1");
-          
+
             $.ajax({
                 type: "POST",
                 data: { Sesnb: 22 },
@@ -71,7 +72,7 @@
             //$('#success_msg').show();
             //$('#error_msg').hide();
             //$('#labelIdd').text(e.response.responseText);
-        }
+        }*@
         if (e.type == "destroy" && e.response != null && e.response.success && !e.response.Errors) {
             toastr.success(e.response.responseText, 'نجحت العملية');
             alert("2");
@@ -89,6 +90,26 @@
     }
 
     function sync_handler(e) {
+ 
+          $.ajax({
+                type: "POST",
+                data: { Sesnb: 22 },
+                url: "@Url.Action("SetProcedCount", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+                       // GetPartial();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+                        $("#grid").data("kendoGrid").dataSource.read();
+                        $("#ProcedCount").data("kendoWindow").center().close();
+                        toastr.success("تمت العملية  بنجاح");
+
+                    } else {
+
+                    }
+
+                }
+            });
+
         this.read();
     }
 

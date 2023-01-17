@@ -28,27 +28,32 @@ namespace Passengers.ViewModel
 
     }
 
-    public class TRSESSIONS_PROCEDS_Print_VM
-    {
+    public class PROCEDS_Print_ALL
+    { 
+    
        
-        public string PROCEDNAME { get; set; }
-        public int PROCEDNB { get; set; }
+        public List<PROCEDS_2001_VM> proces2001 { get; set; }
 
-        public long CARPROCEDNB { get; set; }
-        public string TABNU { get; set; }
-        public string CATNAME { get; set; }
-
-        public string FACNAME { get; set; }
-
-        public string ENGINEFEUL { get; set; }
-
-        public string FACTYY { get; set; }
-
-        public string SITES { get; set; }
-
-
-
+        public PROCEDS_Print_ALL()
+        {
+            proces2001 = new List<PROCEDS_2001_VM>();
+        }
 
     }
+    public class PROCEDS_2000_VM : PROCEDS_Print_ALL
+    { 
+    }
+    public class PROCEDS_2001_VM 
+    {
+        public string PROCEDNAME { get; set; }
+        public int? PROCEDNB { get; set; }
+        public long? CARPROCEDNB { get; set; }
+        public long?  NB { get; set; } 
+        public string NAME { get; set; }
+        public string TYP { get; set; }
+        public string LINEPATH { get; set; }
+        public  List<string> LISTCITYS { get; set; }
+    }
+
 
 }

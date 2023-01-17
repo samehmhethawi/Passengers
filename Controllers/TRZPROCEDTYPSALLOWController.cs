@@ -33,7 +33,18 @@ namespace Passengers.Controllers
 
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var sql = "SELECT * FROM TRZPROCEDTYPS_ALLOW WHERE 1 = 1 ";
+
+            var sql = "SELECT TA.* FROM TRZPROCEDTYPS_ALLOW TA join ZPROCEDTYPS ZP ON ZP.NB = TA.PROCEDNB JOIN ZPROCEDTYPS ZP2 ON ZP2.NB = TA.CHECK_PROCEDNB WHERE 1 = 1  ";
+            var PROCEDNB = Request.Form["SPROCEDNB"].Trim();
+            var CHECK_PROCEDNB = Request.Form["SCHECK_PROCEDNB"].Trim();
+            if (PROCEDNB != "")
+            {
+                sql += " and ZP.NAME like '%" + PROCEDNB + "%'";
+            }
+            if (CHECK_PROCEDNB != "")
+            {
+                sql += " and ZP2.NAME like '%" + CHECK_PROCEDNB + "%'";
+            }
             var data = db.Database.SqlQuery<TRZPROCEDTYPS_ALLOW>(sql).ToList();
             int index = 0;
             DataSourceResult result = data.ToDataSourceResult(request, commm => new

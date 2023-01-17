@@ -38,7 +38,19 @@ namespace Passengers.Controllers
 
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var sql = "SELECT * FROM TRZPROCEDS_CARCAT WHERE 1 = 1 ";
+            var sql = "SELECT * FROM TRZPROCEDS_CARCAT TC JOIN ZPROCEDTYPS ZP ON ZP.NB = TC.PROCEDNB JOIN ZCARCATEGORYS CT ON CT.NB = TC.CARCATNB WHERE 1 = 1 ";
+
+            var SPROCEDNB = Request.Form["SPROCEDNB"].Trim();
+            var SCARCATNB = Request.Form["SCARCATNB"].Trim();
+            if (SPROCEDNB != "")
+            {
+                sql += " and ZP.NAME like '%" + SPROCEDNB + "%'";
+            }
+            if (SCARCATNB != "")
+            {
+                sql += " and CT.NAME like '%" + SCARCATNB + "%'";
+            }
+
             var data = db.Database.SqlQuery<TRZPROCEDS_CARCAT>(sql).ToList();
             int index = 0;
             DataSourceResult result = data.ToDataSourceResult(request, commm => new

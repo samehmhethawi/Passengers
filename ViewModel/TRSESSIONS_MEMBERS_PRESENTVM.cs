@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Proced.DataAccess.Models.CF;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -14,6 +16,8 @@ namespace Passengers.ViewModel
         public short? ISPRESENT { get; set; }
         public long MEMBERSHIPNB { get; set; }
         public long MEMBERPOSITIONNB { get; set; }
-        public long SESSIONSTATUS { get; set; } 
+        public long SESSIONSTATUS { get; set; }
+
+     
     }
 }
