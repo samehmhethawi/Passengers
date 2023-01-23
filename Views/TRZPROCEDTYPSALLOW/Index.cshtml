@@ -10,7 +10,7 @@
         var fillter = {};
         fillter.SPROCEDNB = $('#SPROCEDNB').val();
         fillter.SCHECK_PROCEDNB = $('#SCHECK_PROCEDNB').val();
-   
+
 
         return fillter;
 
@@ -18,7 +18,7 @@
 </script>
 
 @section PartialHeader{
-    <div class="panel-heading1 collapse" id="searchPanel">
+    <div class="panel-heading1 " id="searchPanel">
         <div style="padding:10px">
             <div class="row" style="padding-bottom:10px">
                 <div class="col-md-2">
@@ -55,26 +55,26 @@
             {
                 columns.Template(t => { }).Title("م.").ClientTemplate(
                  "#= renderNumber(data) #"
-               ).Width(80);
+               ).MinScreenWidth(100);
                 columns.Bound(c => c.NB).Visible(false);
                 columns.Bound(c => c.PROCEDNB).Visible(false);
-                columns.ForeignKey(c => c.PROCEDNB, (System.Collections.IEnumerable)ViewData["PROCEDS"], "ID", "NAME");
+                columns.ForeignKey(c => c.PROCEDNB, (System.Collections.IEnumerable)ViewData["PROCEDS"], "ID", "NAME").MinScreenWidth(100);
 
-                columns.Bound(c => c.CHECK_PROCEDNB).Visible(false);
-                columns.ForeignKey(c => c.CHECK_PROCEDNB, (System.Collections.IEnumerable)ViewData["PROCEDS"], "ID", "NAME");
+                columns.Bound(c => c.CHECK_PROCEDNB).Visible(false).MinScreenWidth(100);
+                columns.ForeignKey(c => c.CHECK_PROCEDNB, (System.Collections.IEnumerable)ViewData["PROCEDS"], "ID", "NAME").MinScreenWidth(100);
 
                 columns.Bound(c => c.STATUS).Visible(false);
-                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(100);
+                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").MinScreenWidth(100);
 
 
                 columns.Command(command =>
                 {
-                //    //command.Custom("Preview").Click("Preview").Text(" ");
+                    //    //command.Custom("Preview").Click("Preview").Text(" ");
                     command.Custom("Edit").Click("Edit").Text(" ");
-                  // command.Custom("Delete").Click("Delete").Text(" ");
-                //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
-                //      command.Custom("Details2").Click("Details2").Text(" ");
-                }).Width(180);
+                    command.Custom("Delete").Click("Delete").Text(" ");
+                    //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
+                    //      command.Custom("Details2").Click("Details2").Text(" ");
+                }).MinScreenWidth(100);
             })
             .HtmlAttributes(new { style = "height: aotu  !important;" })
             .Scrollable()
@@ -88,16 +88,17 @@
             .Read(read => read.Action("Read", "TRZPROCEDTYPSALLOW").Data("GetFillters")))
             .Resizable(resize => resize
             .Columns(true)
+
             )
             .ToolBar(toolbar =>
             {
-               toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+                toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
             })
                 .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
                                       .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
                                       .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
                                       .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
-                                       .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
                                       .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
                                       .Next(HelperLib.ControlLabelsAR.KendoGridNext)
                                       .Of(HelperLib.ControlLabelsAR.KendoGridOf)
@@ -253,6 +254,44 @@
             .Pinned()
             )
 </div>
+
+
+
+<!-- delete -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("delete")
+            .Title("حذف")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="delete_S">
+               <div>
+                    @Html.Hidden("deleteNBB")
+                   <div class="col-md-11" >
+                   <h1 style="text-align:center">                هل انت متأكد من حذف السجل؟       </h1>
+
+
+                   </div>
+
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="Savedelete()" style="font-size:30px">نعم</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()" style="font-size:30px"> لا    </button>
+
+               </div>
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(300)
+            .Pinned()
+            )
+
+</div>
+
+
 <!-- Save Add-->
 <script>
 
@@ -295,20 +334,23 @@
        }
 </script>
 <script>
-        function renderNumber(data) {
+    function renderNumber(data)
+    {
 
             return data.Seq;
-        }
+    }
 
 
-        $("#AddNew").click(function () {
+    $("#AddNew").click(function ()
+    {
            // $("#CHECK_PROCEDNB").data("kendoDropDownList").value(-1);
           //  $("#PROCEDNB").data("kendoDropDownList").value(-1);
             var wnd = $("#Add").data("kendoWindow");
             wnd.center().open();
-        });
+    });
 
-        function ColseWindow() {
+    function ColseWindow()
+    {
 
             var wnd = $("#Add").data("kendoWindow");
             wnd.center().close();
@@ -316,11 +358,13 @@
             var wnd = $("#Edit").data("kendoWindow");
             wnd.center().close();
 
+            var wnd = $("#delete").data("kendoWindow");
+            wnd.center().close();
 
+    }
 
-        }
-
-        function Edit(e) {
+    function Edit(e)
+    {
             var tr = $(e.target).closest("tr");    // get the current table row (tr)
             var item = this.dataItem(tr);          // get the date of this row
             alert(item.NB);
@@ -333,17 +377,20 @@
             var wnd = $("#Edit").data("kendoWindow");
             wnd.center().open();
 
-        }
+    }
 
-        function SaveEdit() {
+    function SaveEdit()
+    {
             alert($('#NBB').val());
             var windowWidget = $("#Edit").data("kendoWindow");
 
 
         var validator = $("#Add_E").kendoValidator().data("kendoValidator");
-        if (validator.validate()) {
+        if (validator.validate())
+        {
             kendo.ui.progress(windowWidget.element, true);
-            var model = {
+            var model =
+            {
                 NB: $('#NBB').val(),
                 PROCEDNB: $('#EditPROCEDNB').val(),
                 CHECK_PROCEDNB: $('#EditCHECK_PROCEDNB').val(),
@@ -354,14 +401,17 @@
                 type: "POST",
                 data: model,
                 url: "@Url.Action("Update", "TRZPROCEDTYPSALLOW")",
-                success: function (response) {
-                    if (response.success) {
+                success: function (response)
+                {
+                    if (response.success)
+                    {
                         kendo.ui.progress(windowWidget.element, false);
                         ColseWindow();
                         $("#grid").data("kendoGrid").dataSource.page(1);
 
                         toastr.success("تمت عملية الإضافة بنجاح");
-                    } else {
+                    } else
+                    {
                         kendo.ui.progress(windowWidget.element, false);
                         toastr.error(response.responseText);
                     }
@@ -369,18 +419,56 @@
                 }
             });
         }
-        }
+    }
 
-    function Delete() { }
+ 
 
-    function Btn_Search() {
+    function Btn_Search()
+    {
         $("#grid").data("kendoGrid").dataSource.read();
     }
-    function rest_filtters() {
+    function rest_filtters()
+    {
         $('#SPROCEDNB').val("");
         $('#SCHECK_PROCEDNB').val("");
-
-
     }
 
+    function Delete(e)
+    {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);
+        $('#deleteNBB').val(item.NB);
+        var wnd = $("#delete").data("kendoWindow");
+        wnd.center().open();
+    }
+
+
+    function Savedelete()
+    {
+            var windowWidget = $("#delete").data("kendoWindow");
+            var id = $('#deleteNBB').val();
+           
+        $.ajax(
+            {
+                type: "POST",
+              data: { NB: id},
+                url: "@Url.Action("Delete", "TRZPROCEDTYPSALLOW")",
+              success: function (response)
+              {
+                  if (response.success)
+                  {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                  } else
+                  {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                  }
+
+                }
+            });
+    }
 </script>

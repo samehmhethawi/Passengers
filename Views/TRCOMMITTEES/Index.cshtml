@@ -51,12 +51,11 @@
         $('#SComDateEnd').val("");
         $("#SComStatus").data("kendoDropDownList").value(-1);
         $("#SComCity").data("kendoDropDownList").value(-1);
-
         $("#grid").data("kendoGrid").dataSource.data([]);
     }
 </script>
 @section PartialHeader{
-    <div class="panel-heading1 collapse" id="searchPanel">
+    <div class="panel-heading1 " id="searchPanel" style="font-size: 15px">
         <div style="padding:10px">
             <div class="row" style="padding-bottom:10px">
                 <div class="col-md-1">
@@ -87,7 +86,7 @@
                 <div class="col-md-1">
                     <label for="template_name"> التاريخ من</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2" >
                     @(Html.Kendo().DatePicker()
                         .Name("SComDateStart")
                         .Format("{0:dd/MM/yyyy}")
@@ -127,10 +126,9 @@
 
                 </div>
 
-                <div class="col-md-offset-7">
+                <div class="col-md-1 col-md-offset-7">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
-                </div>
-                <div class="col-md-1">
+                
                     <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
 
                 </div>
@@ -138,9 +136,6 @@
         </div>
     </div>
 }
-
-
-
 <!-- Gridn Committee -->
 <div>
     @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRCOMMITTEES>()
@@ -150,16 +145,16 @@
                 columns.Template(t => { }).Title("م.").ClientTemplate(
                  "#= renderNumber(data) #"
                ).Width(80);
-                columns.Bound(c => c.NB);
-                columns.Bound(c => c.COMNO);
-                columns.Bound(c => c.COMDATE).Format("{0:dd/MM/yyyy}");
+                columns.Bound(c => c.NB).Visible(false);
+                columns.Bound(c => c.COMNO).Width(150);
+                columns.Bound(c => c.COMDATE).Format("{0:dd/MM/yyyy}").Width(150);
                 columns.ForeignKey(c => c.COMCITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
                 columns.Bound(c => c.COMCITYNB).Visible(false);
                 columns.Bound(c => c.STATUS).Visible(false);
                 columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150);
-                columns.Bound(c => c.ORDR);
-                columns.Bound(c => c.IUSER);
-                columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}");
+                columns.Bound(c => c.ORDR).Width(150);
+                columns.Bound(c => c.IUSER).Width(200);
+                columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}").Width(150);
                 columns.Command(command =>
                 {
                     //command.Custom("Preview").Click("Preview").Text(" ");
@@ -218,19 +213,11 @@
 
 </div>
 
-
-
-
-
 @Html.Partial("_AddCommittee")
 @Html.Partial("_EditCommittee")
 @Html.Partial("_AddMemberToCommittee")
 @Html.Partial("_SearchOwners")
 @Html.Partial("_DetailsMembers")
-
-
-
-
 
 <!-- show and close Window-->
 <script>

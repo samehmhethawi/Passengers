@@ -8,11 +8,11 @@
            <div id="Edit_Session">
                @Html.Hidden("SesNb")
                <div class="row col-11">
-                   <div class="col-md-3" >
+                   <div class="col-md-5" >
                    <span>  رقم الجلسة
                        @Html.Kendo().TextBox().Name("EditSesNo").HtmlAttributes(new { placeholder = " رقم الجلسة", required = "required", data_required_msg = "هذا الحقل مطلوب" })</span>
                        </div>
-                      <div class="col-md-3" >
+                      <div class="col-md-5" >
                    <span>  تاريخ الجلسة
                           @(Html.Kendo().DatePicker()
                                         .Name("EditSesDate").Format("{0:dd/MM/yyyy}")
@@ -21,7 +21,7 @@
 
 
                        </div>
-                      <div class="col-md-3" >
+                      @*<div class="col-md-3" >
                    <span>  محافظة الجلسة
                           @(Html.Kendo().DropDownList()
                                     .Name("EditSesCity")
@@ -39,7 +39,7 @@
                                     )</span>
 
 
-                       </div>
+                       </div>*@
                </div>
                <div class="window-footer">
                    <button class="btn btn-primary" onclick="SaveEditSession()">حفظ</button>
@@ -61,8 +61,9 @@
     function SaveEditSession() {
         var validator = $("#Edit_Session").kendoValidator().data("kendoValidator");
 
-
+        var windowWidget = $("#EditSession").data("kendoWindow");
         if (validator.validate()) {
+            kendo.ui.progress(windowWidget.element, true);
             var model = {
                 NB: $('#SesNb').val(),
                 SESNO: $('#EditSesNo').val(),
@@ -71,7 +72,26 @@
 
             }
 
-           
+             $.ajax({
+                type: "POST",
+                data: model,
+                url: "@Url.Action("EditSession", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+
+
         }
 
        }

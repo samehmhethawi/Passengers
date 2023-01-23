@@ -124,7 +124,7 @@ namespace Passengers.Controllers
         public ActionResult GetCarCat()
         {
 
-            var status = db.ZCARCATEGORYS.Select(x => new
+            var status = db.ZCARKINDS.Select(x => new
             {
                 ID = x.NB,
                 NAME = x.NAME,

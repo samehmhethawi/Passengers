@@ -28,7 +28,7 @@ namespace Passengers.Controllers
                 ID = x.NB,
                 NAME = x.NAME
             });
-            ViewData["CARCAT"] = db.ZCARCATEGORYS.Select(x => new
+            ViewData["CARCAT"] = db.ZCARKINDS.Select(x => new
             {
                 ID = x.NB,
                 NAME = x.NAME
@@ -38,7 +38,7 @@ namespace Passengers.Controllers
 
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var sql = "SELECT * FROM TRZPROCEDS_CARCAT TC JOIN ZPROCEDTYPS ZP ON ZP.NB = TC.PROCEDNB JOIN ZCARCATEGORYS CT ON CT.NB = TC.CARCATNB WHERE 1 = 1 ";
+            var sql = "SELECT * FROM TRZPROCEDS_CARCAT TC JOIN ZPROCEDTYPS ZP ON ZP.NB = TC.PROCEDNB JOIN ZCARKINDS CT ON CT.NB = TC.CARCATNB WHERE 1 = 1 ";
 
             var SPROCEDNB = Request.Form["SPROCEDNB"].Trim();
             var SCARCATNB = Request.Form["SCARCATNB"].Trim();
@@ -118,6 +118,55 @@ namespace Passengers.Controllers
                 return Json(new { success = false, responseText = ex }, JsonRequestBehavior.AllowGet);
             }
            
+
+            
+        }
+        public ActionResult Delete(long NB)
+        {
+
+            try
+            {
+
+                var dd = db.TRZPROCEDS_CARCAT.Find(NB);
+
+                if (dd == null)
+                {
+                    return Json(new { success = false, responseText = " لا يوجد سجل" }, JsonRequestBehavior.AllowGet);
+
+                }
+                else 
+                {
+                    using (var transaction = db.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            if (dd != null)
+                            {
+
+                                db.TRZPROCEDS_CARCAT.Attach(dd);
+                                db.TRZPROCEDS_CARCAT.Remove(dd);
+                                db.SaveChanges();
+                                transaction.Commit();
+                                
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            transaction.Rollback();
+                           
+                        }
+                    }
+                }
+              
+
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, responseText = ex }, JsonRequestBehavior.AllowGet);
+            }
+
         }
     }
 }

@@ -111,5 +111,53 @@ namespace Passengers.Controllers
             }
 
         }
+
+        public ActionResult Delete(long NB)
+        {
+
+            try
+            {
+
+                var dd = db.TRZPROCEDTYPS_ALLOW.Find(NB);
+
+                if (dd == null)
+                {
+                    return Json(new { success = false, responseText = " لا يوجد سجل" }, JsonRequestBehavior.AllowGet);
+
+                }
+                else
+                {
+                    using (var transaction = db.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            if (dd != null)
+                            {
+
+                                db.TRZPROCEDTYPS_ALLOW.Attach(dd);
+                                db.TRZPROCEDTYPS_ALLOW.Remove(dd);
+                                db.SaveChanges();
+                                transaction.Commit();
+
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            transaction.Rollback();
+
+                        }
+                    }
+                }
+
+
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, responseText = ex }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
     }
 }

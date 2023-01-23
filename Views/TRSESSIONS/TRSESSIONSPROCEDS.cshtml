@@ -47,22 +47,22 @@
 
 @section PartialHeader{
     <!--Session Info -->
-    <div class="panel-heading1 collapse" id="searchPanel">
+    <div class="panel-heading1 " id="searchPanel">
         <div>
             <table width="100%">
                 <tr>
                     <td width="80%">
                         <div class="row SessionInfo" style="margin:0;">
-                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                            <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 <span><label>رقم الجلسة:</label> <span class="text-primary" id="currentCarProcedIdMoz">@ViewBag.SessionNo</span></span>
                             </div>
-                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                            <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 <span><label>تاريخ الجلسة:</label> <span class="text-primary" id="currentCarProcedIdMoz">@ViewBag.SessionDate</span></span>
                             </div>
-                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                            <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 <span><label>رئيس الجلسة:</label> <span class="text-primary" id="currentCarProcedIdMoz">@ViewBag.SessionBossName</span></span>
                             </div>
-                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                            <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 <span><label>حالة الجلسة:</label> <span class="text-primary" id="currentCarProcedIdMoz">@ViewBag.SessionStatus</span></span>
                             </div>
                         </div>
@@ -125,7 +125,7 @@
                 <tr>
                     <td width="80%">
                         <div class="row SessionInfo" style="margin:0;">
-                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                            <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 @if (ViewBag.SessionStatus == "فعال" )
                                 {
                                     <button id="procedsetting" onclick="GetPartialProcedCount()" class="btn btn-danger">اعداد طلبات الجلسة</button>
@@ -133,17 +133,17 @@
 
                                 }
                             </div>
-                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                            <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 <button id="PrintSession" onclick="PrintSession()" class="btn btn-primary">طباعة المحضر</button>
                             </div>
-                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                            <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 @if (ViewBag.SessionStatus == "فعال")
                                 {
                                     <button id="CloseSession" onclick="CloseSession()" class="btn btn-danger">الغاء الجلسة</button>
                                 }
                             </div>
 
-                            <div class="col-md-3 col-sm-4 col-xs-6 bordered">
+                            <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 @if (ViewBag.SessionStatus == "فعال")
                                 {
                                     <button id="FinishSession" onclick="FinishSession()" class="btn btn-success">انهاء الجلسة</button>
@@ -208,17 +208,17 @@
             .Name("grid")
             .Columns(columns =>
             {
-                columns.Bound(c => c.NB);
-                columns.Bound(c => c.ORDR).Title("الترتيب");
-                columns.Bound(c => c.CARNB).Title("رمز المركبة");
-                columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة").ClientTemplate("#= renderCarLink1(data) #").Width(130);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.Bound(c => c.ORDR).Title("الترتيب").Width(100);
+                columns.Bound(c => c.CARNB).Title("رمز المركبة").Width(150);
+                columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة").ClientTemplate("#= renderCarLink1(data) #").Width(150);
                 columns.Bound(c => c.PROCEDNB).Title("نوع المعاملة").Visible(false);
                 columns.Bound(c => c.SESSIONNB).Title("رمز الجلسة").Visible(false);
-                columns.Bound(c => c.RECDAT).Format("{0:dd/MM/yyyy}").Title("تاريخ المعاملة");
-                columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة");
+                columns.Bound(c => c.RECDAT).Format("{0:dd/MM/yyyy}").Title("تاريخ المعاملة").Width(150);
+                columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة").Width(150);
                 //columns.Bound(c => c.CARNB).Title("رمز المركبة");
                 columns.Bound(c => c.CARPROCEDSTEPNB).Title("رمز الخطوة").Visible(false);
-                columns.ForeignKey(c => c.PSTATUS, (System.Collections.IEnumerable)ViewData["TRSESSIONSPROCEDSTATUS"], "ID", "NAME").Title("حالة الطلب");
+                columns.ForeignKey(c => c.PSTATUS, (System.Collections.IEnumerable)ViewData["TRSESSIONSPROCEDSTATUS"], "ID", "NAME").Title("حالة الطلب").Width(150);
 
                 if (@ViewBag.SessionStatus == "فعال")
                 {
@@ -235,6 +235,7 @@
             })
             .Filterable()
             .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
             .DataSource(dataSource => dataSource
             .Ajax()
             .Model(model => model.Id(p => p.NB))
@@ -380,9 +381,10 @@
 <script>
     function GetCount() {
         var model = {
-            ID: @ViewBag.SessionID
+            ID: 1
 
-        }
+        };
+
         $.ajax({
                 type: "GET",
             data: model,

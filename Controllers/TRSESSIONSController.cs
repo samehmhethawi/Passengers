@@ -164,7 +164,32 @@ namespace Passengers.Controllers
 
         }
 
-
+        public ActionResult EditSession(TRSESSIONS model)
+        {
+            try
+            {
+                var data = db.TRSESSIONS.Find(model.NB);
+                if (data != null)
+                {
+                    if (data.SESNO != model.SESNO)
+                    {
+                        data.SESNO = model.SESNO;
+                    }
+                    if (data.SESDATE != model.SESDATE)
+                    {
+                        data.SESDATE = model.SESDATE;
+                    }
+                    db.Entry(data).State = EntityState.Modified;
+                }
+                db.SaveChanges();
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = ex.ToString()
+    });
+            }
+        }
         public ActionResult Read_Member_Session([DataSourceRequest] DataSourceRequest request , long NB)
         {
             var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TSM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + NB; 
@@ -198,7 +223,6 @@ namespace Passengers.Controllers
             db.SaveChanges();
             return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
         }
-
         public ActionResult YesPRESENT(long nb)
         {
             var data = db.TRSESSIONS_MEMBERS_PRESENT.Find(nb);
@@ -207,7 +231,6 @@ namespace Passengers.Controllers
             db.SaveChanges();
             return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
         }
-
         public ActionResult TRSESSIONSPROCEDS(long id )
         {
             ViewData["TRSESSIONSPROCEDSTATUS"] = db.TRSESSIONSPROCEDSTATUS.Select(x => new
@@ -228,15 +251,12 @@ namespace Passengers.Controllers
 
             return View();
         }
-
-        public ActionResult TRSESSIONSPROCEDS_Read([DataSourceRequest] DataSourceRequest request ,long nb)
+        public ActionResult TRSESSIONSPROCEDS_Read([DataSourceRequest] DataSourceRequest request ,long? nb)
         {
-
-            string sql = "SELECT TSP.NB AS NB ,ZP.NAME  AS PROCEDNAME , ZP.NB AS PROCEDNB, TSP.SESSIONNB  AS SESSIONNB, TSP.CARPROCEDNB AS CARPROCEDNB, CP.RECDAT  AS RECDAT, TSP.PSTATUS   AS PSTATUS, CP.CARNB  AS CARNB, TSP.ORDR AS ORDR, TSP.CARPROCEDSTEPNB  AS CARPROCEDSTEPNB  FROM TRSESSIONS_PROCEDS  TSP JOIN CARPROCEDS CP ON CP.NB = TSP.CARPROCEDNB JOIN ZPROCEDTYPS ZP ON ZP.NB = CP.PROCEDNB where TSP.SESSIONNB = " + nb + " ORDER BY TSP.ORDR ASC";
+            string sql = "SELECT TSP.NB AS NB ,ZP.NAME  AS PROCEDNAME , ZP.NB AS PROCEDNB, TSP.SESSIONNB  AS SESSIONNB, TSP.CARPROCEDNB AS CARPROCEDNB, CP.RECDAT  AS RECDAT, TSP.PSTATUS   AS PSTATUS, CP.CARNB  AS CARNB, TSP.ORDR AS ORDR, TSP.CARPROCEDSTEPNB  AS CARPROCEDSTEPNB  FROM TRSESSIONS_PROCEDS  TSP JOIN CARPROCEDS CP ON CP.NB = TSP.CARPROCEDNB JOIN ZPROCEDTYPS ZP ON ZP.NB = CP.PROCEDNB where TSP.SESSIONNB = "+nb+" ORDER BY TSP.ORDR ASC";
             var data = db.Database.SqlQuery<TRSESSIONS_PROCEDS_VM>(sql).ToList();
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
-
         public ActionResult GetCount555(long ID)
         {
 
@@ -247,7 +267,6 @@ namespace Passengers.Controllers
 
             return Json(new { success = true, TOTALCOUNT = data.TOTALCOUNT , AGREE = data.AGREE , NOTAGREE = data.NOTAGREE , DELAYED = data.DELAYED , UNANSWERED = data.UNANSWERED , countproced = countproced }, JsonRequestBehavior.AllowGet);
         }
-
         public ActionResult Agree(long nb)
         {
             try
@@ -284,7 +303,6 @@ namespace Passengers.Controllers
                 return false;
             }
         }
-
         public ActionResult NotAgree(long nb)
         {
             try
@@ -315,7 +333,6 @@ namespace Passengers.Controllers
                 return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
             }
         }
-
         public ActionResult CloseSession(long ID)
         {
             try
@@ -338,7 +355,6 @@ namespace Passengers.Controllers
                 return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
             }
         }
-
         public  ActionResult  FinishSession  (long ID)
         {
             try
@@ -367,11 +383,21 @@ namespace Passengers.Controllers
                 return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
             }
         }
-
         public ActionResult PrintReportSession(long? ID)
         {
-            var ses = db.TRSESSIONS.Find(ID);
 
+
+            var ses = db.TRSESSIONS.Find(ID);
+            if (ses.STATUS == 1) 
+            {
+                string sql = "BEGIN VEHICLES.PASSENGERS_PKG.TRSESSIONS_REPORTS_PASSENGERS(:SESNB); END;";
+
+   
+                db.Database.ExecuteSqlCommand(sql,ID);
+                db.SaveChanges();
+            }
+
+            var sesdatayear = DateTime.Parse(ses.SESDATE.ToString()).ToString("yyyy");
             var temp = DateTime.Parse(ses.SESDATE.ToString()).ToString("dd/MM/yyyy");
             ViewBag.SessionID = ID;
             ViewBag.SessionNo = ses.SESNO;
@@ -383,48 +409,78 @@ namespace Passengers.Controllers
             List<string> Members = new List<string>(); 
             foreach (var member in data)
             {
-                if (member.TRCOMMITTEES_MEMBERS.MEMBERSHIPNB != 1) {
-
+                if (member.MEMBERSHIPNB != 1) {
                     var temp3 = "";
-                    temp3 += "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERSHIP.NAME;
+                    temp3 += "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRZMEMBERSHIP.NAME;
                     Members.Add(temp3);
                 }
                 else
                 {
-                    ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERSHIP.NAME;
+                    ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRZMEMBERSHIP.NAME;
                 }
             }
             ViewBag.SessionMemers = Members;
+            //foreach (var member in data)
+            //{
+            //    if (member.TRCOMMITTEES_MEMBERS.MEMBERSHIPNB != 1)
+            //    {
+            //        var temp3 = "";
+            //        temp3 += "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERSHIP.NAME;
+            //        Members.Add(temp3);
+            //    }
+            //    else
+            //    {
+            //        ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERSHIP.NAME;
+            //    }
+            //}
+            //ViewBag.SessionMemers = Members;
 
 
-            PROCEDS_Print_ALL ALLPROCEDS = new PROCEDS_Print_ALL();
-            var pr = db.TRSESSIONS_PROCEDS.Where(x=>x.SESSIONNB == ID);            
-            foreach (var item in pr)
+            var sql1 = "SELECT DISTINCT PROCEDNB FROM TRSESSIONS_REPORTS WHERE RYEAR = " + sesdatayear + " and SESSIONNB = " + ses.NB;
+            var listofproed = db.Database.SqlQuery<long>(sql1).ToList();
+
+            List<ListPROCEDS_Print_ALL> ListPROCEDS_Print_ALL = new List<ListPROCEDS_Print_ALL>();
+            foreach (var item in listofproed)
             {
-                if (item.CARPROCED.PROCEDNB == 2001)
-                {
-                    var trli = db.Database.SqlQuery<PROCEDS_2001_VM>("SELECT PL.NB ,PL.NAME , ZT.NAME AS TYP , PL.LINEPATH FROM PROCED_LINES PL JOIN ZTRLINETYPES ZT ON PL.TYP = ZT.NB  WHERE CARPROCEDNB = " + item.CARPROCEDNB).FirstOrDefault();
-                    trli.PROCEDNB = 2001;
-                    trli.PROCEDNAME = "احداث خط";
-                    trli.CARPROCEDNB = item.CARPROCEDNB;
-                    trli.LISTCITYS = db.Database.SqlQuery<string>("SELECT ZC.NAME FROM PROCED_LINES_CITY TC JOIN ZCITYS ZC ON TC.CITYNB = ZC.NB WHERE TC.PROCEDLINENB = "+ trli.NB).ToList();
-                    ALLPROCEDS.proces2001.Add(trli)  ;
-                }
+                ListPROCEDS_Print_ALL ofpro = new ListPROCEDS_Print_ALL();
+                ofpro.pronb = item;
+                ofpro.proname = db.ZPROCEDTYPS.Where(x=>x.NB == item).Select(x=>x.NAME).FirstOrDefault();
+              var sql = "SELECT * FROM TRSESSIONS_REPORTS WHERE RYEAR = " + sesdatayear + " and SESSIONNB = " + ses.NB + "and PROCEDNB = "+ item;
+                ofpro.pro = db.Database.SqlQuery<PROCEDS_Print_ALL>(sql).ToList();
+                ListPROCEDS_Print_ALL.Add(ofpro);
             }
-            ViewBag.ALLPROCEDS = ALLPROCEDS.proces2001;
-            //var sql = "SELECT PT.NAME AS PROCEDNAME,CP.PROCEDNB,TP.CARPROCEDNB ,CA.TABNU , ZC.NAME AS CATNAME,ZF.NAME FACNAME,CT.ENGINEFEUL,CA.FACTYY ,CT.SITES"
-            //           + " FROM TRSESSIONS_PROCEDS  TP"
-            //           + " LEFT JOIN CARPROCEDS CP ON TP.CARPROCEDNB = CP.NB"
-            //           + " LEFT JOIN CARS CA ON CA.NB = CP.CARNB"
-            //           + " LEFT JOIN ZPROCEDTYPS PT ON CP.PROCEDNB = PT.NB"
-            //           + " LEFT JOIN ZCARCATEGORYS ZC ON CA.CARCATNB = ZC.NB"
-            //           + " LEFT JOIN ZFACCOMPS ZF ON CA.FACTCOMPNB = ZF.NB"
-            //           + " LEFT JOIN CARATTRIBS CT ON CA.NB = CT.CARNB"
-            //           + " ORDER BY CP.PROCEDNB ASC";
+
+           
+
+           
+            //PROCEDS_Print_ALL ALLPROCEDS = new PROCEDS_Print_ALL();
+            //var pr = db.TRSESSIONS_PROCEDS.Where(x=>x.SESSIONNB == ID);            
+            //foreach (var item in pr)
+            //{
+            //    if (item.CARPROCED.PROCEDNB == 2001)
+            //    {
+            //        var trli = db.Database.SqlQuery<PROCEDS_2001_VM>("SELECT PL.NB ,PL.NAME , ZT.NAME AS TYP , PL.LINEPATH FROM PROCED_LINES PL JOIN ZTRLINETYPES ZT ON PL.TYP = ZT.NB  WHERE CARPROCEDNB = " + item.CARPROCEDNB).FirstOrDefault();
+            //        trli.PROCEDNB = 2001;
+            //        trli.PROCEDNAME = "احداث خط";
+            //        trli.CARPROCEDNB = item.CARPROCEDNB;
+            //        trli.LISTCITYS = db.Database.SqlQuery<string>("SELECT ZC.NAME FROM PROCED_LINES_CITY TC JOIN ZCITYS ZC ON TC.CITYNB = ZC.NB WHERE TC.PROCEDLINENB = "+ trli.NB).ToList();
+            //        ALLPROCEDS.proces2001.Add(trli)  ;
+            //    }
+            //}
+            //ViewBag.ALLPROCEDS = ALLPROCEDS.proces2001;
+            ////var sql = "SELECT PT.NAME AS PROCEDNAME,CP.PROCEDNB,TP.CARPROCEDNB ,CA.TABNU , ZC.NAME AS CATNAME,ZF.NAME FACNAME,CT.ENGINEFEUL,CA.FACTYY ,CT.SITES"
+            ////           + " FROM TRSESSIONS_PROCEDS  TP"
+            ////           + " LEFT JOIN CARPROCEDS CP ON TP.CARPROCEDNB = CP.NB"
+            ////           + " LEFT JOIN CARS CA ON CA.NB = CP.CARNB"
+            ////           + " LEFT JOIN ZPROCEDTYPS PT ON CP.PROCEDNB = PT.NB"
+            ////           + " LEFT JOIN ZCARCATEGORYS ZC ON CA.CARCATNB = ZC.NB"
+            ////           + " LEFT JOIN ZFACCOMPS ZF ON CA.FACTCOMPNB = ZF.NB"
+            ////           + " LEFT JOIN CARATTRIBS CT ON CA.NB = CT.CARNB"
+            ////           + " ORDER BY CP.PROCEDNB ASC";
 
 
 
-            return View(ALLPROCEDS);
+            return View(ListPROCEDS_Print_ALL);
         }
         public ActionResult GetProcedinfo(long NB , long PRONB)
         {
@@ -482,8 +538,7 @@ namespace Passengers.Controllers
             {
                 return PartialView("_ProcedInfo");
             }                    
-        }
-    
+        }    
         public ActionResult GetProcedCount()
         {
             var data = db.Database.SqlQuery<TRPROCEDS_AVAILABLEVM>("SELECT PV.NB, PV.PROCEDNB  ,  PV.COUNTAVAILABLE ,PV.COUNTPROCED, ZP.NAME FROM TRPROCEDS_AVAILABLE PV JOIN ZPROCEDTYPS ZP ON ZP.NB =  PV.PROCEDNB").ToList();
@@ -539,7 +594,6 @@ namespace Passengers.Controllers
             }
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
-
         public ActionResult SetProcedCount(long Sesnb)
         {
             try {

@@ -73,6 +73,7 @@
     <Compile Include="Controllers\TRZMEMBERSHIPController.cs" />
     <Compile Include="Controllers\TRZPROCEDSCARCATController.cs" />
     <Compile Include="Controllers\TRZPROCEDTYPSALLOWController.cs" />
+    <Compile Include="Controllers\ValidationController.cs" />
     <Compile Include="Controllers\ZAttribCategoriesController.cs" />
     <Compile Include="Controllers\ZAttribIndexsController.cs" />
     <Compile Include="Controllers\ZAttribsController.cs" />

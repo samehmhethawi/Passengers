@@ -77,5 +77,54 @@ namespace Passengers.Controllers
             }
 
         }
+
+        public ActionResult Delete(long NB)
+        {
+
+            try
+            {
+
+                var dd = db.TRZMEMBERSHIP.Find(NB);
+
+                if (dd == null)
+                {
+                    return Json(new { success = false, responseText = " لا يوجد سجل" }, JsonRequestBehavior.AllowGet);
+
+                }
+                else
+                {
+                    using (var transaction = db.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            if (dd != null)
+                            {
+
+                                db.TRZMEMBERSHIP.Attach(dd);
+                                db.TRZMEMBERSHIP.Remove(dd);
+                                db.SaveChanges();
+                                transaction.Commit();
+
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            transaction.Rollback();
+                            return Json(new { success = false, responseText = e.Message }, JsonRequestBehavior.AllowGet);
+
+                        }
+                    }
+                }
+
+
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, responseText = ex }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }

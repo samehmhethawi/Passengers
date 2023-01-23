@@ -16,7 +16,7 @@
 </script>
 
 @section PartialHeader{
-    <div class="panel-heading1 collapse" id="searchPanel">
+    <div class="panel-heading1" id="searchPanel">
         <div style="padding:10px">
             <div class="row" style="padding-bottom:10px">
                 <div class="col-md-2">
@@ -26,10 +26,10 @@
                     @Html.Kendo().TextBox().Name("SPROCEDNB").HtmlAttributes(new { placeholder = " المعاملة الاساسية" })
                 </div>
                 <div class="col-md-2">
-                    <label for="template_name"> النوع الثانوي</label>
+                    <label for="template_name"> النوع الرئيسي</label>
                 </div>
                 <div class="col-md-3">
-                    @Html.Kendo().TextBox().Name("SCARCATNB").HtmlAttributes(new { placeholder = " النوع الثانوي" })
+                    @Html.Kendo().TextBox().Name("SCARCATNB").HtmlAttributes(new { placeholder = " النوع الرئيسي" })
                 </div>
                 <div class="col-md-1">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
@@ -68,7 +68,7 @@
                 {
                 //    //command.Custom("Preview").Click("Preview").Text(" ");
                     command.Custom("Edit").Click("Edit").Text(" ");
-                  // command.Custom("Delete").Click("Delete").Text(" ");
+                   command.Custom("Delete").Click("Delete").Text(" ");
                 //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
                 //      command.Custom("Details2").Click("Details2").Text(" ");
                 }).Width(180);
@@ -254,9 +254,41 @@
 
 
 
+<!-- delete -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("delete")
+            .Title("حذف")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="delete_S">
+               <div>
+                    @Html.Hidden("deleteNBB")
+                   <div class="col-md-11" >
+                   <h1 style="text-align:center">                هل انت متأكد من حذف السجل؟       </h1>
 
-<!-- Save Add-->
-<script>
+
+                   </div>
+
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="Savedelete()" style="font-size:30px">نعم</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()" style="font-size:30px"> لا    </button>
+
+               </div>
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(300)
+            .Pinned()
+            )
+
+</div>
+    <!-- Save Add-->
+    <script>
     function SaveAdd() {
 
         var required = $("#PROCEDNB").data("kendoMultiSelect").value();
@@ -290,8 +322,8 @@
             });
         }
        }
-</script>
-<script>
+    </script>
+    <script>
         function renderNumber(data) {
 
             return data.Seq;
@@ -309,7 +341,8 @@
 
             var wnd = $("#Edit").data("kendoWindow");
             wnd.center().close();
-
+            var wnd = $("#delete").data("kendoWindow");
+            wnd.center().close();
 
 
         }
@@ -364,7 +397,13 @@
         }
         }
 
-    function Delete() { }
+        function Delete(e) {
+            var tr = $(e.target).closest("tr");    // get the current table row (tr)
+            var item = this.dataItem(tr);
+            $('#deleteNBB').val(item.NB);
+        var wnd = $("#delete").data("kendoWindow");
+        wnd.center().open();
+        }
 
     function Btn_Search() {
         $("#grid").data("kendoGrid").dataSource.read();
@@ -372,7 +411,29 @@
     function rest_filtters() {
         $('#SPROCEDNB').val("");
         $('#SCARCATNB').val("");
+        }
 
+        function Savedelete() {
+            var windowWidget = $("#delete").data("kendoWindow");
+            var id = $('#deleteNBB').val();
+            alert(id);
+          $.ajax({
+                type: "POST",
+              data: { NB: id},
+                url: "@Url.Action("Delete", "TRZPROCEDSCARCAT")",
+                success: function (response) {
+                    if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
 
-    }
-</script>
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+        }
+    </script>

@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<Passengers.ViewModel.ListPROCEDS_Print_ALL>
 @{
     ViewBag.Title = "طباعة محضر الجلسة";
     Layout = null;
@@ -15,6 +15,22 @@
     <link href="~/Content/toastr.min.css" rel="stylesheet" />
     <script src="~/Scripts/toastr.min.js"></script>
 </head>
+<style>
+    .table {
+        border: 1px solid #ccc;
+        font-size: 16px;
+        text-align: center;
+        width: 100%;
+    }
+
+    th {
+        text-align: center;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+</style>
 <style>
     #toast-container {
         z-index: 9999999999999999999 !important;
@@ -102,6 +118,11 @@
         padding: 3px !important;
         line-height: 1.2 !important;
     }*/
+    @@media print {
+        table {
+            page-break-after: always;
+        }
+    }
 </style>
 <script>
     $(function () {
@@ -115,6 +136,8 @@
         } catch (e) {
         }
     });
+
+
 </script>
 <header></header>
 
@@ -157,40 +180,172 @@
         </tr>
 
     </table>
-    <div style="text-align:center">
-     طلبات :    @ViewBag.ALLPROCEDS[0].PROCEDNAME
-    </div>
-    <table border="1" style="text-align:center">
-      
-        <tbody>
-            <tr>
-                <th>رمز المعاملة</th>
-                <th>اسم الخط</th>
-                <th>نوع الخط</th>
-                <th>مسار الخط</th>
-                <th>محافظات الخط</th>
-                <th>النتيجة</th>
-            </tr>
-            @foreach (var item in ViewBag.ALLPROCEDS)
-            {
-        <tr>
-            <td width="15%">@item.CARPROCEDNB</td>
-            <td width="25%">@item.NAME</td>
-            <td width="10%">@item.TYP</td>
-            <td width="20%">@item.LINEPATH</td>
-            <td width="25%">
-                @foreach (var item2 in item.LISTCITYS)
-                {
-                    <label> @item2 -</label>
-                }
-            </td>
-            <td width="5%"></td>
-        </tr>
-             }
-            </tbody>
-       
- 
-    </table>
+
+    @foreach (var item in Model)
+    {
+
+        <div style="text-align:center">
+            طلبات :   @item.proname
+        </div>
+
+
+        if (item.pronb == 2001)
+        {
+            <table border="1" style="text-align:center" class="table" width="100%">
+
+                <thead>
+                    <tr>
+                        <th style="text-align:center" width="5%">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
+                        <th style="text-align:center" width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].TYP)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in item.pro)
+                    {
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.LINENAME</td>
+                            <td>@item2.TYP</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        }
+        if (item.pronb == 2002)
+        {
+            <table border="1" style="text-align:center" class="table" width="100%">
+
+                <thead>
+                    <tr>
+
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
+                        <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in item.pro)
+                    {
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.LINENAME1</td>
+                            <td>@item2.LINETYP1</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        if (item.pronb == 2003)
+        {
+            <table border="1" style="text-align:center" class="table" width="100%">
+
+                <thead>
+                    <tr>
+
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
+                        <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].TYP)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in item.pro)
+                    {
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.LINENAME1</td>
+                            <td>@item2.LINETYP1</td>
+                            <td>@item2.LINENAME</td>
+                            <td>@item2.TYP</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        if (item.pronb == 2004)
+        {
+            <table border="1" style="text-align:center" class="table" width="100%">
+
+                <thead>
+                    <tr>
+
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
+                        <th width="7%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].LINENAME2)</th>
+                        <th width="7%">@Html.DisplayNameFor(model => model.pro[0].LINETYP2)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].LINENAME)</th>
+                        <th width="7%">@Html.DisplayNameFor(model => model.pro[0].TYP)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in item.pro)
+                    {
+                    <tr>
+                        <td>@item2.ORDR</td>
+                        <td>@item2.LINENAME1</td>
+                        <td>@item2.LINETYP1</td>
+                        <td>@item2.LINENAME2</td>
+                        <td>@item2.LINETYP2</td>
+                        <td>@item2.LINENAME</td>
+                        <td>@item2.TYP</td>
+                        <td>@item2.PSTATUS</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        if (item.pronb == 2006)
+        {
+            <table border="1" style="text-align:center" class="table" width="100%">
+                <thead>
+                    <tr>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].CARNB)</th>
+                        <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].TABNB)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in item.pro)
+                    {
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.CARNB</td>
+                            <td>@item2.LINENAME1</td>
+                            <td>@item2.TABNB</td>
+                            <td>@item2.ENGINEFEUL</td>
+                            <td>@item2.FACCOMPNAME</td>
+                            <td>@item2.FACTYY</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
+                    }
+                    }
+                </tbody>
+            </table>
+
+            <br />
+            <br />
+
+        }
+    }
 
 </body>
 

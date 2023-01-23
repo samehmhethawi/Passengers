@@ -5,7 +5,7 @@
 }
 
 @section PartialHeader{
-    <div class="panel-heading1 collapse" id="searchPanel">
+    <div class="panel-heading1 " id="searchPanel">
         <div style="padding:10px">
             <div class="row" style="padding-bottom:10px">
                 <div class="col-md-1">
@@ -76,10 +76,9 @@
 
                 </div>
 
-                <div class="col-md-offset-7">
+                <div class="col-md-1 col-md-offset-7">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
-                </div>
-                <div class="col-md-1">
+               
                     <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
 
                 </div>
@@ -100,17 +99,17 @@
                  "#= renderNumber(data) #"
                ).Width(80);
                 columns.Bound(c => c.NB).Visible(false);
-                columns.Bound(c => c.SESNO);
-                columns.Bound(c => c.SESDATE).Format("{0:dd/MM/yyyy}");
-                columns.ForeignKey(c => c.SESCITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة");
+                columns.Bound(c => c.SESNO).Width(150);
+                columns.Bound(c => c.SESDATE).Format("{0:dd/MM/yyyy}").Width(150);
+                columns.ForeignKey(c => c.SESCITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
                 columns.Bound(c => c.COMMITTEENB).Visible(false);
                 columns.Bound(c => c.STATUS).Visible(false);
-                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة");
+                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150);
                 columns.Bound(c => c.ORDR).Visible(false);
                 columns.Bound(c => c.COMBOSSNAME).Width(400);
 
                 columns.Bound(c => c.IUSER).Visible(false);
-                columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}");
+                columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}").Width(150);
                 columns.Command(command =>
                 {
                     //command.Custom("Preview").Click("Preview").Text(" ");
@@ -233,14 +232,14 @@
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         var id = item.NB;
-        alert(item.SESCITYNB);
+       
 
         $('#SesNb').val(item.NB);
         $('#EditSesNo').val(item.SESNO);
 
         $("#EditSesDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.SESDATE });
 
-        $("#EditSesCity").data("kendoDropDownList").value(item.SESCITYNB);
+        //$("#EditSesCity").data("kendoDropDownList").value(item.SESCITYNB);
 
         var wnd = $("#EditSession").data("kendoWindow");
         wnd.center().open();
@@ -282,8 +281,8 @@
 
         var wnd = $("#AddSession").data("kendoWindow");
         wnd.center().close();
-
-
+        $("#EditSession").data("kendoWindow").center().close();
+        
 
     }
 </script>

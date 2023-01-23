@@ -17,18 +17,18 @@
                  "#= renderNumber(data) #"
                ).Width(80);
                 columns.Bound(c => c.NB).Visible(false);
-                columns.Bound(c => c.NAME);
-                columns.Bound(c => c.ORDR);
-                columns.Bound(c => c.NOTES);
+                columns.Bound(c => c.NAME).Width(150);
+                columns.Bound(c => c.ORDR).Width(150);
+                columns.Bound(c => c.NOTES).Width(150);
 
                 columns.Command(command =>
                 {
                 //    //command.Custom("Preview").Click("Preview").Text(" ");
                     command.Custom("Edit").Click("Edit").Text(" ");
-                  // command.Custom("Delete").Click("Delete").Text(" ");
+                   command.Custom("Delete").Click("Delete").Text(" ");
                 //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
                 //      command.Custom("Details2").Click("Details2").Text(" ");
-                }).Width(180);
+                }).Width(100);
             })
             .HtmlAttributes(new { style = "height: aotu  !important;" })
             .Scrollable()
@@ -179,6 +179,36 @@
             .Pinned()
             )
 </div>
+
+
+<!-- delete -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("delete")
+            .Title("حذف")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="delete_S">
+               <div>
+                    @Html.Hidden("deleteNBB")
+                   <div class="col-md-11" >
+                   <h1 style="text-align:center">هل انت متأكد من حذف السجل؟</h1>
+                   </div>
+                   <div class="window-footer">
+                       <button class="btn btn-primary" onclick="Savedelete()" style="font-size:30px">نعم</button>
+                       <button class="btn btn-danger" onclick="ColseWindow()" style="font-size:30px"> لا    </button>
+                   </div>
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(300)
+            .Pinned()
+            )
+
+</div>
 <!-- Save Add-->
 <script>
     function SaveAdd() {
@@ -241,36 +271,29 @@
     });
 
     function ColseWindow() {
-
         var wnd = $("#Add").data("kendoWindow");
         wnd.center().close();
-
         var wnd = $("#Edit").data("kendoWindow");
         wnd.center().close();
-
-
-
+        var wnd = $("#delete").data("kendoWindow");
+        wnd.center().close();
     }
 
     function Edit(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
-
         $('#NBB').val(item.NB);
         $('#EditName').val(item.NAME);
         $("#EditOrdr").data("kendoNumericTextBox").value(item.ORDR);
-
         $('#EditNotes').val(item.NOTES);
         var wnd = $("#Edit").data("kendoWindow");
         wnd.center().open();
-
     }
 
 
-     function SaveEdit() {
+    function SaveEdit()
+    {
                    var windowWidget = $("#Edit").data("kendoWindow");
-
-
                    var validator = $("#Add_E").kendoValidator().data("kendoValidator");
                         if (validator.validate()) {
                             kendo.ui.progress(windowWidget.element, true);
@@ -280,7 +303,6 @@
                                 ORDR: $('#EditOrdr').val(),
                                 NOTES: $('#EditNotes').val()
                             }
-
                             $.ajax({
                                 type: "POST",
                                 data: model,
@@ -300,6 +322,44 @@
                                 }
                             });
                         }
-             }
-    function Delete() { }
+    }
+
+
+    function Delete(e)
+    {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);
+        $('#deleteNBB').val(item.NB);
+        var wnd = $("#delete").data("kendoWindow");
+        wnd.center().open();
+
+    }
+
+    function Savedelete()
+    {
+        var windowWidget = $("#delete").data("kendoWindow");
+        var id = $('#deleteNBB').val();
+
+        $.ajax(
+            {
+                type: "POST",
+              data: { NB: id},
+                url: "@Url.Action("Delete", "TRZMEMBERPOSITION")",
+              success: function (response)
+              {
+                  if (response.success)
+                  {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                  } else
+                  {
+                      kendo.ui.progress(windowWidget.element, false);
+                      toastr.error(response.responseText);
+                  }
+
+                }
+            });
+    }
 </script>
