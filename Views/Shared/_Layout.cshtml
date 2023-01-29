@@ -20,6 +20,8 @@
     <link href="~/Content/chosen.css" rel="stylesheet" />
     <script src="~/Scripts/chosen.jquery.js"></script>
     @*ForKendo*@
+    <script src="~/Scripts/kendo/2017.1.118/kendo.web.min.js"></script>
+    <script src="~/Scripts/kendo/2017.1.118/kendo.aspnetmvc.min.js"></script>
     <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.common-bootstrap.min.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.mobile.all.min.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.bootstrap.min.css")" rel="stylesheet" type="text/css" />
@@ -42,7 +44,7 @@
             border-color: #28a745 !important;
         }
 
-     /*   .btn-danger {
+        /*   .btn-danger {
             color: #fff !important;
             background-color: #dc3545 !important;
             border-color: #dc3545 !important;
@@ -218,7 +220,7 @@
             background-color: #76abd9 !important;
             border-color: #76abd9 !important;
         }
-/*
+        /*
         .k-button.btn-danger {
             color: #fff !important;
             background-color: #d43f3a !important;
@@ -236,9 +238,6 @@
             background-color: #17a2b8 !important;
             border-color: #17a2b8 !important;
         }
- 
-
-
     </style>
     @*sameh----------------------------------script and style of the button icons--------------------------------------------------------*@
     <style>
@@ -252,7 +251,7 @@
             text-align: center;
             border-top: 1px solid #e5e5e5;
         }
-/*-------------------------------------------------------------------*/
+        /*-------------------------------------------------------------------*/
         .MyButtonKendoGrid {
             color: unset;
             border-color: transparent;
@@ -271,7 +270,7 @@
                 width: 1.2em;
             }
 
-/*-----------------------------------------------------------------*/
+        /*-----------------------------------------------------------------*/
         .k-grid .k-button {
             color: unset;
             border-color: transparent;
@@ -292,7 +291,6 @@
         .padding222 {
             padding-left: 30px !important;
             padding-right: 30px !important;
-          
         }
 
         .grid-icon {
@@ -316,11 +314,11 @@
                 position: "left",
                 autoHide: true,
             });
-          
 
-      //------------------------------------------------------------------------------
 
-          
+            //------------------------------------------------------------------------------
+
+
             $(".k-grid-Delete").addClass(" hvr-box-shadow-outset");
             $(".k-grid-Delete").kendoButton({
                 icon: "i fa fa-trash text-danger"
@@ -330,7 +328,7 @@
                 position: "left",
                 autoHide: true,
             });
-  //------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             $(".k-grid-Details").addClass("hvr-box-shadow-outset");
 
             $(".k-grid-Details").kendoButton({
@@ -356,7 +354,7 @@
                 position: "left",
                 autoHide: true,
             });
-            
+
             //------------------------------------------------------------------------------
             //------------------------------------------------------------------------------
             $(".k-grid-Details2").addClass("hvr-box-shadow-outset");
@@ -371,7 +369,7 @@
                 position: "left",
                 autoHide: true,
             });
-           
+
             //------------------------------------------------------------------------------
             $(".k-grid-Finish").addClass("hvr-box-shadow-outset");
 
@@ -386,12 +384,12 @@
                 autoHide: true,
             });
 
-              //------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             $(".k-grid-selectit").addClass("hvr-box-shadow-outset");
 
             $(".k-grid-selectit").kendoButton({
                 icon: " fa fa-check text-info"
-                
+
 
             });
 
@@ -402,13 +400,13 @@
             });
 
 
-  //------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             $(".mybuttonsearch").kendoTooltip({
                 content: "بحث",
                 position: "left",
                 autoHide: true,
             });
-  //------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             $(".mybuttonsearchreset").kendoTooltip({
                 content: "تفريغ الحقول",
                 position: "left",
@@ -435,7 +433,7 @@
 
             $(".k-grid-NotAgree").kendoButton({
                 icon: " fa fa-close text-danger",
-                
+
 
             });
 
@@ -603,11 +601,11 @@
                 </div>
                 <!-- Button trigger modal -->
                 @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                    Launch demo modal
-                </button>*@
+                        Launch demo modal
+                    </button>*@
                 <a href="#" class="nav-item nav-link" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-window-maximize"></i></a>
-                <a href="#" class="nav-item nav-link" data-toggle="modal" data-target="#grid"><i class="fa fa-th"></i></a>
-               
+                <a href="#" class="nav-item nav-link" data-toggle="modal" data-target="#grid2"><i class="fa fa-th"></i></a>
+
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <i class="fa fa-bars"></i>
                 </button>
@@ -616,17 +614,17 @@
                     <div>
                         <div class="row">
                             <!--<div class="col-md-1">-->
-                               @* <a href="#" class="navbar-brand hidden-sm">نقل الركاب</a>*@
+                            @* <a href="#" class="navbar-brand hidden-sm">نقل الركاب</a>*@
                             <!--</div>-->
                             <div class="col-md-12" style="text-align: center !important;">
                                 @Html.Partial("_TopNavMenuPartial")
                             </div>
                         </div>
-                       
-                       
+
+
                     </div>
-                   
-                    <div class="form-inline" >
+
+                    <div class="form-inline">
                         <h3 class="navbar-brand" style="margin:0;">
                             @ViewBag.Title
                             @if (ViewBag.Description != null)
@@ -639,7 +637,7 @@
                         @Html.Partial("_LoginPartial")
 
                     </div>
-                   
+
                 </div>
             </nav>
             <!-- #nav-menu-container -->
@@ -691,11 +689,11 @@
                         <div class="row">
                             <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                                 <a href="@Url.Action("CommittesAndMembers", "PassengersReport")">
-                                <div class="grid">
-                                    <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="">
-                                    <h5 class="grid-title">اللجان واعضائها</h5>
-                                </div>
-                                    </a>
+                                    <div class="grid">
+                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="">
+                                        <h5 class="grid-title">اللجان واعضائها</h5>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -707,9 +705,12 @@
             </div>
         </div>
     </div>
-   
-    <div class="modal fade costum" id="grid" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+
+    @*<div class="modal fade costum" id="grid" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-dialog-centered costum" id="home">
+            <div class="modal-content">*@
+    <div class="modal fade costum" id="grid2" tabindex="-1" role="dialog"  aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered costum" role="document" id="home">
             <div class="modal-content">
                 <div class="container">
                     <div class="row">
@@ -816,9 +817,9 @@
                     </div>
                 </div>
             </div>
-   
+
         </div>
-    
+
     </div>
 
 

@@ -73,14 +73,11 @@
                                     })
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
                                     )
-
                 </div>
 
                 <div class="col-md-1 col-md-offset-7">
-                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
-               
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>               
                     <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
-
                 </div>
             </div>
         </div>
@@ -107,7 +104,6 @@
                 columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150);
                 columns.Bound(c => c.ORDR).Visible(false);
                 columns.Bound(c => c.COMBOSSNAME).Width(400);
-
                 columns.Bound(c => c.IUSER).Visible(false);
                 columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}").Width(150);
                 columns.Command(command =>
@@ -161,8 +157,6 @@
             .Page("setIcons")
             .Cancel("setIcons")
         //.Edit("hideIdField")
-
-
         )
 )
 
@@ -176,7 +170,6 @@
 
 
 <script>
-
     function GetFillters() {
         var fillter = {};
         fillter.SESNO = $('#SSESNO').val();
@@ -184,11 +177,8 @@
         fillter.SESDATEEND = $('#SSESDATEEnd').val();
         fillter.STATUS = $('#SSESStatus').val();
         fillter.SESCITYNB = $('#SSESCITYNB').val();
-
         return fillter;
-
     }
-
     function Btn_Search() {
         $("#grid").data("kendoGrid").dataSource.read();
     }
@@ -216,14 +206,20 @@
 
 <!-- show and close Window-->
 <script>
-
+    function openWindow(Id) {
+        var pagewidth = document.body.offsetWidth;
+        if (pagewidth >= 1000)
+            $("#" + Id).data("kendoWindow").center().open();
+        else
+            $("#" + Id).data("kendoWindow").center().open().maximize();
+    }
     $("#AddNew").click(function () {
+       var pagewidth = document.body.offsetWidth;
         $('#AddSesNo').val("");
         $('#AddSesDate').val("");
         $("#AddSesCity").data("kendoDropDownList").value(1)
         $("#Add_Session span.k-tooltip-validation").hide();
-        var wnd = $("#AddSession").data("kendoWindow");
-        wnd.center().open();
+        openWindow('AddSession');     
     });
 
 
@@ -231,19 +227,13 @@
     function Edit(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
-        var id = item.NB;
-       
-
+        var id = item.NB;      
         $('#SesNb').val(item.NB);
         $('#EditSesNo').val(item.SESNO);
-
         $("#EditSesDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.SESDATE });
-
         //$("#EditSesCity").data("kendoDropDownList").value(item.SESCITYNB);
-
         var wnd = $("#EditSession").data("kendoWindow");
         wnd.center().open();
-
     }
 
     function Delete(e) {
@@ -251,16 +241,12 @@
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         var id = item.NB;
-
     }
     function DetailsMembers(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         iid = item.NB;
-
-
         $("#Detailsgrid").data("kendoGrid").dataSource.read();
-
         var wnd = $("#DetailsMemberSession").data("kendoWindow");
         wnd.center().open();
     }
@@ -268,27 +254,18 @@
     function Details2(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
-       
-
-
         window.open("@Url.Action("TRSESSIONSPROCEDS", "TRSESSIONS")" + "?id=" + item.NB , "_blank");
-
-
     }
 
 
     function ColseWindow() {
-
         var wnd = $("#AddSession").data("kendoWindow");
         wnd.center().close();
-        $("#EditSession").data("kendoWindow").center().close();
-        
-
+        $("#EditSession").data("kendoWindow").center().close();       
     }
 </script>
 <script>
     function renderNumber(data) {
-
         return data.Seq;
     }
 </script>

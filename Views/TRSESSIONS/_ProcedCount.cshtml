@@ -90,13 +90,16 @@
     }
 
     function sync_handler(e) {
- 
+        var ss = GETSESSIONNB();
+        var sss = ss.nb;
+        
           $.ajax({
                 type: "POST",
-                data: { Sesnb: 22 },
+              data: { Sesnb: sss },
                 url: "@Url.Action("SetProcedCount", "TRSESSIONS")",
                 success: function (response) {
                     if (response.success) {
+                        
                        // GetPartial();
                         $("#grid").data("kendoGrid").dataSource.page(1);
                         $("#grid").data("kendoGrid").dataSource.read();
@@ -104,7 +107,7 @@
                         toastr.success("تمت العملية  بنجاح");
 
                     } else {
-
+                        
                     }
 
                 }

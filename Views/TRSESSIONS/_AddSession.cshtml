@@ -7,25 +7,39 @@
             .Content(@<text>
            <div id="Add_Session">
                <div class="row col-11">
-                       <div class="col-md-3" >
-                           <span>  رقم الجلسة
+                   <div class="col-sm-12">
+                             رقم الجلسة
+
+                   </div>
+                       <div class="col-md-12 col-sm-12" >
                                   @Html.Kendo().TextBox().Name("AddSesNo").HtmlAttributes(new { placeholder = " رقم الجلسة", required = "required", data_required_msg = "هذا الحقل مطلوب"})
-                           </span>
 
-
-                       </div>
-                      <div class="col-md-4" >
-                          <span>  تاريخ الجلسة
-                                          @(Html.Kendo().DatePicker()
-                                                        .Name("AddSesDate").Format("{0:dd/MM/yyyy}")
-                                                        .HtmlAttributes(new { placeholder = "تاريخ الجلسة", required = "required", data_required_msg = "هذا الحقل مطلوب" })
-                                                    )
-                          </span>
 
 
                        </div>
-                      <div class="col-md-3" >
-                           <span>  محافظة الجلسة
+                   <div class="col-sm-12">
+                            تاريخ الجلسة
+
+                   </div>
+                      <div class="col-md-12 col-sm-12" >
+
+                                @(Html.Kendo().DatePicker()
+                                .Name("AddSesDate")
+                                .Format("{0:dd/MM/yyyy}")
+                                .HtmlAttributes(new { placeholder = "تاريخ الجلسة", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                            )
+                                
+
+
+
+                       </div>
+                   <div class="col-sm-12">
+                            محافظة الجلسة
+
+                   </div>
+                      <div class="col-md-12 col-sm-12" >
+
                                   @(Html.Kendo().DropDownList()
                                             .Name("AddSesCity")
                                             .DataTextField("NAME")
@@ -39,8 +53,8 @@
                                             })
                                             .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
                                             )
-                          
-                           </span>
+
+
 
 
                        </div>
@@ -54,14 +68,17 @@
             </text>)
             .Draggable(true)
             .Resizable()
-            .Width(800)
+            .Width(400)
             .Height(300)
+            .Actions(actions => actions.Pin().Minimize().Maximize().Close())
             .Pinned()
             )
 </div>
 
 <!-- Save Add Committee-->
 <script>
+
+
     function SaveAddSession() {
 
 

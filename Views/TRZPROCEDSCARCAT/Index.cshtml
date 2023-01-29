@@ -331,6 +331,10 @@
         $("#AddNew").click(function () {
           //  $("#CARCATNB").data("kendoDropDownList").value(-1);
           //  $("#PROCEDNB").data("kendoDropDownList").value(-1);
+            $("#PROCEDNB").data("kendoMultiSelect").value("")
+
+            $("#CARCATNB").data("kendoMultiSelect").value("")
+
             var wnd = $("#Add").data("kendoWindow");
             wnd.center().open();
         });

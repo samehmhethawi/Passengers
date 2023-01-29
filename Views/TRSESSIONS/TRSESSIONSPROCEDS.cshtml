@@ -209,9 +209,9 @@
             .Columns(columns =>
             {
                 columns.Bound(c => c.NB).Visible(false);
-                columns.Bound(c => c.ORDR).Title("الترتيب").Width(100);
+                columns.Bound(c => c.ORDR).Title("م.").Width(50);
                 columns.Bound(c => c.CARNB).Title("رمز المركبة").Width(150);
-                columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة").ClientTemplate("#= renderCarLink1(data) #").Width(150);
+                columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة").ClientTemplate("#= renderCarLink1(data) #").Width(300);
                 columns.Bound(c => c.PROCEDNB).Title("نوع المعاملة").Visible(false);
                 columns.Bound(c => c.SESSIONNB).Title("رمز الجلسة").Visible(false);
                 columns.Bound(c => c.RECDAT).Format("{0:dd/MM/yyyy}").Title("تاريخ المعاملة").Width(150);
@@ -229,7 +229,7 @@
                   " #<button id='' class='btn btn-danger' onclick='NotAgree(#=NB#)'> <i  class='fa fa-close'></i> </button>  # " +
                   " #<button id='' class='btn btn-text-info' onclick='Delay(#=NB#)'> <i  class='fa fa-repeat'></i> </button># " +
                   "} #")
-                .Sortable(false).Title(" ").Width(200).Filterable(false);
+                .Sortable(false).Title(" ").Width(150).Filterable(false);
 
                  }
             })
@@ -381,7 +381,7 @@
 <script>
     function GetCount() {
         var model = {
-            ID: 1
+            ID: @ViewBag.SessionID
 
         };
 
@@ -390,17 +390,17 @@
             data: model,
                 url: "@Url.Action("GetCount555", "TRSESSIONS")",
             success: function (response) {
-                
+
                 document.getElementById('totalcount').innerHTML = response.TOTALCOUNT;
                 document.getElementById('DELAYED').innerHTML = response.DELAYED;
                 document.getElementById('AGREE').innerHTML = response.AGREE;
                 document.getElementById('NOTAGREE').innerHTML = response.NOTAGREE;
                 document.getElementById('UNANSWERED').innerHTML = response.UNANSWERED;
                 if (response.countproced > 0) {
-                   
+
                     $('#procedsetting').css('display', 'none');
-                   
-                    
+
+
                 }
                 }
             });}
@@ -463,7 +463,7 @@
 <script>
 
     function renderCarLink1(data) {
-        return "<button  onclick='GetPartialProcedinfo(" + data.CARPROCEDSTEPNB + "," + data.PROCEDNB + ")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button>";
+        return "<button style='Width:88%; text-algin:center;' onclick='GetPartialProcedinfo(" + data.CARPROCEDSTEPNB + "," + data.PROCEDNB + ")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button>";
     }
 
     function ShowProcedInfo(nb) {

@@ -52,30 +52,30 @@ namespace Passengers.ViewModel
 
 
         [Display(Name = "سنة الجلسة")]
-        public long? RYEAR        { get; set; }
+        public long? RYEAR { get; set; }
 
 
         [Display(Name = " اسم الخط الجديد")]
-        public string LINENAME        { get; set; }
+        public string LINENAME { get; set; }
 
 
         [Display(Name = "نوع الخط")]
-        public long? TYP        { get; set; }
+        public string TYP { get; set; }
 
 
         [Display(Name = "رمز الخط")]
-        public long? LINENB1        { get; set; }
+        public long? LINENB1 { get; set; }
 
 
         [Display(Name = "اسم الخط")]
-        public string LINENAME1        { get; set; }
+        public string LINENAME1 { get; set; }
 
         [Display(Name = "نوع الخط")]
-        public long? LINETYP1        { get; set; }
+        public string LINETYP1 { get; set; }
 
 
         [Display(Name = "رمز الخط")]
-        public long? LINENB2        { get; set; }
+        public long? LINENB2 { get; set; }
 
 
         [Display(Name = "اسم الخط")]
@@ -83,43 +83,62 @@ namespace Passengers.ViewModel
 
 
         [Display(Name = "نوع الخط")]
-        public long? LINETYP2        { get; set; }
+        public string LINETYP2 { get; set; }
 
 
         [Display(Name = "رمز المركبة")]
-        public long? CARNB        { get; set; }
+        public long? CARNB { get; set; }
 
 
         [Display(Name = "رقم اللوحة")]
-        public string TABNB        { get; set; }
+        public string TABNB { get; set; }
 
 
         [Display(Name = "الصانع")]
-        public string FACCOMPNAME        { get; set; }
+        public string FACCOMPNAME { get; set; }
 
 
         [Display(Name = "سنة الصنع")]
-        public string FACTYY        { get; set; }
+        public string FACTYY { get; set; }
 
 
         [Display(Name = "نوع الوقود")]
-        public string ENGINEFEUL        { get; set; }
+        public string ENGINEFEUL { get; set; }
 
 
         [Display(Name = "عدد الركاب")]
-        public long? SITES        { get; set; }
+        public long? SITES { get; set; }
 
 
         [Display(Name = "رمز المعاملة")]
-        public long? CARPROCEDNB        { get; set; }
+        public long? CARPROCEDNB { get; set; }
 
 
-        [Display(Name = "حالة الطلب")]
-        public string PSTATUS        { get; set; }
+        [Display(Name = "قرار اللجنة")]
+        public string PSTATUS { get; set; }
 
+
+        [Display(Name = "محافظات الخط ")]
         public string NEWLINECITY { get; set; }
+
+
+        [Display(Name = "محافظات الخط")]
         public string LINE1CITY { get; set; }
+
+
+        [Display(Name = "محافظات الخط")]
         public string LINE2CITY { get; set; }
+
+
+        [Display(Name = "عدد مركبات الخط")]
+        public string COUNTCARLINE1 { get; set; }
+
+
+        [Display(Name = "عدد مركبات الخط")]
+        public string COUNTCARLINE2 { get; set; }
+
+
+
 
 
 
@@ -128,11 +147,11 @@ namespace Passengers.ViewModel
     }
 
     public class ListPROCEDS_Print_ALL
-    { 
-    
-      public  List<PROCEDS_Print_ALL> pro { get; set; }
-       public long pronb { get; set; }
+    {
+
+        public List<PROCEDS_Print_ALL> pro { get; set; }
+        public long pronb { get; set; }
         public string proname { get; set; }
     }
 
-    }
+}

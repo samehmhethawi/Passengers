@@ -1,72 +1,125 @@
 ﻿@{
     ViewBag.Title = "خطوط السير";
 }
-<div id="searchPanel">
-    <div class="row alert-success" style="margin:0;">
-        <div class="col-md-6 col-sm-12 col-xs-24" style="padding:0px;margin:0px;text-align:right">
-            <div class="row" style="margin:0;">
-                <div class="col-xs-3" style="padding:0px;margin:0px;text-align:left">
-                    <label for="USERNB">الاسم:</label>
+@section PartialHeader{
+    <div class="panel-heading1 " id="searchPanel" style="font-size: 15px">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-md-1">
+                    <label for="template_name"> الاسم</label>
                 </div>
-                <div class="col-xs-9">
-                    <input type="text" class="form-control" id="type_name" placeholder="بحث حسب الاسم" style="width:100%" />
+                <div class="col-md-9">
+                    @Html.Kendo().TextBox().Name("STrline").HtmlAttributes(new { placeholder = " اسم الخط" })
                 </div>
             </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-xs-12">
 
-        </div>
-        <div class="col-md-3 col-sm-6 col-xs-12" style="margin:0px;padding:0px">
-            <div class="row" style="margin:0px;padding:0px">
-                <div class="col-xs-6" style="padding:0px;margin:0px;">
-                    <button id="btn-search" class="btn btn-info hvr-box-shadow-outset search-btn1" style="outline:0;width:100%">
-                        بحث...
-                        <span class="fa fa-search"></span>
-                    </button>
+            <div class="row">
+                <div class="col-md-1">
+                    <label for="template_name"> المحافظة</label>
                 </div>
-                <div class="col-xs-6" style="padding:0px;margin:0px;">
-                    <button id="btn-clear" class="btn btn-danger hvr-box-shadow-outset clear-btn" style="outline:0;width:100%;">
-                        <i class="fa fa-close"></i>
-                    </button>
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر محافظة الخط")
+                                    .Name("SlineCity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                <div class="col-md-1">
+                    <label for="template_name"> هل متاح</label>
+                </div>
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر")
+                                    .Name("StrlineStatus")
+                                    .DataTextField("Text")
+                                    .DataValueField("Value").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .BindTo(new List<SelectListItem>() {
+                                          new SelectListItem() {
+                                              Text = "نعم",
+                                              Value = "1"
+                                          },
+                                          new SelectListItem() {
+                                              Text = "لا",
+                                              Value = "0"
+                                          }
+                                      })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                <div class="col-md-1">
+                    <label for="template_name"> هل ملغى</label>
+                </div>
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر")
+                                    .Name("StrlineCANCELD")
+                                    .DataTextField("Text")
+                                    .DataValueField("Value").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .BindTo(new List<SelectListItem>() {
+                                          new SelectListItem() {
+                                              Text = "نعم",
+                                              Value = "1"
+                                          },
+                                          new SelectListItem() {
+                                              Text = "لا",
+                                              Value = "0"
+                                          }
+                                      })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                <div class="col-md-2">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+
                 </div>
             </div>
         </div>
     </div>
-</div>
-@(Html.Kendo().Grid<Proced.DataAccess.Models.CF.TRLINE>()
-      .Name("grid")
-      
+}
+
+<div>
+    @(Html.Kendo().Grid<Proced.DataAccess.Models.CF.TRLINE>()
+      .Name("grid").AutoBind(false)
+
       .Columns(columns =>
+      {
+          columns.Command(command =>
           {
-            
-              columns.Bound(c => c.NAME).Title("اسم خط السير");
-              columns.Bound(c => c.TYP).Title("نوع خط السير");
-              columns.Bound(c => c.CITYNB).Title("المحافظة");
-              columns.Bound(c => c.STATUS).Title("هل هو متاح؟").ClientTemplate("#=STATUS ? 'نعم':'لا' #");
-               columns.Command(command =>
-          {
-            //  command.Custom("Edit").Click("Edit").Text(" ");
-            //  command.Custom("Delete").Click("Delete").Text(" ");
+              // command.Custom("Preview").Click("Preview").Text(" ");
+              command.Custom("Edit").Click("Edit").Text(" ");
+
+              command.Custom("DetailsMembers").Click("Preview").Text(" ");
+              //  command.Custom("Delete").Click("Delete").Text(" ");
           }).Width(150);
-          })
+          columns.Bound(c => c.NAME).Title("اسم خط السير").Width(500);
+          columns.ForeignKey(c => c.TYP, (System.Collections.IEnumerable)ViewData["ZTRLINETYPES"], "ID", "NAME").Title("النوع").Width(150);
+          //columns.Bound(c => c.TYP).Title("نوع خط السير");
+          columns.Bound(c => c.CITYNB).Title("المحافظة");
+          columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
+          columns.Bound(c => c.STATUS).Title("متاح؟").ClientTemplate("#=STATUS ? 'نعم':'لا' #").Width(100);
+          columns.Bound(c => c.ISCANCELD).Title("ملغى؟").ClientTemplate("#=ISCANCELD ? 'نعم':'لا' #").Width(100);
+          columns.Bound(c => c.MINCARS).Title("عدد الادنى").Width(150);
+          columns.Bound(c => c.MAXCARS).Title("عدد الاعلى").Width(150);
+
+      })
   //arabic from here
   .ToolBar(toolbar =>
   {
-  toolbar.Excel().Text(HelperLib.ControlLabelsAR.ExcelExport);
-  toolbar.Create().Text(HelperLib.ControlLabelsAR.Create);
-  toolbar.Template(@<text>
-            <div class="toolbar">
-                <div class="btn-group">
-                    <button class="btn btn-default hvr-box-shadow-outset" id="AddNewBtn" href="#">
-                        <span class="k-icon k-i-add"></span>@(HelperLib.ControlLabelsAR.Create)
-                    </button>
-                    <label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
-                    <label id="ROWSCOUNT" style="font-size: 20px;"></label>
-                </div>
-            </div>
-</text>);
-
-})
+      toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+  })
 .ColumnMenu(c =>
 c.Messages(m =>
      m.Columns(HelperLib.ControlLabelsAR.KendoGridColumns)
@@ -103,12 +156,12 @@ c.Messages(m =>
 )
 .Selectable(selectable =>
 {
-selectable.Mode(GridSelectionMode.Single);
-selectable.Type(GridSelectionType.Row);
+    selectable.Mode(GridSelectionMode.Single);
+    selectable.Type(GridSelectionType.Row);
 })
 .Sortable(sortable =>
 {
-sortable.SortMode(GridSortMode.SingleColumn);
+    sortable.SortMode(GridSortMode.SingleColumn);
 })
 //arabic to here
 .Filterable()
@@ -116,7 +169,7 @@ sortable.SortMode(GridSortMode.SingleColumn);
 .DataSource(dataSource => dataSource
 .Ajax()
 .Model(model => model.Id(p => p.NB))
-.Read(read => read.Action("TrLines_Read", "TrLines"))
+.Read(read => read.Action("TrLines_Read", "TrLines").Data("GetFillters"))
 .Create(create => create.Action("TrLines_Read", "TrLines"))
 .Update(update => update.Action("TrLines_Read", "TrLines"))
 .Destroy(destroy => destroy.Action("TrLines_Read", "TrLines"))
@@ -125,7 +178,7 @@ sortable.SortMode(GridSortMode.SingleColumn);
 
 .Change("setIcons")
 .DataBound("setIcons")
- 
+
 .Sort("setIcons")
 .Filter("setIcons")
 .Group("setIcons")
@@ -134,3 +187,618 @@ sortable.SortMode(GridSortMode.SingleColumn);
 //.Edit("hideIdField")
 )
 )
+</div>
+
+<!-- Add -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("AddTRline")
+            .Title("اضافة خط سير")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_TRline">
+               <div style="padding:10px">
+                    <div class="row" style="padding-bottom:10px">
+                            <div class="col-md-1">
+                                <label for="template_name"> الاسم</label>
+                            </div>
+                            <div class="col-md-9">
+                                @Html.Kendo().TextBox().Name("addTrline").HtmlAttributes(new { placeholder = " اسم الخط" })
+                            </div>
+                    </div>
+
+                    <div class="row" style="padding-bottom:10px">
+                            <div class="col-md-1">
+                                <label for="template_name"> المحافظة</label>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                @(Html.Kendo().DropDownList()
+                                                .OptionLabel("اختر محافظة الخط")
+                                                .Name("addlineCity")
+                                                .DataTextField("NAME")
+                                                .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("GetCity", "Codes");
+                                                    });
+                                                })
+                                                .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                )
+                            </div>
+
+                             <div class="col-md-1">
+                                <label for="template_name"> نوع الخط</label>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                @(Html.Kendo().DropDownList()
+                                                .OptionLabel("اختر نوع الخط")
+                                                .Name("addlinetyp")
+                                                .DataTextField("NAME")
+                                                .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("Gettrlinetyps", "Codes");
+                                                    });
+                                                })
+                                                .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                )
+                            </div>
+                        </div>
+                   <div class="row" style="padding-bottom:10px">
+                        <div class="col-md-1">
+                                <label for="template_name"> عدد الادنى</label>
+                            </div>
+                         <div class="col-md-3" >
+
+                       @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("AddtrlineMINCARS").HtmlAttributes(new { placeholder = "عدد المركبات الادنى", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+
+
+
+                       </div>
+                          <div class="col-md-1">
+                                <label for="template_name"> عدد الاعلى</label>
+                            </div>
+                         <div class="col-md-3" >
+
+                               @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("AddtrlinemaxCARS")
+                                .HtmlAttributes(new { placeholder = "عدد المركبات الادنى", required = "required", data_required_msg = "هذا الحقل مطلوب"}))
+
+
+
+                       </div>
+                    </div>
+                   <div class="row" >
+                               <div class="col-md-1">
+                                         <label for="template_name">محافظات الخط</label>
+                               </div>
+                                <div class="col-md-9">
+                                   @(Html.Kendo().MultiSelect().Filter("contains")
+                                    .Name("addlineallCity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetallCity", "Codes");
+                                        });
+
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                                </div>
+                    </div>
+               </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveAdd()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+        </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(350)
+            .Pinned()
+            .HtmlAttributes(new { style = "Width: 100%  !important;" })
+            )
+</div>
+
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("TRlinecitys")
+            .Title("محافظات خط سير")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+    <div>
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRLINE_CITY>()
+            .Name("gridcity").AutoBind(false)
+            .Columns(columns =>
+            {
+                columns.Template(t => { }).Title("م.").ClientTemplate(
+                 "#= renderNumber(data) #"
+               ).Width(80);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.Bound(c => c.LINENB).Visible(false);
+
+                columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
+                //columns.Bound(c => c.CITYNB).Width(150);
+                columns.Bound(c => c.ORDR).Width(150).Title("الترتيب");
+                // columns.Bound(c => c.NOTES).Width(150);
+
+
+
+                columns.Command(command =>
+                {
+                    //    //command.Custom("Preview").Click("Preview").Text(" ");
+                    //    command.Custom("Edit").Click("Edit").Text(" ");
+                    command.Custom("Delete").Click("Deletecity").Text(" ");
+                    //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
+                    //    command.Custom("Details2").Click("Details2").Text(" ");
+                }).Width(100);
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("Read_city", "TrLines").Data("GetCommNbRead")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+                toolbar.Custom().Name("AddNewcity").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNewcity", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("setIcons")
+            .DataBound("setIcons")
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Cancel("setIcons")
+        //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+             </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(350)
+            .Pinned()
+            .HtmlAttributes(new { style = "Width: 100%  !important;" })
+            )
+</div>
+
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("AddNewtrcity")
+            .Title("اضافة محافظة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_TRline">
+               <div style="padding:10px">
+                    @Html.Hidden("trnb")
+                    <div class="row" style="padding-bottom:10px">
+                            <div class="col-md-1">
+                                <label for="template_name"> المحافظة</label>
+                            </div>
+                            <div class="col-lg-5 col-md-3 col-sm-12 col-xs-12">
+                                @(Html.Kendo().DropDownList()
+                                                .OptionLabel("اختر محافظة الخط")
+                                                .Name("addlineCity2")
+                                                .DataTextField("NAME")
+                                                .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("GetCity", "Codes");
+                                                    });
+                                                })
+                                                .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                )
+                            </div>
+                        </div>
+               </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveAddcity()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+               </div>
+        </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(500)
+            .Height(250)
+            .Pinned()
+            .HtmlAttributes(new { style = "Width: 100%  !important;" })
+            )
+</div>
+
+
+<!-- Edit -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("EidtTRline")
+            .Title("تعديل خط سير")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_TRline">
+               <div style="padding:10px">
+                    @Html.Hidden("Etrnb")
+                    <div class="row" style="padding-bottom:10px">
+                            <div class="col-md-1">
+                                <label for="template_name"> الاسم</label>
+                            </div>
+                            <div class="col-md-9">
+                                @Html.Kendo().TextBox().Name("ETrline").HtmlAttributes(new { placeholder = " اسم الخط" })
+                            </div>
+                    </div>
+
+                    <div class="row" style="padding-bottom:10px">
+                            <div class="col-md-1">
+                                <label for="template_name"> المحافظة</label>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                @(Html.Kendo().DropDownList()
+                                                .OptionLabel("اختر محافظة الخط")
+                                                .Name("ElineCity")
+                                                .DataTextField("NAME")
+                                                .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("GetCity", "Codes");
+                                                    });
+                                                })
+                                                .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                )
+                            </div>
+
+                             <div class="col-md-1">
+                                <label for="template_name"> نوع الخط</label>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                @(Html.Kendo().DropDownList()
+                                                .OptionLabel("اختر نوع الخط")
+                                                .Name("Elinetyp")
+                                                .DataTextField("NAME")
+                                                .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("Gettrlinetyps", "Codes");
+                                                    });
+                                                })
+                                                .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                )
+                            </div>
+                        </div>
+                   <div class="row" style="padding-bottom:10px">
+                        <div class="col-md-1">
+                                <label for="template_name"> عدد الادنى</label>
+                            </div>
+                         <div class="col-md-3" >
+
+                       @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("EtrlineMINCARS").HtmlAttributes(new { placeholder = "عدد المركبات الادنى", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+
+
+
+                       </div>
+                          <div class="col-md-1">
+                                <label for="template_name"> عدد الاعلى</label>
+                            </div>
+                         <div class="col-md-3" >
+
+                               @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("EtrlinemaxCARS")
+                                .HtmlAttributes(new { placeholder = "عدد المركبات الادنى", required = "required", data_required_msg = "هذا الحقل مطلوب"}))
+
+
+
+                       </div>
+                    </div>
+                     <div class="row">
+                       <div class="col-md-1">
+                        <label for="template_name"> هل متاح</label>
+                    </div>
+                            <div class="col-md-3">
+                                @(Html.Kendo().DropDownList()
+                                                .OptionLabel("اختر")
+                                                .Name("EtrlineStatus")
+                                                .DataTextField("Text")
+                                                .DataValueField("Value").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                                .BindTo(new List<SelectListItem>() {
+                                                      new SelectListItem() {
+                                                          Text = "نعم",
+                                                          Value = "1"
+                                                      },
+                                                      new SelectListItem() {
+                                                          Text = "لا",
+                                                          Value = "0"
+                                                      }
+                                                  })
+                                                .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                )
+
+                            </div>
+
+                            <div class="col-md-1">
+                                <label for="template_name"> هل ملغى</label>
+                            </div>
+                            <div class="col-md-3">
+                                @(Html.Kendo().DropDownList()
+                                                .OptionLabel("اختر")
+                                                .Name("EtrlineCANCELD")
+                                                .DataTextField("Text")
+                                                .DataValueField("Value").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                                .BindTo(new List<SelectListItem>() {
+                                                      new SelectListItem() {
+                                                          Text = "نعم",
+                                                          Value = "1"
+                                                      },
+                                                      new SelectListItem() {
+                                                          Text = "لا",
+                                                          Value = "0"
+                                                      }
+                                                  })
+                                                .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                )
+
+                            </div>
+                       </div>
+               </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveEidt()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+        </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(350)
+            .Pinned()
+            .HtmlAttributes(new { style = "Width: 100%  !important;" })
+            )
+</div>
+
+
+<script>
+    var nb = 0;
+    function GetFillters() {
+        var fillter = {};
+        fillter.STrline = $('#STrline').val();
+        fillter.SlineCity = $('#SlineCity').val();
+        fillter.StrlineStatus = $('#StrlineStatus').val();
+        fillter.StrlineCANCELD = $('#StrlineCANCELD').val();
+        return fillter;
+    }
+
+    function Btn_Search() {
+        $("#grid").data("kendoGrid").dataSource.read();
+    }
+    function rest_filtters() {
+        $('#STrline').val("");
+        $("#StrlineCANCELD").data("kendoDropDownList").value(-1);
+        $("#SlineCity").data("kendoDropDownList").value(-1);
+        $("#StrlineStatus").data("kendoDropDownList").value(-1);
+        $("#grid").data("kendoGrid").dataSource.data([]);
+    }
+
+    $("#AddNew").click(function () {
+        $('#addTrline').val("");
+        $("#AddtrlinemaxCARS").data("kendoNumericTextBox").value("")
+        $("#AddtrlineMINCARS").data("kendoNumericTextBox").value("")
+        $("#addlineallCity").data("kendoMultiSelect").value("")
+        $("#addlineCity").data("kendoDropDownList").value(-1)
+        $("#addlinetyp").data("kendoDropDownList").value(-1)
+        var wnd = $("#AddTRline").data("kendoWindow");
+        wnd.center().open();
+    });
+    $("#AddNewcity").click(function () {
+
+        $("#addlineCity2").data("kendoDropDownList").value(-1)
+        $("#AddNewtrcity").data("kendoWindow").center().open();
+
+    });
+    function SaveAdd() {
+        var name = $('#addTrline').val();
+        var City = $("#addlineCity").val();
+        var Typ = $("#addlinetyp").val();
+        var Min = $("#AddtrlineMINCARS").val();
+        var Max = $("#AddtrlinemaxCARS").val();
+        var addlineallCity = $("#addlineallCity").data("kendoMultiSelect").value();
+        $.ajax({
+            type: "POST",
+            data: { Name: name, city: City, typ: Typ, min: Min, max: Max, allcity: addlineallCity},
+                url: "@Url.Action("Create", "TrLines")",
+                success: function (response) {
+                    if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+    }
+
+    function Deletecity(e)
+    {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);
+        var NNB = item.NB;
+         $.ajax({
+            type: "POST",
+            data: { nb : NNB},
+                url: "@Url.Action("Deletecity", "TrLines")",
+                success: function (response) {
+                    if (response.success) {
+                        $("#gridcity").data("kendoGrid").dataSource.page(1);
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+    }
+    function Preview(e)
+    {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        iid = item.NB;
+        $('#trnb').val(item.NB);
+        $("#gridcity").data("kendoGrid").dataSource.read();
+        var wnd = $("#TRlinecitys").data("kendoWindow");
+        wnd.center().open();
+    }
+
+    iid = 0;
+    function GetCommNbRead()
+    {
+
+        return {
+            Nb: iid
+        }
+    }
+
+    function SaveAddcity()
+    {
+        var tt = $('#trnb').val();
+        var fff = $('#addlineCity2').val();
+         $.ajax({
+            type: "POST",
+             data: { linb: tt, city: fff},
+                url: "@Url.Action("addcitytoline", "TrLines")",
+                success: function (response) {
+                    if (response.success) {
+                        $("#gridcity").data("kendoGrid").dataSource.page(1);
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+    }
+
+    function Edit(e)
+    {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);
+        $('#Etrnb').val(item.NB);
+        $('#ETrline').val(item.NAME);
+        $("#ElineCity").data("kendoDropDownList").value(item.CITYNB);
+        $("#Elinetyp").data("kendoDropDownList").value(item.TYP);
+        $("#EtrlineMINCARS").data("kendoNumericTextBox").value(item.MINCARS);
+        $("#EtrlinemaxCARS").data("kendoNumericTextBox").value(item.MAXCARS);
+        if (item.STATUS == true) {
+            
+            $("#EtrlineStatus").data("kendoDropDownList").value(1);
+
+        }
+        if (item.STATUS == false) {
+            $("#EtrlineStatus").data("kendoDropDownList").value(0);
+        }
+        
+        $("#EtrlineCANCELD").data("kendoDropDownList").value(item.ISCANCELD);
+
+        $("#EidtTRline").data("kendoWindow").center().open();
+
+    }
+    function SaveEidt()
+    {
+        var enb = $('#Etrnb').val();
+        var ename = $('#ETrline').val();
+        var eCity = $("#ElineCity").val();
+        var eTyp = $("#Elinetyp").val();
+        var eMin = $("#EtrlineMINCARS").val();
+        var eMax = $("#EtrlinemaxCARS").val();
+        var eSTATUS = $("#EtrlineStatus").val();
+        var eISCANCELD = $("#EtrlineCANCELD").val();
+
+        $.ajax({
+            type: "POST",
+            data: { Nb: enb, Name: ename, city: eCity, typ: eTyp, min: eMin, max: eMax, STATUS: eSTATUS, ISCANCELD: eISCANCELD},
+                url: "@Url.Action("update", "TrLines")",
+                success: function (response) {
+                    if (response.success) {
+
+                        $("#grid").data("kendoGrid").dataSource.read();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+                        $("#EidtTRline").data("kendoWindow").center().close();
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+    }
+
+
+    function ColseWindow() {
+        $("#EidtTRline").data("kendoWindow").center().close();
+        $("#AddTRline").data("kendoWindow").center().close();
+    }
+</script>
+
+<script>
+    function renderNumber(data) {
+
+        return data.Seq;
+    }
+</script>
+

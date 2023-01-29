@@ -132,8 +132,28 @@ namespace Passengers.Controllers
             return Json(status, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult Gettrlinetyps()
+        {
 
-        
+            var status = db.ZTRLINETYPES.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(status, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetallCity()
+        {            
+                var city = db.ZCITYS.Select(x => new
+                {
+                    ID = x.NB,
+                    NAME = x.NAME,
+                });
+                return Json(city, JsonRequestBehavior.AllowGet);  
+            
+
+        }
     }
 }
 

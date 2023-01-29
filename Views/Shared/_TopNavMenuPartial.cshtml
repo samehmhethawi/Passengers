@@ -2,12 +2,14 @@
     <div class="nav-item dropdown" >
         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" style="text-align: center !important;">فهارس نقل الركاب</a>
        
-        <div class="dropdown-menu" >
+        <div class="dropdown-menu">
+            <a href="@Url.Action("Index", "TrLines")" class="dropdown-item"><i class="fa fa-book"></i>خطوط السير</a>
+
             <a href="@Url.Action("Index", "TRZMEMBERPOSITION")" class="dropdown-item"><i class="fa fa-book"></i>المناصب</a>
             <a href="@Url.Action("Index", "TRZMEMBERSHIP")" class="dropdown-item"><i class="fa fa-book"></i>العضوية</a>
             <a href="@Url.Action("Index", "TRZPROCEDTYPSALLOW")" class="dropdown-item"><i class="fa fa-book"></i>المعاملات المرتبطة بمعاملة</a>
             <a href="@Url.Action("Index", "TRZPROCEDSCARCAT")" class="dropdown-item"><i class="fa fa-book"></i>الأنواع المرتبطة بمعاملة</a>
-           
+
         </div>
     </div>
     <div class="nav-item" style="text-align: center !important;">

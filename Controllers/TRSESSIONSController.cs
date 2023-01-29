@@ -48,12 +48,12 @@ namespace Passengers.Controllers
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
             var sql = "select * from TRSESSIONS where 1 = 1 ";
+
             var SESNO = Request.Form["SESNO"].Trim();
             var SESDATESTART = Request.Form["SESDATESTART"].Trim();
             var SESDATEEND = Request.Form["SESDATEEND"].Trim();
             var STATUS = Request.Form["STATUS"].Trim();
             var SESCITYNB = Request.Form["SESCITYNB"].Trim();
-
 
 
 
@@ -385,14 +385,11 @@ namespace Passengers.Controllers
         }
         public ActionResult PrintReportSession(long? ID)
         {
-
-
             var ses = db.TRSESSIONS.Find(ID);
+
             if (ses.STATUS == 1) 
             {
-                string sql = "BEGIN VEHICLES.PASSENGERS_PKG.TRSESSIONS_REPORTS_PASSENGERS(:SESNB); END;";
-
-   
+                string sql = "BEGIN VEHICLES.PASSENGERS_PKG.TRSESSIONS_REPORTS_PASSENGERS(:SESNB); END;";   
                 db.Database.ExecuteSqlCommand(sql,ID);
                 db.SaveChanges();
             }
@@ -543,6 +540,8 @@ namespace Passengers.Controllers
         {
             var data = db.Database.SqlQuery<TRPROCEDS_AVAILABLEVM>("SELECT PV.NB, PV.PROCEDNB  ,  PV.COUNTAVAILABLE ,PV.COUNTPROCED, ZP.NAME FROM TRPROCEDS_AVAILABLE PV JOIN ZPROCEDTYPS ZP ON ZP.NB =  PV.PROCEDNB").ToList();
            ViewBag.Listdata = data;
+            ViewBag.sesID = data[0].SESSIONNB;
+
             return PartialView("_ProcedCount");
         }
         public ActionResult GetProcedCountIstrue(long Sesnb)

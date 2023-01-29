@@ -15,6 +15,16 @@ namespace Passengers.Controllers
         private ProcedContext db = new ProcedContext();
         public ActionResult Index()
         {
+            ViewData["ZTRLINETYPES"] = db.ZTRLINETYPES.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            ViewData["zcities"] = db.ZCITYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
             return View();
         }
 
@@ -44,131 +54,304 @@ namespace Passengers.Controllers
 
         public ActionResult TrLines_Read([DataSourceRequest]DataSourceRequest request)
         {
-            //IQueryable<TRLINE> zcarregs = db.TRLINES.OrderBy(c => c.ORDR);
-            IQueryable<TRLINE> zcarregs = db.TRLINES.SqlQuery("select * from TRLINES order by ORDR").AsQueryable();
-            int index = 0;
-            DataSourceResult result = zcarregs.ToDataSourceResult(request, commm => new
-            {
-                NB = commm.NB,
-                NAME = commm.NAME,
-                ORDR = commm.ORDR,
-                STATUS = commm.STATUS,
-                CITYNB = commm.CITYNB,
-            
-                //MINCARS = commm.MINCARS,
-                //MAXCARS = commm.MAXCARS,
-              
+            var sql = "select * from TRLINES where 1 = 1 ";
+            var STrline = Request.Form["STrline"].Trim();
+            var SlineCity = Request.Form["SlineCity"].Trim();
+            var StrlineStatus = Request.Form["StrlineStatus"].Trim();
+            var StrlineCANCELD = Request.Form["StrlineCANCELD"].Trim();
 
-                Seq = (request.Page - 1) * request.PageSize + (++index)
-            });
-            return Json(result);
-            //DataSourceResult result = zcarregs.ToDataSourceResult(request, trLine => new
-            //{
-            //    trLine.NB,
-            //    trLine.NAME,
-            //    trLine.ORDR,
-            //    trLine.STATUS,
-            //    ZCITY = new {
-            //        NAME= trLine.ZCITY != null? trLine.ZCITY.NAME :db.ZCITYS.Find(trLine.CITYNB) != null ? db.ZCITYS.Find(trLine.CITYNB).NAME:"",
-            //    },
-            //    ZTRLINETYPE = new
-            //    {
-            //        NAME = trLine.ZTRLINETYPE != null ? trLine.ZTRLINETYPE.NAME : db.ZTRLINETYPES.Find(trLine.TYP) != null ?  db.ZTRLINETYPES.Find(trLine.TYP).NAME: "",
-            //    },
-            //});
-            //return Json(result);
-        }
+            if (STrline != "") 
+            {
+                sql += " and name like '%" + STrline + "%'";
+            }
+            if (StrlineStatus != "")
+            {
+                sql += " and STATUS = " + StrlineStatus ;
+            }
 
-        [AcceptVerbs(HttpVerbs.Get)]
-        public ActionResult Create()
-        {
-            var model = new TRLINE();
-            var zTrlinesTypes = db.ZTRLINETYPES.ToList();
-            ViewBag.zTrlinesTypes = zTrlinesTypes.ToList().Select(pt => new SelectListItem()
+            if (StrlineCANCELD != "")
             {
-                Text = pt.NAME,
-                Value = "" + pt.NB
-            }).ToList();
-            var zCitys = db.ZCITYS.OrderBy(c => c.ORDR).ToList();
-            ViewBag.zCitys = zCitys.ToList().Select(pt => new SelectListItem()
+                sql += " and ISCANCELD = " + StrlineCANCELD  ;
+            }
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+            if (ci == "0")
             {
-                Text = pt.NB+"-"+ pt.NAME,
-                Value = "" + pt.NB
-            }).ToList();
-            if (db.TRLINES.Any())
-            {
-                model.ORDR = db.TRLINES.Max(m => m.ORDR) + 1;
+                if (SlineCity != "")
+                {
+                    sql += " and CITYNB =" + SlineCity;
+                }
             }
             else
             {
-                model.ORDR = 1;
+                sql += " and CITYNB =" + ci;
             }
-            return PartialView(model);
+           
+            var data = db.Database.SqlQuery<TRLINE>(sql).ToList();     
+            int index = 0;
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,
+                NAME = commm.NAME,
+                TYP = commm.TYP,
+                ORDR = commm.ORDR,
+                STATUS = commm.STATUS,
+                CITYNB = commm.CITYNB,
+                ISCANCELD = commm.ISCANCELD,
+                MINCARS = commm.MINCARS,
+                MAXCARS = commm.MAXCARS,               
+                Seq = (request.Page - 1) * request.PageSize + (++index)
+            });
+            return Json(result);
+           
         }
 
+        
+
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Create(TRLINE model)
+        public ActionResult Create(string Name , int? city , int? typ ,long? min,long? max, List<int> allcity)
         {
-            bool success = false;
-            if (model != null)
+            try
             {
-                if (string.IsNullOrWhiteSpace(model.NAME))
+                if (Name == "")
                 {
-                    ModelState.AddModelError("", "لايمكن الاضافة,يجب تحديد الاسم");
+                    return Json(new { success = false, responseText = "الاسم فارغ" });
+                }
+                if (!city.HasValue)
+                {
+                    return Json(new { success = false, responseText = "يجب تحديد محافظة الخط" });
+                }
+                if (!typ.HasValue)
+                {
+                    return Json(new { success = false, responseText = "يجب تحديد نوع الخط" });
+                }
+                if (!min.HasValue || !max.HasValue)
+                {
+                    return Json(new { success = false, responseText = "يجب تحديد العدد الادنى و الاعلى" });
+                }
+                TRLINE tRLINE = new TRLINE();
+                tRLINE.NAME = Name;
+                tRLINE.TYP = typ;
+                tRLINE.MAXCARS = max;
+                tRLINE.MINCARS = min;
+                tRLINE.CITYNB = city;
+                db.TRLINES.Add(tRLINE);
+
+                db.SaveChanges();
+
+                TRLINE_CITY cc = new TRLINE_CITY();
+                cc.LINENB = tRLINE.NB;
+                cc.CITYNB = (int)city;
+                cc.ORDR = 1;
+                db.TRLINE_CITY.Add(cc);
+                db.SaveChanges();
+                foreach (var item in allcity) 
+                {
+                    if (item != city)
+                    {
+                        cc.LINENB = tRLINE.NB;
+                        cc.CITYNB = item;
+                        cc.ORDR = db.Database.SqlQuery<long?>("select nvl(Max(ordr),0)+1 from TRLINE_CITY where LINENB = "+ tRLINE.NB).FirstOrDefault();
+                        db.TRLINE_CITY.Add(cc);
+                    }
+                    db.SaveChanges();
+                }
+
+                db.SaveChanges();
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e) { 
+                    return Json(new { success = false, responseText = e .Message});
+            }
+
+        }
+
+        public ActionResult Read_city([DataSourceRequest] DataSourceRequest request,long? Nb)
+        {
+            var sql = "select * from TRLINE_CITY where 1 = 1 and LINENB = "+ Nb+" order by ordr";
+
+            //var STrline = Request.Form["STrline"].Trim();
+            //var SlineCity = Request.Form["SlineCity"].Trim();
+            //var StrlineStatus = Request.Form["StrlineStatus"].Trim();
+            //var StrlineCANCELD = Request.Form["StrlineCANCELD"].Trim();
+
+            var data = db.Database.SqlQuery<TRLINE_CITY>(sql).ToList();
+            int index = 0;
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,          
+                ORDR = commm.ORDR,              
+                CITYNB = commm.CITYNB,
+                LINENB = commm.LINENB,
+                Seq = (request.Page - 1) * request.PageSize + (++index)
+            });
+            return Json(result);
+        }
+       
+        
+        public ActionResult Deletecity(long? nb)
+        {
+            try
+            {
+                var dd = db.TRLINE_CITY.Find(nb);
+                if (dd == null)
+                {
+                    return Json(new { success = false, responseText = " لا يوجد سجل" }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
-                    if (db.TRLINES.Any(c => c.NAME == model.NAME))
+                    using (var transaction = db.Database.BeginTransaction())
                     {
-                        ModelState.AddModelError("", "لايمكن الاضافة,الاسم مكرر");
+                        try
+                        {
+                            if (dd != null)
+                            {
+                                db.TRLINE_CITY.Attach(dd);
+                                db.TRLINE_CITY.Remove(dd);
+                                db.SaveChanges();
+                                transaction.Commit();
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            transaction.Rollback();
+
+                        }
                     }
                 }
-                if (model.ORDR == null || model.ORDR < 0)
-                {
-                    ModelState.AddModelError("", "لايمكن الاضافة,يجب تحديد الترتيب");
-                }
-                if (db.TRLINES.Any(m => m.ORDR == model.ORDR))
-                {
-                    ModelState.AddModelError("", "لايمكن الاضافة,قيمة الترتيب مكررة");
-                }
-                if (model.TYP == null )
-                {
-                    ModelState.AddModelError("", "لايمكن الاضافة,يجب تحديد نوع الخط");
-                }
-                if (model.CITYNB == null)
-                {
-                    ModelState.AddModelError("", "لايمكن الاضافة,يجب تحديد المحافظة");
-                }
-                if (ModelState.IsValid)
-                {
-                    db.TRLINES.Add(model);
-                    try
-                    {
-                        db.SaveChanges();
-                        success = true;
-                    }
-                    catch (Exception ee)
-                    {
-                        ModelState.AddModelError("", "فشلت عملية الإضافة");
-                    }
-                }
+
+
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
             }
-            var zTrlinesTypes = db.ZTRLINETYPES.ToList();
-            ViewBag.zTrlinesTypes = zTrlinesTypes.ToList().Select(pt => new SelectListItem()
+            catch (Exception ex)
             {
-                Text = pt.NAME,
-                Value = "" + pt.NB
-            }).ToList();
-            var zCitys = db.ZCITYS.OrderBy(c => c.ORDR).ToList();
-            ViewBag.zCitys = zCitys.ToList().Select(pt => new SelectListItem()
-            {
-                Text = pt.NB + "-" + pt.NAME,
-                Value = "" + pt.NB
-            }).ToList();
-            ViewBag.Success = success;
-            return PartialView("_CreatPartial", model);
+
+                return Json(new { success = false, responseText = ex }, JsonRequestBehavior.AllowGet);
+            }
         }
-        public ActionResult Edit(long? id)
+
+        public ActionResult addcitytoline(long? linb ,long? city)
+        {
+            try
+            {
+                TRLINE_CITY cc = new TRLINE_CITY();
+                cc.LINENB = (long)linb;
+                cc.CITYNB = (int)city;
+                cc.ORDR = db.Database.SqlQuery<long?>("select nvl(Max(ordr),0)+1 from TRLINE_CITY where LINENB = " + linb).FirstOrDefault();
+                db.TRLINE_CITY.Add(cc);
+                db.SaveChanges();
+
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { success = false, responseText = e.Message });
+            }
+        }
+
+        public ActionResult update(long? Nb, string Name, int? city, int? typ, long? min, long? max,int? STATUS, int? ISCANCELD)
+        {
+            try
+            {
+                if (!Nb.HasValue)
+                {
+                    return Json(new { success = false, responseText = "الرمز فارغ" });
+                }
+                if (!STATUS.HasValue)
+                {
+                    return Json(new { success = false, responseText = "يجب اختيار هل هو فعال او لا" });
+                }
+                if (!ISCANCELD.HasValue)
+                {
+                    return Json(new { success = false, responseText = "يجب اختيار هل هو ملغى او لا" });
+                }
+                if (Name == "")
+                {
+                    return Json(new { success = false, responseText = "الاسم فارغ" });
+                }
+                if (!city.HasValue)
+                {
+                    return Json(new { success = false, responseText = "يجب تحديد محافظة الخط" });
+                }
+                if (!typ.HasValue)
+                {
+                    return Json(new { success = false, responseText = "يجب تحديد نوع الخط" });
+                }
+                if (!min.HasValue || !max.HasValue)
+                {
+                    return Json(new { success = false, responseText = "يجب تحديد العدد الادنى و الاعلى" });
+                }
+
+                var data = db.TRLINES.Find(Nb);
+
+                if (data == null)
+                {
+
+                    return Json(new { success = false, responseText = "لا يوجد سجل موافق" });
+
+                }
+
+                if (data.NAME != Name)
+                {
+                    data.NAME = Name;
+                }
+                if (data.CITYNB != city)
+                {
+                    data.CITYNB = city;
+                }
+                if (data.TYP != typ)
+                {
+                    data.TYP = typ;
+                }
+                if (data.MINCARS != min)
+                {
+                    data.MINCARS = min;
+                }
+                if (data.MAXCARS != max)
+                {
+                    data.MAXCARS = max;
+                }
+                if (data.ISCANCELD != ISCANCELD)
+                {
+                    data.ISCANCELD = ISCANCELD;
+                }
+                bool? dSTATUS=true;
+                if (STATUS == 1)
+                {
+                    dSTATUS = true;
+                }
+                if (STATUS == 0)
+                {
+                    dSTATUS = false;
+                }
+                if (data.STATUS != dSTATUS)
+                {
+                    data.STATUS = dSTATUS;
+                }
+               
+                db.Entry(data).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return Json(new { success = true, responseText = "ok" });
+            }
+
+            catch (Exception e)
+            {
+                return Json(new { success = false, responseText = e.Message });
+
+            }
+
+
+        }
+
+
+
+
+
+
+
+            public ActionResult Edit(long? id)
         {
             var trLine = db.TRLINES.Find(id);
             if (trLine == null)
