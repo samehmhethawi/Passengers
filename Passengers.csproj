@@ -66,6 +66,7 @@
     <Compile Include="Controllers\HandleExceptionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PassengersReportController.cs" />
+    <Compile Include="Controllers\TRAGREEMENTSController.cs" />
     <Compile Include="Controllers\TRCOMMITTEESController.cs" />
     <Compile Include="Controllers\TRLINESController.cs" />
     <Compile Include="Controllers\TRSESSIONSController.cs" />
@@ -1265,6 +1266,7 @@
     <Content Include="Views\TRZMEMBERPOSITION\Index.cshtml" />
     <Content Include="Views\TRSESSIONS\_ProcedInfo.cshtml" />
     <Content Include="Views\TRSESSIONS\_ProcedCount.cshtml" />
+    <Content Include="Views\TRAGREEMENTS\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

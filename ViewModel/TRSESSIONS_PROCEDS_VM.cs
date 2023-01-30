@@ -6,6 +6,7 @@ using System.Web;
 
 namespace Passengers.ViewModel
 {
+    // المعاملات في الجلسة
     public class TRSESSIONS_PROCEDS_VM
     {
         public long? NB { get; set; }
@@ -26,9 +27,15 @@ namespace Passengers.ViewModel
 
         public long? CARPROCEDSTEPNB { get; set; }
 
+        public string TYPSNAMEAGR { get; set; }
+
+
 
     }
 
+
+
+    // الطلبات في طباعة محضر الجلسة
     public class PROCEDS_Print_ALL
     {
         [Display(Name = "الرمز الالكتروني")]

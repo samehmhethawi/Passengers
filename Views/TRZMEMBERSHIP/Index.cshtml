@@ -22,6 +22,21 @@
 </script>
 
 <script>
+    var pagewidth = document.body.offsetWidth;
+    if (pagewidth >= 500) {
+        alert(pagewidth);
+        $('.mycoll').css("display", "block");
+        $('.mycollall').css("display", "none");
+    } 
+    if (pagewidth < 500) {
+        alert(pagewidth);
+
+        $('.mycoll').css("display", "none");
+        $('.mycollall').css("display", "block");
+    }
+</script>
+
+<script>
     var resColTemplate;
 
     $(document).ready(function () {
@@ -30,6 +45,12 @@
 </script>
 
 <style>
+    .mycoll {
+        display: none
+    }
+    mycollall{
+        display:none
+    }
     .col-template-val {
         margin: 0 0 1em .5em;
     }
@@ -40,18 +61,18 @@
 <div>
     @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRZMEMBERSHIP>()
             .Name("grid")
+
             .Columns(columns =>
             {
+           
             columns.Template(t => { }).Title("م.").ClientTemplate(
              "#= renderNumber(data) #"
            ).Width(80);
             columns.Bound(c => c.NB).Visible(false);
-            columns.Bound(c => c.NAME).MinScreenWidth(450);
-            columns.Bound(c => c.ORDR);
+            columns.Bound(c => c.NAME).Width(450).MinScreenWidth(1000);
+            columns.Bound(c => c.ORDR).MinScreenWidth(1000);
             columns.Bound(c => c.NOTES).Width(150);
             columns.Template(@<text></text>).ClientTemplate("#=resColTemplate(data)#").Title("Items");
-
-
                 columns.Command(command =>
                 {
                 //    //command.Custom("Preview").Click("Preview").Text(" ");
@@ -128,7 +149,13 @@
                        </div>
                     <div class="col-md-5" >
                    <span>  الترتيب<br />
-                       @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("AddOrdr").HtmlAttributes(new { placeholder = "الترتيب", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+                       @(Html.Kendo()
+                        .NumericTextBox()
+                        .Spinners(false)
+                        .Format("0")
+                        .Name("AddOrdr")
+                        .HtmlAttributes
+                        (new { placeholder = "الترتيب", required = "required", data_required_msg = "هذا الحقل مطلوب"}))
 
                        </span>
 

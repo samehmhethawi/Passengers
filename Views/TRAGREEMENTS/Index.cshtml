@@ -1,0 +1,353 @@
+﻿
+@{
+    ViewBag.Title = "الموافقات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .laend {
+        text-align: end;
+        padding-left:5px;
+    }
+
+    .colsh {
+        padding-right: 0px;
+        padding-left: 0px;
+      
+    }
+  
+</style>
+@section PartialHeader{
+    <div class="panel-heading1 " id="searchPanel" style="font-size:14px">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-md-1 laend" >
+                    <label for="template_name"> رمز المركبة</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo()
+                        .NumericTextBox()
+                        .Spinners(false)
+                        .Format("0")
+                        .Name("SCARNB")
+                        .Min(0)
+                        .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                        .HtmlAttributes
+                        (new { placeholder = "رمز المركبة", style = "width: 100%; " }))
+
+
+
+                </div>
+                <div class="col-md-1 laend">
+                    <label for="template_name"> رقم اللوحة</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo()
+                      .TextBox()
+                      .Name("STABNB")
+                      .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                      .HtmlAttributes(new { placeholder = "رقم اللوحة" }))
+                </div>
+                <div class="col-md-1 laend">
+                    <label for="template_name"> المحافظة</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر محافظة المركبة")
+                                    .Name("SCITYNB")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetallCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                <div class="col-md-1 laend">
+                    <label for="template_name"> الفئة</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر فئة المركبة")
+                                    .Name("SREGNB")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    //.DataSource(source =>
+                                    //{
+                                    //    source.Read(read =>
+                                    //    {
+                                    //        read.Action("GetCity", "Codes");
+                                    //    });
+                                    //})
+                                    .BindTo((System.Collections.IEnumerable)ViewData["zregs"])
+
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+            </div>
+            <div div class="row" style="padding-bottom:10px">
+                <div class="col-md-1 laend">
+                    <label for="template_name "> الموافقة</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر نوع الموافقة")
+                                    .Name("SAGRNB")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    //.DataSource(source =>
+                                    //{
+                                    //    source.Read(read =>
+                                    //    {
+                                    //        read.Action("GetCity", "Codes");
+                                    //    });
+                                    //})
+                                    .BindTo((System.Collections.IEnumerable)ViewData["AGREEMENTTYPENB"])
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                <div class="col-md-1 laend">
+                    <label for="template_name"> التاريخ من</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SAGRDATEStart")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ الموافقة من",  style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+                <div class="col-md-1 laend">
+                    <label for="template_name"> التاريخ الى</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SAGRDATEEnd")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ الموافقة الى", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+                <div class="col-md-1 laend">
+                    <label for="template_name"> رمز المعاملة</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo()
+                        .NumericTextBox()
+                        .Spinners(false)
+                        .Format("0")
+                        .Name("SCARPROCEDNB")
+                        .Min(0)
+                        .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                        .HtmlAttributes
+                        (new { placeholder = "رمز المعاملة", style = "width: 100%; " }))
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-1 laend">
+                    <label for="template_name"> رقم الجلسة</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo()
+                      .TextBox()
+                      .Name("SSESNO")
+                      .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                      .HtmlAttributes(new { placeholder = " رقم الجلسة" }))
+                </div>
+                <div class="col-md-1 laend">
+                    <label for="template_name"> التاريخ من</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SSESDATEStart")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ الجلسة من",style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+                <div class="col-md-1 laend">
+                    <label for="template_name"> التاريخ الى</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SSESDATEEnd")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ الجلسة الى", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+                <div class="col-md-1 laend">
+                    <label for="template_name"> المحافظة</label>
+                </div>
+                <div class="col-md-2 colsh">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر محافظة الجلسة")
+                                    .Name("SSESCITYNB")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+            </div>
+            <div class="row" style = "width: 100%; text-align:center;">
+                <div class="col-md-12 col-lg-12" style = "width: 100%; text-align:center;">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Gridn AGREEMENTS -->
+<div>
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRAGREEMENTS>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+
+
+
+
+                columns.Template(t => { }).Title("م.").ClientTemplate(
+                 "#= renderNumber(data) #"
+               ).Width(80);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.Bound(c => c.CARNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); 
+
+                columns.Bound(c => c.TABNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.CITYNB).Width(150).Visible(false);
+                columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+
+                columns.Bound(c => c.CARREGNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.CARPROCEDSTEPNB).Width(150).Visible(false);
+                columns.Bound(c => c.AGREEMENTTYPENB).Width(150).Visible(false);
+                columns.ForeignKey(c => c.AGREEMENTTYPENB, (System.Collections.IEnumerable)ViewData["AGREEMENTTYPENB"], "ID", "NAME").Title("نوع الموافقة").Width(250).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+
+                columns.Bound(c => c.STARTDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.ENDDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.SESNB).Visible(false);
+                columns.Bound(c => c.SESNO).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.SES_DATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.ForeignKey(c => c.SESCITY, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("محافظة الجلسة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); 
+                columns.Bound(c => c.AGREENO).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.AGREEDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.CARPROCEDNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.NOTES).Width(350).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                //columns.Command(command =>
+                //{
+                //    //command.Custom("Preview").Click("Preview").Text(" ");
+                //    //command.Custom("Edit").Click("Edit").Text(" ");
+                //    //command.Custom("Delete").Click("Delete").Text(" ");
+                //    //  command.Custom("Details").Click("Details").Text(" ");
+                //    // command.Custom("Finish").Click("Finish").Text(" ");
+                //}).Width(180);
+            })
+
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("Read", "TRAGREEMENTS").Data("GetFillters")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+                //  toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("setIcons")
+            .DataBound("setIcons")
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Cancel("setIcons")
+        //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+
+<script>
+    function renderNumber(data) {
+        return data.Seq;
+    }
+</script>
+
+<script>
+    function GetFillters() {
+        var fillter = {};
+        fillter.SCARNB = $('#SCARNB').val();
+        fillter.STABNB = $('#STABNB').val();
+        fillter.SCITYNB = $('#SCITYNB').val();
+        fillter.SREGNB = $('#SREGNB').val();
+
+        fillter.SAGRNB = $('#SAGRNB').val();
+        fillter.SAGRDATEStart = $('#SAGRDATEStart').val();
+        fillter.SAGRDATEEnd = $('#SAGRDATEEnd').val();
+        fillter.SCARPROCEDNB = $('#SCARPROCEDNB').val();
+
+        fillter.SSESNO = $('#SSESNO').val();
+        fillter.SSESDATEStart = $('#SSESDATEStart').val();
+        fillter.SSESDATEEnd = $('#SSESDATEEnd').val();
+        fillter.SSESCITYNB = $('#SSESCITYNB').val();
+        return fillter;
+    }
+    function Btn_Search() {
+        $("#grid").data("kendoGrid").dataSource.read();
+    }
+
+    function rest_filtters() {
+       
+        $("#SCARNB").data("kendoNumericTextBox").value("");
+        $('#STABNB').val("");
+        $("#SCITYNB").data("kendoDropDownList").value(-1);
+        $("#SREGNB").data("kendoDropDownList").value(-1);
+
+        $("#SAGRNB").data("kendoDropDownList").value(-1);
+        $('#SAGRDATEStart').val("");
+        $('#SAGRDATEEnd').val("");
+        $("#SCARPROCEDNB").data("kendoNumericTextBox").value("")
+
+        $('#SSESNO').val("");
+        $('#SSESDATEStart').val("");
+        $('#SSESDATEEnd').val("");
+        $("#SSESCITYNB").data("kendoDropDownList").value(-1);
+
+       
+        $("#grid").data("kendoGrid").dataSource.data([]);
+    }
+</script>

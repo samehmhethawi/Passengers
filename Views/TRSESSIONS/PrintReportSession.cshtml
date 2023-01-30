@@ -205,13 +205,13 @@
                 <tbody>
                     @foreach (var item2 in item.pro)
                     {
-                    <tr>
-                        <td>@item2.ORDR</td>
-                        <td>@item2.LINENAME</td>
-                        <td>@item2.TYP</td>
-                        <td>@item2.NEWLINECITY</td>
-                        <td>@item2.PSTATUS</td>
-                    </tr>
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.LINENAME</td>
+                            <td>@item2.TYP</td>
+                            <td>@item2.NEWLINECITY</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
                     }
                 </tbody>
 
@@ -226,7 +226,9 @@
 
                         <th width="5%">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
                         <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
-                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
                         <th width="25%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
 
                     </tr>
@@ -238,6 +240,8 @@
                             <td>@item2.ORDR</td>
                             <td>@item2.LINENAME1</td>
                             <td>@item2.LINETYP1</td>
+                            <td>@item2.LINE1CITY</td>
+                            <td>@item2.COUNTCARLINE1</td>
                             <td>@item2.PSTATUS</td>
                         </tr>
                     }
@@ -253,7 +257,9 @@
 
                         <th width="5%">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
                         <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
-                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
                         <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME)</th>
                         <th width="25%">@Html.DisplayNameFor(model => model.pro[0].TYP)</th>
                         <th width="25%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
@@ -267,6 +273,8 @@
                             <td>@item2.ORDR</td>
                             <td>@item2.LINENAME1</td>
                             <td>@item2.LINETYP1</td>
+                            <td>@item2.LINE1CITY</td>
+                            <td>@item2.COUNTCARLINE1</td>
                             <td>@item2.LINENAME</td>
                             <td>@item2.TYP</td>
                             <td>@item2.PSTATUS</td>
@@ -283,11 +291,15 @@
                     <tr>
 
                         <th width="5%">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
-                        <th >@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
+                        <th>@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
                         <th width="7%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
-                        <th >@Html.DisplayNameFor(model => model.pro[0].LINENAME2)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
+                        <th>@Html.DisplayNameFor(model => model.pro[0].LINENAME2)</th>
                         <th width="7%">@Html.DisplayNameFor(model => model.pro[0].LINETYP2)</th>
-                        <th >@Html.DisplayNameFor(model => model.pro[0].LINENAME)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINE2CITY)</th>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE2)</th>
+                        <th>@Html.DisplayNameFor(model => model.pro[0].LINENAME)</th>
                         <th width="7%">@Html.DisplayNameFor(model => model.pro[0].TYP)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
 
@@ -296,16 +308,20 @@
                 <tbody>
                     @foreach (var item2 in item.pro)
                     {
-                    <tr>
-                        <td>@item2.ORDR</td>
-                        <td>@item2.LINENAME1</td>
-                        <td>@item2.LINETYP1</td>
-                        <td>@item2.LINENAME2</td>
-                        <td>@item2.LINETYP2</td>
-                        <td>@item2.LINENAME</td>
-                        <td>@item2.TYP</td>
-                        <td>@item2.PSTATUS</td>
-                    </tr>
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.LINENAME1</td>
+                            <td>@item2.LINETYP1</td>
+                            <td>@item2.LINE1CITY</td>
+                            <td>@item2.COUNTCARLINE1</td>
+                            <td>@item2.LINENAME2</td>
+                            <td>@item2.LINETYP2</td>
+                            <td>@item2.LINE2CITY</td>
+                            <td>@item2.COUNTCARLINE2</td>
+                            <td>@item2.LINENAME</td>
+                            <td>@item2.TYP</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -320,7 +336,6 @@
                         <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
-
                         <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].TABNB)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
@@ -332,21 +347,64 @@
                 <tbody>
                     @foreach (var item2 in item.pro)
                     {
-                    <tr>
-                        <td>@item2.ORDR</td>
-                        <td>@item2.CARNB</td>
-                        <td>@item2.LINENAME1</td>
-                        <td>@item2.LINETYP1</td>
-                        <td>@item2.LINE1CITY</td>
-                        <td>@item2.COUNTCARLINE1</td>
-                        <td>@item2.TABNB</td>
-                        <td>@item2.ENGINEFEUL</td>
-                        <td>@item2.FACCOMPNAME</td>
-                        <td>@item2.FACTYY</td>
-                        <td>@item2.PSTATUS</td>
-                    </tr>
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.CARNB</td>
+                            <td>@item2.LINENAME1</td>
+                            <td>@item2.LINETYP1</td>
+                            <td>@item2.LINE1CITY</td>
+                            <td>@item2.COUNTCARLINE1</td>
+                            <td>@item2.TABNB</td>
+                            <td>@item2.ENGINEFEUL</td>
+                            <td>@item2.FACCOMPNAME</td>
+                            <td>@item2.FACTYY</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
                     }
-                    
+
+                </tbody>
+            </table>
+
+            <br />
+            <br />
+
+        }
+        if (item.pronb == 2008)
+        {
+            <table border="1" style="text-align:center" class="table" width="100%">
+                <thead>
+                    <tr>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].CARNB)</th>
+                        <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].TABNB)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in item.pro)
+                    {
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.CARNB</td>
+                            <td>@item2.LINENAME1</td>
+                            <td>@item2.LINETYP1</td>
+                            <td>@item2.LINE1CITY</td>
+                            <td>@item2.COUNTCARLINE1</td>
+                            <td>@item2.TABNB</td>
+                            <td>@item2.ENGINEFEUL</td>
+                            <td>@item2.FACCOMPNAME</td>
+                            <td>@item2.FACTYY</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
+                    }
+
                 </tbody>
             </table>
 

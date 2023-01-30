@@ -139,7 +139,7 @@
                             <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 @if (ViewBag.SessionStatus == "فعال")
                                 {
-                                    <button id="CloseSession" onclick="CloseSession()" class="btn btn-danger">الغاء الجلسة</button>
+                                    //<button id="CloseSession" onclick="CloseSession()" class="btn btn-danger">الغاء الجلسة</button>
                                 }
                             </div>
 
@@ -213,12 +213,15 @@
                 columns.Bound(c => c.CARNB).Title("رمز المركبة").Width(150);
                 columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة").ClientTemplate("#= renderCarLink1(data) #").Width(300);
                 columns.Bound(c => c.PROCEDNB).Title("نوع المعاملة").Visible(false);
+                
+                columns.Bound(c => c.TYPSNAMEAGR).Width(100).Title("الموافقة");
+
                 columns.Bound(c => c.SESSIONNB).Title("رمز الجلسة").Visible(false);
                 columns.Bound(c => c.RECDAT).Format("{0:dd/MM/yyyy}").Title("تاريخ المعاملة").Width(150);
                 columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة").Width(150);
                 //columns.Bound(c => c.CARNB).Title("رمز المركبة");
                 columns.Bound(c => c.CARPROCEDSTEPNB).Title("رمز الخطوة").Visible(false);
-                columns.ForeignKey(c => c.PSTATUS, (System.Collections.IEnumerable)ViewData["TRSESSIONSPROCEDSTATUS"], "ID", "NAME").Title("حالة الطلب").Width(150);
+                columns.ForeignKey(c => c.PSTATUS, (System.Collections.IEnumerable)ViewData["TRSESSIONSPROCEDSTATUS"], "ID", "NAME").Title("الحالة").Width(100);
 
                 if (@ViewBag.SessionStatus == "فعال")
                 {
@@ -390,17 +393,13 @@
             data: model,
                 url: "@Url.Action("GetCount555", "TRSESSIONS")",
             success: function (response) {
-
                 document.getElementById('totalcount').innerHTML = response.TOTALCOUNT;
                 document.getElementById('DELAYED').innerHTML = response.DELAYED;
                 document.getElementById('AGREE').innerHTML = response.AGREE;
                 document.getElementById('NOTAGREE').innerHTML = response.NOTAGREE;
                 document.getElementById('UNANSWERED').innerHTML = response.UNANSWERED;
                 if (response.countproced > 0) {
-
                     $('#procedsetting').css('display', 'none');
-
-
                 }
                 }
             });}
@@ -472,12 +471,8 @@
     }
 
     function ColseWindow() {
-
         var wnd = $("#ProcedInfo").data("kendoWindow");
         wnd.center().close();
-
-
-
     }
 
 
@@ -485,7 +480,6 @@
 
 <script>
     function GetPartialProcedinfo(CARPROCEDSTEPNB, PROCEDNB) {
-
         var model = {
             NB: CARPROCEDSTEPNB,
             PRONB :PROCEDNB
