@@ -174,11 +174,30 @@ namespace Passengers.Controllers
             });
             return Json(city, JsonRequestBehavior.AllowGet);
 
+        }
 
-
+        public ActionResult GETZTRLINETYPES()
+        {
+            var city = db.ZLINETYPES.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(city, JsonRequestBehavior.AllowGet);
 
         }
-        
+        //public ActionResult GETTRLINES_TYPES_DURATIONS()
+        //{
+        //    var city = db.TRLINES_TYPES_DURATIONS.Select(x => new
+        //    {
+        //        ID = x.NB,
+        //        NAME = x.NAME,
+        //    });
+        //    return Json(city, JsonRequestBehavior.AllowGet);
+
+        //}
+
     }
+    
 }
 

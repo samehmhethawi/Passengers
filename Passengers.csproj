@@ -97,9 +97,11 @@
     <Compile Include="Security\UserAccountManager.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Types.cs" />
+    <Compile Include="ViewModel\CityAndLinesVM.cs" />
     <Compile Include="ViewModel\CommittesAndMembersVM.cs" />
     <Compile Include="ViewModel\CommittesAndSessions.cs" />
     <Compile Include="ViewModel\CountTotal.cs" />
+    <Compile Include="ViewModel\LinesAndCarsGroupVM.cs" />
     <Compile Include="ViewModel\SessionsAndMembersVM.cs" />
     <Compile Include="ViewModel\SessionsAndProcedsVM.cs" />
     <Compile Include="ViewModel\TRPROCEDS_AVAILABLEVM.cs" />
@@ -1278,6 +1280,10 @@
     <Content Include="Views\PassengersReport\SessionsAndMembers.cshtml" />
     <Content Include="Views\PassengersReport\SessionsAndMembers_PDF.cshtml" />
     <Content Include="Views\PassengersReport\SessionsAndProceds.cshtml" />
+    <Content Include="Views\PassengersReport\SessionsAndProceds_PDF.cshtml" />
+    <Content Include="Views\PassengersReport\CityAndLines.cshtml" />
+    <Content Include="Views\PassengersReport\CityAndLines_PDF.cshtml" />
+    <Content Include="Views\PassengersReport\LinesAndCarsGroup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Passengers.ViewModel.CityAndLinesVM>
+
+
+
+@{
+    Layout = null;
+}
+
+<head>
+    <title>تقرير المحافظات وخطوطها</title>
+    <style>
+        .table {
+            border: 1px solid #ccc;
+            font-size: 16px;
+            text-align: center;
+            width: 100%;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align:center;">تقرير المحافظات وخطوطها</h1>
+
+    <table cellpadding="8" cellspacing="0" class="table" DIR="auto">
+        <thead>
+            <tr>
+                <th style="border: 1px solid; width: auto;">م.</th>
+
+                <th style="border: 1px solid; width: auto;">المحافظة</th>
+                <th style="border: 1px solid; width: auto;">اسم الخط</th>
+                <th style="border: 1px solid; width: auto;">حالة الخط</th>
+                <th style="border: 1px solid; width: auto;">هل ملغى؟</th>
+                <th style="border: 1px solid; width: auto;">نوع الخط</th>
+                <th style="border: 1px solid; width: auto;">الحد الادنى للمركبات</th>
+
+                <th style="border: 1px solid; width: auto;">الحد الاعلى للمركبات</th>
+
+
+
+
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td style="width: auto; border: 1px solid">@item.rr</td>
+
+                <td style="width: auto; border: 1px solid">@item.CityName</td>
+                <td style="width: auto; border: 1px solid">@item.LINENAME</td>
+                <td style="width: auto; border: 1px solid">@item.STATUS</td>
+                <td style="width: auto; border: 1px solid">@item.ISCANCELD</td>
+                <td style="width: auto; border: 1px solid">@item.TPYS</td>
+                <td style="width: auto; border: 1px solid">@item.MINCARS</td>
+                <td style="width: auto; border: 1px solid">@item.MAXCARS</td>
+
+
+
+            </tr>
+            }
+        </tbody>
+    </table>
+</body>

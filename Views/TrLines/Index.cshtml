@@ -107,7 +107,7 @@
           columns.Bound(c => c.NAME).Title("اسم خط السير").Width(500);
           columns.ForeignKey(c => c.TYP, (System.Collections.IEnumerable)ViewData["ZTRLINETYPES"], "ID", "NAME").Title("النوع").Width(150);
           //columns.Bound(c => c.TYP).Title("نوع خط السير");
-          columns.Bound(c => c.CITYNB).Title("المحافظة");
+          columns.Bound(c => c.CITYNB).Title("المحافظة").Visible(false);
           columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
           columns.Bound(c => c.STATUS).Title("متاح؟").ClientTemplate("#=STATUS ? 'نعم':'لا' #").Width(100);
           columns.Bound(c => c.ISCANCELD).Title("ملغى؟").ClientTemplate("#=ISCANCELD ? 'نعم':'لا' #").Width(100);

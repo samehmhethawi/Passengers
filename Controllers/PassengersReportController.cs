@@ -302,7 +302,7 @@ namespace Passengers.Controllers
    + " JOIN TRSESSIONS TCS ON TCS.COMMITTEENB = TM.NB "
    + " JOIN TRSTATUS TS2 ON TS2.NB = TCS.STATUS "
    + " WHERE 1 = 1 AND TMM.MEMBERSHIPNB = 1 ";
-        
+
 
             var NB = pNB;
             var COMNO = pCOMNO;
@@ -643,7 +643,7 @@ namespace Passengers.Controllers
         public ActionResult SessionsAndMembers_PDF(string pNB, string pCOMNO, string pCOMDATESTART, string pCOMDATEEND, string pSTATUS, string psNB, string psNO, string psDATESTART, string psDATEEND, string psSTATUS, string pMemberSH, string pCOMCITYNB)
         {
 
-          
+
 
             string sql = "SELECT ZC.NAME   AS CityName,"
       + " TSE.COMMITTEENB AS CommNb, "
@@ -665,7 +665,7 @@ namespace Passengers.Controllers
       + " WHERE 1 = 1 ";
 
 
-            var NB = pNB;         
+            var NB = pNB;
             var sNB = psNB;
             var sNO = psNO;
             var sDATESTART = psDATESTART;
@@ -675,7 +675,7 @@ namespace Passengers.Controllers
             var COMCITYNB = pCOMCITYNB;
 
 
-       
+
 
 
             if (NB != "")
@@ -746,12 +746,12 @@ namespace Passengers.Controllers
         {
             string sql = "SELECT ZC.NAME  AS CityName, "
       + " TSE.COMMITTEENB AS CommNb, "
-       +" TSE.NB AS SessNb, "
-       +" TSE.SESNO AS SessNo, "
-       +" TSE.SESDATE AS SessDate, "
-       +" TS.NAME AS SessStatus, "
-       +" PT.NAME AS ProcedName, "
-       +" TSS.NAME AS ProcedRes "
+       + " TSE.NB AS SessNb, "
+       + " TSE.SESNO AS SessNo, "
+       + " TSE.SESDATE AS SessDate, "
+       + " TS.NAME AS SessStatus, "
+       + " PT.NAME AS ProcedName, "
+       + " TSS.NAME AS ProcedRes "
       + " FROM TRSESSIONS_PROCEDS TSP "
       + " JOIN TRSESSIONS TSE ON TSE.NB = TSP.SESSIONNB "
       + " JOIN ZCITYS ZC ON ZC.NB = TSE.SESCITYNB "
@@ -763,80 +763,345 @@ namespace Passengers.Controllers
 
 
 
-            //var NB = Request.Form["NB"].Trim();
-            //var sNB = Request.Form["sNB"].Trim();
-            //var sNO = Request.Form["sNO"].Trim();
-            //var sDATESTART = Request.Form["sDATESTART"].Trim();
-            //var sDATEEND = Request.Form["sDATEEND"].Trim();
-            //var STATUS = Request.Form["sSTATUS"].Trim();
-
-            //var MemberSH = Request.Form["MemberSH"].Trim();
-            //var COMCITYNB = Request.Form["COMCITYNB"].Trim();
-
-
-            //if (NB != "")
-            //{
-            //    sql += " and TSE.COMMITTEENB = " + NB;
-            //}
-            //if (sNB != "")
-            //{
-            //    sql += " and TSE.NB =" + sNB;
-            //}
-
-            //if (sNO != "")
-            //{
-            //    sql += " and  TSE.SESNO =" + sNO;
-            //}
-
-            //if (STATUS != "")
-            //{
-            //    sql += " and  TSE.STATUS =" + STATUS;
-            //}
-
-            //if (sDATESTART != "")
-            //{
-            //    sql += " and TSE.SESDATE >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
-            //}
-
-            //if (sDATEEND != "")
-            //{
-            //    sql += " and TSE.SESDATE <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
-            //}
-            //if (MemberSH != "")
-            //{
-            //    sql += " and TSP.MEMBERNB =" + MemberSH;
-            //}
+            var NB = Request.Form["NB"].Trim();
+            var sNB = Request.Form["sNB"].Trim();
+            var sNO = Request.Form["sNO"].Trim();
+            var sDATESTART = Request.Form["sDATESTART"].Trim();
+            var sDATEEND = Request.Form["sDATEEND"].Trim();
+            var SesStatus = Request.Form["sSTATUS"].Trim();
+            var SPstatus = Request.Form["SPstatus"].Trim();
+            var SProcedtyps = Request.Form["SProcedtyps"].Trim();
+            var COMCITYNB = Request.Form["COMCITYNB"].Trim();
 
 
-            //CodesController bb = new CodesController();
+            if (NB != "")
+            {
+                sql += " and TSE.COMMITTEENB = " + NB;
+            }
+            if (sNB != "")
+            {
+                sql += " and TSE.NB =" + sNB;
+            }
 
-            //var ci = bb.GetCityForRead();
+            if (sNO != "")
+            {
+                sql += " and  TSE.SESNO =" + sNO;
+            }
 
-            //if (ci == "0")
-            //{
-            //    if (COMCITYNB != "")
-            //    {
-            //        sql += " and TSE.SESCITYNB =" + COMCITYNB;
-            //    }
+            if (SesStatus != "")
+            {
+                sql += " and  TSE.STATUS =" + SesStatus;
+            }
 
-            //}
-            //else
-            //{
-            //    sql += " and TSE.SESCITYNB =" + ci;
-            //}
+            if (sDATESTART != "")
+            {
+                sql += " and TSE.SESDATE >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
+            }
 
-            //sql += " ORDER BY TSE.NB, TSP.MEMBERNB ";
+            if (sDATEEND != "")
+            {
+                sql += " and TSE.SESDATE <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
+            }
+
+            if (SPstatus != "")
+            {
+                sql += " and TSP.PSTATUS =" + SPstatus;
+            }
+
+            if (SProcedtyps != "")
+            {
+                sql += " and CP.PROCEDNB =" + SProcedtyps;
+            }
+
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+
+            if (ci == "0")
+            {
+                if (COMCITYNB != "")
+                {
+                    sql += " and TSE.SESCITYNB =" + COMCITYNB;
+                }
+
+            }
+            else
+            {
+                sql += " and TSE.SESCITYNB =" + ci;
+            }
+
+            sql += " ORDER BY TSE.NB";
 
             var data = db.Database.SqlQuery<ViewModel.SessionsAndProcedsVM>(sql);
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
-            
+
         }
 
-        public ActionResult SessionsAndProceds_PDF()
+        public ActionResult SessionsAndProceds_PDF(string pNB, string psNB, string psNO, string psDATESTART, string psDATEEND, string psSTATUS, string SPstatus, string SProcedtyps, string pCOMCITYNB)
+        {
+            string sql = "SELECT ZC.NAME  AS CityName, "
+     + " TSE.COMMITTEENB AS CommNb, "
+      + " TSE.NB AS SessNb, "
+      + " TSE.SESNO AS SessNo, "
+      + " TSE.SESDATE AS SessDate, "
+      + " TS.NAME AS SessStatus, "
+      + " PT.NAME AS ProcedName, "
+      + " TSS.NAME AS ProcedRes "
+     + " FROM TRSESSIONS_PROCEDS TSP "
+     + " JOIN TRSESSIONS TSE ON TSE.NB = TSP.SESSIONNB "
+     + " JOIN ZCITYS ZC ON ZC.NB = TSE.SESCITYNB "
+     + " JOIN TRSTATUS TS ON TS.NB = TSE.STATUS "
+     + " JOIN CARPROCEDS CP ON CP.NB = TSP.CARPROCEDNB "
+     + " JOIN ZPROCEDTYPS PT ON PT.NB = CP.PROCEDNB "
+     + " JOIN TRSESSIONSPROCEDSTATUS TSS ON TSS.NB = TSP.PSTATUS "
+    + " WHERE 1 = 1 ";
+
+
+            var NB = pNB;
+            var sNB = psNB;
+            var sNO = psNO;
+            var sDATESTART = psDATESTART;
+            var sDATEEND = psDATEEND;
+            var SesStatus = psSTATUS;
+
+            var COMCITYNB = pCOMCITYNB;
+            var Pstatus = SPstatus;
+            var Procedtyps = SProcedtyps;
+
+
+
+            if (NB != "")
+            {
+                sql += " and TSE.COMMITTEENB = " + NB;
+            }
+            if (sNB != "")
+            {
+                sql += " and TSE.NB =" + sNB;
+            }
+
+            if (sNO != "")
+            {
+                sql += " and  TSE.SESNO =" + sNO;
+            }
+
+            if (SesStatus != "")
+            {
+                sql += " and  TSE.STATUS =" + SesStatus;
+            }
+
+            if (sDATESTART != "")
+            {
+                sql += " and TSE.SESDATE >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
+            }
+
+            if (sDATEEND != "")
+            {
+                sql += " and TSE.SESDATE <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
+            }
+
+            if (Pstatus != "")
+            {
+                sql += " and TSP.PSTATUS =" + Pstatus;
+            }
+
+            if (Procedtyps != "")
+            {
+                sql += " and CP.PROCEDNB =" + Procedtyps;
+            }
+
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+
+            if (ci == "0")
+            {
+                if (COMCITYNB != "")
+                {
+                    sql += " and TSE.SESCITYNB =" + COMCITYNB;
+                }
+
+            }
+            else
+            {
+                sql += " and TSE.SESCITYNB =" + ci;
+            }
+
+            sql += " ORDER BY TSE.NB";
+
+            var data = db.Database.SqlQuery<ViewModel.SessionsAndProcedsVM>(sql);
+            return new ViewAsPdf(data)
+            {
+                CustomSwitches = "--page-offset 0 --footer-center [page] --footer-font-size 8"
+            };
+        }
+
+        public ActionResult  CityAndLines()
         {
             return View();
         }
+        public ActionResult CityAndLines_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            var sql= " SELECT ZC.NAME AS CITYNAME, "
+                 + " TR.NAME AS LINENAME, "
+                 + "   TRT.NAME AS TPYS, "
+                 + "   CASE WHEN TR.STATUS = 1 THEN 'فعال' ELSE 'غير فعال' END AS STATUS, "
+                 + "   CASE WHEN TR.ISCANCELD = 1 THEN 'ملغى' ELSE 'غير ملغى' END AS ISCANCELD, "
+                 + "   TR.MINCARS AS MINCARS, "
+                 + "  TR.MAXCARS AS MAXCARS "
+                 + "  FROM TRLINES TR "
+                 + "    LEFT JOIN ZCITYS ZC ON ZC.NB = TR.CITYNB "
+                 + "  JOIN ZTRLINETYPES TRT ON TRT.NB = TR.TYP where 1 = 1 ";
+
+            var STrName = Request.Form["STrline"].Trim();
+            var StrlineStatus = Request.Form["StrlineStatus"].Trim();
+            var StrlineCANCELD = Request.Form["StrlineCANCELD"].Trim();
+            var Slinetyps = Request.Form["Slinetyps"].Trim();
+            var SlineCity = Request.Form["SlineCity"].Trim();
 
 
+            if (STrName != "")
+            {
+                sql += " and TR.NAME like '%" + STrName+"%' ";
+            }
+            if (StrlineStatus != "")
+            {
+                sql += " and TR.STATUS =" + StrlineStatus;
+            }
+            if (StrlineCANCELD != "")
+            {
+                sql += " and nvl(TR.ISCANCELD,0) =" + StrlineCANCELD;
+            }
+            if (Slinetyps != "")
+            {
+                sql += " and TR.TYP =" + Slinetyps;
+            }
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+
+            if (ci == "0")
+            {
+                if (SlineCity != "")
+                {
+                    sql += " and TR.CITYNB =" + SlineCity;
+                }
+
+            }
+            else
+            {
+                sql += " and TR.CITYNB =" + ci;
+            }
+            var data = db.Database.SqlQuery<ViewModel.CityAndLinesVM>(sql);
+            return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult CityAndLines_PDF(string pSTrName , string pStrlineStatus, string pStrlineCANCELD, string pSlinetyps, string pSlineCity)
+        {
+            var sql = " SELECT rownum as rr,  ZC.NAME AS CITYNAME, "
+                 + " TR.NAME AS LINENAME, "
+                 + "   TRT.NAME AS TPYS, "
+                 + "   CASE WHEN TR.STATUS = 1 THEN 'فعال' ELSE 'غير فعال' END AS STATUS, "
+                 + "   CASE WHEN TR.ISCANCELD = 1 THEN 'ملغى' ELSE 'غير ملغى' END AS ISCANCELD, "
+                 + "   TR.MINCARS AS MINCARS, "
+                 + "  TR.MAXCARS AS MAXCARS "
+                 + "  FROM TRLINES TR "
+                 + "    LEFT JOIN ZCITYS ZC ON ZC.NB = TR.CITYNB "
+                 + "  JOIN ZTRLINETYPES TRT ON TRT.NB = TR.TYP where 1 = 1 ";
+
+            var STrName = pSTrName;
+            var StrlineStatus = pStrlineStatus;
+            var StrlineCANCELD = pStrlineCANCELD;
+            var Slinetyps = pSlinetyps;
+            var SlineCity = pSlineCity;
+
+
+            if (STrName != "")
+            {
+                sql += " and TR.NAME like '%" + STrName + "%' ";
+            }
+            if (StrlineStatus != "")
+            {
+                sql += " and TR.STATUS =" + StrlineStatus;
+            }
+            if (StrlineCANCELD != "")
+            {
+                sql += " and nvl(TR.ISCANCELD,0) =" + StrlineCANCELD;
+            }
+            if (Slinetyps != "")
+            {
+                sql += " and TR.TYP =" + Slinetyps;
+            }
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+
+            if (ci == "0")
+            {
+                if (SlineCity != "")
+                {
+                    sql += " and TR.CITYNB =" + SlineCity;
+                }
+
+            }
+            else
+            {
+                sql += " and TR.CITYNB =" + ci;
+            }
+            var data = db.Database.SqlQuery<ViewModel.CityAndLinesVM>(sql);
+            return new ViewAsPdf(data)
+            {
+                CustomSwitches = "--page-offset 0 --footer-center [page] --footer-font-size 8"
+            };
+        }
+
+
+        public ActionResult LinesAndCarsGroup()
+        {
+            return View();
+        }
+        public ActionResult LinesAndCarsGroup_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            //var sql = "SELECT ZC.NAME AS CityName,try.name AS TYPS ,COUNT (*) AS CoutnCar "
+            // + "  FROM TRLINES TR JOIN ZCITYS ZC ON ZC.NB = TR.CITYNB "
+            // + "  join ZTRLINETYPES try on try.nb = tr.TYP "
+            // + " GROUP BY ZC.NAME ,try.name "
+            // + "  order by ZC.NAME ";
+            var SlineCitycheckbox = Request.Form["SlineCitycheckbox"].Trim();
+            var Slinetypscheckbox = Request.Form["Slinetypscheckbox"].Trim();
+
+            
+            var sql1 = " select ";
+          
+            if (SlineCitycheckbox != "")
+            {
+                sql1 += " ZC.NAME AS CityName ,";
+            }
+            if (Slinetypscheckbox != "")
+            {
+                sql1 += " try.name AS TYPS ,";
+            }
+
+            sql1 += " COUNT (*) AS CoutnCar ";
+
+            sql1 += "  FROM TRLINES TR JOIN ZCITYS ZC ON ZC.NB = TR.CITYNB "
+             + "  join ZTRLINETYPES try on try.nb = tr.TYP ";
+
+            if (SlineCitycheckbox != "" || Slinetypscheckbox != "")
+            {
+                sql1 += " GROUP BY ";
+            }
+            if (SlineCitycheckbox != "")
+            {
+                sql1 += " ZC.NAME ,";
+            }
+            if (Slinetypscheckbox != "")
+            {
+                sql1 += " try.name ";
+            }
+
+            var data = db.Database.SqlQuery<ViewModel.LinesAndCarsGroupVM>(sql1);
+            return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+            
+        }
     }
 }
