@@ -12,6 +12,7 @@ namespace Passengers.Controllers
     {
         //private IndexesEntities db = new IndexesEntities();
         private ProcedContext db = new ProcedContext();
+        private ValidationController validation = new ValidationController();
         public ActionResult Index()
         {
             return View();

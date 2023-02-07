@@ -154,6 +154,31 @@ namespace Passengers.Controllers
             
 
         }
+
+        public ActionResult GETTRSESSIONSPROCEDSTATUS()
+        {
+            var city = db.TRSESSIONSPROCEDSTATUS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(city, JsonRequestBehavior.AllowGet);
+       
+        }
+        public ActionResult GETZPROCEDTYPS()
+        {
+            var city = db.ZPROCEDTYPS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(city, JsonRequestBehavior.AllowGet);
+
+
+
+
+        }
+        
     }
 }
 

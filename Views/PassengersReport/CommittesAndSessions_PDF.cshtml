@@ -1,0 +1,69 @@
+﻿@model IEnumerable<Passengers.ViewModel.CommittesAndSessions>
+
+
+
+@{
+    Layout = null;
+}
+
+<head>
+    <title>تقرير اللجان وجلساتها</title>
+    <style>
+        .table {
+            border: 1px solid #ccc;
+            font-size: 16px;
+            text-align: center;
+            width: 100%;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align:center;">تقرير اللجان وجلساتها</h1>
+
+    <table cellpadding="8" cellspacing="0" class="table" DIR="auto">
+        <thead>
+            <tr>
+                <th style="border: 1px solid; width: auto;">المحافظة</th>
+                <th style="border: 1px solid; width: auto;">رمز اللجنة</th>
+                <th style="border: 1px solid; width: auto;">رقم اللجنة</th>
+                <th style="border: 1px solid; width: auto;">تاريخ اللجنة</th>
+                <th style="border: 1px solid; width: auto;">حالة اللجنة</th>
+                <th style="border: 1px solid; width: auto;">رمز الجلسة</th>
+                <th style="border: 1px solid; width: auto;">رقم الجلسة</th>
+                <th style="border: 1px solid; width: auto;">تاريخ الجلسة</th>
+                <th style="border: 1px solid; width: auto;">حالة الجلسة</th>
+                <th style="border: 1px solid; width: auto;">رئيس اللجنة</th>
+                <th style="border: 1px solid; width: auto;">المنصب</th>
+               
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td style="width: auto; border: 1px solid">@item.CityName</td>
+                <td style="width: auto; border: 1px solid">@item.CommNb</td>
+                <td style="width: auto; border: 1px solid">@item.CommNo</td>
+                <td style="width: auto; border: 1px solid">@Convert.ToDateTime(item.CommDate).ToString("dd/MM/yyyy")</td>
+                <td style="width: auto; border: 1px solid">@item.CommStatus</td>
+
+                <td style="width: auto; border: 1px solid">@item.SessNb</td>
+                <td style="width: auto; border: 1px solid">@item.SessNo</td>
+                <td style="width: auto; border: 1px solid">@Convert.ToDateTime(item.SessDate).ToString("dd/MM/yyyy")</td>
+                <td style="width: auto; border: 1px solid">@item.SessStatus</td>
+
+                <td style="width: auto; border: 1px solid">@item.BossName</td>
+
+                <td style="width: auto; border: 1px solid">@item.BossPostion</td>
+
+            </tr>
+            }
+        </tbody>
+    </table>
+</body>

@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "تقرير اللجان واعضائها";
+    ViewBag.Title = "تقرير اللجان وجلساتها";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -20,25 +20,6 @@
         </div>*@
                 <div class="col-md-2">
                     @Html.Kendo().TextBox().Name("SCommNO").HtmlAttributes(new { placeholder = " رقم اللجنة" })
-                </div>
-                @*<div class="col-md-1">
-            <label for="template_name"> المحافظة</label>
-        </div>*@
-                <div class="col-md-2">
-                    @(Html.Kendo().DropDownList()
-                                    .OptionLabel("اختر محافظة اللجنة")
-                                    .Name("SComCity")
-                                    .DataTextField("NAME")
-                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
-                                    .DataSource(source =>
-                                    {
-                                        source.Read(read =>
-                                        {
-                                            read.Action("GetCity", "Codes");
-                                        });
-                                    })
-                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
-                                    )
                 </div>
                 @*<div class="col-md-1">
             <label for="template_name"> التاريخ من</label>
@@ -63,8 +44,6 @@
                 @*<div class="col-md-1">
             <label for="template_name"> حالة اللجنة</label>
         </div>*@
-                </div>
-            <div class="row">
                 <div class="col-md-2">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر  حالة اللجنة")
@@ -82,68 +61,98 @@
                                     )
 
                 </div>
+
                 @*<div class="col-md-1">
-            <label for="template_name"> العضوية</label>
-        </div>*@
-                <div class="col-md-2">
-                    @(Html.Kendo().DropDownList()
-                                    .OptionLabel("اختر العضوية")
-                                    .Name("SMemberPos")
-                                    .DataTextField("NAME")
-                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
-                                    .DataSource(source =>
-                                    {
-                                        source.Read(read =>
-                                        {
-                                            read.Action("GetMemberShip", "Codes");
-                                        });
-                                    })
-                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
-                                    )
-                </div>
-                @*<div class="col-md-1">
-            <label for="template_name"> المنصب</label>
-        </div>*@
-                <div class="col-md-2">
-                    @(Html.Kendo().DropDownList()
-                                    .OptionLabel("اختر المنصب")
-                                    .Name("SMeberShip")
-                                    .DataTextField("NAME")
-                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
-                                    .DataSource(source =>
-                                    {
-                                        source.Read(read =>
-                                        {
-                                            read.Action("GetMemberPostion", "Codes");
-                                        });
-                                    })
-                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
-                                    )
-                </div>
-                        @*<div class="col-md-1">
-                    <label for="template_name"> اسم العضو</label>
+                    <label for="template_name"> المحافظة</label>
                 </div>*@
-                <div class="col-md-4">
-                    @Html.Kendo().TextBox().Name("SMemerName").HtmlAttributes(new { placeholder = " اسم العضو" })
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر محافظة اللجنة")
+                                    .Name("SComCity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+            </div>
+            <div class="row" style="padding-bottom:10px">
+
+                @*<div class="col-md-1">
+            <label for="template_name"> رمز الجلسة</label>
+        </div>*@
+                <div class="col-md-2">
+                    @Html.Kendo().TextBox().Name("SSessNb").HtmlAttributes(new { placeholder = " رمز الجلسة" })
+                </div>
+                @*<div class="col-md-1">
+            <label for="template_name"> رقم الجلسة</label>
+        </div>*@
+                <div class="col-md-2">
+                    @Html.Kendo().TextBox().Name("SSesNO").HtmlAttributes(new { placeholder = " رقم الجلسة" })
+                </div>
+                @*<div class="col-md-1">
+            <label for="template_name"> التاريخ من</label>
+        </div>*@
+                <div class="col-md-2">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SSesDateStart")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ الجلسة من", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+                @*<div class="col-md-1">
+            <label for="template_name"> التاريخ الى</label>
+        </div>*@
+                <div class="col-md-2">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SSesDateEnd")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ الجلسة الى", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+                @*<div class="col-md-1">
+            <label for="template_name"> حالة الجلسة</label>
+        </div>*@
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر  حالة الجلسة")
+                                    .Name("SSesStatus")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetStatus", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
 
                 </div>
-
                 <div class="col-md-2">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
 
                     <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
 
                 </div>
+
+
             </div>
-          
-            
+           
         </div>
     </div>
 }
 
 
 <div>
-    @(Html.Kendo().Grid <Passengers.ViewModel.CommittesAndMembersVM>()
+    @(Html.Kendo().Grid <Passengers.ViewModel.CommittesAndSessions>()
             .Name("grid").AutoBind(false)
             .Columns(columns =>
             {
@@ -153,14 +162,18 @@
                 columns.Bound(c => c.CityName).Title("المحافظة").Width(110);
                 columns.Bound(c => c.CommNb).Title("رمز اللجنة").Width(120);
                 columns.Bound(c => c.CommNo).Title("رقم اللجنة").Width(120);
-
                 columns.Bound(c => c.CommDate).Format("{0:dd/MM/yyyy}").Title("تاريخ اللجنة").Width(110);
                 //  columns.ForeignKey(c => c.COMCITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
                 columns.Bound(c => c.CommStatus).Title("حالة اللجنة").Width(100);
+                columns.Bound(c => c.SessNb).Title("رمز الجلسة").Width(120);
+                columns.Bound(c => c.SessNo).Title("رقم الجلسة").Width(120);
+                columns.Bound(c => c.SessDate).Format("{0:dd/MM/yyyy}").Title("تاريخ الجلسة").Width(110);
+                //  columns.ForeignKey(c => c.COMCITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
+                columns.Bound(c => c.SessStatus).Title("حالة الجلسة").Width(100);
                 //columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150);
-                columns.Bound(c => c.MemberName).Title("اسم العضو");
-                columns.Bound(c => c.MemberPostion).Title("المنصب").Width(150);
-                columns.Bound(c => c.MemberShip).Title("العضوية").Width(150);
+                columns.Bound(c => c.BossName).Title("اسم رئيس اللجنة");
+                columns.Bound(c => c.BossPostion).Title("المنصب").Width(150);
+
                 //columns.Command(command =>
                 //{
                 //    //command.Custom("Preview").Click("Preview").Text(" ");
@@ -179,14 +192,14 @@
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
             .PageSize(15)
             //.Model(model => model.Id(p => p.NB))
-            .Read(read => read.Action("CommittesAndMembers_Read", "PassengersReport").Data("GetFillters")))
+            .Read(read => read.Action("CommittesAndSessions_Read", "PassengersReport").Data("GetFillters")))
             .Resizable(resize => resize
             .Columns(true)
             )
             .ToolBar(toolbar =>
             {
-             //   toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
-           toolbar.Template(@<text>
+            //   toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            toolbar.Template(@<text>
             <div >
                 <div>
                     <button class="btn btn-green" href="#" onclick="ExportToPdf()">
@@ -243,14 +256,12 @@
         fillter.COMNO = $('#SCommNO').val();
         fillter.COMDATESTART = $('#SComDateStart').val();
         fillter.COMDATEEND = $('#SComDateEnd').val();
-
-        fillter.STATUS = $('#SComStatus').val();
-
-        fillter.MEMBERNAME = $('#SMemerName').val();
-
-        fillter.MEMBERPOSITIONNB = $('#SMemberPos').val();
-        fillter.MEMBERSHIPNB = $('#SMeberShip').val();
-
+        fillter.COMSTATUS = $('#SComStatus').val();
+        fillter.sNB = $('#SSessNb').val();
+        fillter.sNO = $('#SSesNO').val();
+        fillter.sDATESTART = $('#SSesDateStart').val();
+        fillter.sDATEEND = $('#SSesDateEnd').val();
+        fillter.sSTATUS = $('#SSesStatus').val();
         fillter.COMCITYNB = $('#SComCity').val();
 
         return fillter;
@@ -267,42 +278,69 @@
     }
 
     function rest_filtters() {
+
         $('#SCommNb').val("");
         $('#SCommNO').val("");
-
         $('#SComDateStart').val("");
         $('#SComDateEnd').val("");
-        $('#SMemerName').val("");
-
-        $("#SComCity").data("kendoDropDownList").value(-1);
-        $("#SMeberShip").data("kendoDropDownList").value(-1);
-        $("#SMemberPos").data("kendoDropDownList").value(-1);
         $("#SComStatus").data("kendoDropDownList").value(-1);
-
+        $('#SSessNb').val("");
+        $('#SSesNO').val("");
+        $('#SSesDateStart').val("");
+        $('#SSesDateEnd').val("");
+        $("#SSesStatus").data("kendoDropDownList").value(-1);
+        $("#SComCity").data("kendoDropDownList").value(-1);
         $("#grid").data("kendoGrid").dataSource.data([]);
     }
 
     function ExportToPdf() {
         var fill = {};
-
         fill.NB = $('#SCommNb').val();
         fill.COMNO = $('#SCommNO').val();
         fill.COMDATESTART = $('#SComDateStart').val();
         fill.COMDATEEND = $('#SComDateEnd').val();
-
-        fill.STATUS = $('#SComStatus').val();
-
-        fill.MEMBERNAME = $('#SMemerName').val();
-
-        fill.MEMBERPOSITIONNB = $('#SMemberPos').val();
-        fill.MEMBERSHIPNB = $('#SMeberShip').val();
-
+        fill.COMSTATUS = $('#SComStatus').val();
+        fill.sNB = $('#SSessNb').val();
+        fill.sNO = $('#SSesNO').val();
+        fill.sDATESTART = $('#SSesDateStart').val();
+        fill.sDATEEND = $('#SSesDateEnd').val();
+        fill.sSTATUS = $('#SSesStatus').val();
         fill.COMCITYNB = $('#SComCity').val();
-        
-        window.open("CommittesAndMembers_PDF?sNB=" + fill.NB + "&sCOMNO=" + fill.COMNO
-            + "&sCOMDATESTART=" + fill.COMDATESTART + "&sCOMDATEEND=" + fill.COMDATEEND
-            + "&sSTATUS=" + fill.STATUS + "&sMEMBERNAME=" + fill.MEMBERNAME + "&sMEMBERPOSITIONNB=" + fill.MEMBERPOSITIONNB + "&sMEMBERSHIPNB=" + fill.MEMBERSHIPNB + "&sCOMCITYNB=" + fill.COMCITYNB , "_blank");
-    
+
+
+        window.open("CommittesAndSessions_PDF?pNB=" + fill.NB
+            + "&pCOMNO=" + fill.COMNO
+            + "&pCOMDATESTART=" + fill.COMDATESTART
+            + "&pCOMDATEEND=" + fill.COMDATEEND
+            + "&pSTATUS=" + fill.COMSTATUS
+            + "&psNB=" + fill.sNB
+            + "&psNO=" + fill.sNO
+            + "&psDATESTART=" + fill.sDATESTART
+            + "&psDATEEND=" + fill.sDATEEND
+            + "&psSTATUS=" + fill.sSTATUS
+            + "&pCOMCITYNB=" + fill.COMCITYNB, "_blank"
+        );
     }
-    function ExportToExcel() {}
+    function ExportToExcel()
+
+    {
+
+            $.ajax({
+                type: "POST",
+               
+                url: "@Url.Action("CommittesAndSessions_ex", "PassengersReport")",
+                success: function (response) {
+                    if (response.success) {
+                      
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                       
+                    }
+
+                }
+            });
+
+
+    }
 </script>

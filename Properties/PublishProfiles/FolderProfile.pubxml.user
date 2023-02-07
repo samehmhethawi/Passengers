@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <_PublishTargetUrl>D:\SIT\Publish\Indexes</_PublishTargetUrl>
-    <History>True|2023-01-26T06:27:47.4315975Z;True|2023-01-23T16:36:13.6075737+03:00;True|2023-01-23T10:24:41.7048943+03:00;True|2023-01-23T10:19:54.2865218+03:00;True|2023-01-17T13:13:26.2100251+03:00;True|2023-01-14T10:44:58.6437561+03:00;True|2021-11-08T17:47:08.2412470+03:00;True|2021-09-26T17:51:26.0277928+03:00;True|2021-08-18T16:55:07.9020323+03:00;</History>
+    <History>True|2023-01-30T14:10:56.1156592Z;True|2023-01-26T09:27:47.4315975+03:00;True|2023-01-23T16:36:13.6075737+03:00;True|2023-01-23T10:24:41.7048943+03:00;True|2023-01-23T10:19:54.2865218+03:00;True|2023-01-17T13:13:26.2100251+03:00;True|2023-01-14T10:44:58.6437561+03:00;True|2021-11-08T17:47:08.2412470+03:00;True|2021-09-26T17:51:26.0277928+03:00;True|2021-08-18T16:55:07.9020323+03:00;</History>
   </PropertyGroup>
   <ItemGroup>
     <File Include="App_Browsers/qt.browser">
@@ -39,13 +39,13 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>03/06/2018 08:28:04</publishTime>
     </File>
     <File Include="bin/HelperLib.dll">
-      <publishTime>01/25/2023 13:55:36</publishTime>
+      <publishTime>01/30/2023 17:10:33</publishTime>
     </File>
     <File Include="bin/HelperLib.dll.config">
       <publishTime>11/11/2022 14:33:59</publishTime>
     </File>
     <File Include="bin/HelperLib.pdb">
-      <publishTime>01/25/2023 13:55:36</publishTime>
+      <publishTime>01/30/2023 17:10:33</publishTime>
     </File>
     <File Include="bin/Indexes.dll">
       <publishTime>11/08/2021 16:45:19</publishTime>
@@ -111,19 +111,19 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>11/13/2012 15:19:34</publishTime>
     </File>
     <File Include="bin/Passengers.dll">
-      <publishTime>01/25/2023 15:54:34</publishTime>
+      <publishTime>01/30/2023 17:10:36</publishTime>
     </File>
     <File Include="bin/Passengers.pdb">
-      <publishTime>01/25/2023 15:54:34</publishTime>
+      <publishTime>01/30/2023 17:10:36</publishTime>
     </File>
     <File Include="bin/Proced.DataAccess.dll">
-      <publishTime>01/25/2023 14:00:43</publishTime>
+      <publishTime>01/30/2023 17:10:34</publishTime>
     </File>
     <File Include="bin/Proced.DataAccess.dll.config">
       <publishTime>11/10/2022 10:59:16</publishTime>
     </File>
     <File Include="bin/Proced.DataAccess.pdb">
-      <publishTime>01/25/2023 14:00:43</publishTime>
+      <publishTime>01/30/2023 17:10:34</publishTime>
     </File>
     <File Include="bin/roslyn/csc.exe">
       <publishTime>05/24/2018 13:38:22</publishTime>
@@ -2291,6 +2291,96 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     <File Include="Global.asax">
       <publishTime>11/12/2022 14:06:28</publishTime>
     </File>
+    <File Include="Images/200.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/accent.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/adit2.jpg">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/analysis.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/audit1.jpg">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/audit122.jpg">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/auto.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/back.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/bullet.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/coins.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/curriculum.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/driving-license.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/electric-car.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/email.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/heroAccent.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/home.jpg">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/home2.jpg">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/import.jpg">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/license-plate.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/loading_apple.gif">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/logo.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/online-booking.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/pdf_icon.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/production.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/progress4.gif">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/syrian_plate.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/tiff.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/title.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/transportation-ministary-logo.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
+    <File Include="Images/transportation.png">
+      <publishTime>02/14/2022 20:05:48</publishTime>
+    </File>
     <File Include="Mvc.sitemap">
       <publishTime>08/18/2021 16:34:50</publishTime>
     </File>
@@ -3486,7 +3576,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>11/13/2022 13:32:14</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>01/23/2023 15:36:08</publishTime>
+      <publishTime>01/28/2023 09:23:27</publishTime>
     </File>
     <File Include="Views/Shared/_LoaderPartial.cshtml">
       <publishTime>11/15/2022 16:54:23</publishTime>
@@ -3495,7 +3585,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>01/23/2023 15:55:09</publishTime>
     </File>
     <File Include="Views/Shared/_TopNavMenuPartial.cshtml">
-      <publishTime>01/24/2023 13:06:04</publishTime>
+      <publishTime>01/29/2023 17:01:31</publishTime>
+    </File>
+    <File Include="Views/TRAGREEMENTS/Index.cshtml">
+      <publishTime>01/30/2023 13:35:55</publishTime>
     </File>
     <File Include="Views/TRCOMMITTEES/Index.cshtml">
       <publishTime>01/23/2023 15:03:30</publishTime>
@@ -3525,7 +3618,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>08/15/2021 15:48:20</publishTime>
     </File>
     <File Include="Views/TrLines/Index.cshtml">
-      <publishTime>01/25/2023 15:17:54</publishTime>
+      <publishTime>01/26/2023 19:21:27</publishTime>
     </File>
     <File Include="Views/TrLines/_CreatPartial.cshtml">
       <publishTime>08/15/2021 15:48:20</publishTime>
@@ -3537,16 +3630,16 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>08/15/2021 15:48:20</publishTime>
     </File>
     <File Include="Views/TRSESSIONS/Index.cshtml">
-      <publishTime>01/23/2023 15:01:33</publishTime>
+      <publishTime>01/28/2023 16:08:06</publishTime>
     </File>
     <File Include="Views/TRSESSIONS/PrintReportSession.cshtml">
-      <publishTime>01/22/2023 16:49:03</publishTime>
+      <publishTime>01/30/2023 09:34:52</publishTime>
     </File>
     <File Include="Views/TRSESSIONS/TRSESSIONSPROCEDS.cshtml">
-      <publishTime>01/25/2023 17:10:26</publishTime>
+      <publishTime>01/30/2023 11:02:12</publishTime>
     </File>
     <File Include="Views/TRSESSIONS/_AddSession.cshtml">
-      <publishTime>01/23/2023 10:48:07</publishTime>
+      <publishTime>01/28/2023 10:19:30</publishTime>
     </File>
     <File Include="Views/TRSESSIONS/_DetailsSessionMembers.cshtml">
       <publishTime>01/25/2023 16:30:31</publishTime>
@@ -3561,10 +3654,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>01/07/2023 16:17:38</publishTime>
     </File>
     <File Include="Views/TRZMEMBERPOSITION/Index.cshtml">
-      <publishTime>01/23/2023 14:45:22</publishTime>
+      <publishTime>01/30/2023 16:10:21</publishTime>
     </File>
     <File Include="Views/TRZMEMBERSHIP/Index.cshtml">
-      <publishTime>01/23/2023 11:20:33</publishTime>
+      <publishTime>01/30/2023 16:23:56</publishTime>
     </File>
     <File Include="Views/TRZPROCEDSCARCAT/Index.cshtml">
       <publishTime>01/25/2023 12:59:59</publishTime>
@@ -4380,7 +4473,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>08/15/2021 15:48:12</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>01/26/2023 09:27:45</publishTime>
+      <publishTime>01/30/2023 17:10:54</publishTime>
     </File>
   </ItemGroup>
 </Project>

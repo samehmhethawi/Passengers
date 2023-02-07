@@ -90,6 +90,7 @@
            <div id="Add_S">
                <div class="row col-11">
                    <div class="col-md-5" >
+                      
                    <span>  الاسم
                        @Html.Kendo().TextBox().Name("AddName").HtmlAttributes(new { placeholder = " الاسم", required = "required", data_required_msg = "هذا الحقل مطلوب"})
                        </span>
@@ -97,9 +98,9 @@
 
                        </div>
                     <div class="col-md-5" >
-                   <span>  الترتيب<br />
-                       @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("AddOrdr").HtmlAttributes(new { placeholder = "الترتيب", required = "required", data_required_msg = "هذا الحقل مطلوب"})
-                       </span>
+                         <span>  الترتيب<br />
+                           @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("AddOrdr").HtmlAttributes(new { placeholder = "الترتيب", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+                          </span>
 
 
                        </div>

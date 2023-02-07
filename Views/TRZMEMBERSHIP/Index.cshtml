@@ -3,12 +3,8 @@
     ViewBag.Title = "العضوية";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<head>
-    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/kendo.web.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/kendo.aspnetmvc.min.js")"></script>
 
-</head>
-<script id="responsive-column-template" type="text/x-kendo-template">
+@*<script id="responsive-column-template" type="text/x-kendo-template">
     <strong>Contact Name</strong>
     <p class="col-template-val">#=data.NAME#</p>
 
@@ -19,49 +15,25 @@
     <p class="col-template-val">#=data.NOTES#</p>
 
    
-</script>
+</script>*@
 
-<script>
-    var pagewidth = document.body.offsetWidth;
-    if (pagewidth >= 500) {
-        alert(pagewidth);
-        $('.mycoll').css("display", "block");
-        $('.mycollall').css("display", "none");
-    } 
-    if (pagewidth < 500) {
-        alert(pagewidth);
 
-        $('.mycoll').css("display", "none");
-        $('.mycollall').css("display", "block");
-    }
-</script>
 
-<script>
+@*<script>
     var resColTemplate;
 
     $(document).ready(function () {
         resColTemplate = kendo.template($("#responsive-column-template").html());
     });
-</script>
+</script>*@
 
-<style>
-    .mycoll {
-        display: none
-    }
-    mycollall{
-        display:none
-    }
-    .col-template-val {
-        margin: 0 0 1em .5em;
-    }
-</style>
+
 
 
 <!-- Grid  -->
 <div>
     @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRZMEMBERSHIP>()
             .Name("grid")
-
             .Columns(columns =>
             {
            
@@ -69,15 +41,15 @@
              "#= renderNumber(data) #"
            ).Width(80);
             columns.Bound(c => c.NB).Visible(false);
-            columns.Bound(c => c.NAME).Width(450).MinScreenWidth(1000);
-            columns.Bound(c => c.ORDR).MinScreenWidth(1000);
+            columns.Bound(c => c.NAME).Width(450);
+            columns.Bound(c => c.ORDR).Width(150);
             columns.Bound(c => c.NOTES).Width(150);
-            columns.Template(@<text></text>).ClientTemplate("#=resColTemplate(data)#").Title("Items");
+            //columns.Template(@<text></text>).ClientTemplate("#=resColTemplate(data)#").Title("Items");
                 columns.Command(command =>
                 {
                 //    //command.Custom("Preview").Click("Preview").Text(" ");
                    command.Custom("Edit").Click("Edit").Text(" ");
-                    command.Custom("Delete").Click("Delete").Text(" ");
+                   command.Custom("Delete").Click("Delete").Text(" ");
                 //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
                 //      command.Custom("Details2").Click("Details2").Text(" ");
                 }).Width(100);
@@ -85,7 +57,7 @@
             .HtmlAttributes(new { style = "height: aotu  !important;" })
             .Scrollable()
             .Sortable()
-            .Groupable()
+            
             .Filterable()
             .DataSource(dataSource => dataSource
             .Ajax()

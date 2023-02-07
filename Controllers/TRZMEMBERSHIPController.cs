@@ -15,6 +15,7 @@ namespace Passengers.Controllers
     public class TRZMEMBERSHIPController : Controller
     {
         private ProcedContext db = new ProcedContext();
+        private ValidationController validation = new ValidationController();
         // GET: TRZMEMBERSHIP
         public ActionResult Index()
         {
@@ -72,8 +73,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-
-                return Json(new { success = false, responseText = ex }, JsonRequestBehavior.AllowGet);
+                var SS = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = SS }, JsonRequestBehavior.AllowGet);
             }
 
         }
@@ -109,8 +110,9 @@ namespace Passengers.Controllers
                         }
                         catch (Exception e)
                         {
+                            var SS = validation.OracleExceptionValidation(e);
                             transaction.Rollback();
-                            return Json(new { success = false, responseText = e.Message }, JsonRequestBehavior.AllowGet);
+                            return Json(new { success = false, responseText = SS }, JsonRequestBehavior.AllowGet);
 
                         }
                     }
@@ -121,8 +123,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-
-                return Json(new { success = false, responseText = ex }, JsonRequestBehavior.AllowGet);
+                var SS = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = SS }, JsonRequestBehavior.AllowGet);
             }
         }
 

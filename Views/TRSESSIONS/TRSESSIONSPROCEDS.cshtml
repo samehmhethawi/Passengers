@@ -209,11 +209,11 @@
             .Columns(columns =>
             {
                 columns.Bound(c => c.NB).Visible(false);
-                columns.Bound(c => c.ORDR).Title("م.").Width(50);
+                columns.Bound(c => c.ORDR).Title("م.").Width(50).Visible(false);
                 columns.Bound(c => c.CARNB).Title("رمز المركبة").Width(150);
                 columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة").ClientTemplate("#= renderCarLink1(data) #").Width(300);
                 columns.Bound(c => c.PROCEDNB).Title("نوع المعاملة").Visible(false);
-                
+
                 columns.Bound(c => c.TYPSNAMEAGR).Width(100).Title("الموافقة");
 
                 columns.Bound(c => c.SESSIONNB).Title("رمز الجلسة").Visible(false);
@@ -228,13 +228,13 @@
                     columns.Bound(c => c.PSTATUS).ClientTemplate
                   (" # if (1 == 1) if " +
                   "(1 == 1)" +
-                  "{#<button id='' class='btn btn-success' onclick='Agree(#=NB# , #=PROCEDNB# , #=CARPROCEDSTEPNB#)'> <i  class='fa fa-check'></i> </button> #" +
-                  " #<button id='' class='btn btn-danger' onclick='NotAgree(#=NB#)'> <i  class='fa fa-close'></i> </button>  # " +
-                  " #<button id='' class='btn btn-text-info' onclick='Delay(#=NB#)'> <i  class='fa fa-repeat'></i> </button># " +
+                  "{#<button id='' title='موافقة' class='btn btn-success' onclick='Agree(#=NB# , #=PROCEDNB# , #=CARPROCEDSTEPNB#)'> <i  class='fa fa-check'></i> </button> #" +
+                  " #<button id='' title='عدم موافقة' class='btn btn-danger' onclick='NotAgree(#=NB#)'> <i  class='fa fa-close'></i> </button>  # " +
+                  " #<button id='' title='تأجيل' class='btn btn-text-info' onclick='Delay(#=NB#)'> <i  class='fa fa-repeat'></i> </button># " +
                   "} #")
                 .Sortable(false).Title(" ").Width(150).Filterable(false);
 
-                 }
+                }
             })
             .Filterable()
             .HtmlAttributes(new { style = "height: aotu  !important;" })
@@ -248,7 +248,7 @@
             )
             .ToolBar(toolbar =>
             {
-             })
+            })
 
                 //      .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
                 //                            .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
@@ -324,7 +324,7 @@
 
                         toastr.success("تمت العملية  بنجاح");
                     } else {
-
+                        toastr.error(response.responseText);
                     }
 
                 }
@@ -348,7 +348,7 @@
 
                         toastr.success("تمت العملية  بنجاح");
                     } else {
-
+                        toastr.error(response.responseText);
                     }
 
                 }
@@ -372,7 +372,7 @@
 
                         toastr.success("تمت العملية  بنجاح");
                     } else {
-
+                        toastr.error(response.responseText);
                     }
 
                 }
@@ -526,14 +526,19 @@
             url: url,
             cache: false,
             type: "POST",
-           // data: model,
+            data: { ID : @ViewBag.SessionID},
             success: function (data) {
+                if (data.success != false) {
+                    $.when(ss2(data)).then(function () {
+                        ShowProcedCount();
+                        $("#ProcedCount").parent().find(".k-window-action").css("visibility", "block");
 
-                $.when(ss2(data)).then(function () {
-                    ShowProcedCount();
-                    $("#ProcedCount").parent().find(".k-window-action").css("visibility", "block");
+                    })
+                } else {
+                    toastr.error(data.responseText);
+                }
 
-                })
+
             },
             error: function (reponse) {
                 alert("error : " + reponse);

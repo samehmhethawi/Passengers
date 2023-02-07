@@ -14,6 +14,7 @@ namespace Passengers.Controllers
     public class TRZPROCEDSCARCATController : Controller
     {
         private ProcedContext db = new ProcedContext();
+        private ValidationController validation = new ValidationController();
         // GET: TRZPROCEDSCARCAT
         public ActionResult Index()
         {
@@ -114,8 +115,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-              
-                return Json(new { success = false, responseText = ex }, JsonRequestBehavior.AllowGet);
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
            
 
@@ -163,8 +164,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-
-                return Json(new { success = false, responseText = ex }, JsonRequestBehavior.AllowGet);
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
 
         }

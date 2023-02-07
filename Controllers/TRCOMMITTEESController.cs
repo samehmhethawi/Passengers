@@ -14,6 +14,7 @@ namespace Passengers.Controllers
     public class TRCOMMITTEESController : Controller
     {
         private ProcedContext db = new ProcedContext();
+        private ValidationController validation = new ValidationController();
         // GET: TRCOMMITTEES
         public ActionResult Index()
         {
@@ -124,6 +125,8 @@ namespace Passengers.Controllers
                 }
                 else
                 {
+                    model.IUSER = Utility.MyName();
+                    model.IDATE = DateTime.Now;
                     db.TRCOMMITTEES.Add(model);
                     db.SaveChanges();
                     return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
@@ -132,7 +135,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText =  ex.ToString() });
+                var SS = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText =  SS });
             }
            
         }
@@ -210,7 +214,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = ex.ToString() });
+                var SS = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = SS });
             }
 
         }
@@ -247,8 +252,8 @@ namespace Passengers.Controllers
         {
             try
             {
-               
-              
+                var ssss = "select zh.ORDR from TRZMEMBERSHIP zh where zh.nb = " + model.MEMBERSHIPNB;
+                  model.ORDR = db.Database.SqlQuery<long?>(ssss).FirstOrDefault();
                     db.TRCOMMITTEES_MEMBERS.Add(model);
                     db.SaveChanges();
                     return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
@@ -257,7 +262,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = ex.ToString() });
+                var SS = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = SS });
             }
 
         }
@@ -334,7 +340,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = ex.ToString() });
+                var SS = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = SS });
             }
             
         }

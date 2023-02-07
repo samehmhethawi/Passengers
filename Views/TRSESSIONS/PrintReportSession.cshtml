@@ -44,6 +44,12 @@
     }
 </style>
 <style>
+    .col-md-3{
+        padding:0 !important;
+        margin:0 !important;
+        margin-bottom:50px !important;
+        margin-top:10px!important;
+    }
     #bg-text {
         color: rgba(128, 128, 128, 0.43) !important;
         font-size: 70px;
@@ -118,27 +124,27 @@
         padding: 3px !important;
         line-height: 1.2 !important;
     }*/
-    @@media print {
+   /* @@media print {
         table {
             page-break-after: always;
         }
-    }
+    }*/
 </style>
-<script>
-    $(function () {
-        window.focus();
-        window.print();
+@*<script>
+        $(function () {
+            window.focus();
+            window.print();
 
-        try {
-            setTimeout(function () {
-                window.close();
-            }, 2000);
-        } catch (e) {
-        }
-    });
+            try {
+                setTimeout(function () {
+                    window.close();
+                }, 2000);
+            } catch (e) {
+            }
+        });
 
 
-</script>
+    </script>*@
 <header></header>
 
 
@@ -414,8 +420,21 @@
         }
     }
 
-</body>
 
+
+
+</body>
+<div class="row col-md-12">
+    @foreach (var item in ViewBag.sigSessionMemers)
+    {
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" style="display:block">
+            <div style="display:block;text-align:center">
+                @Html.Raw(@item.Replace(Environment.NewLine, "<br/>"))
+            </div>
+        </div>
+    }
+
+</div>
 
 
 

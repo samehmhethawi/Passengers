@@ -518,7 +518,7 @@ c.Messages(m =>
                             </div>
                          <div class="col-md-3" >
 
-                       @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("EtrlineMINCARS").HtmlAttributes(new { placeholder = "عدد المركبات الادنى", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+                       @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("EtrlineMINCARS").HtmlAttributes(new { placeholder = "عدد المركبات الادنى"@*, required = "required", data_required_msg = "هذا الحقل مطلوب"*@})
 
 
 
@@ -533,7 +533,7 @@ c.Messages(m =>
                                 .Spinners(false)
                                 .Format("0")
                                 .Name("EtrlinemaxCARS")
-                                .HtmlAttributes(new { placeholder = "عدد المركبات الادنى", required = "required", data_required_msg = "هذا الحقل مطلوب"}))
+                                .HtmlAttributes(new { placeholder = "عدد المركبات الادنى"/*, required = "required", data_required_msg = "هذا الحقل مطلوب"*/}))
 
 
 

@@ -15,6 +15,7 @@ namespace Passengers.Controllers
         // GET: TRAGREEMENTS
 
         private ProcedContext db = new ProcedContext();
+        private ValidationController validation = new ValidationController();
         public ActionResult Index()
         {
             ViewData["AGREEMENTTYPENB"] = db.AGREEMENTTYPES.Select(x => new

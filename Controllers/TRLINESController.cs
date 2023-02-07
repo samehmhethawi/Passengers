@@ -13,6 +13,7 @@ namespace Passengers.Controllers
     public class TrLinesController : Controller
     {
         private ProcedContext db = new ProcedContext();
+        private ValidationController validation = new ValidationController();
         public ActionResult Index()
         {
             ViewData["ZTRLINETYPES"] = db.ZTRLINETYPES.Select(x => new
@@ -126,10 +127,10 @@ namespace Passengers.Controllers
                 {
                     return Json(new { success = false, responseText = "يجب تحديد نوع الخط" });
                 }
-                if (!min.HasValue || !max.HasValue)
-                {
-                    return Json(new { success = false, responseText = "يجب تحديد العدد الادنى و الاعلى" });
-                }
+                //if (!min.HasValue || !max.HasValue)
+                //{
+                //    return Json(new { success = false, responseText = "يجب تحديد العدد الادنى و الاعلى" });
+                //}
                 TRLINE tRLINE = new TRLINE();
                 tRLINE.NAME = Name;
                 tRLINE.TYP = typ;
@@ -161,8 +162,9 @@ namespace Passengers.Controllers
                 db.SaveChanges();
                 return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception e) { 
-                    return Json(new { success = false, responseText = e .Message});
+            catch (Exception ex) {
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss});
             }
 
         }
@@ -278,10 +280,10 @@ namespace Passengers.Controllers
                 {
                     return Json(new { success = false, responseText = "يجب تحديد نوع الخط" });
                 }
-                if (!min.HasValue || !max.HasValue)
-                {
-                    return Json(new { success = false, responseText = "يجب تحديد العدد الادنى و الاعلى" });
-                }
+                //if (!min.HasValue || !max.HasValue)
+                //{
+                //    return Json(new { success = false, responseText = "يجب تحديد العدد الادنى و الاعلى" });
+                //}
 
                 var data = db.TRLINES.Find(Nb);
 
@@ -336,9 +338,10 @@ namespace Passengers.Controllers
                 return Json(new { success = true, responseText = "ok" });
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Json(new { success = false, responseText = e.Message });
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText =ss });
 
             }
 

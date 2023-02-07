@@ -70,6 +70,7 @@
     <Compile Include="Controllers\TRCOMMITTEESController.cs" />
     <Compile Include="Controllers\TRLINESController.cs" />
     <Compile Include="Controllers\TRSESSIONSController.cs" />
+    <Compile Include="Controllers\trstController.cs" />
     <Compile Include="Controllers\TRZMEMBERPOSITIONController.cs" />
     <Compile Include="Controllers\TRZMEMBERSHIPController.cs" />
     <Compile Include="Controllers\TRZPROCEDSCARCATController.cs" />
@@ -97,7 +98,10 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="ViewModel\CommittesAndMembersVM.cs" />
+    <Compile Include="ViewModel\CommittesAndSessions.cs" />
     <Compile Include="ViewModel\CountTotal.cs" />
+    <Compile Include="ViewModel\SessionsAndMembersVM.cs" />
+    <Compile Include="ViewModel\SessionsAndProcedsVM.cs" />
     <Compile Include="ViewModel\TRPROCEDS_AVAILABLEVM.cs" />
     <Compile Include="ViewModel\TRSESSIONS_MEMBERS_PRESENTVM.cs" />
     <Compile Include="ViewModel\TRSESSIONS_PROCEDS_VM.cs" />
@@ -1012,6 +1016,7 @@
     <Content Include="Scripts\moment-with-langs.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\myhomepage.js" />
     <Content Include="Scripts\other\jquery.preloader.js" />
     <Content Include="Scripts\other\jquery.scrolling-tabs.js" />
     <Content Include="Scripts\other\select2.min.js" />
@@ -1267,6 +1272,12 @@
     <Content Include="Views\TRSESSIONS\_ProcedInfo.cshtml" />
     <Content Include="Views\TRSESSIONS\_ProcedCount.cshtml" />
     <Content Include="Views\TRAGREEMENTS\Index.cshtml" />
+    <Content Include="Views\trst\Index.cshtml" />
+    <Content Include="Views\PassengersReport\CommittesAndSessions.cshtml" />
+    <Content Include="Views\PassengersReport\CommittesAndSessions_PDF.cshtml" />
+    <Content Include="Views\PassengersReport\SessionsAndMembers.cshtml" />
+    <Content Include="Views\PassengersReport\SessionsAndMembers_PDF.cshtml" />
+    <Content Include="Views\PassengersReport\SessionsAndProceds.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

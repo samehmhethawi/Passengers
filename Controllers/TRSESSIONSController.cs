@@ -15,6 +15,7 @@ namespace Passengers.Controllers
     public class TRSESSIONSController : Controller
     {
         private ProcedContext db = new ProcedContext();
+        private ValidationController validation = new ValidationController();
         // GET: TRSESSIONS
         public ActionResult Index()
         {
@@ -42,9 +43,6 @@ namespace Passengers.Controllers
             });
             return View();
         }
-
-
-
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
             var sql = "select * from TRSESSIONS where 1 = 1 ";
@@ -118,9 +116,6 @@ namespace Passengers.Controllers
             return Json(result);
 
         }
-
-       
-
         public ActionResult Create(TRSESSIONS model)
         {
             try
@@ -147,6 +142,8 @@ namespace Passengers.Controllers
                     {
                         var comnb = db.Database.SqlQuery<int>("select nb from TRCOMMITTEES where COMCITYNB = " + model.SESCITYNB + " and STATUS = 1").FirstOrDefault();
                         model.COMMITTEENB = comnb;
+                        model.IUSER = Utility.MyName();
+                        model.IDATE = DateTime.Now;
                         db.TRSESSIONS.Add(model);
                         db.SaveChanges();
                         return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
@@ -159,11 +156,11 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = ex.ToString() });
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss });
             }
 
         }
-
         public ActionResult EditSession(TRSESSIONS model)
         {
             try
@@ -186,8 +183,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = ex.ToString()
-    });
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss});
             }
         }
         public ActionResult Read_Member_Session([DataSourceRequest] DataSourceRequest request , long NB)
@@ -212,7 +209,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
         }
         public ActionResult NotPRESENT(long nb) 
@@ -272,6 +270,18 @@ namespace Passengers.Controllers
             try
             {
                 var data = db.TRSESSIONS_PROCEDS.Find(nb);
+              
+                var setp = db.CARPROCEDSTEPS.Find(data.CARPROCEDSTEPNB);
+                var proced= db.CARPROCEDS.Find(data.CARPROCEDNB);
+                if (proced.RESULT != "جارية")
+                {
+                    return Json(new { success = false, responseText = "المعاملة ليست جارية" }, JsonRequestBehavior.AllowGet);
+                }
+                if (setp.DONE == 1)
+                {
+                    return Json(new { success = false, responseText = "الخظوة منفذة" }, JsonRequestBehavior.AllowGet);
+                }
+             
                 data.PSTATUS = 1;
                 db.Entry(data).State = EntityState.Modified;
                 db.SaveChanges();
@@ -279,7 +289,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
             
         }
@@ -308,6 +319,16 @@ namespace Passengers.Controllers
             try
             {
                 var data = db.TRSESSIONS_PROCEDS.Find(nb);
+                var setp = db.CARPROCEDSTEPS.Find(data.CARPROCEDSTEPNB);
+                var proced = db.CARPROCEDS.Find(data.CARPROCEDNB);
+                if (proced.RESULT != "جارية")
+                {
+                    return Json(new { success = false, responseText = "المعاملة ليست جارية" }, JsonRequestBehavior.AllowGet);
+                }
+                if (setp.DONE == 1)
+                {
+                    return Json(new { success = false, responseText = "الخظوة منفذة" }, JsonRequestBehavior.AllowGet);
+                }
                 data.PSTATUS = 2;
                 db.Entry(data).State = EntityState.Modified;
                 db.SaveChanges();
@@ -315,7 +336,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
         }
         public ActionResult Delay(long nb)
@@ -323,6 +345,16 @@ namespace Passengers.Controllers
             try
             {
                 var data = db.TRSESSIONS_PROCEDS.Find(nb);
+                var setp = db.CARPROCEDSTEPS.Find(data.CARPROCEDSTEPNB);
+                var proced = db.CARPROCEDS.Find(data.CARPROCEDNB);
+                if (proced.RESULT != "جارية")
+                {
+                    return Json(new { success = false, responseText = "المعاملة ليست جارية" }, JsonRequestBehavior.AllowGet);
+                }
+                if (setp.DONE == 1)
+                {
+                    return Json(new { success = false, responseText = "الخظوة منفذة" }, JsonRequestBehavior.AllowGet);
+                }
                 data.PSTATUS = 3;
                 db.Entry(data).State = EntityState.Modified;
                 db.SaveChanges();
@@ -330,7 +362,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss}, JsonRequestBehavior.AllowGet);
             }
         }
         public ActionResult CloseSession(long ID)
@@ -352,7 +385,8 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
         }
         public  ActionResult  FinishSession  (long ID)
@@ -368,19 +402,21 @@ namespace Passengers.Controllers
                     }
                     else
                     {
-                        //data.STATUS = 2;
+                        data.STATUS = 2;
                         db.Entry(data).State = EntityState.Modified;
                         db.SaveChanges();
                         return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
                     }
                 }
                 else {
-                    return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+
+                    return Json(new { success = false, responseText = "حدث خطأ اثناء التنفيذ" }, JsonRequestBehavior.AllowGet);
                 }                                            
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
         }
         public ActionResult PrintReportSession(long? ID)
@@ -402,21 +438,38 @@ namespace Passengers.Controllers
             ViewBag.SessionStatus = ses.TRSTATUS.NAME;
            //var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + ID;
            // var data = db.Database.SqlQuery<TRSESSIONS_MEMBERS_PRESENT>("select * from TRSESSIONS_MEMBERS_PRESENT where SESSIONNB =" + ID).ToList();
-            var data = db.TRSESSIONS_MEMBERS_PRESENT.Where(x=>x.SESSIONNB == ID);
-            List<string> Members = new List<string>(); 
+            var data = db.TRSESSIONS_MEMBERS_PRESENT.Where(x=>x.SESSIONNB == ID && x.ISPRESENT == 1).OrderBy(x=>x.ORDR);
+            List<string> Members = new List<string>();
+            List<string> sigMembers = new List<string>();
+
             foreach (var member in data)
             {
                 if (member.MEMBERSHIPNB != 1) {
                     var temp3 = "";
+                   
                     temp3 += "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRZMEMBERSHIP.NAME;
+
                     Members.Add(temp3);
                 }
                 else
                 {
+
                     ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRZMEMBERSHIP.NAME;
                 }
             }
+         var data1 =   data.OrderByDescending(x => x.ORDR).ToList();
+            foreach (var member in data1)
+            {
+                
+                    var temp4 = "";
+                    temp4 += member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + Environment.NewLine + member.TRCOMMITTEES_MEMBERS.MEMBERNAME;
+
+                    sigMembers.Add(temp4);
+               
+            }
             ViewBag.SessionMemers = Members;
+            ViewBag.sigSessionMemers = sigMembers;
+
             //foreach (var member in data)
             //{
             //    if (member.TRCOMMITTEES_MEMBERS.MEMBERSHIPNB != 1)
@@ -531,18 +584,50 @@ namespace Passengers.Controllers
                 ViewBag.NEWLineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM PROCED_LINES  pl JOIN PROCED_LINES_CITY pc ON pc.PROCEDLINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.CARPROCEDNB = " + pro).ToList();
                 return PartialView("_ProcedInfo");
             }
+            else if (PRONB == 2006)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var LINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + LINENB).ToList();
+               // ViewBag.LineNew = db.Database.SqlQuery<string>("select NAME from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + LINENB).ToList();
+               // ViewBag.NEWLineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM PROCED_LINES  pl JOIN PROCED_LINES_CITY pc ON pc.PROCEDLINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.CARPROCEDNB = " + pro).ToList();
+                return PartialView("_ProcedInfo");
+            }
             else
             {
                 return PartialView("_ProcedInfo");
             }                    
         }    
-        public ActionResult GetProcedCount()
+        public ActionResult GetProcedCount(long? ID)
         {
-            var data = db.Database.SqlQuery<TRPROCEDS_AVAILABLEVM>("SELECT PV.NB, PV.PROCEDNB  ,  PV.COUNTAVAILABLE ,PV.COUNTPROCED, ZP.NAME FROM TRPROCEDS_AVAILABLE PV JOIN ZPROCEDTYPS ZP ON ZP.NB =  PV.PROCEDNB").ToList();
-           ViewBag.Listdata = data;
-            ViewBag.sesID = data[0].SESSIONNB;
+            try 
+            {
+                var countproced =  db.Database.SqlQuery<int>("select count(*) from TRSESSIONS_PROCEDS where PSTATUS != 4 and SESSIONNB = " + ID).FirstOrDefault();
+                if (countproced == 0) 
+                {
+                    //var data = db.Database.SqlQuery<TRPROCEDS_AVAILABLEVM>("SELECT PV.NB, PV.PROCEDNB  ,  PV.COUNTAVAILABLE ,PV.COUNTPROCED, ZP.NAME FROM TRPROCEDS_AVAILABLE PV JOIN ZPROCEDTYPS ZP ON ZP.NB =  PV.PROCEDNB").ToList();
+                    //ViewBag.Listdata = data;
+                    //ViewBag.sesID = data[0].SESSIONNB;
 
-            return PartialView("_ProcedCount");
+                    return PartialView("_ProcedCount");
+                } 
+                else 
+              
+                {
+                    return Json(new { success = false, responseText = "لا يمكن تغير عدد طلبات الجلسة" }, JsonRequestBehavior.AllowGet);
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
+            }
+            
         }
         public ActionResult GetProcedCountIstrue(long Sesnb)
         {
@@ -587,7 +672,8 @@ namespace Passengers.Controllers
                     }
                     catch (Exception ex)
                     {
-                      return Json(new { success = false}, JsonRequestBehavior.AllowGet);
+                        var ss = validation.OracleExceptionValidation(ex);
+                        return Json(new { success = false}, JsonRequestBehavior.AllowGet);
                     }                   
                 }
             }
@@ -604,6 +690,7 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
+                var ss = validation.OracleExceptionValidation(ex);
                 return Json(new { success = false }, JsonRequestBehavior.AllowGet);
 
             }

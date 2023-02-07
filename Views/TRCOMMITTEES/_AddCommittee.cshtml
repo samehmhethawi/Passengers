@@ -8,16 +8,16 @@
            <div id="Add_comm">
                <div class="row col-11">
                    <div class="col-md-3" >
-                   <span>  رقم اللجنة
-                       @Html.Kendo().TextBox().Name("AddComNo").HtmlAttributes(new { placeholder = " رقم اللجنة", required = "required", data_required_msg = "هذا الحقل مطلوب"})</span>
+                   <span>  رقم قرار اللجنة
+                       @Html.Kendo().TextBox().Name("AddComNo").HtmlAttributes(new { placeholder = " رقم قرار اللجنة", required = "required", data_required_msg = "هذا الحقل مطلوب"})</span>
 
 
                        </div>
                       <div class="col-md-4" >
-                   <span>  تاريخ اللجنة
+                   <span>  تاريخ قرار اللجنة
                           @(Html.Kendo().DatePicker()
                                         .Name("AddComDate").Format("{0:dd/MM/yyyy}")
-                                        .HtmlAttributes(new { placeholder = "تاريخ اللجنة", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                        .HtmlAttributes(new { placeholder = "تاريخ قرار اللجنة", required = "required", data_required_msg = "هذا الحقل مطلوب" })
                                     )</span>
 
 

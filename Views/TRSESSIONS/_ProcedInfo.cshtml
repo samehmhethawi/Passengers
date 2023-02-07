@@ -95,6 +95,34 @@
         }
     }
 
+    @if (ViewBag.ProcedNb == 2006)
+    {
+        <label>الخط المراد منحه للمركبة:</label><br />
+        foreach (var item7 in ViewBag.LineName)
+        {
+            <label>@item7.NAME</label>
+        }
+        <br />
+        <label>المحافظات المرتبطة بالخط:</label>
+        <br />
+        foreach (var city in ViewBag.LineCity)
+        {
+            <label>@city</label>
+        }
+        <div class="row" style="background-color:darkgrey; height:1px; margin:10px; opacity:0.5;">
+        </div>
+
+        @*<label>الخط الجديد: </label>
+        <br />
+        <label>  @ViewBag.LineNew</label>
+        <br />
+        <label>المحافظات المرتبطة بالخط:</label>
+        <br />
+        foreach (var city1 in ViewBag.NEWLineCity)
+        {
+            <label>@city1</label>
+        }*@
+    }
 
 
 
