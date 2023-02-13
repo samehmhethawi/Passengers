@@ -1,4 +1,3 @@
-D:\sit\Passengers\bin\Syncfusion.Pdf.Base.dll
 D:\sit\Passengers\bin\Passengers.dll.config
 D:\sit\Passengers\bin\Passengers.dll
 D:\sit\Passengers\bin\Passengers.pdb
@@ -14,6 +13,7 @@ D:\sit\Passengers\bin\Rotativa.dll
 D:\sit\Passengers\bin\System.IO.Packaging.dll
 D:\sit\Passengers\bin\System.Linq.Dynamic.Core.dll
 D:\sit\Passengers\bin\System.ValueTuple.dll
+D:\sit\Passengers\bin\Syncfusion.Pdf.Base.dll
 D:\sit\Passengers\bin\Syncfusion.HtmlConverter.Base.dll
 D:\sit\Passengers\bin\Telerik.Windows.Documents.Flow.dll
 D:\sit\Passengers\bin\Microsoft.Web.Administration.dll

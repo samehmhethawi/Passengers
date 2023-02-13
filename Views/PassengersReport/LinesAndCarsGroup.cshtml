@@ -16,7 +16,7 @@
                                     .OptionLabel("اختر محافظة الخط")
                                     .Name("SlineCity")
                                     .DataTextField("NAME")
-                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataValueField("ID")
                                     .DataSource(source =>
                                     {
                                         source.Read(read =>
@@ -33,7 +33,7 @@
                                     .OptionLabel("نوع الخط حسب المسار")
                                     .Name("Slinetyps")
                                     .DataTextField("NAME")
-                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataValueField("ID")
                                     .DataSource(source =>
                                     {
                                         source.Read(read =>
@@ -44,12 +44,13 @@
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
                                     )
                 </div>
+                <input type="checkbox" id="StrlineStatuscheckbox" />
                 <div class="col-md-2">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر الحالة فعال")
                                     .Name("StrlineStatus")
                                     .DataTextField("Text")
-                                    .DataValueField("Value").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataValueField("Value")
                                     .BindTo(new List<SelectListItem>() {
                                           new SelectListItem() {
                                               Text = "نعم",
@@ -63,6 +64,49 @@
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
                                     )
 
+                </div>
+                <input type="checkbox" id="Scarkindcheckbox" />
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("النوع الرئيسي")
+                                    .Name("Scarkind")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETCARKIND", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                <input type="checkbox" id="Scarregcheckbox" />
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("الفئة الثانوية")
+                                    .Name("Scarreg")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETCARREG", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+            </div>
+            <div class="row" style="padding-bottom:10px">
+                <input type="checkbox" id="Strnameheckbox" />
+
+                <div class="col-md-7">
+                    @Html.Kendo().TextBox().Name("STrline").HtmlAttributes(new { placeholder = "%.. اسم الخط ..%" })
                 </div>
                 <div class="col-md-2">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
@@ -81,6 +125,11 @@
             {
                 columns.Bound(c => c.CityName).Title("المحافظة").Visible(false);
                 columns.Bound(c => c.TYPS).Title("المحافظة").Visible(false);
+                columns.Bound(c => c.STATUS).Title("المحافظة").Visible(false);
+                columns.Bound(c => c.kind).Title("المحافظة").Visible(false);
+                columns.Bound(c => c.reg).Title("المحافظة").Visible(false);
+                columns.Bound(c => c.trname).Title("المحافظة").Visible(false);
+
                 columns.Bound(c => c.CoutnCar).Title("عدد المركبات").Width(150).Visible(false);
                 columns.Template(@<text></text>).ClientTemplate("#=resColTemplate(data)#").Title("النتيجة");
             })
@@ -151,18 +200,42 @@
 </div>
 
 <script id="responsive-column-template" type="text/x-kendo-template">
-    <div style="display: contents;">
-    <strong>المحافظة:</strong>
+    <div class="row">
+    <div class="col-md-1" >
+    <strong>المحافظة:</strong><br>
     <label class="col-template-val">#=data.CityName#</label>
     </div>
-    <div style="display: contents;">
-     <strong>النوع:</strong>
+
+     <div class="col-md-3" >
+    <strong>الخط:</strong><br>
+    <label class="col-template-val">#=data.trname#</label>
+    </div>
+
+    <div class="col-md-1">
+     <strong>نوع الخط:</strong>
     <label  class="col-template-val TYPSisnull">#=data.TYPS#</label>
     </div>
-     <div style="display: contents;">
+
+     <div class="col-md-1">
+     <strong>الحالة:</strong><br>
+    <label  class="col-template-val TYPSisnull">#=data.STATUS#</label>
+    </div>
+
+      <div class="col-md-1" >
+    <strong>نوع المركبة:</strong>
+    <label class="col-template-val">#=data.kind#</label>
+    </div>
+
+      <div class="col-md-1" >
+    <strong>الفئة:</strong>
+    <label class="col-template-val">#=data.reg#</label>
+    </div>
+
+     <div class="col-md-1">
     <strong>العدد:</strong>
     <label class="col-template-val">#=data.CoutnCar#</label>
     </div>
+     </div>
 </script>
 
 <script>
@@ -200,11 +273,22 @@
 <script>
     function GetFillters() {
         var fillter = {};
-        fillter.SlineCitycheckbox = $('#SlineCitycheckbox').is(':checked');
-        fillter.Slinetypscheckbox = $('#Slinetypscheckbox').is(':checked');
-        //fillter.StrlineStatus = $('#StrlineStatus').val();
-        //fillter.StrlineCANCELD = $('#StrlineCANCELD').val();
-        //fillter.Slinetyps = $('#Slinetyps').val();
+        fillter.SlineCity_checkbox = $('#SlineCitycheckbox').is(':checked');
+        fillter.Slinetyps_checkbox = $('#Slinetypscheckbox').is(':checked');
+        fillter.StrlineStatus_checkbox = $('#StrlineStatuscheckbox').is(':checked');
+        fillter.Scarkind_checkbox = $('#Scarkindcheckbox').is(':checked');
+        fillter.Scarreg_checkbox = $('#Scarregcheckbox').is(':checked');
+        fillter.Strname_checkbox = $('#Strnameheckbox').is(':checked');
+
+        
+        
+        fillter.SlineCity = $('#SlineCity').val();
+        fillter.Slinetyps = $('#Slinetyps').val();
+        fillter.StrlineStatus = $('#StrlineStatus').val();
+        fillter.Scarkind = $('#Scarkind').val();
+        fillter.Scarreg = $('#Scarreg').val();
+        fillter.STrline = $('#STrline').val();
+        
 
 
         return fillter;
@@ -214,4 +298,43 @@
       
         $("#grid").data("kendoGrid").dataSource.read();
     }
+
+
+
+
+    function ExportToPdf() {
+        var fill = {};
+        fill.SlineCity_checkbox = $('#SlineCitycheckbox').is(':checked');
+        fill.Slinetyps_checkbox = $('#Slinetypscheckbox').is(':checked');
+        fill.StrlineStatus_checkbox = $('#StrlineStatuscheckbox').is(':checked');
+        fill.Scarkind_checkbox = $('#Scarkindcheckbox').is(':checked');
+        fill.Scarreg_checkbox = $('#Scarregcheckbox').is(':checked');
+        fill.Strname_checkbox = $('#Strnameheckbox').is(':checked');
+        fill.SlineCity = $('#SlineCity').val();
+        fill.Slinetyps = $('#Slinetyps').val();
+        fill.StrlineStatus = $('#StrlineStatus').val();
+        fill.Scarkind = $('#Scarkind').val();
+        fill.Scarreg = $('#Scarreg').val();
+        fill.STrline = $('#STrline').val();
+
+
+      
+        window.open("LinesAndCarsGroup_PDF?"
+            + "SlineCitycheckbox=" + fill.SlineCity_checkbox
+            + "&Slinetypscheckbox=" + fill.Slinetyps_checkbox
+            + "&StrlineStatuscheckbox=" + fill.StrlineStatus_checkbox
+            + "&Scarkindcheckbox=" + fill.Scarkind_checkbox
+            + "&Scarregcheckbox=" + fill.Scarreg_checkbox
+            + "&Strnamecheckbox=" + fill.Strname_checkbox
+            + "&pSlinetyps=" + fill.Slinetyps
+            + "&pStrlineStatus=" + fill.StrlineStatus
+            + "&pScarkind=" + fill.Scarkind
+            + "&pScarreg=" + fill.Scarreg
+            + "&pSTrline=" + fill.STrline
+            + "&pSlineCity=" + fill.SlineCity, "_blank"
+        );
+    }
+
+
+    
     </script>

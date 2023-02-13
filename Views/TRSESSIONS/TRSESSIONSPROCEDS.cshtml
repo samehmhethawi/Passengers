@@ -128,7 +128,7 @@
                             <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 @if (ViewBag.SessionStatus == "فعال" )
                                 {
-                                    <button id="procedsetting" onclick="GetPartialProcedCount()" class="btn btn-danger">اعداد طلبات الجلسة</button>
+                                    <button id="procedsetting" onclick="GetPartialProcedCount()" class="btn btn-danger" style="display:none">اعداد طلبات الجلسة</button>
 
 
                                 }
@@ -139,12 +139,12 @@
                             <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 @if (ViewBag.SessionStatus == "فعال")
                                 {
-                                    //<button id="CloseSession" onclick="CloseSession()" class="btn btn-danger">الغاء الجلسة</button>
+                                    <button id="ConSession" onclick="ConSession()" class="btn btn-danger">انعقاد الجلسة</button>
                                 }
                             </div>
 
                             <div class="col-md-3 col-sm-12 col-xs-12 bordered">
-                                @if (ViewBag.SessionStatus == "فعال")
+                                @if (ViewBag.SessionStatus == "منعقدة")
                                 {
                                     <button id="FinishSession" onclick="FinishSession()" class="btn btn-success">انهاء الجلسة</button>
 
@@ -223,7 +223,7 @@
                 columns.Bound(c => c.CARPROCEDSTEPNB).Title("رمز الخطوة").Visible(false);
                 columns.ForeignKey(c => c.PSTATUS, (System.Collections.IEnumerable)ViewData["TRSESSIONSPROCEDSTATUS"], "ID", "NAME").Title("الحالة").Width(100);
 
-                if (@ViewBag.SessionStatus == "فعال")
+                if (@ViewBag.SessionStatus == "منعقدة")
                 {
                     columns.Bound(c => c.PSTATUS).ClientTemplate
                   (" # if (1 == 1) if " +
@@ -398,8 +398,8 @@
                 document.getElementById('AGREE').innerHTML = response.AGREE;
                 document.getElementById('NOTAGREE').innerHTML = response.NOTAGREE;
                 document.getElementById('UNANSWERED').innerHTML = response.UNANSWERED;
-                if (response.countproced > 0) {
-                    $('#procedsetting').css('display', 'none');
+                if (response.countproced = 0) {
+                    $('#procedsetting').css('display', 'block');
                 }
                 }
             });}
@@ -407,7 +407,7 @@
 </script>
 
 <script>
-    function CloseSession() {
+    function ConSession() {
         var id = @ViewBag.SessionID;
         var model = {
            ID :id
@@ -415,12 +415,12 @@
      $.ajax({
                 type: "POST",
                data: model,
-                url: "@Url.Action("CloseSession", "TRSESSIONS")",
+                url: "@Url.Action("ConSession", "TRSESSIONS")",
                 success: function (response) {
                     if (response.success) {
-
-                        $("#grid").data("kendoGrid").dataSource.page(1);
-
+                        location.reload()
+                      //  $("#grid").data("kendoGrid").dataSource.page(1);
+                        
                         toastr.success("تمت العملية  بنجاح");
                     } else {
                         toastr.error(response.responseText);
@@ -441,7 +441,7 @@
                             url: "@Url.Action("FinishSession", "TRSESSIONS")",
                             success: function (response) {
                                 if (response.success) {
-
+                                    location.reload()
                                     $("#grid").data("kendoGrid").dataSource.page(1);
 
                                     toastr.success("تمت العملية  بنجاح");

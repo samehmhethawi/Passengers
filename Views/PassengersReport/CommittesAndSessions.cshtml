@@ -207,9 +207,9 @@
                     </button>
                     @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
                     <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
-                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
+                   <button class="btn btn-green" href="#" onclick="ExportToExcel()">
                          تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
-                    </button>*@
+                    </button>
                 </div>
             </div>
 </text>);
@@ -321,26 +321,13 @@
             + "&pCOMCITYNB=" + fill.COMCITYNB, "_blank"
         );
     }
-    function ExportToExcel()
 
-    {
-
-            $.ajax({
-                type: "POST",
-               
-                url: "@Url.Action("CommittesAndSessions_ex", "PassengersReport")",
-                success: function (response) {
-                    if (response.success) {
-                      
-
-                        toastr.success("تمت عملية الإضافة بنجاح");
-                    } else {
-                       
-                    }
-
-                }
-            });
+    function ExportToExcel() {
+            //window.location = 'Url.Action("CommittesAndSessions_ex", "PassengersReport")?tes=' + $("#test").val() + '&test1=' + $("#test1").val();
+                    window.location = '@Url.Action("CommittesAndSessions_ex", "PassengersReport")';
 
 
-    }
+            return false;
+            }
+  
 </script>

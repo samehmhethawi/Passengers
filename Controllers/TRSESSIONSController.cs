@@ -366,7 +366,7 @@ namespace Passengers.Controllers
                 return Json(new { success = false, responseText = ss}, JsonRequestBehavior.AllowGet);
             }
         }
-        public ActionResult CloseSession(long ID)
+        public ActionResult ConSession(long ID)
         {
             try
             {
@@ -377,9 +377,10 @@ namespace Passengers.Controllers
                 }
                 else
                 {
-                    data.STATUS = 3;
+                    data.STATUS = 2;
                     db.Entry(data).State = EntityState.Modified;
                     db.SaveChanges();
+                   // return View("TRSESSIONSPROCEDS?id=181");
                     return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -396,13 +397,13 @@ namespace Passengers.Controllers
                  var res  =  AgreeAll(ID);
                 if (res ==  true) {
                     var data = db.TRSESSIONS.Find(ID);
-                    if (data.STATUS != 1)
+                    if (data.STATUS != 2)
                     {
-                        return Json(new { success = false, responseText = "حالة الجلسة ليست فعالة" }, JsonRequestBehavior.AllowGet);
+                        return Json(new { success = false, responseText = "حالة الجلسة ليست منعقدة" }, JsonRequestBehavior.AllowGet);
                     }
                     else
                     {
-                        data.STATUS = 2;
+                        data.STATUS = 0;
                         db.Entry(data).State = EntityState.Modified;
                         db.SaveChanges();
                         return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
@@ -423,7 +424,7 @@ namespace Passengers.Controllers
         {
             var ses = db.TRSESSIONS.Find(ID);
 
-            if (ses.STATUS == 1) 
+            if (ses.STATUS == 1 || ses.STATUS == 2) 
             {
                 string sql = "BEGIN VEHICLES.PASSENGERS_PKG.TRSESSIONS_REPORTS_PASSENGERS(:SESNB); END;";   
                 db.Database.ExecuteSqlCommand(sql,ID);
@@ -584,18 +585,77 @@ namespace Passengers.Controllers
                 ViewBag.NEWLineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM PROCED_LINES  pl JOIN PROCED_LINES_CITY pc ON pc.PROCEDLINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.CARPROCEDNB = " + pro).ToList();
                 return PartialView("_ProcedInfo");
             }
+            //منح موافقة خط سير 
             else if (PRONB == 2006)
             {
                 var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
                 var LINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
                 ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + LINENB).ToList();
-               // ViewBag.LineNew = db.Database.SqlQuery<string>("select NAME from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
                 ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
                 ViewBag.ProcedNb = PRONB;
                 ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + LINENB).ToList();
-               // ViewBag.NEWLineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM PROCED_LINES  pl JOIN PROCED_LINES_CITY pc ON pc.PROCEDLINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.CARPROCEDNB = " + pro).ToList();
                 return PartialView("_ProcedInfo");
             }
+            //منح موافقة الغاء خط سير المحافظة المصدر
+            else if (PRONB == 2008)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var LINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + LINENB).ToList();
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + LINENB).ToList();
+                return PartialView("_ProcedInfo");
+            }
+            //منح موافقة تغيير فئة مركبة عامة إلى خاصة
+            else if (PRONB == 2012)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var  Proced =db.CARPROCEDS.Find(pro);
+                var car = db.Database.SqlQuery<CAR>("select * from cars where nb = " + Proced.CARNB).FirstOrDefault();
+                ViewBag.carnb = car.NB;
+                ViewBag.tabnb = car.TABNU;
+                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + car.LIN).ToList();
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + car.LIN).ToList();
+                return PartialView("_ProcedInfo");
+            }
+            //منح موافقة ترقين مركبة عامة
+            else if (PRONB == 2014)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var Proced = db.CARPROCEDS.Find(pro);
+                var car = db.Database.SqlQuery<CAR>("select * from cars where nb = " + Proced.CARNB).FirstOrDefault();
+                ViewBag.carnb = car.NB;
+                ViewBag.tabnb = car.TABNU;
+                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + car.LIN).ToList();
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + car.LIN).ToList();
+                return PartialView("_ProcedInfo");
+            }
+            //منح موافقة تغيير خط سير مركبة استثمار
+            else if (PRONB == 2016)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var Proced = db.CARPROCEDS.Find(pro);
+                var car = db.Database.SqlQuery<CAR>("select * from cars where nb = " + Proced.CARNB).FirstOrDefault();
+                ViewBag.carnb = car.NB;
+                ViewBag.tabnb = car.TABNU;
+                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + car.LIN).ToList();
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + car.LIN).ToList();              
+                var NEWLINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.NEWLineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + NEWLINENB).ToList();
+                ViewBag.NEWLineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + NEWLINENB).ToList();
+
+
+
+                return PartialView("_ProcedInfo");
+            }
+
             else
             {
                 return PartialView("_ProcedInfo");

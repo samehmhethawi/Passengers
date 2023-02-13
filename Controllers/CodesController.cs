@@ -186,6 +186,26 @@ namespace Passengers.Controllers
             return Json(city, JsonRequestBehavior.AllowGet);
 
         }
+        public ActionResult GETCARKIND()
+        {
+            var kind = db.ZCARKINDS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(kind, JsonRequestBehavior.AllowGet);
+
+        }
+        public ActionResult GETCARREG()
+        {
+            var reg = db.ZCARREGS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(reg, JsonRequestBehavior.AllowGet);
+
+        }
         //public ActionResult GETTRLINES_TYPES_DURATIONS()
         //{
         //    var city = db.TRLINES_TYPES_DURATIONS.Select(x => new

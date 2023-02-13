@@ -3,6 +3,8 @@ using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
 using Proced.DataAccess.Models.CF;
 using Rotativa;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -90,8 +92,6 @@ namespace Passengers.Controllers
             var data = db.Database.SqlQuery<ViewModel.CommittesAndMembersVM>(sql);
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
-
-
         public ActionResult CommittesAndMembers_PDF(string sNB, string sCOMNO, string sCOMDATESTART, string sCOMDATEEND, string sSTATUS, string sMEMBERNAME, string sMEMBERPOSITIONNB, string sMEMBERSHIPNB, string sCOMCITYNB)
         {
             string sql = "SELECT ZC.NAME AS CityName, TM.NB AS CommNb, TM.COMNO AS CommNo , TM.COMDATE AS CommDate, TS.NAME AS CommStatus, TMM.MEMBERNAME AS MemberName, ZP.NAME  AS MemberPostion, ZSH.NAME  AS MemberShip  FROM TRCOMMITTEES  TM JOIN TRCOMMITTEES_MEMBERS TMM ON TMM.COMMITTEENB = TM.NB JOIN ZCITYS ZC ON ZC.NB = TM.COMCITYNB  JOIN TRSTATUS TS ON TS.NB = TM.STATUS  JOIN TRZMEMBERPOSITION ZP ON ZP.NB = TMM.MEMBERPOSITIONNB JOIN TRZMEMBERSHIP ZSH ON ZSH.NB = TMM.MEMBERSHIPNB WHERE 1 = 1 ";
@@ -166,6 +166,8 @@ namespace Passengers.Controllers
             };
 
         }
+
+
 
         public ActionResult CommittesAndSessions()
         {
@@ -390,33 +392,18 @@ namespace Passengers.Controllers
             };
 
         }
-
-
-
-        public MemoryStream GetStream(XLWorkbook excelWorkbook)
-        {
-            MemoryStream fs = new MemoryStream();
-            excelWorkbook.SaveAs(fs);
-            fs.Position = 0;
-            return fs;
-        }
-
-        public FileResult CommittesAndSessions_ex()
+        public ActionResult CommittesAndSessions_ex()
         {
 
-            DataTable dt = new DataTable("Grid");
-            dt.Columns.AddRange(new DataColumn[4] { new DataColumn("CustomerId"),
-                                            new DataColumn("ContactName"),
-                                            new DataColumn("City"),
-                                            new DataColumn("Country") });
+        
             string query = "SELECT ZC.NAME AS CityName,"
                    + " TM.NB AS CommNb, "
                    + " TM.COMNO AS CommNo, "
-            + " TM.COMDATE AS CommDate, "
+            + " TO_DATE(TM.COMDATE,'DD/MM/YYYY') AS CommDate, "
             + " TS.NAME AS CommStatus, "
             + " TCS.NB AS SessNb, "
             + " TCS.SESNO AS SessNo, "
-            + " TCS.SESDATE AS SessDate, "
+            + " TO_DATE(TCS.SESDATE,'DD/MM/YYYY') AS SessDate, "
             + " TS2.NAME AS SessStatus, "
             + " TMM.MEMBERNAME AS BossName, "
             + " ZP.NAME AS BossPostion "
@@ -428,124 +415,58 @@ namespace Passengers.Controllers
             + " JOIN TRSESSIONS TCS ON TCS.COMMITTEENB = TM.NB "
             + " JOIN TRSTATUS TS2 ON TS2.NB = TCS.STATUS "
             + " WHERE 1 = 1 AND TMM.MEMBERSHIPNB = 1 ";
-            var customers = db.Database.SqlQuery<ViewModel.CommittesAndSessions>(query);
+
+            var data = db.Database.SqlQuery<ViewModel.CommittesAndSessions>(query);
+
+            var data2 = from e in data
+                             select new
+                             {
+                                 المحافظة = e.CityName,
+                                 رمز_اللجنة = e.CommNb,
+                                 رقم_اللجنة  = e.CommNo,
+                                 تاريخ_اللجنة  = e.CommDate,
+                                 حالة_اللجنة  = e.CommStatus,
+                                 رمز_الجلسة  = e.SessNb,
+                                 رقم_الجلسة  = e.SessNo,
+                                 تاريخ_الجلسة  = e.SessDate,
+                                 حالة_الجلسة  = e.SessStatus,
+                                 اسم_رئيس_الجلسة   = e.BossName,
+                                 منصب_رئيس_الجلسة  = e.BossPostion,
+                             };
+
+            string sheetName = "تقرير اللجان وجلساتها";
+            XLWorkbook wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add(sheetName);
+            ws.Cell(1, 1).InsertTable(data2);
+
+            ws.RightToLeft = true;
+            ws.ColumnWidth = 30;
 
 
-            foreach (var customer in customers)
+            //ws.Style.Font.Bold = true;
+            ws.Style.Font.FontSize = 12;
+            for (int i = 1; i <= 11; i++)
             {
-                dt.Rows.Add(customer.SessNo, customer.SessDate, customer.CityName, customer.BossName);
+                ws.Column(i).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
             }
 
-            using (XLWorkbook wb = new XLWorkbook())
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", String.Format(@"attachment;filename={0}.xlsx", sheetName.Replace(" ", "_")));
+
+            using (MemoryStream memoryStream = new MemoryStream())
             {
-                wb.Worksheets.Add(dt);
-                using (MemoryStream stream = new MemoryStream())
-                {
-                    wb.SaveAs(stream);
-                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Grid.xlsx");
-                }
+                wb.SaveAs(memoryStream);
+                memoryStream.WriteTo(Response.OutputStream);
+                memoryStream.Close();
             }
 
-            //       OracleConnection conn = new OracleConnection(ConfigurationManager.ConnectionStrings["ModelCF"].ConnectionString);
-            //       conn.Open();
-            //       DataTable Table_hor = new DataTable();
-            //       DataTable table_ver = new DataTable();
-            //       string query = "SELECT ZC.NAME AS CityName,"
-            //       + " TM.NB AS CommNb, "
-            //       + " TM.COMNO AS CommNo, "
-            //+ " TM.COMDATE AS CommDate, "
-            //+ " TS.NAME AS CommStatus, "
-            //+ " TCS.NB AS SessNb, "
-            //+ " TCS.SESNO AS SessNo, "
-            //+ " TCS.SESDATE AS SessDate, "
-            //+ " TS2.NAME AS SessStatus, "
-            //+ " TMM.MEMBERNAME AS BossName, "
-            //+ " ZP.NAME AS BossPostion "
-            //+ " FROM TRCOMMITTEES TM "
-            //+ " JOIN TRCOMMITTEES_MEMBERS TMM ON TMM.COMMITTEENB = TM.NB "
-            //+ " JOIN ZCITYS ZC ON ZC.NB = TM.COMCITYNB "
-            //+ " JOIN TRSTATUS TS ON TS.NB = TM.STATUS "
-            //+ "  JOIN TRZMEMBERPOSITION ZP ON ZP.NB = TMM.MEMBERPOSITIONNB "
-            //+ " JOIN TRSESSIONS TCS ON TCS.COMMITTEENB = TM.NB "
-            //+ " JOIN TRSTATUS TS2 ON TS2.NB = TCS.STATUS "
-            //+ " WHERE 1 = 1 AND TMM.MEMBERSHIPNB = 1 ";
-            //       //var query = "SELECT GROUP_NB, SS.SSVAL('TGROUPS', 'NAME', GROUP_NB, 'NB') TGROUPS FROM TAXES WHERE GROUP_NB IS NOT NULL GROUP BY GROUP_NB ";
-            //       OracleCommand cmd_hor = new OracleCommand(query, conn);
-            //       OracleDataReader dr_hor = cmd_hor.ExecuteReader();
-            //       Table_hor.Load(dr_hor);
-            //       double count = 1;
+            Response.End();
 
-
-            //       //Table_hor.Load(dr_hor);
-
-
-            //       for (int i = 0; i < Table_hor.Rows.Count; i++)
-            //       {
-            //           string hutt1 = Table_hor.Rows[i][Table_hor.Columns[1]].ToString();
-
-            //           hutt1 = hutt1.Replace("(", "_");
-            //           hutt1 = hutt1.Replace(")", "_");
-            //           hutt1 = hutt1.Replace(".", "_");
-            //           hutt1 = hutt1.Replace("+", "_");
-            //           hutt1 = hutt1.Replace(",", "_");
-            //           hutt1 = hutt1.Replace(";", "_");
-            //           hutt1 = hutt1.Replace("-", "_");
-            //           hutt1 = hutt1.Replace("&", "_");
-            //           hutt1 = hutt1.Replace("?", "_");
-            //           hutt1 = hutt1.Replace("!", "_");
-            //           hutt1 = hutt1.Replace("/", "_");
-            //           hutt1 = hutt1.Replace("%", "_");
-            //           hutt1.Replace(" ", "_");
-            //           hutt1 = hutt1.Trim();
-            //           string hutt = Table_hor.Rows[i][Table_hor.Columns[0]].ToString();
-
-            //       }
-
-
-
-            //       OracleCommand cmd = new OracleCommand(query, conn);
-
-            //       OracleDataReader dr = cmd.ExecuteReader();
-
-            //       table_ver.Load(dr);
-            //       cmd.Dispose();
-            //       conn.Close(); conn.Dispose();
-
-
-            //       ViewData["PageCnt"] = count;
-            //       ViewData["dt"] = Table_hor;
-            //       ViewData["dt2"] = table_ver;
-
-            //       //var v = View(table_ver);
-            //       XLWorkbook wb = new XLWorkbook();
-            //       wb.Worksheets.Add(table_ver, "الرسوم");
-            //       wb.Worksheets.FirstOrDefault()?.Row(1).InsertRowsAbove(1);
-            //       wb.Worksheets.FirstOrDefault()?.Row(1).InsertRowsAbove(1);
-            //       wb.Worksheets.FirstOrDefault()?.Row(1).InsertRowsAbove(1);
-            //       wb.Worksheets.FirstOrDefault()?.Cell(1, 1)?.SetValue("الجمهورية العربية السورية");
-            //       wb.Worksheets.FirstOrDefault()?.Cell(2, 1)?.SetValue("وزارة النقل");
-            //       if (ViewBag.FromDateText != null)
-            //       {
-            //           wb.Worksheets.FirstOrDefault()?.Cell(3, 1)?.SetValue("من تاريخ");
-            //           wb.Worksheets.FirstOrDefault()?.Cell(3, 2)?.SetValue(ViewBag.FromDateText);
-            //       }
-            //       if (ViewBag.ToDateText != null)
-            //       {
-            //           wb.Worksheets.FirstOrDefault()?.Cell(3, 5)?.SetValue("إلى تاريخ");
-            //           wb.Worksheets.FirstOrDefault()?.Cell(2, 6)?.SetValue(ViewBag.ToDateText);
-            //       }
-            //       MemoryStream stream = GetStream(wb);
-
-            //       string myName = "التقرير_التفصيلي_للرسوم.xlsx";
-            //       Response.Clear();
-            //       Response.Buffer = true;
-            //       Response.AddHeader("content-disposition", "attachment; filename=" + myName);
-            //       Response.ContentType = "application/vnd.ms-excel";
-            //       Response.BinaryWrite(stream.ToArray());
-            //       Response.End();
-            //       return null;
-
+            return View();
         }
+
+
 
         public ActionResult SessionsAndMembers()
         {
@@ -737,6 +658,8 @@ namespace Passengers.Controllers
             };
 
         }
+
+
 
         public ActionResult SessionsAndProceds()
         {
@@ -935,6 +858,8 @@ namespace Passengers.Controllers
             };
         }
 
+
+
         public ActionResult  CityAndLines()
         {
             return View();
@@ -1053,8 +978,9 @@ namespace Passengers.Controllers
                 CustomSwitches = "--page-offset 0 --footer-center [page] --footer-font-size 8"
             };
         }
-
-
+      
+        
+        
         public ActionResult LinesAndCarsGroup()
         {
             return View();
@@ -1066,42 +992,338 @@ namespace Passengers.Controllers
             // + "  join ZTRLINETYPES try on try.nb = tr.TYP "
             // + " GROUP BY ZC.NAME ,try.name "
             // + "  order by ZC.NAME ";
-            var SlineCitycheckbox = Request.Form["SlineCitycheckbox"].Trim();
-            var Slinetypscheckbox = Request.Form["Slinetypscheckbox"].Trim();
+            var SlineCity_checkbox = Request.Form["SlineCity_checkbox"].Trim();
+            var Slinetyps_checkbox = Request.Form["Slinetyps_checkbox"].Trim();
+            var StrlineStatus_checkbox = Request.Form["StrlineStatus_checkbox"].Trim();
+            var Scarkind_checkbox = Request.Form["Scarkind_checkbox"].Trim();
+            var Scarreg_checkbox = Request.Form["Scarreg_checkbox"].Trim();
+            var Strname_checkbox = Request.Form["Strname_checkbox"].Trim();
 
-            
+            var Slinetyps = Request.Form["Slinetyps"].Trim();
+            var StrlineStatus = Request.Form["StrlineStatus"].Trim();
+            var Scarkind = Request.Form["Scarkind"].Trim();
+            var Scarreg = Request.Form["Scarreg"].Trim();
+
+            var STrline = Request.Form["STrline"].Trim();
+            var SlineCity = Request.Form["SlineCity"].Trim();
+
+
+
+
+            List<string> grossupby =new List<string>();
+
             var sql1 = " select ";
           
-            if (SlineCitycheckbox != "")
+            if (SlineCity_checkbox == "true")
             {
                 sql1 += " ZC.NAME AS CityName ,";
+                grossupby.Add("ZC.NAME");
             }
-            if (Slinetypscheckbox != "")
+            if (Slinetyps_checkbox == "true")
             {
                 sql1 += " try.name AS TYPS ,";
+                grossupby.Add("try.name");
+
+            }
+            if (StrlineStatus_checkbox == "true")
+            {
+                sql1 += " CASE WHEN TR.STATUS = 1 THEN 'فعال' ELSE 'غير فعال' END AS  STATUS , ";
+                grossupby.Add("TR.STATUS ");
+
+            }
+            if (Scarkind_checkbox == "true")
+            {
+                sql1 += " zk.name as kind ,";
+                grossupby.Add("zk.name");
+
+            }
+            if (Scarreg_checkbox == "true")
+            {
+                sql1 += " zg.name as reg ,";
+                grossupby.Add("zg.name");
+
+            }
+            if (Strname_checkbox == "true")
+            {
+                sql1 += " TR.name as trname ,";
+                grossupby.Add("TR.NAME");
+
+            }
+            
+
+            sql1 += " COUNT (CA.NB) AS CoutnCar ";
+
+            sql1 += "  FROM TRLINES TR  " 
+             + "  left JOIN ZCITYS ZC ON ZC.NB = TR.CITYNB "
+             + "  left join ZTRLINETYPES try on try.nb = tr.TYP "
+             + "  left JOIN cars ca ON tr.nb = ca.lin  "
+             + "  left join zcarkinds zk on zk.nb = ca.reg "
+             + "  left join ZCARREGS zg on ca.CARREGNB = zg.nb where 1=1 ";
+
+            if (Slinetyps != "")
+            {
+                sql1 += " and tr.TYP = " + Slinetyps ;
+            }
+            if (StrlineStatus != "")
+            {
+                sql1 += " and TR.STATUS = " + StrlineStatus ;
             }
 
-            sql1 += " COUNT (*) AS CoutnCar ";
 
-            sql1 += "  FROM TRLINES TR JOIN ZCITYS ZC ON ZC.NB = TR.CITYNB "
-             + "  join ZTRLINETYPES try on try.nb = tr.TYP ";
+            if (Scarkind != "")
+            {
+                sql1 += " and ca.reg = " + Scarkind;
+            }
 
-            if (SlineCitycheckbox != "" || Slinetypscheckbox != "")
+            if (Scarreg != "")
+            {
+                sql1 += " and ca.CARREGNB = " + Scarreg;
+            }
+
+            if (STrline != "")
+            {
+                sql1 += " and tr.name like  '%" + STrline + "%' ";
+            }
+
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+
+            if (ci == "0")
+            {
+                if (SlineCity != "")
+                {
+                    sql1 += " and TR.CITYNB =" + SlineCity;
+                }
+
+            }
+            else
+            {
+                sql1 += " and TR.CITYNB =" + ci;
+            }
+
+            if (SlineCity_checkbox == "true" || 
+                Slinetyps_checkbox == "true" || 
+                StrlineStatus_checkbox == "true" ||
+                Scarkind_checkbox == "true" ||
+                Scarreg_checkbox == "true"||
+                Strname_checkbox == "true"
+                )
             {
                 sql1 += " GROUP BY ";
             }
-            if (SlineCitycheckbox != "")
+
+            for (var i = 0;i<= grossupby.Count() -1 ;i++)
             {
-                sql1 += " ZC.NAME ,";
+                sql1 += grossupby[i];
+                if(i != grossupby.Count() - 1)
+                {
+                    sql1 += " , ";
+                }
             }
-            if (Slinetypscheckbox != "")
+
+            if (SlineCity_checkbox == "true" ||
+               Slinetyps_checkbox == "true" ||
+               StrlineStatus_checkbox == "true" ||
+               Scarkind_checkbox == "true" ||
+               Scarreg_checkbox == "true"||
+               Strname_checkbox == "true"
+               )
             {
-                sql1 += " try.name ";
+                sql1 += " ORDER BY ";
             }
+            for (var i = 0; i <= grossupby.Count() - 1; i++)
+            {
+                sql1 += grossupby[i];
+                if (i != grossupby.Count() - 1)
+                {
+                    sql1 += " , ";
+                }
+            }
+          
 
             var data = db.Database.SqlQuery<ViewModel.LinesAndCarsGroupVM>(sql1);
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
             
         }
+    
+        public ActionResult LinesAndCarsGroup_PDF
+            (
+            string SlineCitycheckbox, 
+            string Slinetypscheckbox, 
+            string StrlineStatuscheckbox,
+            string Scarkindcheckbox,
+            string Scarregcheckbox,
+
+            string Strnamecheckbox,
+            string pSlinetyps,
+
+            string pStrlineStatus,
+            string pScarkind,
+            string pScarreg,
+            string pSTrline,
+            string pSlineCity
+
+
+
+            )
+        {
+            var SlineCity_checkbox = SlineCitycheckbox;
+            var Slinetyps_checkbox = Slinetypscheckbox;
+            var StrlineStatus_checkbox = StrlineStatuscheckbox;
+
+            var Scarkind_checkbox = Scarkindcheckbox;
+            var Scarreg_checkbox = Scarregcheckbox;
+            var Strname_checkbox = Strnamecheckbox;
+
+            var Slinetyps = pSlinetyps;
+            var StrlineStatus = pStrlineStatus;
+            var Scarkind = pScarkind;
+            var Scarreg = pScarreg;
+
+            var STrline = pSTrline;
+            var SlineCity = pSlineCity;
+
+
+
+
+            List<string> grossupby = new List<string>();
+
+            var sql1 = " select ";
+
+            if (SlineCity_checkbox == "true")
+            {
+                sql1 += " ZC.NAME AS CityName ,";
+                grossupby.Add("ZC.NAME");
+            }
+            if (Slinetyps_checkbox == "true")
+            {
+                sql1 += " try.name AS TYPS ,";
+                grossupby.Add("try.name");
+
+            }
+            if (StrlineStatus_checkbox == "true")
+            {
+                sql1 += " CASE WHEN TR.STATUS = 1 THEN 'فعال' ELSE 'غير فعال' END AS  STATUS , ";
+                grossupby.Add("TR.STATUS ");
+
+            }
+            if (Scarkind_checkbox == "true")
+            {
+                sql1 += " zk.name as kind ,";
+                grossupby.Add("zk.name");
+
+            }
+            if (Scarreg_checkbox == "true")
+            {
+                sql1 += " zg.name as reg ,";
+                grossupby.Add("zg.name");
+
+            }
+            if (Strname_checkbox == "true")
+            {
+                sql1 += " TR.name as trname ,";
+                grossupby.Add("TR.NAME");
+
+            }
+
+
+            sql1 += " COUNT (CA.NB) AS CoutnCar ";
+
+            sql1 += "  FROM TRLINES TR  "
+             + "  left JOIN ZCITYS ZC ON ZC.NB = TR.CITYNB "
+             + "  left join ZTRLINETYPES try on try.nb = tr.TYP "
+             + "  left JOIN cars ca ON tr.nb = ca.lin  "
+             + "  left join zcarkinds zk on zk.nb = ca.reg "
+             + "  left join ZCARREGS zg on ca.CARREGNB = zg.nb where 1=1 ";
+
+            if (Slinetyps != "")
+            {
+                sql1 += " and tr.TYP = " + Slinetyps;
+            }
+            if (StrlineStatus != "")
+            {
+                sql1 += " and TR.STATUS = " + StrlineStatus;
+            }
+
+
+            if (Scarkind != "")
+            {
+                sql1 += " and ca.reg = " + Scarkind;
+            }
+
+            if (Scarreg != "")
+            {
+                sql1 += " and ca.CARREGNB = " + Scarreg;
+            }
+
+            if (STrline != "")
+            {
+                sql1 += " and tr.name like  '%" + STrline + "%' ";
+            }
+
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+
+            if (ci == "0")
+            {
+                if (SlineCity != "")
+                {
+                    sql1 += " and TR.CITYNB =" + SlineCity;
+                }
+
+            }
+            else
+            {
+                sql1 += " and TR.CITYNB =" + ci;
+            }
+
+            if (SlineCity_checkbox == "true" ||
+                Slinetyps_checkbox == "true" ||
+                StrlineStatus_checkbox == "true" ||
+                Scarkind_checkbox == "true" ||
+                Scarreg_checkbox == "true" ||
+                Strname_checkbox == "true"
+                )
+            {
+                sql1 += " GROUP BY ";
+            }
+
+            for (var i = 0; i <= grossupby.Count() - 1; i++)
+            {
+                sql1 += grossupby[i];
+                if (i != grossupby.Count() - 1)
+                {
+                    sql1 += " , ";
+                }
+            }
+
+            if (SlineCity_checkbox == "true" ||
+               Slinetyps_checkbox == "true" ||
+               StrlineStatus_checkbox == "true" ||
+               Scarkind_checkbox == "true" ||
+               Scarreg_checkbox == "true" ||
+               Strname_checkbox == "true"
+               )
+            {
+                sql1 += " ORDER BY ";
+            }
+            for (var i = 0; i <= grossupby.Count() - 1; i++)
+            {
+                sql1 += grossupby[i];
+                if (i != grossupby.Count() - 1)
+                {
+                    sql1 += " , ";
+                }
+            }
+
+            var data = db.Database.SqlQuery<ViewModel.LinesAndCarsGroupVM>(sql1).ToList();
+            return new ViewAsPdf(data)
+            {
+                CustomSwitches = "--page-offset 0 --footer-center [page] --footer-font-size 8"
+            };
+        }
+
     }
 }

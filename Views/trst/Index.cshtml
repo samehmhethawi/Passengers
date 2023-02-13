@@ -1,187 +1,65 @@
 ﻿
 @{
     ViewBag.Title = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta charset="utf-8" />
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
 
-
-<style>
-    .red {
-        background-color: red;
-    }
-
-    .green {
-        background-color: green;
-    }
-
-    .blue {
-        background-color: #061E47;
-    }
-
-    .yellow {
-        background-color: yellow;
-    }
-
-    .sphere {
-        height: 120px;
-        width: 120px;
-        border-radius: 50%;
-        text-align: center;
-        vertical-align: middle;
-        font-size: 500%;
-        position: relative;
-        box-shadow: inset -10px -10px 5px #000, 10px 10px 30px black, inset 0px 0px 10px black;
-        display: inline-block;
-        margin: 0.5%;
-    }
-
-        .sphere::after {
-            background-color: rgba(255, 255, 255, 0.3);
-            content: '';
-            height: 45%;
-            width: 12%;
-            position: absolute;
-            top: 4%;
-            left: 15%;
-            border-radius: 50%;
-            transform: rotate(40deg);
         }
 
-    .sphere2 {
-        height: 60px;
-        width: 60px;
-        border-radius: 50%;
-        text-align: center;
-        vertical-align: middle;
-        font-size: 500%;
-        position: relative;
-        box-shadow: inset -1px -1px 5px #000, 1px 1px 10px black, inset 0px 0px 10px black;
-        display: inline-block;
-        margin: 0.5%;
-    }
+        body{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            min-height:100vh;
+            background:#223243;
 
-        .sphere2::after {
-            background-color: rgba(255, 255, 255, 0.3);
-            content: '';
-            height: 45%;
-            width: 12%;
-            position: absolute;
-            top: 4%;
-            left: 15%;
-            border-radius: 50%;
-            transform: rotate(40deg);
         }
 
-    .sphere3 {
-        height: 30px;
-        width: 30px;
-        border-radius: 50%;
-        text-align: center;
-        vertical-align: middle;
-        font-size: 500%;
-        position: relative;
-        box-shadow: inset -1px -1px 10px #000, 1px 1px 5px black, inset 0px 0px 1px black;
-        display: inline-block;
-        margin: 0.5%;
-    }
-
-        .sphere3::after {
-            background-color: rgba(255, 255, 255, 0.3);
-            content: '';
-            height: 45%;
-            width: 12%;
-            position: absolute;
-            top: 4%;
-            left: 15%;
-            border-radius: 50%;
-            transform: rotate(40deg);
+        .container {
+            border: 8px solid #223243;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: -5px -5px 15px rgba(255,255,255,0.1), 5px 5px 15px rgba(0,0,0,0.35),
+           inset -5px -5px 15px rgba(255,255,255,0.1), 5px 5px 15px rgba(0,0,0,0.35);
         }
-
-    .sphere4 {
-        height: 15px;
-        width: 15px;
-        border-radius: 50%;
-        text-align: center;
-        vertical-align: middle;
-        font-size: 500%;
-        position: relative;
-        box-shadow: inset -1px -1px 5px #000, 1px 1px 5px black, inset 0px 0px 1px black;
-        display: inline-block;
-        margin: 0.5%;
-    }
-
-        .sphere4::after {
-            background-color: rgba(255, 255, 255, 0.3);
-            content: '';
-            height: 45%;
-            width: 12%;
-            position: absolute;
-            top: 4%;
-            left: 15%;
-            border-radius: 50%;
-            transform: rotate(40deg);
-        }
-</style>
-
-@*<div class="sphere red"></div>
-    <div class="sphere green"></div>*@
-@*<div class="sphere yellow"></div>
-    <div class="sphere"></div>*@
-<div class="container" style="width:100%;height:100%; text-align:center">
-    <div class="row justify-content-center" style="text-align:center">
-        <div class="sphere blue col-md-1"></div>
-        <div class="sphere blue col-md-1"></div>
-        <div class="sphere blue col-md-1"></div>
-        <div class="sphere blue col-md-1"></div>
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="form signup">
+        <h2>sign up</h2>
+        <div class="inputBox">
+            <input type="text" required="required" />
+            <i class="fa-solid fa-user" ></i>
+            <span>username</span>
+        </div>
+       
+        <div class="inputBox">
+            <input type="password" required="required" />
+            <i class="fa-solid fa-lock"></i>
+            <span>password</span>
+        </div>
+        <div class="inputBox">
+            <input type="password" required="required" />
+            <i class="fa-solid fa-lock"></i>
+            <span>confirm password</span>
+        </div>
+        <div class="inputBox">
+            <input type="submit" value="create" />
+            
+        </div>
     </div>
-    <div class="row justify-content-center" style="text-align:center">
-        <div class="sphere blue col-md-1"></div>
-        <div class="sphere blue col-md-1"></div>
-        <div class="sphere blue col-md-1"></div>
-    </div>
-    <div class="row justify-content-center" style="text-align:center">
-        <div class="sphere2 blue col-md-0.5"></div>
-        <div class="sphere2 blue col-md-0.5"></div>
-        <div class="sphere2 blue col-md-0.5"></div>
-    </div>
-    <div class="row justify-content-center" style="text-align:center">
-        <div class="sphere3 blue col-md-0.25"></div>
-        <div class="sphere3 blue col-md-0.25"></div>
-        <div class="sphere3 blue col-md-0.25"></div>
-        <div class="sphere3 blue col-md-0.25"></div>
-
-    </div>
-    <div class="row justify-content-center" style="text-align:center">
-        <div class="sphere4 blue col-md-0.125"></div>
-        <div class="sphere4 blue col-md-0.125"></div>
-        <div class="sphere4 blue col-md-0.125"></div>
-        <div class="sphere4 blue col-md-0.125"></div>
-
-    </div>
-    <div class="row justify-content-center" style="text-align:center">
-        <div class="sphere4 blue col-md-0.125"></div>
-        <div class="sphere4 blue col-md-0.125"></div>
-
-    </div>
-    <div class="row justify-content-center" style="text-align:center">
-        <div class="sphere4 blue col-md-0.125"></div>
-
-
-    </div>
-
+    <div class="form singin"></div>
 </div>
-<script>
-       $(window).resize(function () {
-           var windowsize = $(window).width();
-           if (windowsize <= 500) {
-               $('.sphere4').fadeOut(400);
-               $('.sphere3').fadeOut(400);
-
-           } if (windowsize > 500) {
-               $('.sphere4').fadeIn(400);
-               $('.sphere3').fadeOut(400);
-           }
-       });
-
-
-</script>
+</body>
+</html>
