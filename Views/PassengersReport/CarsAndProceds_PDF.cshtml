@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Passengers.ViewModel.CarsAndProcedsVM>
+
+
+
+@{
+    Layout = null;
+}
+
+<head>
+    <title>تقرير المركبات وطلباتها</title>
+    <style>
+        .table {
+            border: 1px solid #ccc;
+            font-size: 16px;
+            text-align: center;
+            width: 100%;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align:center;">تقرير المركبات وطلباتها</h1>
+
+    <table cellpadding="8" cellspacing="0" class="table" DIR="auto">
+        <thead>
+            <tr>
+                <th style="border: 1px solid; width: auto;">رمز المركبة</th>
+                <th style="border: 1px solid; width: auto;">رقم اللوحة</th>
+                <th style="border: 1px solid; width: auto;">النوع</th>
+                <th style="border: 1px solid; width: auto;">الفئة</th>
+                <th style="border: 1px solid; width: auto;">محافظة المركبة</th>
+                <th style="border: 1px solid; width: auto;">رمز المعاملة</th>
+                <th style="border: 1px solid; width: auto;">اسم المعاملة</th>
+                <th style="border: 1px solid; width: auto;">تاريخ المعاملة</th>
+                <th style="border: 1px solid; width: auto;">حالة المعاملة</th>
+
+                <th style="border: 1px solid; width: auto;">نوع الموافقة</th>
+                <th style="border: 1px solid; width: auto;">محافظة الطلب</th>
+                <th style="border: 1px solid; width: auto;">موافقة نهائية</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td style="width: auto; border: 1px solid">@item.carnb</td>
+                <td style="width: auto; border: 1px solid">@item.tabnu</td>
+                <td style="width: auto; border: 1px solid">@item.kind</td>
+                <td style="width: auto; border: 1px solid">@item.reg</td>
+                <td style="width: auto; border: 1px solid">@item.carcity</td>
+                <td style="width: auto; border: 1px solid">@item.CARPROCEDNB</td>
+                <td style="width: auto; border: 1px solid">@item.PROCEDNAME</td>
+                <td style="width: auto; border: 1px solid">@Convert.ToDateTime(item.PROCEDDATE).ToString("dd/MM/yyyy")</td>
+                <td style="width: auto; border: 1px solid">@item.RESULT</td>
+
+                <td style="width: auto; border: 1px solid">@item.TYPSNAMEAGR</td>
+                <td style="width: auto; border: 1px solid">@item.STEPCITY</td>
+                <td style="width: auto; border: 1px solid">@item.PROPSTATUS</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</body>

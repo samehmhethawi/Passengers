@@ -97,6 +97,8 @@
     <Compile Include="Security\UserAccountManager.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Types.cs" />
+    <Compile Include="ViewModel\CarsAndProcedsVM.cs" />
+    <Compile Include="ViewModel\CityAndLinesChangeVM.cs" />
     <Compile Include="ViewModel\CityAndLinesVM.cs" />
     <Compile Include="ViewModel\CommittesAndMembersVM.cs" />
     <Compile Include="ViewModel\CommittesAndSessions.cs" />
@@ -1285,6 +1287,11 @@
     <Content Include="Views\PassengersReport\CityAndLines_PDF.cshtml" />
     <Content Include="Views\PassengersReport\LinesAndCarsGroup.cshtml" />
     <Content Include="Views\PassengersReport\LinesAndCarsGroup_PDF.cshtml" />
+    <Content Include="Views\PassengersReport\CityAndLinesChange.cshtml" />
+    <Content Include="Views\PassengersReport\LinesAndCarsDetalis.cshtml" />
+    <Content Include="Views\PassengersReport\LinesAndCarsDetalis_PDF.cshtml" />
+    <Content Include="Views\PassengersReport\CarsAndProceds.cshtml" />
+    <Content Include="Views\PassengersReport\CarsAndProceds_PDF.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

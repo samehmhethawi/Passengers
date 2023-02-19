@@ -1,0 +1,295 @@
+﻿
+@{
+    ViewBag.Title = "تقرير المركبات وطلباتها";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section PartialHeader{
+    <div class="panel-heading1 " id="searchPanel" style="font-size: 15px">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+
+                @* <input type="checkbox" id="SlineCitycheckbox" />*@
+                <div class="col-md-2">
+                    @(Html.Kendo()
+                        .NumericTextBox()
+                        .Spinners(false)
+                        .Format("0")
+                        .Name("Carnb").Min(0)
+                        .HtmlAttributes(new { placeholder = "رمز المركبة", maxlength = "10", style = "width: 100%;" }))
+                </div>
+                <div class="col-md-2">
+                    @(Html.Kendo().TextBox()
+                    .Name("Tabnu")
+                    .HtmlAttributes(new { placeholder = "رقم اللوحة" }))
+                </div>
+
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر محافظة المركبة")
+                                    .Name("Carcity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                @*<input type="checkbox" id="Slinetypscheckbox" />*@
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("النوع الرئيسي")
+                                    .Name("Scarkind")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETCARKIND", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                @*<input type="checkbox" id="StrlineStatuscheckbox" />*@
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("الفئة الثانوية")
+                                    .Name("Scarreg")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETCARREG", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                @*<input type="checkbox" id="Scarkindcheckbox" />*@
+
+                @*<input type="checkbox" id="Scarregcheckbox" />*@
+
+            </div>
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر نوع الطلب")
+                                    .Name("SProcedtyps")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETZPROCEDTYPS", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                <div class="col-md-2">
+                    @(Html.Kendo()
+                        .NumericTextBox()
+                        .Spinners(false)
+                        .Format("0")
+                        .Name("Carprocednb").Min(0)
+                        .HtmlAttributes(new { placeholder = "رمز المعاملة", maxlength = "12",style = "width: 100%;" }))
+                </div>
+                <div class="col-md-2">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SCarprocedDateStart")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ المعاملة من", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+                @*<div class="col-md-1">
+                        <label for="template_name"> التاريخ الى</label>
+                    </div>*@
+                <div class="col-md-2">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SCarprocedDateEnd")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ المعاملة الى", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+                <div class="col-md-2">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}<div>
+    @(Html.Kendo().Grid <Passengers.ViewModel.CarsAndProcedsVM>()
+            .Name("grid").AutoBind(false)
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.carnb).Title("رمز المركبة");
+                columns.Bound(c => c.tabnu).Title("رقم اللوحة");
+                columns.Bound(c => c.kind).Title("النوع");
+                columns.Bound(c => c.reg).Title("الفئة").Width(100);
+                columns.Bound(c => c.carcity).Title("محافظة المركبة");
+                columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة").Width(150); ;
+                columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة");
+                columns.Bound(c => c.PROCEDDATE).Title("تاريخ المعاملة").Format("{0:dd/MM/yyyy}").Width(150);
+                columns.Bound(c => c.RESULT).Title("حالة المعاملة");
+                columns.Bound(c => c.TYPSNAMEAGR).Title("نوع الموافقة");
+                columns.Bound(c => c.STEPCITY).Title("محافظة الطلب");
+                columns.Bound(c => c.PROPSTATUS).Title("موافقة نهائية");
+
+
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            //.ClientDetailTemplateId("template")
+            //.Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            //.Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("CarsAndProceds_Read", "PassengersReport").Data("GetFillters")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+            //   toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            toolbar.Template(@<text>
+            <div >
+                <div>
+                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
+                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    </button>
+                    @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
+                    <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
+                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>*@
+                </div>
+            </div>
+</text>);
+
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+        )
+                //.Events(events => events
+        //  .Change("dataBound2222")
+        //  .DataBound("dataBound2222")
+        //  .Sort("dataBound2222")
+        //  .Filter("dataBound2222")
+        //  .Group("dataBound2222")
+        //  .Page("dataBound2222")
+        //  .Cancel("dataBound2222")
+        //.Edit("hideIdField")
+
+
+        )
+
+
+
+</div>
+
+ <script>
+     function Btn_Search() {
+         $("#grid").data("kendoGrid").dataSource.read();
+
+     }
+     function GetFillters() {
+         var fillter = {};
+
+         fillter.Carnb = $('#Carnb').val();
+         fillter.Tabnu = $('#Tabnu').val();
+         fillter.Carcity = $('#Carcity').val();
+         fillter.Scarkind = $('#Scarkind').val();
+         fillter.Scarreg = $('#Scarreg').val();
+         fillter.SProcedtyps = $('#SProcedtyps').val();
+         fillter.Carprocednb = $('#Carprocednb').val();
+         fillter.SCarprocedDateStart = $('#SCarprocedDateStart').val();
+         fillter.SCarprocedDateEnd = $('#SCarprocedDateEnd').val();
+
+         return fillter;
+
+
+     }
+
+     function ExportToPdf() {
+         var fill = {};
+
+         fill.pCarnb = $('#Carnb').val();
+         fill.pTabnu = $('#Tabnu').val();
+         fill.pCarcity = $('#Carcity').val();
+
+         fill.pScarkind = $('#Scarkind').val();
+         fill.pScarreg = $('#Scarreg').val();
+         fill.pSProcedtyps = $('#SProcedtyps').val();
+
+         fill.pCarprocednb = $('#Carprocednb').val();
+         fill.pSCarprocedDateStart = $('#SCarprocedDateStart').val();
+         fill.pSCarprocedDateEnd = $('#SCarprocedDateEnd').val();
+
+
+         window.open("CarsAndProceds_PDF?"
+
+             + "&pCarnb=" + fill.pCarnb
+             + "&pTabnu=" + fill.pTabnu
+             + "&pCarcity=" + fill.pCarcity
+
+             + "&pScarkind=" + fill.pScarkind
+             + "&pScarreg=" + fill.pScarreg
+
+             + "&pCarprocednb=" + fill.pCarprocednb
+             + "&pSCarprocedDateStart=" + fill.pSCarprocedDateStart
+             + "&pSCarprocedDateEnd=" + fill.pSCarprocedDateEnd
+
+             + "&pSProcedtyps=" + fill.pSProcedtyps, "_blank"
+         );
+     }
+     function rest_filtters() {
+       
+         $("#Carnb").data("kendoNumericTextBox").value("");
+         $("#Carprocednb").data("kendoNumericTextBox").value("");
+         $('#SCarprocedDateStart').val("");
+         $('#SCarprocedDateEnd').val("");
+         $('#Tabnu').val("");
+
+         $("#Carcity").data("kendoDropDownList").value(-1);
+         $("#Scarkind").data("kendoDropDownList").value(-1);
+
+         $("#Scarreg").data("kendoDropDownList").value(-1);
+         $("#SProcedtyps").data("kendoDropDownList").value(-1);
+
+         $("#grid").data("kendoGrid").dataSource.data([]);
+     }
+ </script>
+</script>
+   

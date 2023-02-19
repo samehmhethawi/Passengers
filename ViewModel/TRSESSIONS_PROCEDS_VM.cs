@@ -146,10 +146,22 @@ namespace Passengers.ViewModel
 
 
 
+        [Display(Name = "رمز الخط المركبة")]
+        public long? CARLINENB { get; set; }
 
 
+        [Display(Name = "اسم خط المركبة")]
+        public string CARLINENAME { get; set; }
 
 
+        [Display(Name = "نوع خط  المركبة")]
+        public string CARLINETYP { get; set; }
+
+
+        [Display(Name = "محافظات خط المركبة")]
+        public string CARLINECITY { get; set; }
+
+        
 
     }
 

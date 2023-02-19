@@ -395,7 +395,7 @@ namespace Passengers.Controllers
         public ActionResult CommittesAndSessions_ex()
         {
 
-        
+
             string query = "SELECT ZC.NAME AS CityName,"
                    + " TM.NB AS CommNb, "
                    + " TM.COMNO AS CommNo, "
@@ -419,20 +419,20 @@ namespace Passengers.Controllers
             var data = db.Database.SqlQuery<ViewModel.CommittesAndSessions>(query);
 
             var data2 = from e in data
-                             select new
-                             {
-                                 المحافظة = e.CityName,
-                                 رمز_اللجنة = e.CommNb,
-                                 رقم_اللجنة  = e.CommNo,
-                                 تاريخ_اللجنة  = e.CommDate,
-                                 حالة_اللجنة  = e.CommStatus,
-                                 رمز_الجلسة  = e.SessNb,
-                                 رقم_الجلسة  = e.SessNo,
-                                 تاريخ_الجلسة  = e.SessDate,
-                                 حالة_الجلسة  = e.SessStatus,
-                                 اسم_رئيس_الجلسة   = e.BossName,
-                                 منصب_رئيس_الجلسة  = e.BossPostion,
-                             };
+                        select new
+                        {
+                            المحافظة = e.CityName,
+                            رمز_اللجنة = e.CommNb,
+                            رقم_اللجنة = e.CommNo,
+                            تاريخ_اللجنة = e.CommDate,
+                            حالة_اللجنة = e.CommStatus,
+                            رمز_الجلسة = e.SessNb,
+                            رقم_الجلسة = e.SessNo,
+                            تاريخ_الجلسة = e.SessDate,
+                            حالة_الجلسة = e.SessStatus,
+                            اسم_رئيس_الجلسة = e.BossName,
+                            منصب_رئيس_الجلسة = e.BossPostion,
+                        };
 
             string sheetName = "تقرير اللجان وجلساتها";
             XLWorkbook wb = new XLWorkbook();
@@ -860,13 +860,13 @@ namespace Passengers.Controllers
 
 
 
-        public ActionResult  CityAndLines()
+        public ActionResult CityAndLines()
         {
             return View();
         }
         public ActionResult CityAndLines_Read([DataSourceRequest] DataSourceRequest request)
         {
-            var sql= " SELECT ZC.NAME AS CITYNAME, "
+            var sql = " SELECT ZC.NAME AS CITYNAME, "
                  + " TR.NAME AS LINENAME, "
                  + "   TRT.NAME AS TPYS, "
                  + "   CASE WHEN TR.STATUS = 1 THEN 'فعال' ELSE 'غير فعال' END AS STATUS, "
@@ -886,7 +886,7 @@ namespace Passengers.Controllers
 
             if (STrName != "")
             {
-                sql += " and TR.NAME like '%" + STrName+"%' ";
+                sql += " and TR.NAME like '%" + STrName + "%' ";
             }
             if (StrlineStatus != "")
             {
@@ -920,7 +920,7 @@ namespace Passengers.Controllers
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult CityAndLines_PDF(string pSTrName , string pStrlineStatus, string pStrlineCANCELD, string pSlinetyps, string pSlineCity)
+        public ActionResult CityAndLines_PDF(string pSTrName, string pStrlineStatus, string pStrlineCANCELD, string pSlinetyps, string pSlineCity)
         {
             var sql = " SELECT rownum as rr,  ZC.NAME AS CITYNAME, "
                  + " TR.NAME AS LINENAME, "
@@ -978,20 +978,20 @@ namespace Passengers.Controllers
                 CustomSwitches = "--page-offset 0 --footer-center [page] --footer-font-size 8"
             };
         }
-      
-        
-        
+
+        public ActionResult CityAndLinesChange()
+        {
+            return View();
+        }
+
+
         public ActionResult LinesAndCarsGroup()
         {
             return View();
         }
         public ActionResult LinesAndCarsGroup_Read([DataSourceRequest] DataSourceRequest request)
         {
-            //var sql = "SELECT ZC.NAME AS CityName,try.name AS TYPS ,COUNT (*) AS CoutnCar "
-            // + "  FROM TRLINES TR JOIN ZCITYS ZC ON ZC.NB = TR.CITYNB "
-            // + "  join ZTRLINETYPES try on try.nb = tr.TYP "
-            // + " GROUP BY ZC.NAME ,try.name "
-            // + "  order by ZC.NAME ";
+
             var SlineCity_checkbox = Request.Form["SlineCity_checkbox"].Trim();
             var Slinetyps_checkbox = Request.Form["Slinetyps_checkbox"].Trim();
             var StrlineStatus_checkbox = Request.Form["StrlineStatus_checkbox"].Trim();
@@ -1010,10 +1010,10 @@ namespace Passengers.Controllers
 
 
 
-            List<string> grossupby =new List<string>();
+            List<string> grossupby = new List<string>();
 
             var sql1 = " select ";
-          
+
             if (SlineCity_checkbox == "true")
             {
                 sql1 += " ZC.NAME AS CityName ,";
@@ -1049,11 +1049,11 @@ namespace Passengers.Controllers
                 grossupby.Add("TR.NAME");
 
             }
-            
+
 
             sql1 += " COUNT (CA.NB) AS CoutnCar ";
 
-            sql1 += "  FROM TRLINES TR  " 
+            sql1 += "  FROM TRLINES TR  "
              + "  left JOIN ZCITYS ZC ON ZC.NB = TR.CITYNB "
              + "  left join ZTRLINETYPES try on try.nb = tr.TYP "
              + "  left JOIN cars ca ON tr.nb = ca.lin  "
@@ -1062,11 +1062,11 @@ namespace Passengers.Controllers
 
             if (Slinetyps != "")
             {
-                sql1 += " and tr.TYP = " + Slinetyps ;
+                sql1 += " and tr.TYP = " + Slinetyps;
             }
             if (StrlineStatus != "")
             {
-                sql1 += " and TR.STATUS = " + StrlineStatus ;
+                sql1 += " and TR.STATUS = " + StrlineStatus;
             }
 
 
@@ -1102,21 +1102,21 @@ namespace Passengers.Controllers
                 sql1 += " and TR.CITYNB =" + ci;
             }
 
-            if (SlineCity_checkbox == "true" || 
-                Slinetyps_checkbox == "true" || 
+            if (SlineCity_checkbox == "true" ||
+                Slinetyps_checkbox == "true" ||
                 StrlineStatus_checkbox == "true" ||
                 Scarkind_checkbox == "true" ||
-                Scarreg_checkbox == "true"||
+                Scarreg_checkbox == "true" ||
                 Strname_checkbox == "true"
                 )
             {
                 sql1 += " GROUP BY ";
             }
 
-            for (var i = 0;i<= grossupby.Count() -1 ;i++)
+            for (var i = 0; i <= grossupby.Count() - 1; i++)
             {
                 sql1 += grossupby[i];
-                if(i != grossupby.Count() - 1)
+                if (i != grossupby.Count() - 1)
                 {
                     sql1 += " , ";
                 }
@@ -1126,7 +1126,7 @@ namespace Passengers.Controllers
                Slinetyps_checkbox == "true" ||
                StrlineStatus_checkbox == "true" ||
                Scarkind_checkbox == "true" ||
-               Scarreg_checkbox == "true"||
+               Scarreg_checkbox == "true" ||
                Strname_checkbox == "true"
                )
             {
@@ -1140,33 +1140,15 @@ namespace Passengers.Controllers
                     sql1 += " , ";
                 }
             }
-          
+
 
             var data = db.Database.SqlQuery<ViewModel.LinesAndCarsGroupVM>(sql1);
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
-            
+
         }
-    
+
         public ActionResult LinesAndCarsGroup_PDF
-            (
-            string SlineCitycheckbox, 
-            string Slinetypscheckbox, 
-            string StrlineStatuscheckbox,
-            string Scarkindcheckbox,
-            string Scarregcheckbox,
-
-            string Strnamecheckbox,
-            string pSlinetyps,
-
-            string pStrlineStatus,
-            string pScarkind,
-            string pScarreg,
-            string pSTrline,
-            string pSlineCity
-
-
-
-            )
+            (string SlineCitycheckbox, string Slinetypscheckbox, string StrlineStatuscheckbox, string Scarkindcheckbox, string Scarregcheckbox, string Strnamecheckbox, string pSlinetyps, string pStrlineStatus, string pScarkind, string pScarreg, string pSTrline, string pSlineCity)
         {
             var SlineCity_checkbox = SlineCitycheckbox;
             var Slinetyps_checkbox = Slinetypscheckbox;
@@ -1325,5 +1307,427 @@ namespace Passengers.Controllers
             };
         }
 
+        public ActionResult LinesAndCarsDetalis()
+        {
+            ViewData["ZCARREGS"] = db.ZCARREGS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+
+            ViewData["zcities"] = db.ZCITYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            ViewData["ZCARKINDS"] = db.ZCARKINDS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+
+            return View();
+        }
+        public ActionResult LinesAndCarsDetalis_Read([DataSourceRequest] DataSourceRequest request)
+        {
+
+
+            var Slinetyps = Request.Form["Slinetyps"].Trim();
+            var StrlineStatus = Request.Form["StrlineStatus"].Trim();
+            var Scarkind = Request.Form["Scarkind"].Trim();
+            var Scarreg = Request.Form["Scarreg"].Trim();
+
+            var STrline = Request.Form["STrline"].Trim();
+            var SlineCity = Request.Form["SlineCity"].Trim();
+
+
+
+
+
+
+            var sql1 = " SELECT ZC.NAME AS CityName,"
+      + " TR.NAME AS trname,"
+      + " try.NAME AS TYPS,"
+      + " CASE WHEN TR.STATUS = 1 THEN 'فعال' ELSE 'غير فعال'  END     AS STATUS,"
+      + " CA.NB AS carnb,"
+      + " CA.TABNU AS tabnu, "
+      + " ca.reg AS kind,"
+      + " ca.CARREGNB AS reg,"
+      + " CA.CITYNB AS carcity"
+      + " FROM TRLINES TR"
+      + " LEFT JOIN ZCITYS ZC ON ZC.NB = TR.CITYNB"
+      + " LEFT JOIN ZTRLINETYPES try ON try.nb = tr.TYP"
+      + "  LEFT JOIN cars ca ON tr.nb = ca.lin"
+      + "  LEFT JOIN zcarkinds zk ON zk.nb = ca.reg"
+      + "  LEFT JOIN ZCARREGS zg ON ca.CARREGNB = zg.nb"
+      + " WHERE 1 = 1 ";
+
+            if (Slinetyps != "")
+            {
+                sql1 += " and tr.TYP = " + Slinetyps;
+            }
+            if (StrlineStatus != "")
+            {
+                sql1 += " and TR.STATUS = " + StrlineStatus;
+            }
+
+
+            if (Scarkind != "")
+            {
+                sql1 += " and ca.reg = " + Scarkind;
+            }
+
+            if (Scarreg != "")
+            {
+                sql1 += " and ca.CARREGNB = " + Scarreg;
+            }
+
+            if (STrline != "")
+            {
+                sql1 += " and tr.name like  '%" + STrline + "%' ";
+            }
+
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+
+            if (ci == "0")
+            {
+                if (SlineCity != "")
+                {
+                    sql1 += " and TR.CITYNB =" + SlineCity;
+                }
+
+            }
+            else
+            {
+                sql1 += " and TR.CITYNB =" + ci;
+            }
+
+
+            var data = db.Database.SqlQuery<ViewModel.LinesAndCarsDetalisVM>(sql1);
+            return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+
+        }
+
+        public ActionResult LinesAndCarsDetalis_PDF(string pSlinetyps, string pStrlineStatus, string pScarkind, string pScarreg, string pSTrline, string pSlineCity)
+        {
+            var Slinetyps = pSlinetyps;
+            var StrlineStatus = pStrlineStatus;
+            var Scarkind = pScarkind;
+            var Scarreg = pScarreg;
+            var STrline = pSTrline;
+            var SlineCity = pSlineCity;
+
+            var sql1 = " SELECT ZC.NAME AS CityName,"
+      + " TR.NAME AS trname,"
+      + " try.NAME AS TYPS,"
+      + " CASE WHEN TR.STATUS = 1 THEN 'فعال' ELSE 'غير فعال'  END     AS STATUS,"
+      + " CA.NB AS carnb,"
+      + " CA.TABNU AS tabnu, "
+      + " zk.NAME  AS kind,"
+      + " zg.NAME  AS reg,"
+      + " ZC2.NAME AS carcity"
+      + " FROM TRLINES TR"
+      + " LEFT JOIN ZCITYS ZC ON ZC.NB = TR.CITYNB"
+      + " LEFT JOIN ZTRLINETYPES try ON try.nb = tr.TYP"
+      + "   JOIN cars ca ON tr.nb = ca.lin"
+      + "  LEFT JOIN zcarkinds zk ON zk.nb = ca.reg"
+      + "  LEFT JOIN ZCARREGS zg ON ca.CARREGNB = zg.nb"
+       + " LEFT JOIN ZCITYS ZC2 ON ZC2.NB = CA.CITYNB"
+      + " WHERE 1 = 1 ";
+
+            if (Slinetyps != "")
+            {
+                sql1 += " and tr.TYP = " + Slinetyps;
+            }
+            if (StrlineStatus != "")
+            {
+                sql1 += " and TR.STATUS = " + StrlineStatus;
+            }
+
+
+            if (Scarkind != "")
+            {
+                sql1 += " and ca.reg = " + Scarkind;
+            }
+
+            if (Scarreg != "")
+            {
+                sql1 += " and ca.CARREGNB = " + Scarreg;
+            }
+
+            if (STrline != "")
+            {
+                sql1 += " and tr.name like  '%" + STrline + "%' ";
+            }
+
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+
+            if (ci == "0")
+            {
+                if (SlineCity != "")
+                {
+                    sql1 += " and TR.CITYNB =" + SlineCity;
+                }
+
+            }
+            else
+            {
+                sql1 += " and TR.CITYNB =" + ci;
+            }
+
+
+            var data = db.Database.SqlQuery<ViewModel.LinesAndCarsDetalisPDFVM>(sql1);
+            return new ViewAsPdf(data)
+            {
+                CustomSwitches = "--page-offset 0 --footer-center [page] --footer-font-size 8"
+            };
+
+        }
+
+        public ActionResult CarsAndProceds()
+        {
+            ViewData["ZCARREGS"] = db.ZCARREGS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+
+            ViewData["zcities"] = db.ZCITYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            ViewData["ZCARKINDS"] = db.ZCARKINDS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+
+            return View();
+        }
+
+
+        public ActionResult CarsAndProceds_Read([DataSourceRequest] DataSourceRequest request)
+        { 
+            var Carnb = Request.Form["Carnb"].Trim();
+            var Tabnu = Request.Form["Tabnu"].Trim();
+            var Carcity = Request.Form["Carcity"].Trim();
+            var Scarkind = Request.Form["Scarkind"].Trim();
+            var Scarreg = Request.Form["Scarreg"].Trim();
+            var SProcedtyps = Request.Form["SProcedtyps"].Trim();
+            var Carprocednb = Request.Form["Carprocednb"].Trim();
+            var SCarprocedDateStart = Request.Form["SCarprocedDateStart"].Trim();
+            var SCarprocedDateEnd = Request.Form["SCarprocedDateEnd"].Trim();
+
+            var sql1 = " SELECT CA.NB AS carnb, "
+      + "  CA.TABNU AS tabnu, "
+        + "  zk.NAME AS kind, "
+        + "  zg.NAME AS reg, "
+        + "  ZC2.NAME AS carcity, "
+        + "  CP.NB AS CARPROCEDNB, "
+        + "  ZTP.NAME AS PROCEDNAME, "
+        + "  CP.RECDAT AS PROCEDDATE, "
+       + "   CP.RESULT AS RESULT,  "
+       + "   ZC.NAME AS STEPCITY, "
+        + "  CPS.NB, "
+        + "  CASE WHEN STEPNB = 454 THEN 'نهائية' WHEN STEPNB = 453 THEN 'مبدئية' END AS TYPSNAMEAGR, "
+      + "    (SELECT 'نعم' FROM TRAGREEMENTS WHERE CARPROCEDNB = CP.NB) AS PROPSTATUS "
+  + "   FROM CARPROCEDS  CP "
+     + "     JOIN ZPROCEDTYPS ZTP ON ZTP.NB = CP.PROCEDNB "
+      + "    JOIN CARS CA ON CP.CARNB = CA.NB "
+      + "    LEFT JOIN zcarkinds zk ON zk.nb = ca.reg "
+      + "    LEFT JOIN ZCARREGS zg ON ca.CARREGNB = zg.nb "
+      + "    LEFT JOIN ZCITYS ZC2 ON ZC2.NB = CA.CITYNB "
+      + "    LEFT JOIN CARPROCEDSTEPS CPS ON CPS.CARPROCEDNB = CP.NB "
+      + "    LEFT JOIN ZCITYS ZC ON ZC.NB = CPS.CITYNB "
+  + "  WHERE STEPNB IN(454, 453) ";
+
+            if (Carnb != "")
+            {
+                sql1 += " and CA.NB = " + Carnb;
+            }
+
+            if (Tabnu != "")
+            {
+                sql1 += " and  CA.TABNU = " + Tabnu;
+            }
+         
+
+            if (Scarkind != "")
+            {
+                sql1 += " and  ca.reg = " + Scarkind;
+            }
+
+            if (Scarreg != "")
+            {
+                sql1 += " and  ca.CARREGNB = " + Scarreg;
+            }
+
+            if (SProcedtyps != "")
+            {
+                sql1 += " and  CP.PROCEDNB = " + SProcedtyps;
+            }
+
+            if (Carprocednb != "")
+            {
+                sql1 += " and  cp.nb = " + Carprocednb;
+            }
+
+            if (SCarprocedDateStart != "")
+            {
+                sql1 += " and CP.RECDAT >= TO_DATE('" + SCarprocedDateStart + "','DD/MM/YYYY') ";
+            }
+
+            if (SCarprocedDateEnd != "")
+            {
+                sql1 += " and CP.RECDAT <= TO_DATE('" + SCarprocedDateEnd + "','DD/MM/YYYY') ";
+            }
+
+            if (Carcity != "")
+            {
+                sql1 += " and  CA.CITYNB = " + Carcity;
+            }
+
+
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+
+            if (ci == "0")
+            {
+            
+            }
+            else
+            {
+                sql1 += " and  CPS.CITYNB =" + ci;
+            }
+
+            sql1 += " ORDER BY CARPROCEDNB , CPS.NB ";
+            var data = db.Database.SqlQuery<ViewModel.CarsAndProcedsVM>(sql1);
+            return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+
+        }
+
+        public ActionResult CarsAndProceds_PDF(
+            string pCarnb,
+            string pTabnu,
+            string pCarcity,
+            string pScarkind,
+            string pScarreg,
+            string pSProcedtyps,
+            string pCarprocednb,
+            string pSCarprocedDateStart,
+            string pSCarprocedDateEnd
+
+            )
+        {
+            var Carnb = pCarnb;
+            var Tabnu = pTabnu;
+            var Carcity = pCarcity;
+            var Scarkind = pScarkind;
+            var Scarreg = pScarreg;
+            var SProcedtyps = pSProcedtyps;
+            var Carprocednb = pCarprocednb;
+            var SCarprocedDateStart = pSCarprocedDateStart;
+            var SCarprocedDateEnd = pSCarprocedDateEnd;
+
+            var sql1 = " SELECT CA.NB AS carnb, "
+       + "  CA.TABNU AS tabnu, "
+         + "  zk.NAME AS kind, "
+         + "  zg.NAME AS reg, "
+         + "  ZC2.NAME AS carcity, "
+         + "  CP.NB AS CARPROCEDNB, "
+         + "  ZTP.NAME AS PROCEDNAME, "
+         + "  CP.RECDAT AS PROCEDDATE, "
+        + "   CP.RESULT AS RESULT,  "
+        + "   ZC.NAME AS STEPCITY, "
+         + "  CPS.NB, "
+         + "  CASE WHEN STEPNB = 454 THEN 'نهائية' WHEN STEPNB = 453 THEN 'مبدئية' END AS TYPSNAMEAGR, "
+       + "    (SELECT 'نعم' FROM TRAGREEMENTS WHERE CARPROCEDNB = CP.NB) AS PROPSTATUS "
+   + "   FROM CARPROCEDS  CP "
+      + "     JOIN ZPROCEDTYPS ZTP ON ZTP.NB = CP.PROCEDNB "
+       + "    JOIN CARS CA ON CP.CARNB = CA.NB "
+       + "    LEFT JOIN zcarkinds zk ON zk.nb = ca.reg "
+       + "    LEFT JOIN ZCARREGS zg ON ca.CARREGNB = zg.nb "
+       + "    LEFT JOIN ZCITYS ZC2 ON ZC2.NB = CA.CITYNB "
+       + "    LEFT JOIN CARPROCEDSTEPS CPS ON CPS.CARPROCEDNB = CP.NB "
+       + "    LEFT JOIN ZCITYS ZC ON ZC.NB = CPS.CITYNB "
+   + "  WHERE STEPNB IN(454, 453) ";
+
+            if (Carnb != "")
+            {
+                sql1 += " and CA.NB = " + Carnb;
+            }
+
+            if (Tabnu != "")
+            {
+                sql1 += " and  CA.TABNU = " + Tabnu;
+            }
+
+
+            if (Scarkind != "")
+            {
+                sql1 += " and  ca.reg = " + Scarkind;
+            }
+
+            if (Scarreg != "")
+            {
+                sql1 += " and  ca.CARREGNB = " + Scarreg;
+            }
+
+            if (SProcedtyps != "")
+            {
+                sql1 += " and  CP.PROCEDNB = " + SProcedtyps;
+            }
+
+            if (Carprocednb != "")
+            {
+                sql1 += " and  cp.nb = " + Carprocednb;
+            }
+
+            if (SCarprocedDateStart != "")
+            {
+                sql1 += " and CP.RECDAT >= TO_DATE('" + SCarprocedDateStart + "','DD/MM/YYYY') ";
+            }
+
+            if (SCarprocedDateEnd != "")
+            {
+                sql1 += " and CP.RECDAT <= TO_DATE('" + SCarprocedDateEnd + "','DD/MM/YYYY') ";
+            }
+
+            if (Carcity != "")
+            {
+                sql1 += " and  CA.CITYNB = " + Carcity;
+            }
+
+
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+
+            if (ci == "0")
+            {
+
+            }
+            else
+            {
+                sql1 += " and  CPS.CITYNB =" + ci;
+            }
+
+
+            sql1 += " ORDER BY CARPROCEDNB , CPS.NB ";
+
+            var data = db.Database.SqlQuery<ViewModel.CarsAndProcedsVM>(sql1);
+            return new ViewAsPdf(data)
+            {
+                CustomSwitches = "--page-offset 0 --footer-center [page] --footer-font-size 8"
+            };
+
+
+        }
     }
 }

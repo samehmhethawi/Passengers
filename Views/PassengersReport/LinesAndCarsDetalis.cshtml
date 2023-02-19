@@ -1,0 +1,257 @@
+﻿
+@{
+    ViewBag.Title = "الخطوط والمركبات تفصيلي";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section PartialHeader{
+    <div class="panel-heading1 " id="searchPanel" style="font-size: 15px">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+
+               @* <input type="checkbox" id="SlineCitycheckbox" />*@
+
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر محافظة الخط")
+                                    .Name("SlineCity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                @*<input type="checkbox" id="Slinetypscheckbox" />*@
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("نوع الخط حسب المسار")
+                                    .Name("Slinetyps")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETZTRLINETYPES", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                @*<input type="checkbox" id="StrlineStatuscheckbox" />*@
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر الحالة فعال")
+                                    .Name("StrlineStatus")
+                                    .DataTextField("Text")
+                                    .DataValueField("Value")
+                                    .BindTo(new List<SelectListItem>() {
+                                          new SelectListItem() {
+                                              Text = "فعال",
+                                              Value = "1"
+                                          },
+                                          new SelectListItem() {
+                                              Text = "غير فعال",
+                                              Value = "0"
+                                          }
+                                      })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                @*<input type="checkbox" id="Scarkindcheckbox" />*@
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("النوع الرئيسي")
+                                    .Name("Scarkind")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETCARKIND", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                @*<input type="checkbox" id="Scarregcheckbox" />*@
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("الفئة الثانوية")
+                                    .Name("Scarreg")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETCARREG", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+            </div>
+            <div class="row" style="padding-bottom:10px">
+                @*<input type="checkbox" id="Strnameheckbox" />*@
+
+                <div class="col-md-7">
+                    @Html.Kendo().TextBox().Name("STrline").HtmlAttributes(new { placeholder = "%.. اسم الخط ..%" })
+                </div>
+                <div class="col-md-2">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div>
+    @(Html.Kendo().Grid <Passengers.ViewModel.LinesAndCarsDetalisVM>()
+            .Name("grid").AutoBind(false)
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.CityName).Title("المحافظة");
+                columns.Bound(c => c.trname).Title("اسم الخط");
+                columns.Bound(c => c.TYPS).Title("نوع الخط");
+                columns.Bound(c => c.STATUS).Title("حالة الخط").Width(100); 
+                columns.Bound(c => c.carnb).Title("رمز المركبة");
+                columns.Bound(c => c.tabnu).Title("رقم اللوحة");
+                columns.ForeignKey(c => c.carcity, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("محافظة المركبة").Width(150);
+                columns.Bound(c => c.carcity).Title("محافظة المركبة").Visible(false);
+                columns.ForeignKey(c => c.kind, (System.Collections.IEnumerable)ViewData["ZCARKINDS"], "ID", "NAME").Title("النوع").Width(150);
+                columns.Bound(c => c.kind).Title("النوع ").Visible(false);
+                columns.ForeignKey(c => c.reg, (System.Collections.IEnumerable)ViewData["ZCARREGS"], "ID", "NAME").Title("الفئة").Width(150);
+                columns.Bound(c => c.reg).Title("الفئة").Visible(false);
+
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            //.ClientDetailTemplateId("template")
+            //.Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            //.Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("LinesAndCarsDetalis_Read", "PassengersReport").Data("GetFillters")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+            //   toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            toolbar.Template(@<text>
+            <div >
+                <div>
+                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
+                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    </button>
+                    @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
+                    <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
+                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>*@
+                </div>
+            </div>
+</text>);
+
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+        )
+                //.Events(events => events
+        //  .Change("dataBound2222")
+        //  .DataBound("dataBound2222")
+        //  .Sort("dataBound2222")
+        //  .Filter("dataBound2222")
+        //  .Group("dataBound2222")
+        //  .Page("dataBound2222")
+        //  .Cancel("dataBound2222")
+        //.Edit("hideIdField")
+
+
+        )
+    
+
+
+</div>
+
+
+
+
+
+<script>
+    function GetFillters() {
+        var fillter = {};     
+        fillter.SlineCity = $('#SlineCity').val();
+        fillter.Slinetyps = $('#Slinetyps').val();
+        fillter.StrlineStatus = $('#StrlineStatus').val();
+        fillter.Scarkind = $('#Scarkind').val();
+        fillter.Scarreg = $('#Scarreg').val();
+        fillter.STrline = $('#STrline').val();
+       return fillter;
+    }
+    function Btn_Search()
+    {
+
+        $("#grid").data("kendoGrid").dataSource.read();
+    }
+
+
+
+
+    function ExportToPdf() {
+        var fill = {};
+
+        fill.SlineCity = $('#SlineCity').val();
+        fill.Slinetyps = $('#Slinetyps').val();
+        fill.StrlineStatus = $('#StrlineStatus').val();
+        fill.Scarkind = $('#Scarkind').val();
+        fill.Scarreg = $('#Scarreg').val();
+        fill.STrline = $('#STrline').val();
+
+
+
+        window.open("LinesAndCarsDetalis_PDF?"
+       
+            + "&pSlinetyps=" + fill.Slinetyps
+            + "&pStrlineStatus=" + fill.StrlineStatus
+            + "&pScarkind=" + fill.Scarkind
+            + "&pScarreg=" + fill.Scarreg
+            + "&pSTrline=" + fill.STrline
+            + "&pSlineCity=" + fill.SlineCity, "_blank"
+        );
+    }
+
+
+
+</script>

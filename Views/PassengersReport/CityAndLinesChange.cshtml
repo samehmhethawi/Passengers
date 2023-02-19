@@ -1,0 +1,216 @@
+﻿
+@{
+    ViewBag.Title = "التغيرات التي طرأت على الخط";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section PartialHeader{
+    <div class="panel-heading1 " id="searchPanel" style="font-size: 15px">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر محافظة الخط")
+                                    .Name("SlineCity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر نوع الطلب")
+                                    .Name("SProcedtyps")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETZPROCEDTYPS", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                <div class="col-md-2">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SSesDateStart")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ الطلب من", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+              
+                <div class="col-md-2">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SSesDateEnd")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ الطلب الى", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+               
+        
+
+                
+            </div>
+
+
+            <div class="row">
+
+               
+              
+                
+
+                <div class="col-md-2">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div>
+    @(Html.Kendo().Grid <Passengers.ViewModel.CityAndLinesVM>()
+            .Name("grid").AutoBind(false)
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.CityName).Title("المحافظة");
+
+                columns.Bound(c => c.LINENAME).Title("اسم خط السير").Width(500);
+                columns.Bound(c => c.TPYS).Title("نوع الخط").Width(150);
+                columns.Bound(c => c.STATUS).Title("حالة الخط").Width(150);
+                columns.Bound(c => c.ISCANCELD).Title("هل ملغى").Width(150);
+
+                columns.Bound(c => c.MINCARS).Title("عدد الادنى").Width(150);
+                columns.Bound(c => c.MAXCARS).Title("عدد الاعلى").Width(150);
+
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            //.Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            //.Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("CityAndLines_Read", "PassengersReport").Data("GetFillters")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+            //   toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            toolbar.Template(@<text>
+            <div >
+                <div>
+                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
+                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    </button>
+                    @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
+                    <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
+                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>*@
+                </div>
+            </div>
+</text>);
+
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("setIcons")
+            .DataBound("setIcons")
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Cancel("setIcons")
+        //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+
+
+<script>
+
+    function GetFillters()
+    {
+        var fillter = {};
+        fillter.STrline = $('#STrline').val();
+        fillter.SlineCity = $('#SlineCity').val();
+        fillter.StrlineStatus = $('#StrlineStatus').val();
+        fillter.StrlineCANCELD = $('#StrlineCANCELD').val();
+        fillter.Slinetyps = $('#Slinetyps').val();
+
+
+        return fillter;
+    }
+
+    function Btn_Search()
+    {
+        $("#grid").data("kendoGrid").dataSource.read();
+    }
+    function rest_filtters()
+    {
+        $('#STrline').val("");
+        $("#StrlineCANCELD").data("kendoDropDownList").value(-1);
+        $("#SlineCity").data("kendoDropDownList").value(-1);
+        $("#StrlineStatus").data("kendoDropDownList").value(-1);
+        $("#Slinetyps").data("kendoDropDownList").value(-1);
+
+        $("#grid").data("kendoGrid").dataSource.data([]);
+    }
+
+    function ExportToPdf()
+    {
+        alert('ss');
+        var fill = {};
+        fill.STrline = $('#STrline').val();
+        fill.StrlineStatus = $('#StrlineStatus').val();
+        fill.StrlineCANCELD = $('#StrlineCANCELD').val();
+        fill.Slinetyps = $('#Slinetyps').val();
+        fill.SlineCity = $('#SlineCity').val();
+
+
+
+        window.open("CityAndLines_PDF?pSTrName=" + fill.STrline
+            + "&pStrlineStatus=" + fill.StrlineStatus
+            + "&pStrlineCANCELD=" + fill.StrlineCANCELD
+            + "&pSlinetyps=" + fill.Slinetyps
+            + "&pSlineCity=" + fill.SlineCity
+            , "_blank"
+        );
+    }
+</script>
+
+
+
+

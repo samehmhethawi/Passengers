@@ -6,60 +6,845 @@
 <!DOCTYPE html>
 <html>
 <head>
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/v2/css")
+    @Scripts.Render("~/bundles/v2/jquery")
+    @Scripts.Render("~/bundles/v2/js")
+    @Scripts.Render("~/bundles/v2/modernizr")
+    @Scripts.Render("~/bundles/v2/dataTables")
+
+
+    @Scripts.Render("~/bundles/v2/jqueryval_unobtrusive")
+    <link href="~/Content/jquery-confirm.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-confirm.min.js"></script>
+    <link href="~/Content/chosen.css" rel="stylesheet" />
+    <script src="~/Scripts/chosen.jquery.js"></script>
+    <script src="~/Scripts/kendo/2017.1.118/kendo.web.min.js"></script>
+    <script src="~/Scripts/kendo/2017.1.118/kendo.aspnetmvc.min.js"></script>
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.common-bootstrap.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.mobile.all.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.bootstrap.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.rtl.min.css")" rel="stylesheet" type="text/css" />
+    @*<script src="@Url.Content("~/Scripts/kendo/2017.1.118/jquery.min.js")"></script>*@
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/kendo.all.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/kendo.aspnetmvc.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/kendo.ar.controls.js")"></script>
+    <link href="@Url.Content("~/Content/kendo/2017.1.118/kendo.rtl.min.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/kendo.timezones.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/kendo.modernizr.custom.js")"></script>
+    @*font-awesome from internet*@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <meta charset="utf-8" />
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        body{
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            min-height:100vh;
-            background:#223243;
-
+        body {
+            display: flex;
+            /*justify-content: center;*/
+            align-items: center;
+            min-height: 100vh;
+            background: #000;
+            z-index: 1;
         }
 
-        .container {
+        .daekgrid {
             border: 8px solid #223243;
-            padding: 40px;
+            padding: 10px;
             border-radius: 20px;
-            box-shadow: -5px -5px 15px rgba(255,255,255,0.1), 5px 5px 15px rgba(0,0,0,0.35),
-           inset -5px -5px 15px rgba(255,255,255,0.1), 5px 5px 15px rgba(0,0,0,0.35);
+            box-shadow: -5px -5px 15px rgba(255,255,255,0.5),10px 10px 25px rgba(0,0,0,1), inset -5px -5px 15px rgba(255,255,255,1), 5px 5px 15px rgba(0,0,0,1);
+            z-index: 99999;
+            border: 1px solid #223243;
+            border-radius: 20px;
+        }
+
+       
+
+
+        section {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2px;
+            flex-wrap: wrap;
+            overflow: hidden;
+        }
+
+            section::before {
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(#000,#00dfc4,#000);
+                animation: animate 5s linear infinite;
+            }
+
+        @@keyframes animate {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        section span {
+            position: relative;
+            display: block;
+            width: calc(6.25vw - 2px);
+            height: calc(6.25vw - 2px);
+            background: #223243;
+            z-index: 2;
+            transition: 1.5s;
+        }
+
+            section span:hover {
+                background: #00dfc4;
+                transition: 0s;
+            }
+
+
+
+        @@media(max-width : 900px) {
+            section span {
+                width: calc(10vw - 2px);
+                height: calc(10vw - 2px);
+            }
+        }
+
+        @@media(max-width : 600px) {
+            section span {
+                width: calc(20vw - 2px);
+                height: calc(20vw - 2px);
+            }
+        }
+
+
+
+        .k-grid-header, .k-grid-header tr:first-child {
+            background: #223243;
+            padding: 0px !important;
+        }
+        .k-grid tbody {
+            background: #223243;
+        }
+        .k-grid th {
+            background: #223243;
+        }
+        .k-grid tr:hover {
+           
+            background: #00dfc4;
+            color: #00dfc4;
+        }
+            .k-grid tbody tr {
+                color: #fff !important;
+                background: #223243;
+                height: 38px;
+            }
+        .k-grid-header thead tr th > a,
+        .k-grid-header thead tr th > span {
+            color: #fff !important;
+            font-weight: bold !important;
+            background: #223243;
+        }
+        /*.k-grid-content > table > tbody > tr > td {
+                 font-size: 14px !important;
+                 font-weight: normal !important;
+        }*/
+        .k-grid-content {
+            background: #223243;
+            height: auto !important;
+            overflow-y: auto !important;
+            min-height: 150px !important;
+        }
+
+        .k-pager-info {
+            background: #223243;
+            color: #4f67ea;
+        }
+        .k-grid-pager {
+            font-size: 14px;
+            background: #223243;
+        }
+        .k-pager-refresh {
+            background: #223243 !important;
+        }
+        .k-icon {
+            color: #fff !important;
+        }
+        .k-i-seek-w {
+            color: #fff !important;
+        }
+        .k-state-disabled {
+            background: #223243 !important;
+            color: #fff !important;
+        }
+        .k-label {
+            color: #fff !important;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="form signup">
-        <h2>sign up</h2>
-        <div class="inputBox">
-            <input type="text" required="required" />
-            <i class="fa-solid fa-user" ></i>
-            <span>username</span>
-        </div>
-       
-        <div class="inputBox">
-            <input type="password" required="required" />
-            <i class="fa-solid fa-lock"></i>
-            <span>password</span>
-        </div>
-        <div class="inputBox">
-            <input type="password" required="required" />
-            <i class="fa-solid fa-lock"></i>
-            <span>confirm password</span>
-        </div>
-        <div class="inputBox">
-            <input type="submit" value="create" />
-            
-        </div>
+    <section>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <!-- Grid  -->
+
+
+    </section>
+    <div class="daekgrid">
+        @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRZMEMBERSHIP>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+
+                // columns.Template(t => { }).Title("م.").ClientTemplate(
+                //  "#= renderNumber(data) #"
+                //).Width(80);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.Bound(c => c.NAME).Width(450);
+                columns.Bound(c => c.ORDR).Width(150);
+                columns.Bound(c => c.NOTES).Width(150);
+                //columns.Template(@<text></text>).ClientTemplate("#=resColTemplate(data)#").Title("Items");
+                columns.Command(command =>
+                {
+                    //    //command.Custom("Preview").Click("Preview").Text(" ");
+                    // command.Custom("Edit").Click("Edit").Text(" ");
+                    //command.Custom("Delete").Click("Delete").Text(" ");
+                    //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
+                    //      command.Custom("Details2").Click("Details2").Text(" ");
+                }).Width(100);
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("Read", "TRZMEMBERSHIP")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+                // toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+        )
+        //.Events(events => events
+        //  .Change("setIcons")
+        //  .DataBound("setIcons")
+        //  .Sort("setIcons")
+        //  .Filter("setIcons")
+        //  .Group("setIcons")
+        //  .Page("setIcons")
+        //  .Cancel("setIcons")
+        //.Edit("hideIdField")
+
+
+        )
+        )
+
     </div>
-    <div class="form singin"></div>
-</div>
+
 </body>
 </html>

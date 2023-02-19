@@ -691,7 +691,7 @@
                                 <a href="@Url.Action("CommittesAndMembers", "PassengersReport")">
                                     <div class="grid">
                                         <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
-                                        <h5 class="grid-title">اللجان واعضائها</h5>
+                                        <h5 class="grid-title">1-اللجان واعضائها</h5>
                                     </div>
                                 </a>
                             </div>
@@ -699,7 +699,7 @@
                                 <a href="@Url.Action("CommittesAndSessions", "PassengersReport")">
                                     <div class="grid">
                                         <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
-                                        <h5 class="grid-title">اللجان وجلساتها</h5>
+                                        <h5 class="grid-title">2-اللجان وجلساتها</h5>
                                     </div>
                                 </a>
                             </div>
@@ -707,7 +707,7 @@
                                 <a href="@Url.Action("SessionsAndMembers", "PassengersReport")">
                                     <div class="grid" style="position:relative">
                                         <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
-                                        <h5 class="grid-title" style="position:absolute">الجلسات واعضائها</h5>
+                                        <h5 class="grid-title" style="position:absolute">3-الجلسات واعضائها</h5>
                                     </div>
                                 </a>
                             </div>
@@ -715,7 +715,7 @@
                                 <a href="@Url.Action("SessionsAndProceds", "PassengersReport")">
                                     <div class="grid">
                                         <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
-                                        <h5 class="grid-title">الجلسات وطلباتها</h5>
+                                        <h5 class="grid-title">4-الجلسات وطلباتها</h5>
                                     </div>
                                 </a>
                             </div>
@@ -723,7 +723,15 @@
                                 <a href="@Url.Action("CityAndLines", "PassengersReport")">
                                     <div class="grid">
                                         <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
-                                        <h5 class="grid-title">المحافظات وخطوطها</h5>
+                                        <h5 class="grid-title">5-المحافظات وخطوطها</h5>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+                                <a href="@Url.Action("CityAndLinesChange", "PassengersReport")">
+                                    <div class="grid">
+                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                                        <h5 class="grid-title">6-المحافظة والتغيرات على خطوطها</h5>
                                     </div>
                                 </a>
                             </div>
@@ -731,38 +739,56 @@
                                 <a href="@Url.Action("LinesAndCarsGroup", "PassengersReport")">
                                     <div class="grid">
                                         <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
-                                        <h5 class="grid-title">الخطوط والمركبات تجميعي</h5>
+                                        <h5 class="grid-title">7-الخطوط والمركبات تجميعي</h5>
                                     </div>
 
                                 </a>
                             </div>
                             <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
-                                <a href="@Url.Action("LinesAndCarsGroup", "PassengersReport")">
+                                <a href="@Url.Action("LinesAndCarsDetalis", "PassengersReport")">
                                     <div class="grid">
                                         <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
-                                        <h5 class="grid-title">الخطوط والمركبات تجميعي</h5>
+                                        <h5 class="grid-title">8-الخطوط والمركبات تفصيلي</h5>
                                     </div>
 
                                 </a>
                             </div>
                             <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
-                                <a href="@Url.Action("LinesAndCarsGroup", "PassengersReport")">
+                                <a href="@Url.Action("CarsAndProceds", "PassengersReport")">
                                     <div class="grid">
                                         <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
-                                        <h5 class="grid-title">الخطوط والمركبات تجميعي</h5>
+                                        <h5 class="grid-title">10-المركبات وطلباتها</h5>
                                     </div>
 
                                 </a>
                             </div>
-                            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
-                                <a href="@Url.Action("LinesAndCarsGroup", "PassengersReport")">
-                                    <div class="grid">
-                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
-                                        <h5 class="grid-title">الخطوط والمركبات تجميعي</h5>
-                                    </div>
+                            @*<div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+            <a href="@Url.Action("LinesAndCarsGroup", "PassengersReport")">
+                <div class="grid">
+                    <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                    <h5 class="grid-title">الخطوط والمركبات تجميعي</h5>
+                </div>
 
-                                </a>
-                            </div>
+            </a>
+        </div>
+        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+            <a href="@Url.Action("LinesAndCarsGroup", "PassengersReport")">
+                <div class="grid">
+                    <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                    <h5 class="grid-title">الخطوط والمركبات تجميعي</h5>
+                </div>
+
+            </a>
+        </div>
+        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
+            <a href="@Url.Action("LinesAndCarsGroup", "PassengersReport")">
+                <div class="grid">
+                    <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                    <h5 class="grid-title">الخطوط والمركبات تجميعي</h5>
+                </div>
+
+            </a>
+        </div>*@
 
                         </div>
                     </div>

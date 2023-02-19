@@ -141,7 +141,15 @@ namespace Passengers.Controllers
                     else
                     {
                         var comnb = db.Database.SqlQuery<int>("select nb from TRCOMMITTEES where COMCITYNB = " + model.SESCITYNB + " and STATUS = 1").FirstOrDefault();
+                        var mem = db.TRCOMMITTEES_MEMBERS.Where(x => x.COMMITTEENB == comnb && x.MEMBERSHIPNB == 1).Select(s => s.MEMBERNAME).FirstOrDefault();
+
+                        if (mem == null)
+
+                        {
+                            return Json(new { success = false, responseText = "يجب اضافة رئيس لجنة على الاقل" }, JsonRequestBehavior.AllowGet);
+                        }
                         model.COMMITTEENB = comnb;
+                        model.COMBOSSNAME = mem;
                         model.IUSER = Utility.MyName();
                         model.IDATE = DateTime.Now;
                         db.TRSESSIONS.Add(model);
@@ -394,7 +402,13 @@ namespace Passengers.Controllers
         {
             try
             {
-                 var res  =  AgreeAll(ID);
+                var ListOfProceds = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("SELECT * FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = " + ID + " and PSTATUS = 4 ").ToList();
+
+                if (ListOfProceds.Count != 0)
+                {
+                    return Json(new { success = false, responseText = "يجب الاجابة على جميع الطلبات قبل انهاء الجلسة" }, JsonRequestBehavior.AllowGet);
+                }
+                var res  =  AgreeAll(ID);
                 if (res ==  true) {
                     var data = db.TRSESSIONS.Find(ID);
                     if (data.STATUS != 2)
@@ -449,43 +463,25 @@ namespace Passengers.Controllers
                     var temp3 = "";
                    
                     temp3 += "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRZMEMBERSHIP.NAME;
-
                     Members.Add(temp3);
                 }
                 else
                 {
-
                     ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRZMEMBERSHIP.NAME;
                 }
             }
          var data1 =   data.OrderByDescending(x => x.ORDR).ToList();
             foreach (var member in data1)
             {
-                
                     var temp4 = "";
                     temp4 += member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + Environment.NewLine + member.TRCOMMITTEES_MEMBERS.MEMBERNAME;
 
-                    sigMembers.Add(temp4);
-               
+                    sigMembers.Add(temp4);        
             }
             ViewBag.SessionMemers = Members;
             ViewBag.sigSessionMemers = sigMembers;
 
-            //foreach (var member in data)
-            //{
-            //    if (member.TRCOMMITTEES_MEMBERS.MEMBERSHIPNB != 1)
-            //    {
-            //        var temp3 = "";
-            //        temp3 += "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERSHIP.NAME;
-            //        Members.Add(temp3);
-            //    }
-            //    else
-            //    {
-            //        ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERSHIP.NAME;
-            //    }
-            //}
-            //ViewBag.SessionMemers = Members;
-
+     
 
             var sql1 = "SELECT DISTINCT PROCEDNB FROM TRSESSIONS_REPORTS WHERE RYEAR = " + sesdatayear + " and SESSIONNB = " + ses.NB;
             var listofproed = db.Database.SqlQuery<long>(sql1).ToList();
@@ -496,38 +492,12 @@ namespace Passengers.Controllers
                 ListPROCEDS_Print_ALL ofpro = new ListPROCEDS_Print_ALL();
                 ofpro.pronb = item;
                 ofpro.proname = db.ZPROCEDTYPS.Where(x=>x.NB == item).Select(x=>x.NAME).FirstOrDefault();
-              var sql = "SELECT * FROM TRSESSIONS_REPORTS WHERE RYEAR = " + sesdatayear + " and SESSIONNB = " + ses.NB + "and PROCEDNB = "+ item;
+                var sql = "SELECT * FROM TRSESSIONS_REPORTS WHERE RYEAR = " + sesdatayear + " and SESSIONNB = " + ses.NB + "and PROCEDNB = "+ item;
                 ofpro.pro = db.Database.SqlQuery<PROCEDS_Print_ALL>(sql).ToList();
                 ListPROCEDS_Print_ALL.Add(ofpro);
             }
 
            
-
-           
-            //PROCEDS_Print_ALL ALLPROCEDS = new PROCEDS_Print_ALL();
-            //var pr = db.TRSESSIONS_PROCEDS.Where(x=>x.SESSIONNB == ID);            
-            //foreach (var item in pr)
-            //{
-            //    if (item.CARPROCED.PROCEDNB == 2001)
-            //    {
-            //        var trli = db.Database.SqlQuery<PROCEDS_2001_VM>("SELECT PL.NB ,PL.NAME , ZT.NAME AS TYP , PL.LINEPATH FROM PROCED_LINES PL JOIN ZTRLINETYPES ZT ON PL.TYP = ZT.NB  WHERE CARPROCEDNB = " + item.CARPROCEDNB).FirstOrDefault();
-            //        trli.PROCEDNB = 2001;
-            //        trli.PROCEDNAME = "احداث خط";
-            //        trli.CARPROCEDNB = item.CARPROCEDNB;
-            //        trli.LISTCITYS = db.Database.SqlQuery<string>("SELECT ZC.NAME FROM PROCED_LINES_CITY TC JOIN ZCITYS ZC ON TC.CITYNB = ZC.NB WHERE TC.PROCEDLINENB = "+ trli.NB).ToList();
-            //        ALLPROCEDS.proces2001.Add(trli)  ;
-            //    }
-            //}
-            //ViewBag.ALLPROCEDS = ALLPROCEDS.proces2001;
-            ////var sql = "SELECT PT.NAME AS PROCEDNAME,CP.PROCEDNB,TP.CARPROCEDNB ,CA.TABNU , ZC.NAME AS CATNAME,ZF.NAME FACNAME,CT.ENGINEFEUL,CA.FACTYY ,CT.SITES"
-            ////           + " FROM TRSESSIONS_PROCEDS  TP"
-            ////           + " LEFT JOIN CARPROCEDS CP ON TP.CARPROCEDNB = CP.NB"
-            ////           + " LEFT JOIN CARS CA ON CA.NB = CP.CARNB"
-            ////           + " LEFT JOIN ZPROCEDTYPS PT ON CP.PROCEDNB = PT.NB"
-            ////           + " LEFT JOIN ZCARCATEGORYS ZC ON CA.CARCATNB = ZC.NB"
-            ////           + " LEFT JOIN ZFACCOMPS ZF ON CA.FACTCOMPNB = ZF.NB"
-            ////           + " LEFT JOIN CARATTRIBS CT ON CA.NB = CT.CARNB"
-            ////           + " ORDER BY CP.PROCEDNB ASC";
 
 
 
@@ -691,6 +661,11 @@ namespace Passengers.Controllers
         }
         public ActionResult GetProcedCountIstrue(long Sesnb)
         {
+            var stat = db.TRSESSIONS.Where(x => x.NB == Sesnb).Select(s => s.STATUS).FirstOrDefault();
+            if (stat != 1) 
+            {
+                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+            }
             string sql = "SELECT COUNT(*) FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = "+ Sesnb;
 
             var data = db.Database.SqlQuery<int>(sql).FirstOrDefault();

@@ -418,6 +418,147 @@
             <br />
 
         }
+
+        if (item.pronb == 2012)
+        {
+            <table border="1" style="text-align:center" class="table" width="100%">
+                <thead>
+                    <tr>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].CARNB)</th>
+                        <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].TABNB)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in item.pro)
+                    {
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.CARNB</td>
+                            <td>@item2.LINENAME1</td>
+                            <td>@item2.LINETYP1</td>
+                            <td>@item2.LINE1CITY</td>
+                            <td>@item2.COUNTCARLINE1</td>
+                            <td>@item2.TABNB</td>
+                            <td>@item2.ENGINEFEUL</td>
+                            <td>@item2.FACCOMPNAME</td>
+                            <td>@item2.FACTYY</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+            <br />
+            <br />
+
+        }
+
+        if (item.pronb == 2014)
+        {
+            <table border="1" style="text-align:center" class="table" width="100%">
+                <thead>
+                    <tr>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].CARNB)</th>
+                        <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].TABNB)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
+                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
+
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in item.pro)
+                    {
+                    <tr>
+                        <td>@item2.ORDR</td>
+                        <td>@item2.CARNB</td>
+                        <td>@item2.LINENAME1</td>
+                        <td>@item2.LINETYP1</td>
+                        <td>@item2.LINE1CITY</td>
+                        <td>@item2.COUNTCARLINE1</td>
+                        <td>@item2.TABNB</td>
+                        <td>@item2.ENGINEFEUL</td>
+                        <td>@item2.FACCOMPNAME</td>
+                        <td>@item2.FACTYY</td>
+
+                        <td>@item2.PSTATUS</td>
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+
+            <br />
+            <br />
+
+        }
+        if (item.pronb == 2016)
+        {
+            <table border="1" style="text-align:center" class="table" width="100%">
+                <thead>
+                    <tr>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].CARNB)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].CARLINENAME)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].CARLINETYP)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].CARLINECITY)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].TABNB)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
+
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in item.pro)
+                    {
+                    <tr>
+                        <td>@item2.ORDR</td>
+                        <td>@item2.CARNB</td>
+                        <td>@item2.CARLINENAME</td>
+                        <td>@item2.CARLINETYP</td>
+                        <td>@item2.CARLINECITY</td>
+                        <td>@item2.TABNB</td>
+                        <td>@item2.ENGINEFEUL</td>
+                        <td>@item2.FACCOMPNAME</td>
+                        <td>@item2.FACTYY</td>
+                        <td>@item2.LINENAME1</td>
+                        <td>@item2.LINETYP1</td>
+                        <td>@item2.LINE1CITY</td>
+                        <td>@item2.COUNTCARLINE1</td>
+
+                        <td>@item2.PSTATUS</td>
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+
+            <br />
+            <br />
+
+        }
     }
 
 
