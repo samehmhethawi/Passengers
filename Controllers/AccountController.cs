@@ -239,7 +239,9 @@ namespace Passengers.Controllers
         public ActionResult Logout()
         {
             HttpContext.GetOwinContext().Authentication.SignOut();
-            return RedirectToAction("Login", "Account");
+            //return RedirectToAction("Login", "ProcedBase/Account");
+            return RedirectToAction("Index", "Home");
+
         }
 
         public ActionResult ChangePassword()

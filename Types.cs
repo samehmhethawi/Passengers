@@ -347,6 +347,7 @@ namespace Passengers
                 IList<ROLE_ACTIONS> rOLE_ACTIONS = db.ROLE_ACTIONS.Where(d => d.ACTIONNB == aCTION.NB && d.ROLES.USER_ROLES.Any(x => x.USERNB == User.NB)).ToList();
                 if (rOLE_ACTIONS.Count == 0)
                 {
+
                     return false;
                 }
                 else
@@ -389,7 +390,7 @@ namespace Passengers
 
                 filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "HandleException", action = "Access_Denied", area = "", returnUrl = filterContext.HttpContext.Request.Url.PathAndQuery }));
 
-
+               
             }
             base.OnActionExecuting(filterContext);
         }

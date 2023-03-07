@@ -1729,5 +1729,102 @@ namespace Passengers.Controllers
 
 
         }
+
+
+
+        public ActionResult TRCHANGECARLINES()
+        {
+            ViewData["ZCARREGS"] = db.ZCARREGS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+
+            ViewData["zcities"] = db.ZCITYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+
+            ViewData["ZCARCATEGORYS"] = db.ZCARCATEGORYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+
+          
+            return View();
+        }
+
+        public ActionResult TRCHANGECARLINES_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            string sql = "select * from TRCHANGE_CAR_LINES where 1= 1 ";
+
+            //var NB = Request.Form["NB"].Trim();
+            //var COMNO = Request.Form["COMNO"].Trim();
+            //var COMDATESTART = Request.Form["COMDATESTART"].Trim();
+            //var COMDATEEND = Request.Form["COMDATEEND"].Trim();
+            //var STATUS = Request.Form["STATUS"].Trim();
+            //var MEMBERNAME = Request.Form["MEMBERNAME"].Trim();
+            //var MEMBERPOSITIONNB = Request.Form["MEMBERPOSITIONNB"].Trim();
+            //var MEMBERSHIPNB = Request.Form["MEMBERSHIPNB"].Trim();
+            //var COMCITYNB = Request.Form["COMCITYNB"].Trim();
+
+
+            //if (NB != "")
+            //{
+            //    sql += " and TM.NB = " + NB;
+            //}
+            //if (COMNO != "")
+            //{
+            //    sql += " and TM.COMNO like '%" + COMNO + "%'";
+            //}
+            //if (STATUS != "")
+            //{
+            //    sql += " and TM.STATUS =" + STATUS;
+            //}
+            //if (COMDATESTART != "")
+            //{
+            //    sql += " and TM.COMDATE >= TO_DATE('" + COMDATESTART + "','DD/MM/YYYY') ";
+            //}
+
+            //if (COMDATEEND != "")
+            //{
+            //    sql += " and TM.COMDATE <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
+            //}
+
+
+            //CodesController bb = new CodesController();
+
+            //var ci = bb.GetCityForRead();
+
+            //if (ci == "0")
+            //{
+            //    if (COMCITYNB != "")
+            //    {
+            //        sql += " and TM.COMCITYNB =" + COMCITYNB;
+            //    }
+
+            //}
+            //else
+            //{
+            //    sql += " and TM.COMCITYNB =" + ci;
+            //}
+            //if (MEMBERPOSITIONNB != "")
+            //{
+            //    sql += " and TMM.MEMBERPOSITIONNB =" + MEMBERPOSITIONNB;
+            //}
+
+            //if (MEMBERSHIPNB != "")
+            //{
+            //    sql += " and TMM.MEMBERSHIPNB =" + MEMBERSHIPNB;
+            //}
+            //if (MEMBERNAME != "")
+            //{
+            //    sql += " and TMM.MEMBERNAME LIKE '%" + MEMBERNAME + "%' ";
+            //}
+            var data = db.Database.SqlQuery<ViewModel.TRCHANGE_CAR_LINESVM>(sql);
+            return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+        }
     }
 }

@@ -54,6 +54,16 @@ namespace Passengers.Controllers
             });
             return Json(status, JsonRequestBehavior.AllowGet);
         }
+        public ActionResult GetStatusOfComm()
+        {
+
+            var status = db.TRSTATUS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            }).Where(x=>x.ID == 0 || x.ID == 1);
+            return Json(status, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult GetCity()
         {
             var _isadmin = IsAdmin();
@@ -167,7 +177,7 @@ namespace Passengers.Controllers
         }
         public ActionResult GETZPROCEDTYPS()
         {
-            var city = db.ZPROCEDTYPS.Select(x => new
+            var city = db.ZPROCEDTYPS.Where(s =>s.TYP == "TRANSSESSION").Select(x => new
             {
                 ID = x.NB,
                 NAME = x.NAME,
@@ -216,7 +226,17 @@ namespace Passengers.Controllers
         //    return Json(city, JsonRequestBehavior.AllowGet);
 
         //}
+        public ActionResult GetZOUTACTS()
+        {
+            var reg = db.ZOUTACTS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(reg, JsonRequestBehavior.AllowGet);
 
+        }
+        
     }
     
 }

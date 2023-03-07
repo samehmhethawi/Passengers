@@ -58,16 +58,16 @@
     <div class="panel-heading1 " id="searchPanel" style="font-size: 15px">
         <div style="padding:10px">
             <div class="row" style="padding-bottom:10px">
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> رقم قرار اللجنة</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @Html.Kendo().TextBox().Name("SCommNO").HtmlAttributes(new { placeholder = " رقم قرار اللجنة" })
                 </div>
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> المحافظة</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر محافظة اللجنة")
                                     .Name("SComCity")
@@ -83,20 +83,20 @@
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
                                     )
                 </div>
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> التاريخ من</label>
                 </div>
-                <div class="col-md-2" >
+                <div class="col-lg-2 col-md-4" >
                     @(Html.Kendo().DatePicker()
                         .Name("SComDateStart")
                         .Format("{0:dd/MM/yyyy}")
                         .HtmlAttributes(new { placeholder = "تاريخ اللجنة من", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
                     )
                 </div>
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> التاريخ الى</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DatePicker()
                         .Name("SComDateEnd")
                         .Format("{0:dd/MM/yyyy}")
@@ -105,10 +105,10 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> حالة اللجنة</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر  حالة اللجنة")
                                     .Name("SComStatus")
@@ -118,7 +118,7 @@
                                     {
                                         source.Read(read =>
                                         {
-                                            read.Action("GetStatus", "Codes");
+                                            read.Action("GetStatusOfComm", "Codes");
                                         });
                                     })
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
@@ -126,7 +126,7 @@
 
                 </div>
 
-                <div class="col-md-1 col-md-offset-7">
+                <div class="col-lg-2 col-md-4">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
                 
                     <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
@@ -152,7 +152,7 @@
                 columns.Bound(c => c.COMCITYNB).Visible(false);
                 columns.Bound(c => c.STATUS).Visible(false);
                 columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150);
-                columns.Bound(c => c.ORDR).Width(150);
+                columns.Bound(c => c.ORDR).Width(150).Visible(false);
                 columns.Bound(c => c.IUSER).Width(200);
                 columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}").Width(150);
                 columns.Command(command =>
@@ -258,7 +258,10 @@
 
         $('#OwnerNB').val("");
         $("#Detailsgrid").data("kendoGrid").dataSource.read();
-        $('#ComMebmerNb').val(item.NB)
+        $('#ComMebmerNb').val(item.NB);
+
+        $('#Comstatus').val(item.STATUS);
+
         var wnd = $("#DetailsCOMMITTEE").data("kendoWindow");
         wnd.center().open();
     }

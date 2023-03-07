@@ -1,4 +1,13 @@
-﻿@(Html.Kendo().Grid<Passengers.ViewModel.TRPROCEDS_AVAILABLEVM>()
+﻿@if (ViewBag.isnewproced != null)
+{
+<div id ="isnewproced"style="height: 40px; background-color: #f2dede;">
+    @ViewBag.isnewproced
+    <button id="" onclick="ref_pro()" class="btn btn-danger">تحديث</button>
+</div>
+}
+
+
+@(Html.Kendo().Grid<Passengers.ViewModel.TRPROCEDS_AVAILABLEVM>()
         .Name("gridPROCEDAVAILABLE")
         .Columns(columns =>
         {
@@ -7,24 +16,26 @@
             columns.Bound(c => c.SESSIONNB).Visible(false);
             columns.Bound(c => c.NAME).Width(300).Editable("222222222").Title("نوع المعاملة");
             columns.Bound(c => c.COUNTAVAILABLE).Width(50).Editable("222222222").Title("عدد المعاملات الموجود");
-            columns.Bound(c => c.COUNTPROCED).Width(50).Title("عدد المعاملات المرادد راستها بالجلسة");
+            columns.Bound(c => c.COUNTPROCED).Width(50).Title("عدد المعاملات المراد دراستها بالجلسة");
         })
         .HtmlAttributes(new { style = "height: auto;" })
         .Editable(editable => editable.Mode(GridEditMode.InCell))
         .DataSource(dataSource => dataSource
         .Ajax()
         .Batch(true)
-        .Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+        //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
         .PageSize(50)
         .Model(model => model.Id(p => p.NB))
-        .Read(read => read.Action("Read_TRPROCEDS_AVAILABLE", "TRSESSIONS").Data("GETSESSIONNB"))        
+        .Read(read => read.Action("Read_TRPROCEDS_AVAILABLE", "TRSESSIONS").Data("GETSESSIONNB"))
         .Update(update => update.Action("UpdateAll", "TRSESSIONS")))
         .Resizable(resize => resize
         .Columns(true)
         )
         .ToolBar(toolbar =>
         {
-            toolbar.Save().CancelText("<span><i class='fa fa-close' style='font-size:30px;'></i></span>").SaveText("<span><i class='fa fa-save' style='font-size:30px;'></i></span>").HtmlAttributes(new { id = "Save"});
+            toolbar.Custom().Name("Saveprocount").Text("<span><i class='fa fa-save' style='font-size:30px;'></i></span>").Url("#").HtmlAttributes(new { id = "Saveprocount", @class = "btn btn-primary hvr-box-shadow-outset" });
+
+           // toolbar.Save().CancelText("<span><i class='fa fa-close' style='font-size:30px;'></i></span>").SaveText("<span><i class='fa fa-save' style='font-size:30px;'></i></span>").HtmlAttributes(new { id = "Save"});
         })
         .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
                                 .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
@@ -45,7 +56,7 @@
 
 
 <script>
-    function OnRequestEnd(e) {
+   // function OnRequestEnd(e) {
 
         @*if (e.type == "update" && e.response != null && e.response.success && !e.response.Errors) {
             toastr.success(e.response.responseText, 'نجحت العملية');
@@ -72,7 +83,7 @@
             //$('#success_msg').show();
             //$('#error_msg').hide();
             //$('#labelIdd').text(e.response.responseText);
-        }*@
+        }
         if (e.type == "destroy" && e.response != null && e.response.success && !e.response.Errors) {
             toastr.success(e.response.responseText, 'نجحت العملية');
             alert("2");
@@ -87,19 +98,19 @@
             //$('#error_msg').show();
             //$('#errlabelIdd').text(e.response.responseText);
         }
-    }
+    }*@
 
-    function sync_handler(e) {
+    @*function sync_handler(e) {
         var ss = GETSESSIONNB();
         var sss = ss.nb;
-        
+
           $.ajax({
                 type: "POST",
               data: { Sesnb: sss },
                 url: "@Url.Action("SetProcedCount", "TRSESSIONS")",
                 success: function (response) {
                     if (response.success) {
-                        
+
                        // GetPartial();
                         $("#grid").data("kendoGrid").dataSource.page(1);
                         $("#grid").data("kendoGrid").dataSource.read();
@@ -107,27 +118,109 @@
                         toastr.success("تمت العملية  بنجاح");
 
                     } else {
-                        
+
                     }
 
                 }
             });
 
         this.read();
-    }
+    }*@
 
-    function error_handler(e) {
-        if (e.errors) {
-            var message = "Errors:\n";
-            $.each(e.errors, function (key, value) {
-                if ('errors' in value) {
-                    $.each(value.errors, function () {
-                        message += this + "\n";
-                    });
+    //function error_handler(e) {
+    //    if (e.errors) {
+    //        var message = "Errors:\n";
+    //        $.each(e.errors, function (key, value) {
+    //            if ('errors' in value) {
+    //                $.each(value.errors, function () {
+    //                    message += this + "\n";
+    //                });
+    //            }
+    //        });
+    //        $(".errorMessage").text(message);
+    //        alert(message);
+    //    }
+    //}
+    $("#Saveprocount").click(function () {
+        var grid = $("#gridPROCEDAVAILABLE").data("kendoGrid");
+        var dataSource = grid.dataSource;
+        var sbjs = JSON.stringify(dataSource.data().toJSON());
+        var ss = GETSESSIONNB();
+        var sss = ss.nb;
+
+       
+         $.ajax({
+                type: "POST",
+             data: { mod: sbjs, sesnb: sss},
+                url: "@Url.Action("Saveprocount", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+                        affterSaveprocount();
+                       // GetPartial();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+                        $("#grid").data("kendoGrid").dataSource.read();
+                        $("#ProcedCount").data("kendoWindow").center().close();
+                        //toastr.success("تمت العملية  بنجاح");
+
+                    } else {
+
+                    }
+
                 }
             });
-            $(".errorMessage").text(message);
-            alert(message);
-        }
+    });
+
+    function ref_pro() {
+        var xx = GETSESSIONNB();
+        var xxx = xx.nb;
+        $.ajax({
+                type: "POST",
+                data: { Sesnb: xxx },
+                url: "@Url.Action("refpro", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+
+                       //// GetPartial();
+
+                        $("#gridPROCEDAVAILABLE").data("kendoGrid").dataSource.page(1);
+                        $("#gridPROCEDAVAILABLE").data("kendoGrid").dataSource.read();
+                       // $("#ProcedCount").data("kendoWindow").center().close();
+                        $('#isnewproced').css('display', 'none');
+                        
+
+                    } else {
+
+                    }
+
+                }
+            });
+    }
+
+    function affterSaveprocount(e) {
+        var ss = GETSESSIONNB();
+        var sss = ss.nb;
+
+          $.ajax({
+                type: "POST",
+              data: { Sesnb: sss },
+                url: "@Url.Action("SetProcedCount", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+
+                       // GetPartial();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+                        $("#grid").data("kendoGrid").dataSource.read();
+                        $("#ProcedCount").data("kendoWindow").center().close();
+                        toastr.success("تمت العملية  بنجاح");
+                        location.reload()
+
+                    } else {
+
+                    }
+
+                }
+            });
+
+       
     }
 </script>

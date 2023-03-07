@@ -63,7 +63,7 @@ namespace Passengers.Controllers
 
             if (STrline != "") 
             {
-                sql += " and name like '%" + STrline + "%'";
+                sql += " and name like '" + STrline + "'";
             }
             if (StrlineStatus != "")
             {
@@ -101,7 +101,8 @@ namespace Passengers.Controllers
                 CITYNB = commm.CITYNB,
                 ISCANCELD = commm.ISCANCELD,
                 MINCARS = commm.MINCARS,
-                MAXCARS = commm.MAXCARS,               
+                MAXCARS = commm.MAXCARS,
+                SESNB = commm.SESNB,
                 Seq = (request.Page - 1) * request.PageSize + (++index)
             });
             return Json(result);
@@ -127,6 +128,12 @@ namespace Passengers.Controllers
                 {
                     return Json(new { success = false, responseText = "يجب تحديد نوع الخط" });
                 }
+
+                var Isexis = db.Database.SqlQuery<int>("select count(*) from TRLINES where Name ='" + Name+"'").FirstOrDefault();
+                if(Isexis > 0)
+                {
+                    return Json(new { success = false, responseText = "اسم الخط موجود مسبقاً" });
+                }
                 //if (!min.HasValue || !max.HasValue)
                 //{
                 //    return Json(new { success = false, responseText = "يجب تحديد العدد الادنى و الاعلى" });
@@ -137,6 +144,8 @@ namespace Passengers.Controllers
                 tRLINE.MAXCARS = max;
                 tRLINE.MINCARS = min;
                 tRLINE.CITYNB = city;
+                tRLINE.STATUS = true;
+                tRLINE.ISCANCELD = 0;
                 db.TRLINES.Add(tRLINE);
 
                 db.SaveChanges();
@@ -147,17 +156,21 @@ namespace Passengers.Controllers
                 cc.ORDR = 1;
                 db.TRLINE_CITY.Add(cc);
                 db.SaveChanges();
-                foreach (var item in allcity) 
+                if (allcity != null)
                 {
-                    if (item != city)
+                    foreach (var item in allcity)
                     {
-                        cc.LINENB = tRLINE.NB;
-                        cc.CITYNB = item;
-                        cc.ORDR = db.Database.SqlQuery<long?>("select nvl(Max(ordr),0)+1 from TRLINE_CITY where LINENB = "+ tRLINE.NB).FirstOrDefault();
-                        db.TRLINE_CITY.Add(cc);
+                        if (item != city)
+                        {
+                            cc.LINENB = tRLINE.NB;
+                            cc.CITYNB = item;
+                            cc.ORDR = db.Database.SqlQuery<long?>("select nvl(Max(ordr),0)+1 from TRLINE_CITY where LINENB = " + tRLINE.NB).FirstOrDefault();
+                            db.TRLINE_CITY.Add(cc);
+                        }
+                        db.SaveChanges();
                     }
-                    db.SaveChanges();
                 }
+                
 
                 db.SaveChanges();
                 return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
@@ -237,6 +250,11 @@ namespace Passengers.Controllers
         {
             try
             {
+                var isexis = db.Database.SqlQuery<int>("select count(*) from TRLINE_CITY where LINENB = " + linb + " and CITYNB = "+ city).FirstOrDefault();
+                if (isexis > 0)
+                {
+                    return Json(new { success = false, responseText = "المحافظة المختارة موجودة على الخط" });
+                }
                 TRLINE_CITY cc = new TRLINE_CITY();
                 cc.LINENB = (long)linb;
                 cc.CITYNB = (int)city;

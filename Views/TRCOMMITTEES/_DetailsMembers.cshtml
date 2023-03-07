@@ -73,8 +73,6 @@
             .Page("setIcons")
             .Cancel("setIcons")
         //.Edit("hideIdField")
-
-
         )
 )
 
@@ -89,10 +87,17 @@
 </div>
 
 <script>
-    $("#AddNewMEMBER").click(function () {
-        $("#Add_comm_Member span.k-tooltip-validation").hide();
-        var wnd = $("#AddCOMMITTEEMEMBER").data("kendoWindow");
-        wnd.center().open();
+    $("#AddNewMEMBER").click(function () {        
+        var ssts = $('#Comstatus').val();     
+        if (ssts == "1")
+        {
+            $("#Add_comm_Member span.k-tooltip-validation").hide();
+            var wnd = $("#AddCOMMITTEEMEMBER").data("kendoWindow");
+            wnd.center().open();
+        } else
+        {
+            toastr.error("لا يمكن اضافة الاعضاء لان اللجنة غير فعالة");
+        }     
     });
 
 
@@ -110,16 +115,12 @@
                 success: function (response) {
                     kendo.ui.progress(windowWidget.element, false);
                     if (response.success) {
-
-                       
                         $("#Detailsgrid").data("kendoGrid").dataSource.read();
                         toastr.success("تمت عملية التعديل بنجاح");
                     } else {
                         toastr.error(response.responseText);
                     }
-
                 }
             });
-
     }
 </script>

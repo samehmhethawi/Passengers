@@ -44,12 +44,13 @@
     }
 </style>
 <style>
-    .col-md-3{
-        padding:0 !important;
-        margin:0 !important;
-        margin-bottom:50px !important;
-        margin-top:10px!important;
+    .col-md-3 {
+        padding: 0 !important;
+        margin: 0 !important;
+        margin-bottom: 50px !important;
+        margin-top: 10px !important;
     }
+
     #bg-text {
         color: rgba(128, 128, 128, 0.43) !important;
         font-size: 70px;
@@ -124,7 +125,7 @@
         padding: 3px !important;
         line-height: 1.2 !important;
     }*/
-   /* @@media print {
+    /* @@media print {
         table {
             page-break-after: always;
         }
@@ -190,7 +191,7 @@
     @foreach (var item in Model)
     {
 
-        <div style="text-align:center">
+        <div style="text-align:center;margin-top:15px;">
             طلبات :   @item.proname
         </div>
 
@@ -203,8 +204,9 @@
                     <tr>
                         <th style="text-align:center" width="5%">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
                         <th style="text-align:center" width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME)</th>
-                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].TYP)</th>
-                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].NEWLINECITY)</th>
+                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].TYP)</th>
+                        <th width="20%">@Html.DisplayNameFor(model => model.pro[0].NEWLINECITY)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
                         <th width="25%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
                     </tr>
                 </thead>
@@ -216,6 +218,8 @@
                             <td>@item2.LINENAME</td>
                             <td>@item2.TYP</td>
                             <td>@item2.NEWLINECITY</td>
+                            <td>@item2.AGREEMENTINPROCED</td>
+
                             <td>@item2.PSTATUS</td>
                         </tr>
                     }
@@ -235,6 +239,7 @@
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
                         <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
                         <th width="25%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
 
                     </tr>
@@ -248,6 +253,7 @@
                             <td>@item2.LINETYP1</td>
                             <td>@item2.LINE1CITY</td>
                             <td>@item2.COUNTCARLINE1</td>
+                            <td>@item2.AGREEMENTINPROCED</td>
                             <td>@item2.PSTATUS</td>
                         </tr>
                     }
@@ -268,6 +274,7 @@
                         <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
                         <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME)</th>
                         <th width="25%">@Html.DisplayNameFor(model => model.pro[0].TYP)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
                         <th width="25%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
 
                     </tr>
@@ -283,6 +290,7 @@
                             <td>@item2.COUNTCARLINE1</td>
                             <td>@item2.LINENAME</td>
                             <td>@item2.TYP</td>
+                            <td>@item2.AGREEMENTINPROCED</td>
                             <td>@item2.PSTATUS</td>
                         </tr>
                     }
@@ -307,6 +315,7 @@
                         <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE2)</th>
                         <th>@Html.DisplayNameFor(model => model.pro[0].LINENAME)</th>
                         <th width="7%">@Html.DisplayNameFor(model => model.pro[0].TYP)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
 
                     </tr>
@@ -326,6 +335,7 @@
                             <td>@item2.COUNTCARLINE2</td>
                             <td>@item2.LINENAME</td>
                             <td>@item2.TYP</td>
+                            <td>@item2.AGREEMENTINPROCED</td>
                             <td>@item2.PSTATUS</td>
                         </tr>
                     }
@@ -347,6 +357,7 @@
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
                         <th width="5%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
                     </tr>
                 </thead>
@@ -364,6 +375,7 @@
                             <td>@item2.ENGINEFEUL</td>
                             <td>@item2.FACCOMPNAME</td>
                             <td>@item2.FACTYY</td>
+                            <td>@item2.AGREEMENTINPROCED</td>
                             <td>@item2.PSTATUS</td>
                         </tr>
                     }
@@ -390,6 +402,7 @@
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
                         <th width="5%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
                     </tr>
                 </thead>
@@ -407,6 +420,7 @@
                             <td>@item2.ENGINEFEUL</td>
                             <td>@item2.FACCOMPNAME</td>
                             <td>@item2.FACTYY</td>
+                            <td>@item2.AGREEMENTINPROCED</td>
                             <td>@item2.PSTATUS</td>
                         </tr>
                     }
@@ -434,6 +448,7 @@
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
                         <th width="5%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
                     </tr>
                 </thead>
@@ -451,6 +466,7 @@
                             <td>@item2.ENGINEFEUL</td>
                             <td>@item2.FACCOMPNAME</td>
                             <td>@item2.FACTYY</td>
+                            <td>@item2.AGREEMENTINPROCED</td>
                             <td>@item2.PSTATUS</td>
                         </tr>
                     }
@@ -478,27 +494,27 @@
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
                         <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
-
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
                         <th width="5%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item2 in item.pro)
                     {
-                    <tr>
-                        <td>@item2.ORDR</td>
-                        <td>@item2.CARNB</td>
-                        <td>@item2.LINENAME1</td>
-                        <td>@item2.LINETYP1</td>
-                        <td>@item2.LINE1CITY</td>
-                        <td>@item2.COUNTCARLINE1</td>
-                        <td>@item2.TABNB</td>
-                        <td>@item2.ENGINEFEUL</td>
-                        <td>@item2.FACCOMPNAME</td>
-                        <td>@item2.FACTYY</td>
-
-                        <td>@item2.PSTATUS</td>
-                    </tr>
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.CARNB</td>
+                            <td>@item2.LINENAME1</td>
+                            <td>@item2.LINETYP1</td>
+                            <td>@item2.LINE1CITY</td>
+                            <td>@item2.COUNTCARLINE1</td>
+                            <td>@item2.TABNB</td>
+                            <td>@item2.ENGINEFEUL</td>
+                            <td>@item2.FACCOMPNAME</td>
+                            <td>@item2.FACTYY</td>
+                            <td>@item2.AGREEMENTINPROCED</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
                     }
 
                 </tbody>
@@ -526,30 +542,82 @@
                         <th width="auto">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
                         <th width="auto">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
                         <th width="auto">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
-
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
                         <th width="auto">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item2 in item.pro)
                     {
-                    <tr>
-                        <td>@item2.ORDR</td>
-                        <td>@item2.CARNB</td>
-                        <td>@item2.CARLINENAME</td>
-                        <td>@item2.CARLINETYP</td>
-                        <td>@item2.CARLINECITY</td>
-                        <td>@item2.TABNB</td>
-                        <td>@item2.ENGINEFEUL</td>
-                        <td>@item2.FACCOMPNAME</td>
-                        <td>@item2.FACTYY</td>
-                        <td>@item2.LINENAME1</td>
-                        <td>@item2.LINETYP1</td>
-                        <td>@item2.LINE1CITY</td>
-                        <td>@item2.COUNTCARLINE1</td>
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.CARNB</td>
+                            <td>@item2.CARLINENAME</td>
+                            <td>@item2.CARLINETYP</td>
+                            <td>@item2.CARLINECITY</td>
+                            <td>@item2.TABNB</td>
+                            <td>@item2.ENGINEFEUL</td>
+                            <td>@item2.FACCOMPNAME</td>
+                            <td>@item2.FACTYY</td>
+                            <td>@item2.LINENAME1</td>
+                            <td>@item2.LINETYP1</td>
+                            <td>@item2.LINE1CITY</td>
+                            <td>@item2.COUNTCARLINE1</td>
+                            <td>@item2.AGREEMENTINPROCED</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
+                    }
 
-                        <td>@item2.PSTATUS</td>
+                </tbody>
+            </table>
+
+            <br />
+            <br />
+
+        }
+
+        if (item.pronb == 2018)
+        {
+            <table border="1" style="text-align:center" class="table" width="100%">
+                <thead>
+                    <tr>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].CARNB)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].CARLINENAME)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].CARLINETYP)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].CARLINECITY)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].TABNB)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
+                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
+                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
                     </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in item.pro)
+                    {
+                        <tr>
+                            <td>@item2.ORDR</td>
+                            <td>@item2.CARNB</td>
+                            <td>@item2.CARLINENAME</td>
+                            <td>@item2.CARLINETYP</td>
+                            <td>@item2.CARLINECITY</td>
+                            <td>@item2.TABNB</td>
+                            <td>@item2.ENGINEFEUL</td>
+                            <td>@item2.FACCOMPNAME</td>
+                            <td>@item2.FACTYY</td>
+                            <td>@item2.LINENAME1</td>
+                            <td>@item2.LINETYP1</td>
+                            <td>@item2.LINE1CITY</td>
+                            <td>@item2.COUNTCARLINE1</td>
+                            <td>@item2.AGREEMENTINPROCED</td>
+                            <td>@item2.PSTATUS</td>
+                        </tr>
                     }
 
                 </tbody>

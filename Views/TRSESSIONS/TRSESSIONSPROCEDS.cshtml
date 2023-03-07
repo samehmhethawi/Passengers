@@ -67,7 +67,7 @@
                             </div>
                         </div>
                     </td>
-                    <td rowspan="2" width="20%">
+                    <td rowspan="4" width="20%">
                         <div class="row SessionInfo" style="margin:0;">
                             <div class="col-md-12 col-sm-12 col-xs-12 bordered">
                                 <table>
@@ -120,12 +120,63 @@
                     <td width="80%">
                         <div class="row SessionInfo" style="margin:0;">
                             <div class="col-md-3 col-sm-12 col-xs-12 bordered">
+                                @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("Carnb").Min(0)
+                                .HtmlAttributes(new { placeholder = "رمز المركبة", maxlength = "10", style = "width: 100%;" }))
+                            </div>
+                            <div class="col-md-3 col-sm-12 col-xs-12 bordered">
+                                @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر نوع الطلب")
+                                    .Name("SProcedtyps")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETZPROCEDTYPS", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                            </div>
+                            <div class="col-md-3 col-sm-12 col-xs-12 bordered">
+                                @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("Carprocednb").Min(0)
+                                .HtmlAttributes(new { placeholder = "رمز المعاملة", maxlength = "12", style = "width: 100%;" }))
+                            </div>
+                            <div class="col-md-1 col-sm-12 col-xs-12 bordered">
+                                <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+                            </div>
+                            <div class="col-md-1 col-sm-12 col-xs-12 bordered">
+                                <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+                            </div>
+                            <div class="col-md-1 col-sm-12 col-xs-12 bordered">
+                                <button id="" class="btn btn-dark " onclick="export_exl()"> <i class="fa fa-file-excel-o"></i> </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="80%">
+                        <div class="row SessionInfo" style="margin:0;">
+                            <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 @if (ViewBag.SessionStatus == "فعال")
                                 {
-                                    <button id="procedsetting" onclick="GetPartialProcedCount()" class="btn btn-danger" style="display:none">اعداد طلبات الجلسة</button>
-
-
+                                    <button id="procedsetting" onclick="GetPartialProcedCount()" class="btn btn-next">اعداد طلبات الجلسة</button>
                                 }
+                                @if (ViewBag.SessionStatus == "منعقدة")
+                                {
+                                    <label style="text-align:center;color:red;font-size:14px;">
+
+                                        يمكن طباعة المحضر بعد ادخال النتائج لتظهر النتيجة على المحضر
+                                    </label>}
                             </div>
                             <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 @if (ViewBag.SessionStatus != "ملغى")
@@ -136,16 +187,73 @@
                             <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 @if (ViewBag.SessionStatus == "فعال")
                                 {
-                                    <button id="ConSession" onclick="openConSession()" class="btn btn-danger">انعقاد الجلسة</button>
+                                    <button id="ConSession" onclick="openConSession()" class="btn btn-success">انعقاد الجلسة</button>
                                 }
                             </div>
                             <div class="col-md-3 col-sm-12 col-xs-12 bordered">
                                 @if (ViewBag.SessionStatus == "منعقدة")
                                 {
-                                    <button id="FinishSession" onclick="openFinishSession()" class="btn btn-success">انهاء الجلسة</button>
+                                    <button id="FinishSession1" onclick="openFinishSession()" style="display:none;" class="btn btn-success">حفظ الطلبات وانهاء الجلسة</button>
+                                    <button id="FinishSession2" onclick="openFinishSession()" class="btn btn-success">حفظ الطلبات </button>
+
+                                }
+                                @if (ViewBag.SessionStatus == "فعال")
+                                {
+                                    <button id="CancelSession" onclick="openCancelSession()" class="btn btn-danger">الغاء الجلسة</button>
 
                                 }
                             </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="80%">
+                        <div class="row SessionInfo" style="margin:0;">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bordered">
+                                @if (ViewBag.SessionStatus == "فعال" && ViewBag.SessionProExisting == 0)
+                                {
+                                    <label style="text-align:center;color:red;">
+
+                                        يرجى ادخال عدد المعاملات المراد في هذه الجلسة
+                                    </label>
+                                }
+                                @if (ViewBag.SessionStatus == "فعال" && ViewBag.SessionProExisting > 0 && ViewBag.SessionIsPrinted == 0)
+                                {
+                                    <label style="text-align:center;color:red;">
+
+                                        يرجى طباعة المحضر من اجل دراسته من قبل اللجنة
+                                    </label>
+                                }
+                                @if (ViewBag.SessionStatus == "فعال" && ViewBag.SessionIsPrinted > 0)
+                                {
+                                    <label style="text-align:center;color:red;">
+
+                                        يرجى الضغط على انعقاد الجلسة من اجل ادخال نتائج الطلبات مع العلم انه عند بداية إدخال النتائج لا يمكن القيام بأي تغير على طلبات الجلسة او إلغائها
+                                    </label>
+                                }
+                                @if (ViewBag.SessionStatus == "منعقدة")
+                                {
+                                    <label style="text-align:center;color:red;">
+
+                                        يرجى ادخال نتائج الطلبات مع العلم انه لن يتم انهاء الجلسة الا في حال ادخال نتيجة جميع الطلبات
+                                    </label>
+                                }
+                                @if (ViewBag.SessionStatus == "منتهي")
+                                {
+                                    <label style="text-align:center;color:red;">
+
+                                        تم الانتهاء من الجلسة شكراً لكم.
+                                    </label>
+                                }
+                                @if (ViewBag.SessionStatus == "ملغى")
+                                {
+                                    <label style="text-align:center;color:red;">
+
+                                        نعتذر هذه الجلسة ملغاة.
+                                    </label>
+                                }
+                            </div>
+
                         </div>
                     </td>
                 </tr>
@@ -214,12 +322,14 @@
                 columns.Bound(c => c.RECDAT).Format("{0:dd/MM/yyyy}").Title("تاريخ المعاملة").Width(150);
                 columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة").Width(150);
                 columns.Bound(c => c.CARPROCEDSTEPNB).Title("رمز الخطوة").Visible(false);
+                columns.Bound(c => c.ISDONE).Title("منفذة").Visible(false);
+
                 columns.ForeignKey(c => c.PSTATUS, (System.Collections.IEnumerable)ViewData["TRSESSIONSPROCEDSTATUS"], "ID", "NAME").Title("الحالة").Width(100);
 
                 if (@ViewBag.SessionStatus == "منعقدة")
                 {
                     columns.Bound(c => c.PSTATUS).ClientTemplate
-                  (" # if (1 == 1) if " +
+                  (" # if (ISDONE != 1) if " +
                   "(1 == 1)" +
                   "{#<button id='' title='موافقة' class='btn btn-success' onclick='Agree(#=NB# , #=PROCEDNB# , #=CARPROCEDSTEPNB#)'> <i  class='fa fa-check'></i> </button> #" +
                   " #<button id='' title='عدم موافقة' class='btn btn-danger' onclick='NotAgree(#=NB#)'> <i  class='fa fa-close'></i> </button>  # " +
@@ -323,10 +433,73 @@
             )
 
 </div>
+<!-- cancel -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("cancel")
+            .Title("الغاء الجلسة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="delete_S">
+               <div>
+
+                   <div class="col-md-11" >
+                   <h1 style="text-align:center">هل انت متأكد من  <label style="color:red; font-weight:300">الغاء</label> الجلسة؟ </h1>
+
+
+                   </div>
+
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="CancelSession()" style="font-size:30px">نعم</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()" style="font-size:30px"> لا    </button>
+
+               </div>
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(300)
+            .Pinned()
+            )
+
+</div>
 
 <script>
+
     function GETSESSIONNB() {
-        return {nb : @ViewBag.SessionID}
+        var fillter = {};
+        fillter.nb =  @ViewBag.SessionID;
+        fillter.carnb = $('#Carnb').val();
+        fillter.carprocednb = $('#Carprocednb').val();
+        fillter.procedtyp = $('#SProcedtyps').val();
+        return fillter;
+    }
+
+    function Btn_Search()
+    {
+        $("#grid").data("kendoGrid").dataSource.read();
+    }
+
+    function rest_filtters()
+    {
+        $("#Carnb").data("kendoNumericTextBox").value("");
+        $("#SProcedtyps").data("kendoDropDownList").value(-1);
+        $("#Carprocednb").data("kendoNumericTextBox").value("");
+        $("#grid").data("kendoGrid").dataSource.read();
+
+    }
+
+    function export_exl()
+    {
+          var exl = {};
+        exl.nb =  @ViewBag.SessionID;
+        exl.carnb = $('#Carnb').val();
+        exl.carprocednb = $('#Carprocednb').val();
+        exl.procedtyp = $('#SProcedtyps').val();
+        window.location = '@Url.Action("TRSESSIONSPROCEDS_Exl", "TRSESSIONS")?pnb=' + exl.nb + '&pcarnb=' + exl.carnb + '&pcarprocednb=' + exl.carprocednb + '&pprocedtyp=' + exl.procedtyp;
     }
     function getcolor() {
 
@@ -439,8 +612,9 @@
                 document.getElementById('AGREE').innerHTML = response.AGREE;
                 document.getElementById('NOTAGREE').innerHTML = response.NOTAGREE;
                 document.getElementById('UNANSWERED').innerHTML = response.UNANSWERED;
-                if (response.countproced = 0) {
-                    $('#procedsetting').css('display', 'block');
+                if (response.UNANSWERED == 0) {
+                    $('#FinishSession1').css('display', 'block');
+                    $('#FinishSession2').css('display', 'none');
                 }
                 }
             });}
@@ -448,22 +622,52 @@
 </script>
 
 <script>
-    function ConSession() {
+    function CancelSession() {
         var id = @ViewBag.SessionID;
+        var windowWidget = $("#cancel").data("kendoWindow");
         var model = {
            ID :id
         }
+        kendo.ui.progress(windowWidget.element, true);
+     $.ajax({
+                type: "POST",
+               data: model,
+                url: "@Url.Action("CancelSession", "TRSESSIONS")",
+                success: function (response) {
+                    if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
+                        location.reload()
+                      //  $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت العملية  بنجاح");
+                    } else {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+    }
+    function ConSession() {
+        var id = @ViewBag.SessionID;
+        var windowWidget = $("#con").data("kendoWindow");
+        var model = {
+           ID :id
+        }
+        kendo.ui.progress(windowWidget.element, true);
      $.ajax({
                 type: "POST",
                data: model,
                 url: "@Url.Action("ConSession", "TRSESSIONS")",
                 success: function (response) {
                     if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
                         location.reload()
                       //  $("#grid").data("kendoGrid").dataSource.page(1);
 
                         toastr.success("تمت العملية  بنجاح");
                     } else {
+                        kendo.ui.progress(windowWidget.element, false);
                         toastr.error(response.responseText);
                     }
 
@@ -481,21 +685,25 @@
     }
     function FinishSession() {
         var id = @ViewBag.SessionID;
+        var windowWidget = $("#fin").data("kendoWindow");
         var model =
         {
            ID :id
         }
+        kendo.ui.progress(windowWidget.element, true);
                  $.ajax({
                             type: "POST",
                            data: model,
                             url: "@Url.Action("FinishSession", "TRSESSIONS")",
                             success: function (response) {
                                 if (response.success) {
+                                    kendo.ui.progress(windowWidget.element, false);
                                     location.reload()
                                     $("#grid").data("kendoGrid").dataSource.page(1);
                                     toastr.success("تمت العملية  بنجاح");
                                 } else {
                                     toastr.error(response.responseText);
+                                    kendo.ui.progress(windowWidget.element, false);
                                 }
                             }
                   });
@@ -504,6 +712,11 @@
     function PrintSession() {
         var id = @ViewBag.SessionID;
         window.open("PrintReportSession/" + id, "_blank");
+        location.reload()
+    }
+
+    function openCancelSession() {
+        $("#cancel").data("kendoWindow").center().open();
     }
 </script>
 
@@ -622,7 +835,7 @@
 
                 if (data.success == true) {
                     GetPartialProcedCount();
-                    $("#ProcedCount").parent().find(".k-window-action").css("visibility", "hidden");
+                  //  $("#ProcedCount").parent().find(".k-window-action").css("visibility", "hidden");
 
                 } else {
 

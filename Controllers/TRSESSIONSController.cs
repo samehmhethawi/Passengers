@@ -8,6 +8,9 @@ using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
 using Passengers.ViewModel;
 using System.Data.Entity;
+using ClosedXML.Excel;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Passengers.Controllers
 {
@@ -109,7 +112,7 @@ namespace Passengers.Controllers
                 ORDR = commm.ORDR,
                 IUSER = commm.IUSER,
                 IDATE = commm.IDATE,
-               
+
 
                 Seq = (request.Page - 1) * request.PageSize + (++index)
             });
@@ -120,20 +123,20 @@ namespace Passengers.Controllers
         {
             try
             {
-               
+
                 var count_com_session = db.Database.SqlQuery<int>("select count(nb) from TRCOMMITTEES where COMCITYNB = " + model.SESCITYNB + " and STATUS = 1").FirstOrDefault();
                 if (count_com_session == 0)
                 {
                     return Json(new { success = false, responseText = "لا يوجد لجنة فعالة لهذه المحافظة " });
                 }
-                else if (count_com_session > 1) 
+                else if (count_com_session > 1)
                 {
                     return Json(new { success = false, responseText = " يوجد اكثر من  لجنة فعالة واحدة لهذه المحافظة " });
                 }
                 else
                 {
-                    var is_session_exists = db.Database.SqlQuery<int>("select 1 from TRSESSIONS where SESCITYNB = " + model.SESCITYNB + " and STATUS = 1").FirstOrDefault();
-                  
+                    var is_session_exists = db.Database.SqlQuery<int>("select 1 from TRSESSIONS where SESCITYNB = " + model.SESCITYNB + " and STATUS in (1,2)").FirstOrDefault();
+
                     if (is_session_exists == 1)
                     {
                         return Json(new { success = false, responseText = "يوجد جلسة فعالة لهذه المحافظة " });
@@ -157,9 +160,9 @@ namespace Passengers.Controllers
                         return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
                     }
                 }
-            
 
-               
+
+
 
             }
             catch (Exception ex)
@@ -192,20 +195,20 @@ namespace Passengers.Controllers
             catch (Exception ex)
             {
                 var ss = validation.OracleExceptionValidation(ex);
-                return Json(new { success = false, responseText = ss});
+                return Json(new { success = false, responseText = ss });
             }
         }
-        public ActionResult Read_Member_Session([DataSourceRequest] DataSourceRequest request , long NB)
+        public ActionResult Read_Member_Session([DataSourceRequest] DataSourceRequest request, long NB)
         {
-            var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TSM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + NB; 
+            var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TSM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + NB;
 
             var data = db.Database.SqlQuery<TRSESSIONS_MEMBERS_PRESENTVM>(sql);
 
 
 
-            return Json(data.ToDataSourceResult(request),JsonRequestBehavior.AllowGet);
+            return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
-        public ActionResult EditMEMBERSHIP(long nb , long MEMBERSHIPNB)
+        public ActionResult EditMEMBERSHIP(long nb, long MEMBERSHIPNB)
         {
             try
             {
@@ -221,7 +224,7 @@ namespace Passengers.Controllers
                 return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
         }
-        public ActionResult NotPRESENT(long nb) 
+        public ActionResult NotPRESENT(long nb)
         {
             var data = db.TRSESSIONS_MEMBERS_PRESENT.Find(nb);
             data.ISPRESENT = 0;
@@ -237,31 +240,150 @@ namespace Passengers.Controllers
             db.SaveChanges();
             return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult TRSESSIONSPROCEDS(long id )
+        public ActionResult TRSESSIONSPROCEDS(long id)
         {
             ViewData["TRSESSIONSPROCEDSTATUS"] = db.TRSESSIONSPROCEDSTATUS.Select(x => new
             {
                 ID = x.NB,
                 NAME = x.NAME
             });
-             var ses = db.TRSESSIONS.Find(id);
-        
+            var ses = db.TRSESSIONS.Find(id);
+
             var temp = DateTime.Parse(ses.SESDATE.ToString()).ToString("dd/MM/yyyy");
             ViewBag.SessionID = id;
             ViewBag.SessionNo = ses.SESNO;
             ViewBag.SessionDate = temp;
             ViewBag.SessionStatus = ses.TRSTATUS.NAME;
             ViewBag.SessionBossName = ses.COMBOSSNAME;
+            string sql = "SELECT COUNT(*) FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = " + id;
+            ViewBag.SessionProExisting = db.Database.SqlQuery<int>(sql).FirstOrDefault();
 
-
-
+            ViewBag.SessionIsPrinted = db.Database.SqlQuery<int>("select count(*) from TRSESSIONS_REPORTS where SESSIONNB =" + id).FirstOrDefault();
             return View();
         }
-        public ActionResult TRSESSIONSPROCEDS_Read([DataSourceRequest] DataSourceRequest request ,long? nb)
+        public ActionResult TRSESSIONSPROCEDS_Read([DataSourceRequest] DataSourceRequest request)
         {
-            string sql = "SELECT TSP.NB AS NB ,ZP.NAME  AS PROCEDNAME , ZP.NB AS PROCEDNB, TSP.SESSIONNB  AS SESSIONNB, TSP.CARPROCEDNB AS CARPROCEDNB, CP.RECDAT  AS RECDAT, TSP.PSTATUS   AS PSTATUS, CP.CARNB  AS CARNB, TSP.ORDR AS ORDR, TSP.CARPROCEDSTEPNB  AS CARPROCEDSTEPNB , TSP.TYPSNAMEAGR AS TYPSNAMEAGR FROM TRSESSIONS_PROCEDS  TSP JOIN CARPROCEDS CP ON CP.NB = TSP.CARPROCEDNB JOIN ZPROCEDTYPS ZP ON ZP.NB = CP.PROCEDNB where TSP.SESSIONNB = " + nb+" ORDER BY TSP.ORDR ASC";
+
+            var nb = Request.Form["nb"].Trim();
+            var carnb = Request.Form["carnb"].Trim();
+            var carprocednb = Request.Form["carprocednb"].Trim();
+            var procedtyp = Request.Form["procedtyp"].Trim();
+
+            string sql = "  SELECT TSP.NB                  AS NB, "
+                   + "    ZP.NAME AS PROCEDNAME, "
+                   + "    ZP.NB AS PROCEDNB, "
+                   + "     TSP.SESSIONNB AS SESSIONNB, "
+                   + "       TSP.CARPROCEDNB AS CARPROCEDNB, "
+                   + "       CP.RECDAT AS RECDAT, "
+                   + "       TSP.PSTATUS AS PSTATUS, "
+                   + "       CP.CARNB AS CARNB, "
+                   + "       TSP.ORDR AS ORDR, "
+                   + "       TSP.CARPROCEDSTEPNB AS CARPROCEDSTEPNB, "
+                   + "       TSP.TYPSNAMEAGR AS TYPSNAMEAGR, "
+                   + "       TSP.ISDONE AS ISDONE "
+                   + "    FROM TRSESSIONS_PROCEDS TSP "
+                   + "       JOIN CARPROCEDS CP ON CP.NB = TSP.CARPROCEDNB "
+                   + "        JOIN ZPROCEDTYPS ZP ON ZP.NB = CP.PROCEDNB "
+                   + "      WHERE TSP.SESSIONNB = " + nb;
+
+            if (carnb != "")
+            {
+                sql += " and CP.CARNB = " + carnb;
+            }
+            if (carprocednb != "")
+            {
+                sql += " and TSP.CARPROCEDNB = " + carprocednb;
+            }
+            if (procedtyp != "")
+            {
+                sql += " and ZP.NB = " + procedtyp;
+            }
+
+            sql += " ORDER BY TSP.ORDR ASC , TSP.ISDONE";
             var data = db.Database.SqlQuery<TRSESSIONS_PROCEDS_VM>(sql).ToList();
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult TRSESSIONSPROCEDS_Exl(string pnb, string pcarnb, string pcarprocednb, string pprocedtyp)
+        {
+
+            var nb = pnb;
+            var carnb = pcarnb;
+            var carprocednb = pcarprocednb;
+            var procedtyp = pprocedtyp;
+
+            string sql = "SELECT TSP.NB   AS NB, "
+                   + "  ZP.NAME AS PROCEDNAME, "
+                   + "  ZP.NB AS PROCEDNB, "
+                   + "  TSP.SESSIONNB AS SESSIONNB, "
+                   + "  TSP.CARPROCEDNB AS CARPROCEDNB, "
+                   + "  CP.RECDAT AS RECDAT, "
+                   + "  TSP.PSTATUS AS PSTATUS, "
+                   + "  CP.CARNB AS CARNB, "
+                   + "  TSP.ORDR AS ORDR, "
+                   + "  TSP.CARPROCEDSTEPNB AS CARPROCEDSTEPNB, "
+                   + "  TSP.TYPSNAMEAGR AS TYPSNAMEAGR "
+                   + "  FROM TRSESSIONS_PROCEDS TSP "
+                   + "  JOIN CARPROCEDS CP ON CP.NB = TSP.CARPROCEDNB "
+                   + "  JOIN ZPROCEDTYPS ZP ON ZP.NB = CP.PROCEDNB "
+                   + "  WHERE TSP.SESSIONNB = " + nb;
+
+            if (carnb != "")
+            {
+                sql += " and CP.CARNB = " + carnb;
+            }
+            if (carprocednb != "")
+            {
+                sql += " and TSP.CARPROCEDNB = " + carprocednb;
+            }
+            if (procedtyp != "")
+            {
+                sql += " and ZP.NB = " + procedtyp;
+            }
+
+            sql += " ORDER BY TSP.ORDR ASC ";
+            var data = db.Database.SqlQuery<TRSESSIONS_PROCEDS_VM>(sql).ToList();
+            var data2 = from e in data
+                        select new
+                        {
+                            اسم_المعاملة = e.PROCEDNAME,
+                            رمز_الجلسة = e.SESSIONNB,
+                            رمز_المعاملة = e.CARPROCEDNB,
+                            تاريخ_المعاملة = e.RECDAT,
+                            حالة_الطلب = e.PSTATUS,
+                            رمز_المركبة = e.CARNB,
+                            نوع_الموافقة = e.TYPSNAMEAGR,
+                        };
+
+            string sheetName = "المعلاملات في الجلسة";
+            XLWorkbook wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add(sheetName);
+            ws.Cell(1, 1).InsertTable(data2);
+
+            ws.RightToLeft = true;
+            ws.ColumnWidth = 30;
+
+
+            //ws.Style.Font.Bold = true;
+            ws.Style.Font.FontSize = 12;
+            for (int i = 1; i <= 7; i++)
+            {
+                ws.Column(i).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            }
+
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", String.Format(@"attachment;filename={0}.xlsx", sheetName.Replace(" ", "_")));
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                wb.SaveAs(memoryStream);
+                memoryStream.WriteTo(Response.OutputStream);
+                memoryStream.Close();
+            }
+
+            Response.End();
+
+            return View();
         }
         public ActionResult GetCount555(long ID)
         {
@@ -269,27 +391,26 @@ namespace Passengers.Controllers
             string sql = "SELECT COUNT (*) AS TOTALCOUNT, NVL (SUM (CASE WHEN PSTATUS = 1 THEN 1 ELSE 0 END),0) AS AGREE, NVL (SUM (CASE WHEN PSTATUS = 2 THEN 1 ELSE 0 END),0) AS NOTAGREE, NVL (SUM (CASE WHEN PSTATUS = 3 THEN 1 ELSE 0 END),0) AS DELAYED, NVL (SUM (CASE WHEN PSTATUS = 4 THEN 1 ELSE 0 END),0) AS UNANSWERED  FROM TRSESSIONS_PROCEDS WHERE SESSIONNB =" + ID;
 
             var data = db.Database.SqlQuery<CountTotal>(sql).FirstOrDefault();
-          var countproced = ViewBag.Sessionprocedisanswer = db.Database.SqlQuery<int>("select count(*) from TRSESSIONS_PROCEDS where PSTATUS != 4 and SESSIONNB = " + ID).FirstOrDefault();
+            var countproced = ViewBag.Sessionprocedisanswer = db.Database.SqlQuery<int>("select count(*) from TRSESSIONS_PROCEDS where PSTATUS != 4 and SESSIONNB = " + ID).FirstOrDefault();
 
-            return Json(new { success = true, TOTALCOUNT = data.TOTALCOUNT , AGREE = data.AGREE , NOTAGREE = data.NOTAGREE , DELAYED = data.DELAYED , UNANSWERED = data.UNANSWERED , countproced = countproced }, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, TOTALCOUNT = data.TOTALCOUNT, AGREE = data.AGREE, NOTAGREE = data.NOTAGREE, DELAYED = data.DELAYED, UNANSWERED = data.UNANSWERED, countproced = countproced }, JsonRequestBehavior.AllowGet);
         }
         public ActionResult Agree(long nb)
         {
             try
             {
                 var data = db.TRSESSIONS_PROCEDS.Find(nb);
-              
                 var setp = db.CARPROCEDSTEPS.Find(data.CARPROCEDSTEPNB);
-                var proced= db.CARPROCEDS.Find(data.CARPROCEDNB);
+                var proced = db.CARPROCEDS.Find(data.CARPROCEDNB);
                 if (proced.RESULT != "جارية")
                 {
                     return Json(new { success = false, responseText = "المعاملة ليست جارية" }, JsonRequestBehavior.AllowGet);
                 }
                 if (setp.DONE == 1)
                 {
-                    return Json(new { success = false, responseText = "الخظوة منفذة" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = false, responseText = "الخطوة منفذة" }, JsonRequestBehavior.AllowGet);
                 }
-             
+
                 data.PSTATUS = 1;
                 db.Entry(data).State = EntityState.Modified;
                 db.SaveChanges();
@@ -300,21 +421,48 @@ namespace Passengers.Controllers
                 var ss = validation.OracleExceptionValidation(ex);
                 return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
-            
+
         }
-        public  bool AgreeAll(long Sesnb)
+        public bool AgreeAll(long Sesnb)
         {
             try
             {
-                var ListOfProceds = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("SELECT * FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = " + Sesnb + " and PSTATUS = 1 ").ToList();
+                var ses = db.TRSESSIONS.Find(Sesnb);
+                var ListOfProceds = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("SELECT * FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = " + Sesnb + " and PSTATUS = 1 and ISDONE != 1").ToList();
                 foreach (var proceds in ListOfProceds)
                 {
                     var stepnb = proceds.CARPROCEDSTEPNB;
-                    long? status = 0; 
+                    long? status = 0;
                     string sql = "BEGIN VEHICLES.PASSENGERS_PKG.ACCEPT_PROCED(:PSESNB,:PSTEPNB ,:PSTATUS); END;";
                     db.Database.ExecuteSqlCommand(sql, Sesnb, stepnb, status);
-                } 
+                    if (status == 0)
+                    {
+                        proceds.ISDONE = 1;
+                        db.Entry(proceds).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+
+
+                }
                 db.SaveChanges();
+                var ListOfProcedsNO = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("SELECT * FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = " + Sesnb + " and PSTATUS = 2 ").ToList();
+                foreach (var proceds in ListOfProcedsNO)
+                {
+                    var prostep = db.CARPROCEDSTEPS.Find(proceds.CARPROCEDSTEPNB);
+                    prostep.DONE = 1;
+                    prostep.RESPONSABLE = "جلسة نقل الركاب";
+                    prostep.NOTE = prostep.NOTE + "عدم موافقة في جلسة الرمز: " + ses.NB + " والرقم: " + ses.SESNO + " والتاريخ:" + ses.SESDATE;
+
+                    db.Entry(prostep).State = EntityState.Modified;
+
+                    var pro = db.CARPROCEDS.Find(proceds.CARPROCEDNB);
+                    pro.RESULT = "منتهية";
+                    pro.NOTE = pro.NOTE + "تم انهاء المعاملة بسبب " + "عدم موافقة في جلسة الرمز: " + ses.NB + " والرقم: " + ses.SESNO + " والتاريخ:" + ses.SESDATE;
+                    pro.EDATE = DateTime.Now;
+                    db.Entry(pro).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                }
                 return true;
             }
             catch (Exception ex)
@@ -335,7 +483,7 @@ namespace Passengers.Controllers
                 }
                 if (setp.DONE == 1)
                 {
-                    return Json(new { success = false, responseText = "الخظوة منفذة" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = false, responseText = "الخطوة منفذة" }, JsonRequestBehavior.AllowGet);
                 }
                 data.PSTATUS = 2;
                 db.Entry(data).State = EntityState.Modified;
@@ -361,7 +509,7 @@ namespace Passengers.Controllers
                 }
                 if (setp.DONE == 1)
                 {
-                    return Json(new { success = false, responseText = "الخظوة منفذة" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = false, responseText = "الخطوة منفذة" }, JsonRequestBehavior.AllowGet);
                 }
                 data.PSTATUS = 3;
                 db.Entry(data).State = EntityState.Modified;
@@ -371,7 +519,7 @@ namespace Passengers.Controllers
             catch (Exception ex)
             {
                 var ss = validation.OracleExceptionValidation(ex);
-                return Json(new { success = false, responseText = ss}, JsonRequestBehavior.AllowGet);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
         }
         public ActionResult ConSession(long ID)
@@ -388,7 +536,7 @@ namespace Passengers.Controllers
                     data.STATUS = 2;
                     db.Entry(data).State = EntityState.Modified;
                     db.SaveChanges();
-                   // return View("TRSESSIONSPROCEDS?id=181");
+                    // return View("TRSESSIONSPROCEDS?id=181");
                     return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -398,35 +546,62 @@ namespace Passengers.Controllers
                 return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
         }
-        public  ActionResult  FinishSession  (long ID)
+        public ActionResult CancelSession(long ID)
         {
             try
             {
-                var ListOfProceds = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("SELECT * FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = " + ID + " and PSTATUS = 4 ").ToList();
-
-                if (ListOfProceds.Count != 0)
+                var data = db.TRSESSIONS.Find(ID);
+                if (data.STATUS != 1)
                 {
-                    return Json(new { success = false, responseText = "يجب الاجابة على جميع الطلبات قبل انهاء الجلسة" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = false, responseText = "حالة الجلسة ليست فعالة" }, JsonRequestBehavior.AllowGet);
                 }
-                var res  =  AgreeAll(ID);
-                if (res ==  true) {
-                    var data = db.TRSESSIONS.Find(ID);
-                    if (data.STATUS != 2)
-                    {
-                        return Json(new { success = false, responseText = "حالة الجلسة ليست منعقدة" }, JsonRequestBehavior.AllowGet);
-                    }
-                    else
+                else
+                {
+                    data.STATUS = 3;
+                    db.Entry(data).State = EntityState.Modified;
+                    db.SaveChanges();
+                    // return View("TRSESSIONSPROCEDS?id=181");
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult FinishSession(long ID)
+        {
+            try
+            {
+                var data = db.TRSESSIONS.Find(ID);
+                if (data.STATUS != 2)
+                {
+                    return Json(new { success = false, responseText = "حالة الجلسة ليست منعقدة" }, JsonRequestBehavior.AllowGet);
+                }
+                var res = AgreeAll(ID);
+                if (res == true)
+                {
+                    var ListOfProceds = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("SELECT * FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = " + ID + " and PSTATUS = 4 ").ToList();
+                    if (ListOfProceds.Count == 0)
                     {
                         data.STATUS = 0;
                         db.Entry(data).State = EntityState.Modified;
                         db.SaveChanges();
-                        return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                        return Json(new { success = true, responseText = "تم الانتهاء من ادخال جميع الطلبات" }, JsonRequestBehavior.AllowGet);
                     }
+                    else
+                    {
+                        return Json(new { success = true, responseText = "يوجد المزيد من الطلبات يرجى ادخال نتيجتها" }, JsonRequestBehavior.AllowGet);
+                    }
+
                 }
-                else {
+                else
+                {
 
                     return Json(new { success = false, responseText = "حدث خطأ اثناء التنفيذ" }, JsonRequestBehavior.AllowGet);
-                }                                            
+                }
             }
             catch (Exception ex)
             {
@@ -438,10 +613,10 @@ namespace Passengers.Controllers
         {
             var ses = db.TRSESSIONS.Find(ID);
 
-            if (ses.STATUS == 1 || ses.STATUS == 2) 
+            if (ses.STATUS == 1 || ses.STATUS == 2)
             {
-                string sql = "BEGIN VEHICLES.PASSENGERS_PKG.TRSESSIONS_REPORTS_PASSENGERS(:SESNB); END;";   
-                db.Database.ExecuteSqlCommand(sql,ID);
+                string sql = "BEGIN VEHICLES.PASSENGERS_PKG.TRSESSIONS_REPORTS_PASSENGERS(:SESNB); END;";
+                db.Database.ExecuteSqlCommand(sql, ID);
                 db.SaveChanges();
             }
 
@@ -451,17 +626,18 @@ namespace Passengers.Controllers
             ViewBag.SessionNo = ses.SESNO;
             ViewBag.SessionDate = temp;
             ViewBag.SessionStatus = ses.TRSTATUS.NAME;
-           //var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + ID;
-           // var data = db.Database.SqlQuery<TRSESSIONS_MEMBERS_PRESENT>("select * from TRSESSIONS_MEMBERS_PRESENT where SESSIONNB =" + ID).ToList();
-            var data = db.TRSESSIONS_MEMBERS_PRESENT.Where(x=>x.SESSIONNB == ID && x.ISPRESENT == 1).OrderBy(x=>x.ORDR);
+            //var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + ID;
+            // var data = db.Database.SqlQuery<TRSESSIONS_MEMBERS_PRESENT>("select * from TRSESSIONS_MEMBERS_PRESENT where SESSIONNB =" + ID).ToList();
+            var data = db.TRSESSIONS_MEMBERS_PRESENT.Where(x => x.SESSIONNB == ID && x.ISPRESENT == 1).OrderBy(x => x.ORDR);
             List<string> Members = new List<string>();
             List<string> sigMembers = new List<string>();
 
             foreach (var member in data)
             {
-                if (member.MEMBERSHIPNB != 1) {
+                if (member.MEMBERSHIPNB != 1)
+                {
                     var temp3 = "";
-                   
+
                     temp3 += "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRZMEMBERSHIP.NAME;
                     Members.Add(temp3);
                 }
@@ -470,18 +646,18 @@ namespace Passengers.Controllers
                     ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRZMEMBERSHIP.NAME;
                 }
             }
-         var data1 =   data.OrderByDescending(x => x.ORDR).ToList();
+            var data1 = data.OrderByDescending(x => x.ORDR).ToList();
             foreach (var member in data1)
             {
-                    var temp4 = "";
-                    temp4 += member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + Environment.NewLine + member.TRCOMMITTEES_MEMBERS.MEMBERNAME;
+                var temp4 = "";
+                temp4 += member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + Environment.NewLine + member.TRZMEMBERSHIP.NAME + Environment.NewLine + member.TRCOMMITTEES_MEMBERS.MEMBERNAME;
 
-                    sigMembers.Add(temp4);        
+                sigMembers.Add(temp4);
             }
             ViewBag.SessionMemers = Members;
             ViewBag.sigSessionMemers = sigMembers;
 
-     
+
 
             var sql1 = "SELECT DISTINCT PROCEDNB FROM TRSESSIONS_REPORTS WHERE RYEAR = " + sesdatayear + " and SESSIONNB = " + ses.NB;
             var listofproed = db.Database.SqlQuery<long>(sql1).ToList();
@@ -491,34 +667,34 @@ namespace Passengers.Controllers
             {
                 ListPROCEDS_Print_ALL ofpro = new ListPROCEDS_Print_ALL();
                 ofpro.pronb = item;
-                ofpro.proname = db.ZPROCEDTYPS.Where(x=>x.NB == item).Select(x=>x.NAME).FirstOrDefault();
-                var sql = "SELECT * FROM TRSESSIONS_REPORTS WHERE RYEAR = " + sesdatayear + " and SESSIONNB = " + ses.NB + "and PROCEDNB = "+ item;
+                ofpro.proname = db.ZPROCEDTYPS.Where(x => x.NB == item).Select(x => x.NAME).FirstOrDefault();
+                var sql = "SELECT * FROM TRSESSIONS_REPORTS WHERE RYEAR = " + sesdatayear + " and SESSIONNB = " + ses.NB + "and PROCEDNB = " + item;
                 ofpro.pro = db.Database.SqlQuery<PROCEDS_Print_ALL>(sql).ToList();
                 ListPROCEDS_Print_ALL.Add(ofpro);
             }
 
-           
+
 
 
 
             return View(ListPROCEDS_Print_ALL);
         }
-        public ActionResult GetProcedinfo(long NB , long PRONB)
+        public ActionResult GetProcedinfo(long NB, long PRONB)
         {
             // حالة الغاء خط
             if (PRONB == 2002)
             {
                 var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
                 var LINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
-             // var data = db.TRLINES.Find(LINENB);
-                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = "+ LINENB).ToList();
+                // var data = db.TRLINES.Find(LINENB);
+                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + LINENB).ToList();
                 ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
-                ViewBag.ProcedNb = PRONB;                
+                ViewBag.ProcedNb = PRONB;
                 ViewBag.LineCity = db.Database.SqlQuery<string>("select zc.name from TRLINE_CITY tr join zcitys zc on zc.nb = tr.CITYNB where  tr.LINENB = " + LINENB).ToList();
                 return PartialView("_ProcedInfo");
             }
             //معاملة احداث خط
-           else if (PRONB == 2001)
+            else if (PRONB == 2001)
             {
                 var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
                 var data = db.Database.SqlQuery<string>("select NAME from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
@@ -539,7 +715,7 @@ namespace Passengers.Controllers
                 ViewBag.LineNew = db.Database.SqlQuery<string>("select NAME from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
                 ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
                 ViewBag.ProcedNb = PRONB;
-              //ViewBag.LineCity = db.Database.SqlQuery<string>("select zc.name from PROCED_LINES pl join PROCED_LINES_CITY pc on pc.PROCEDLINENB = pl.nb join zcitys zc on zc.nb = pc.CITYNB where pl.CARPROCEDNB =  " + pro).ToList();
+                //ViewBag.LineCity = db.Database.SqlQuery<string>("select zc.name from PROCED_LINES pl join PROCED_LINES_CITY pc on pc.PROCEDLINENB = pl.nb join zcitys zc on zc.nb = pc.CITYNB where pl.CARPROCEDNB =  " + pro).ToList();
                 return PartialView("_ProcedInfo");
             }
             // تغير اسم او مسار خط
@@ -581,7 +757,7 @@ namespace Passengers.Controllers
             else if (PRONB == 2012)
             {
                 var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
-                var  Proced =db.CARPROCEDS.Find(pro);
+                var Proced = db.CARPROCEDS.Find(pro);
                 var car = db.Database.SqlQuery<CAR>("select * from cars where nb = " + Proced.CARNB).FirstOrDefault();
                 ViewBag.carnb = car.NB;
                 ViewBag.tabnb = car.TABNU;
@@ -616,7 +792,7 @@ namespace Passengers.Controllers
                 ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + car.LIN).ToList();
                 ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
                 ViewBag.ProcedNb = PRONB;
-                ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + car.LIN).ToList();              
+                ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + car.LIN).ToList();
                 var NEWLINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
                 ViewBag.NEWLineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + NEWLINENB).ToList();
                 ViewBag.NEWLineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + NEWLINENB).ToList();
@@ -625,61 +801,134 @@ namespace Passengers.Controllers
 
                 return PartialView("_ProcedInfo");
             }
+            //منح موافقة تغيير خط سير مركبة عامة
+            else if (PRONB == 2018)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var Proced = db.CARPROCEDS.Find(pro);
+                var car = db.Database.SqlQuery<CAR>("select * from cars where nb = " + Proced.CARNB).FirstOrDefault();
+                ViewBag.carnb = car.NB;
+                ViewBag.tabnb = car.TABNU;
+                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + car.LIN).ToList();
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + car.LIN).ToList();
+                var NEWLINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.NEWLineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + NEWLINENB).ToList();
+                ViewBag.NEWLineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + NEWLINENB).ToList();
 
+
+
+                return PartialView("_ProcedInfo");
+            }
             else
             {
                 return PartialView("_ProcedInfo");
-            }                    
-        }    
+            }
+        }
         public ActionResult GetProcedCount(long? ID)
         {
-            try 
+            try
             {
-                var countproced =  db.Database.SqlQuery<int>("select count(*) from TRSESSIONS_PROCEDS where PSTATUS != 4 and SESSIONNB = " + ID).FirstOrDefault();
-                if (countproced == 0) 
+                var countproced = db.Database.SqlQuery<int>("select count(*) from TRSESSIONS_PROCEDS where PSTATUS != 4 and SESSIONNB = " + ID).FirstOrDefault();
+                if (countproced == 0)
                 {
                     //var data = db.Database.SqlQuery<TRPROCEDS_AVAILABLEVM>("SELECT PV.NB, PV.PROCEDNB  ,  PV.COUNTAVAILABLE ,PV.COUNTPROCED, ZP.NAME FROM TRPROCEDS_AVAILABLE PV JOIN ZPROCEDTYPS ZP ON ZP.NB =  PV.PROCEDNB").ToList();
                     //ViewBag.Listdata = data;
                     //ViewBag.sesID = data[0].SESSIONNB;
-
+                    var pro_avai_count = db.Database.SqlQuery<int>("select count(*) from TRPROCEDS_AVAILABLE where SESSIONNB = " + ID).FirstOrDefault();
+                    if (pro_avai_count !=0)
+                    {
+                        var ssess = db.TRSESSIONS.Find(ID);
+                        var pro_count_in_ses = db.Database.SqlQuery<int>("select sum(COUNTPROCED) from TRPROCEDS_AVAILABLE where SESSIONNB = "+ ID).FirstOrDefault();
+                        var sss = " SELECT COUNT (*)     AS COUNTPROCED "
+                                + " FROM CARPROCEDSTEPS  CPS "
+                                + " JOIN CARPROCEDS CP ON CPS.CARPROCEDNB = CP.NB "
+                                + " JOIN ZPROCEDTYPS ZP ON ZP.NB = CP.PROCEDNB "
+                                + " LEFT JOIN CARS CA ON CA.NB = CP.CARNB "
+                                + " WHERE ZP.TYP = 'TRANSSESSION' "
+                                + " AND CP.RESULT = 'جارية' "
+                                + " AND(CPS.STEPNB = 453 OR CPS.STEPNB = 454) "
+                                + " AND CPS.CITYNB = "+ssess.SESCITYNB+" "
+                                + " AND CPS.DONE = 3";
+                             // + " AND(CA.REG != 1 or CA.REG is null) "
+                        var pro_count_notin_ses = db.Database.SqlQuery<int>(sss).FirstOrDefault();
+                        if (pro_count_in_ses != pro_count_notin_ses)
+                        {
+                            ViewBag.isnewproced = "يوجد معاملات جديدة تم اضافتها هل تريد تحديث قائمة الطلبات";
+                        }
+                    }
                     return PartialView("_ProcedCount");
-                } 
-                else 
-              
+                }
+                else
+
                 {
                     return Json(new { success = false, responseText = "لا يمكن تغير عدد طلبات الجلسة" }, JsonRequestBehavior.AllowGet);
                 }
 
-                
+
             }
             catch (Exception ex)
             {
                 var ss = validation.OracleExceptionValidation(ex);
                 return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
-            
+
         }
         public ActionResult GetProcedCountIstrue(long Sesnb)
         {
             var stat = db.TRSESSIONS.Where(x => x.NB == Sesnb).Select(s => s.STATUS).FirstOrDefault();
-            if (stat != 1) 
+            if (stat != 1)
             {
                 return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
-            string sql = "SELECT COUNT(*) FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = "+ Sesnb;
+            string sql = "SELECT COUNT(*) FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = " + Sesnb;
 
             var data = db.Database.SqlQuery<int>(sql).FirstOrDefault();
             if (data == 0)
             {
                 return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-            }else
+            }
+            else
             {
                 return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
         }
         public ActionResult Read_TRPROCEDS_AVAILABLE([DataSourceRequest] DataSourceRequest request, long nb)
         {
-            var sql = "SELECT PV.NB, PV.PROCEDNB  ,  PV.COUNTAVAILABLE ,PV.COUNTPROCED, ZP.NAME ,PV.SESSIONNB FROM TRPROCEDS_AVAILABLE PV JOIN ZPROCEDTYPS ZP ON ZP.NB =  PV.PROCEDNB where PV.SESSIONNB = "+ nb;
+            var sql="";
+            var ses = db.TRSESSIONS.Find(nb);
+            var pro_avai_count = db.Database.SqlQuery<int>("select count(*) from TRPROCEDS_AVAILABLE where SESSIONNB = "+ nb).FirstOrDefault();
+            if (pro_avai_count == 0 ) 
+            {
+                 sql = " SELECT  1 as NB ,"
+                     + " CP.PROCEDNB AS PROCEDNB,"
+                     + " COUNT(*) AS COUNTAVAILABLE,"
+                     + " COUNT(*) AS COUNTPROCED,"
+                     + " zp.name AS NAME , 1 AS SESSIONNB"
+                     + " FROM CARPROCEDSTEPS CPS "
+                     + " JOIN CARPROCEDS CP ON CPS.CARPROCEDNB = CP.NB "
+                     + " JOIN ZPROCEDTYPS ZP ON ZP.NB = CP.PROCEDNB "
+                     + " LEFT JOIN CARS CA ON CA.NB = CP.CARNB "
+                     + " WHERE ZP.TYP = 'TRANSSESSION' "
+                     + " AND CP.RESULT = 'جارية' "
+                     + " AND(CPS.STEPNB = 453 OR CPS.STEPNB = 454) "
+                     + " AND CPS.CITYNB = " + ses.SESCITYNB + " "
+                     + " AND CPS.DONE = 3 "
+                  // + " AND(CA.REG != 1 or CA.REG is null) "
+                     + " GROUP BY CP.PROCEDNB,zp.name ";
+            }
+            else 
+            {
+                   sql = "SELECT PV.NB, PV.PROCEDNB  ,"
+                        +"PV.COUNTAVAILABLE ,PV.COUNTPROCED, "
+                        +"ZP.NAME ,PV.SESSIONNB "
+                        +"FROM TRPROCEDS_AVAILABLE PV "
+                        +"JOIN ZPROCEDTYPS ZP ON ZP.NB =  PV.PROCEDNB "
+                        +"where PV.SESSIONNB = "+ nb;
+
+            }
+
             var data = db.Database.SqlQuery<TRPROCEDS_AVAILABLEVM>(sql).ToList();
             DataSourceResult result = data.ToDataSourceResult(request, commm => new
             {
@@ -690,34 +939,38 @@ namespace Passengers.Controllers
                 COUNTPROCED = commm.COUNTPROCED,
                 SESSIONNB = commm.SESSIONNB,
             });
-            return Json(result);         
+            return Json(result);
         }
-        public ActionResult UpdateAll([Bind(Prefix = "models")] IEnumerable<TRPROCEDS_AVAILABLEVM> model)
-        {
-            if (model != null && ModelState.IsValid)
-            {               
-                foreach (var item in model)
-                {
-                    try
-                    {
-                    var data = db.TRPROCEDS_AVAILABLE.Find(item.NB);
-                        data.COUNTPROCED = item.COUNTPROCED;
-                        db.Entry(data).State = EntityState.Modified;
-                        db.SaveChanges();                                             
-                    }
-                    catch (Exception ex)
-                    {
-                        var ss = validation.OracleExceptionValidation(ex);
-                        return Json(new { success = false}, JsonRequestBehavior.AllowGet);
-                    }                   
-                }
-            }
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        }
+        //public ActionResult UpdateAll([Bind(Prefix = "models")] IEnumerable<TRPROCEDS_AVAILABLEVM> model)
+        //{
+        //    if (model != null && ModelState.IsValid)
+        //    {
+        //        foreach (var item in model)
+        //        {
+        //            try
+        //            {
+        //                var data = db.TRPROCEDS_AVAILABLE.Find(item.NB);
+        //                data.COUNTPROCED = item.COUNTPROCED;
+        //                db.Entry(data).State = EntityState.Modified;
+        //                db.SaveChanges();
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                var ss = validation.OracleExceptionValidation(ex);
+        //                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+        //            }
+        //        }
+        //    }
+        //    return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        //}
         public ActionResult SetProcedCount(long Sesnb)
         {
-            try {
-               
+            try
+            {
+                var sql2 = "delete from TRSESSIONS_PROCEDS where SESSIONNB = " + Sesnb;
+                var rowsAffected2 = db.Database.ExecuteSqlCommand(sql2);
+                db.SaveChanges();
+
                 long? status = 0;
                 string sql = "BEGIN VEHICLES.PASSENGERS_PKG.ADD_SESSION_PROCEDS(:PSESNB,:PSTATUS); END;";
                 db.Database.ExecuteSqlCommand(sql, Sesnb, status);
@@ -732,5 +985,88 @@ namespace Passengers.Controllers
 
 
         }
+    
+        public ActionResult Saveprocount(string mod,long? sesnb)
+        {
+
+            try
+            {
+                var pro_avai_count = db.Database.SqlQuery<int>("select count(*) from TRPROCEDS_AVAILABLE where SESSIONNB = " + sesnb).FirstOrDefault();
+                var subjects = JsonConvert.DeserializeObject<List<TRPROCEDS_AVAILABLEVM>>(mod);
+                if (pro_avai_count == 0)
+                {
+
+
+                    foreach (var item in subjects)
+                    {
+                        TRPROCEDS_AVAILABLE proav = new TRPROCEDS_AVAILABLE();
+                        proav.PROCEDNB = item.PROCEDNB;
+                        proav.COUNTAVAILABLE = item.COUNTAVAILABLE;
+                        proav.COUNTPROCED = item.COUNTPROCED;
+                        proav.SESSIONNB = sesnb;
+                        db.TRPROCEDS_AVAILABLE.Add(proav);
+                        db.SaveChanges();
+
+                    }
+
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    foreach (var item in subjects)
+                    {
+                        var data = db.TRPROCEDS_AVAILABLE.Find(item.NB);
+                        if (data.COUNTPROCED != item.COUNTPROCED)  
+                        {
+                            data.COUNTPROCED = item.COUNTPROCED;
+                        }
+                        
+                        db.SaveChanges();
+
+                    }
+
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+            }
+                       
+        }
+        public ActionResult refpro(long Sesnb)
+        {
+            try
+            {
+                var sql = "delete from TRPROCEDS_AVAILABLE where SESSIONNB = "+ Sesnb;
+                var sql2 = "delete from TRSESSIONS_PROCEDS where SESSIONNB = " + Sesnb;
+
+                var can_i_delete = db.Database.SqlQuery<int>("select count(*) from TRSESSIONS_PROCEDS where SESSIONNB = "+ Sesnb + " and PSTATUS != 4").FirstOrDefault();
+                if (can_i_delete > 0 ) 
+                {
+                    return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    var rowsAffected = db.Database.ExecuteSqlCommand(sql);
+                    var rowsAffected2 = db.Database.ExecuteSqlCommand(sql2);
+                    db.SaveChanges();
+
+                }
+               
+               
+                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+
+            }
+
+
+        }
+        
     }
 }

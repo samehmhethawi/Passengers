@@ -43,7 +43,6 @@ namespace Passengers.Controllers
             return View();
         }
 
-
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
             var sql = "select * from TRCOMMITTEES where 1 = 1 ";
@@ -113,7 +112,6 @@ namespace Passengers.Controllers
            
         }
   
-    
         public ActionResult Create(TRCOMMITTEES model)
         {
             try
@@ -220,15 +218,12 @@ namespace Passengers.Controllers
 
         }
 
-
-
-
         public ActionResult Read_MEMBERS([DataSourceRequest] DataSourceRequest request ,int Nb)
         {
             var sql = "select * from TRCOMMITTEES_MEMBERS where 1 = 1 and STATUS = 1 and  COMMITTEENB = " + Nb ;
            
 
-            sql += " order by nb desc";
+            sql += " order by ORDR";
             var data = db.Database.SqlQuery<TRCOMMITTEES_MEMBERS>(sql).ToList();
 
             int index = 0;
@@ -253,6 +248,25 @@ namespace Passengers.Controllers
             try
             {
                 var ssss = "select zh.ORDR from TRZMEMBERSHIP zh where zh.nb = " + model.MEMBERSHIPNB;
+                if (model.MEMBERSHIPNB == 1 || model.MEMBERSHIPNB == 2 || model.MEMBERSHIPNB == 3) 
+                {
+                    var countship = db.Database.SqlQuery<int>("select count(*) from TRCOMMITTEES_MEMBERS where STATUS = 1 and COMMITTEENB =" + model .COMMITTEENB + " and MEMBERSHIPNB ="+ model.MEMBERSHIPNB).FirstOrDefault();
+                    if (countship > 0) 
+                    {
+                        return Json(new { success = false, responseText = "لا يمكن اضافة هذه العضوية مرتين الى اللجنة" });
+
+                    }
+                    else
+                    {
+                        model.ORDR = db.Database.SqlQuery<long?>(ssss).FirstOrDefault();
+                        db.TRCOMMITTEES_MEMBERS.Add(model);
+                        db.SaveChanges();
+                        return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                    }
+
+                }
+              
+
                   model.ORDR = db.Database.SqlQuery<long?>(ssss).FirstOrDefault();
                     db.TRCOMMITTEES_MEMBERS.Add(model);
                     db.SaveChanges();
@@ -332,11 +346,23 @@ namespace Passengers.Controllers
         {
             try 
             {
+
+
                 var data = db.TRCOMMITTEES_MEMBERS.Find(nb);
-                data.STATUS = 3;
-                db.Entry(data).State = EntityState.Modified;
-                db.SaveChanges();
-                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+
+                var comdate = db.TRCOMMITTEES.Find(data.COMMITTEENB);
+                if (comdate.STATUS == 1)
+                {
+                    data.STATUS = 3;
+                    db.Entry(data).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, responseText = "لا يمكن تعديل الاعضاء لان اللجنة غير فعالة" }, JsonRequestBehavior.AllowGet);
+                }
+                
             }
             catch (Exception ex)
             {

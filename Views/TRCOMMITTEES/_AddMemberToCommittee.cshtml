@@ -6,6 +6,7 @@
             .Modal(true)
             .Content(@<text>
            <div id="Add_comm_Member">
+                 @Html.Hidden("Comstatus")
                @Html.Hidden("ComMebmerNb")
                @Html.Hidden("OwnerNB")
                 @Html.Hidden("AddComMemberName2")
@@ -38,30 +39,30 @@
                              </span>
                        </div>
                       <div class="col-md-4" >
-                         <span>  المنصب
-                           @(Html.Kendo().DropDownList()
-                                    .Name("AddComMemberPostion")
-                                    .OptionLabel("اختر المنصب")
+                             <span>  المنصب
+                               @(Html.Kendo().DropDownList()
+                                        .Name("AddComMemberPostion")
+                                        .OptionLabel("اختر المنصب")
 
-                                    .DataTextField("NAME")
-                                    .DataValueField("ID")
-                                    .DataSource(source =>
-                                    {
-                                        source.Read(read =>
+                                        .DataTextField("NAME")
+                                        .DataValueField("ID")
+                                        .DataSource(source =>
                                         {
-                                            read.Action("GetMemberPostion", "Codes");
-                                        });
-                                    })
-                                    .HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب", style = "width: 100%; text-align:center;" })
+                                            source.Read(read =>
+                                            {
+                                                read.Action("GetMemberPostion", "Codes");
+                                            });
+                                        })
+                                        .HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب", style = "width: 100%; text-align:center;" })
 
-                                    )
-                          </span>
+                                        )
+                              </span>
                        </div>
                </div>
                 <div class="row col-11">
-                      <div class="col-md-4" >
+                      @*<div class="col-md-4" >
                              <span>  الدور @Html.Kendo().TextBox().Name("AddComMemberOrder").HtmlAttributes(new { placeholder = "الدور"})</span>
-                       </div>
+                       </div>*@
                       <div class="col-md-4" >
                              <span>  ملاحظات @Html.Kendo().TextBox().Name("AddComMemberNotes").HtmlAttributes(new { placeholder = "ملاحظات"})</span>
                        </div>
@@ -95,7 +96,7 @@
                 COMMITTEENB: $('#ComMebmerNb').val(),
                 MEMBERSHIPNB: $('#AddComMemberShip').val(),
                 MEMBERNAME: $("#AddComMemberName").val(),
-                ORDR: $("#AddComMemberOrder").val(),
+                ORDR: "",
                 NOTES: $("#AddComMemberNotes").val(),
                 MEMBERPOSITIONNB: $("#AddComMemberPostion").val(),
                 OWNERNB: $("#OwnerNB").val(),

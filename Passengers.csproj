@@ -106,6 +106,7 @@
     <Compile Include="ViewModel\LinesAndCarsGroupVM.cs" />
     <Compile Include="ViewModel\SessionsAndMembersVM.cs" />
     <Compile Include="ViewModel\SessionsAndProcedsVM.cs" />
+    <Compile Include="ViewModel\TRCHANGE_CAR_LINESVM.cs" />
     <Compile Include="ViewModel\TRPROCEDS_AVAILABLEVM.cs" />
     <Compile Include="ViewModel\TRSESSIONS_MEMBERS_PRESENTVM.cs" />
     <Compile Include="ViewModel\TRSESSIONS_PROCEDS_VM.cs" />
@@ -1292,6 +1293,8 @@
     <Content Include="Views\PassengersReport\LinesAndCarsDetalis_PDF.cshtml" />
     <Content Include="Views\PassengersReport\CarsAndProceds.cshtml" />
     <Content Include="Views\PassengersReport\CarsAndProceds_PDF.cshtml" />
+    <Content Include="Views\TRAGREEMENTS\PrintNotification.cshtml" />
+    <Content Include="Views\PassengersReport\TRCHANGECARLINES.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

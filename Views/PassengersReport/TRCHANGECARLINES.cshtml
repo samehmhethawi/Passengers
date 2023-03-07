@@ -1,0 +1,188 @@
+﻿
+@{
+    ViewBag.Title = "تغيرات الخوطو على مركبة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section PartialHeader{
+    <div class="panel-heading1 " id="searchPanel">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("Carnb").Min(0)
+                                .HtmlAttributes(new { placeholder = "رمز المركبة", maxlength = "10", style = "width: 100%;" }))
+                </div>
+
+                <div class="col-lg-2 col-md-4">
+                    @Html.Kendo().TextBox().Name("StabNO").HtmlAttributes(new { placeholder = "رقم اللوحة" })
+                </div>
+
+                <div class="col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر محافظة المركبة")
+                                    .Name("ScarCity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+
+                <div class="col-md-2">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SComDateStart")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ التغير من", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+
+                <div class="col-md-2">
+                    @(Html.Kendo().DatePicker()
+                        .Name("SComDateEnd")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ التغير الى", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+
+            </div>
+            <div class="row">
+
+
+                <div class="col-md-2">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+}
+
+
+
+
+<div>
+    @(Html.Kendo().Grid <Passengers.ViewModel.TRCHANGE_CAR_LINESVM>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.NB).Title("الرمز").Visible(false);
+                columns.Bound(c => c.CARNB).Title("رمز المركبة").Width(150);
+                columns.Bound(c => c.TABNU).Title("رقم اللوحة").Width(150);
+
+
+                columns.ForeignKey(c => c.CARCITY, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("محافظة المركبة").Width(150);
+                columns.Bound(c => c.CARCITY).Title("محافظة المركبة").Visible(false);
+
+
+                columns.ForeignKey(c => c.CARREG, (System.Collections.IEnumerable)ViewData["ZCARREGS"], "ID", "NAME").Title("فئة المركبة").Width(150);
+                columns.Bound(c => c.CARREG).Title("فئة المركبة").Visible(false);
+
+
+                columns.ForeignKey(c => c.CARKIND, (System.Collections.IEnumerable)ViewData["ZCARCATEGORYS"], "ID", "NAME").Title("نوع المركبة").Width(150);
+                columns.Bound(c => c.CARKIND).Title("نوع المركبة").Visible(false);
+
+
+                columns.Bound(c => c.CAR_OLD_LIN).Title("رمز الخط الحالي القديم").Width(150).Visible(false); ;
+                columns.Bound(c => c.CAR_OLD_LIN_NAME).Title("الخط الحالي القديم").Width(250);
+
+
+                columns.Bound(c => c.CAR_NEW_LIN).Title("رمز الخط الحالي الجديد").Width(150).Visible(false); ;
+                columns.Bound(c => c.CAR_NEW_LIN_NAME).Title("الخط الحالي الجديد").Width(250);
+
+
+                columns.Bound(c => c.CAR_OLD_BASELIN).Title("رمز الخط الاساسي القديم").Width(150).Visible(false); ;
+                columns.Bound(c => c.CAR_OLD_BASELIN_NAME).Title("الخط الاساسي القديم").Width(250);
+
+
+                columns.Bound(c => c.CAR_NEW_BASELIN).Title("رمز الخط الاساسي الجديد").Width(150).Visible(false); ;
+                columns.Bound(c => c.CAR_NEW_BASELIN_NAME).Title("الخط الاساسي الجديد").Width(250);
+
+
+                columns.Bound(c => c.UDATE).Format("{0:dd/MM/yyyy}").Title("تاريخ التغير").Width(110);
+
+
+
+
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            //.Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            //.Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("TRCHANGECARLINES_Read", "PassengersReport")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+            //   toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            toolbar.Template(@<text>
+            <div >
+                <div>
+                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
+                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    </button>
+                    @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
+                    <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
+                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>*@
+                </div>
+            </div>
+</text>);
+
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("setIcons")
+            .DataBound("setIcons")
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Cancel("setIcons")
+        //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+

@@ -11,7 +11,7 @@
             .Columns(columns =>
             {
 
-                columns.Bound(c => c.ISPRESENT).ClientTemplate(" # if (SESSIONSTATUS == 1) if (ISPRESENT == 1){ #<button  onclick='NotPRESENT(#=NB#)' class='btn btn-danger'  >غائب</button> # }else{ #<button  onclick='YesPRESENT(#=NB#)' class='btn btn-success'  >حاضر</button> # } #").Sortable(false).Title(" ").Width(100);
+                columns.Bound(c => c.ISPRESENT).ClientTemplate(" # if (SESSIONSTATUS == 2) if (ISPRESENT == 0){ #<button  onclick='YesPRESENT(#=NB#)' class='btn btn-danger'  >غائب</button> # }else{ #<button  onclick='NotPRESENT(#=NB#)' class='btn btn-success'  >حاضر</button> # } #").Sortable(false).Title(" ").Width(100);
                 columns.Bound(c => c.NB).Visible(false);
                 columns.Bound(c => c.SESSIONSTATUS).Visible(false);
                 columns.Bound(c => c.SESSIONNB).Visible(false);

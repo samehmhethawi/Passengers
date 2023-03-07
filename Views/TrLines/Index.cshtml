@@ -5,19 +5,20 @@
     <div class="panel-heading1 " id="searchPanel" style="font-size: 15px">
         <div style="padding:10px">
             <div class="row" style="padding-bottom:10px">
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> الاسم</label>
+                    <label >(<i id="namepercent" class="fa fa-percent"></i>)</label>
                 </div>
-                <div class="col-md-9">
+                <div class="col-lg-9 col-md-12">
                     @Html.Kendo().TextBox().Name("STrline").HtmlAttributes(new { placeholder = " اسم الخط" })
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> المحافظة</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر محافظة الخط")
                                     .Name("SlineCity")
@@ -33,10 +34,10 @@
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
                                     )
                 </div>
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> هل متاح</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر")
                                     .Name("StrlineStatus")
@@ -56,10 +57,10 @@
                                     )
 
                 </div>
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> هل ملغى</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر")
                                     .Name("StrlineCANCELD")
@@ -79,7 +80,7 @@
                                     )
 
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
 
                     <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
@@ -96,14 +97,27 @@
 
       .Columns(columns =>
       {
-          columns.Command(command =>
-          {
-              // command.Custom("Preview").Click("Preview").Text(" ");
-              command.Custom("Edit").Click("Edit").Text(" ");
+          columns.Bound(c => c.NB).ClientTemplate
+                  (" # if (1 == 1) if " +
+                  "(SESNB == null)" +
+                  "{"+
+                "#<button id='' title='تعديل' class='k-button k-button-icontext k-grid-Edit hvr-box-shadow-outset' onclick='Edit(#=NB#)'></button> #"
+               +"#<button id='' title='محافظات الخط' class='k-button k-button-icontext k-grid-Details hvr-box-shadow-outset'onclick='Preview(#=NB#)'></button>  # "
+                  +"} else{"
+                 // +"#<button id='' title='تعديل' class='k-button k-button-icontext k-grid-Edit hvr-box-shadow-outset' onclick='Edit(#=NB#)'></button> #" +
+                 + "#<button id='' title='محافظات الخط' class='k-button k-button-icontext k-grid-Details hvr-box-shadow-outset'onclick='Preview(#=NB#)'></button>  # "
+                  + "} #")
+                .Sortable(false).Title(" ").Width(150).Filterable(false);
+          //columns.Command(command =>
+          //{
+          //    // command.Custom("Preview").Click("Preview").Text(" ");
+          //    command.Custom("Edit").Click("Edit").Text(" ");
 
-              command.Custom("DetailsMembers").Click("Preview").Text(" ");
-              //  command.Custom("Delete").Click("Delete").Text(" ");
-          }).Width(150);
+          //    command.Custom("DetailsMembers").Click("Preview").Text(" ");
+          //    //  command.Custom("Delete").Click("Delete").Text(" ");
+          //}).Width(150);
+          columns.Bound(c => c.NB).Title("رمز الخط").Width(150);
+
           columns.Bound(c => c.NAME).Title("اسم خط السير").Width(500);
           columns.ForeignKey(c => c.TYP, (System.Collections.IEnumerable)ViewData["ZTRLINETYPES"], "ID", "NAME").Title("النوع").Width(150);
           //columns.Bound(c => c.TYP).Title("نوع خط السير");
@@ -113,6 +127,9 @@
           columns.Bound(c => c.ISCANCELD).Title("ملغى؟").ClientTemplate("#=ISCANCELD ? 'نعم':'لا' #").Width(100);
           columns.Bound(c => c.MINCARS).Title("عدد الادنى").Width(150);
           columns.Bound(c => c.MAXCARS).Title("عدد الاعلى").Width(150);
+          columns.Bound(c => c.SESNB).Title("رمز الجلسة").Width(150).Visible(false);
+
+
 
       })
   //arabic from here
@@ -154,11 +171,11 @@ c.Messages(m =>
 
 
 )
-.Selectable(selectable =>
-{
-    selectable.Mode(GridSelectionMode.Single);
-    selectable.Type(GridSelectionType.Row);
-})
+//.Selectable(selectable =>
+//{
+//    selectable.Mode(GridSelectionMode.Single);
+//    selectable.Type(GridSelectionType.Row);
+//})
 .Sortable(sortable =>
 {
     sortable.SortMode(GridSortMode.SingleColumn);
@@ -176,14 +193,14 @@ c.Messages(m =>
 //.Events(events => events.RequestEnd("onRequestEnd").Sync("sync_handler"))
 ).Events(events => events
 
-.Change("setIcons")
-.DataBound("setIcons")
+.Change("getcolor")
+.DataBound("getcolor")
 
-.Sort("setIcons")
-.Filter("setIcons")
-.Group("setIcons")
-.Page("setIcons")
-.Cancel("setIcons")
+.Sort("getcolor")
+.Filter("getcolor")
+.Group("getcolor")
+.Page("getcolor")
+.Cancel("getcolor")
 //.Edit("hideIdField")
 )
 )
@@ -236,7 +253,8 @@ c.Messages(m =>
                                                 .OptionLabel("اختر نوع الخط")
                                                 .Name("addlinetyp")
                                                 .DataTextField("NAME")
-                                                .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                                .DataValueField("ID").HtmlAttributes(new {  required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                                .Events(e => e.Change("onsele"))
                                                 .DataSource(source =>
                                                 {
                                                     source.Read(read =>
@@ -254,7 +272,7 @@ c.Messages(m =>
                             </div>
                          <div class="col-md-3" >
 
-                       @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("AddtrlineMINCARS").HtmlAttributes(new { placeholder = "عدد المركبات الادنى", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+                       @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("AddtrlineMINCARS").HtmlAttributes(new { placeholder = "عدد المركبات الادنى"})
 
 
 
@@ -269,13 +287,13 @@ c.Messages(m =>
                                 .Spinners(false)
                                 .Format("0")
                                 .Name("AddtrlinemaxCARS")
-                                .HtmlAttributes(new { placeholder = "عدد المركبات الادنى", required = "required", data_required_msg = "هذا الحقل مطلوب"}))
+                                .HtmlAttributes(new { placeholder = "عدد المركبات الاعلى" }))
 
 
 
                        </div>
                     </div>
-                   <div class="row" >
+                   <div class="row" id="divaddlineallCity">
                                <div class="col-md-1">
                                          <label for="template_name">محافظات الخط</label>
                                </div>
@@ -321,6 +339,13 @@ c.Messages(m =>
             .Modal(true)
             .Content(@<text>
     <div>
+          @Html.Hidden("isedite")
+       
+        <button id="btnAddNewcity" class="btn btn-primary hvr-box-shadow-outset" >
+                        إضافة جديد
+        </button>
+        
+
     @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRLINE_CITY>()
             .Name("gridcity").AutoBind(false)
             .Columns(columns =>
@@ -336,16 +361,19 @@ c.Messages(m =>
                 columns.Bound(c => c.ORDR).Width(150).Title("الترتيب");
                 // columns.Bound(c => c.NOTES).Width(150);
 
+                columns.Bound(c => c.LINENB).ClientTemplate
+                  (" # if (getisedite() == '') if " +
+                  "(1 == 1)" +
+                  "{#<button id='' title='حذف' class='k-button k-button-icontext k-grid-Delete hvr-box-shadow-outset k-state-border-down' onclick='Deletecity(#=NB#)'> </button> #" +
+                  "} #")
+                .Sortable(false).Title(" ").Width(100).Filterable(false);
+
+                //columns.Command(command =>
+                //{
 
 
-                columns.Command(command =>
-                {
-                    //    //command.Custom("Preview").Click("Preview").Text(" ");
-                    //    command.Custom("Edit").Click("Edit").Text(" ");
-                    command.Custom("Delete").Click("Deletecity").Text(" ");
-                    //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
-                    //    command.Custom("Details2").Click("Details2").Text(" ");
-                }).Width(100);
+                //    command.Custom("Delete").Click("Deletecity").Text(" ");
+                //}).Width(100);
             })
             .HtmlAttributes(new { style = "height: aotu  !important;" })
             .Scrollable()
@@ -362,7 +390,8 @@ c.Messages(m =>
             )
             .ToolBar(toolbar =>
             {
-                toolbar.Custom().Name("AddNewcity").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNewcity", @class = "btn btn-primary hvr-box-shadow-outset" });
+
+                //  toolbar.Custom().Name("AddNewcity").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNewcity", @class = "btn btn-primary hvr-box-shadow-outset" });
             })
                 .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
                                       .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
@@ -607,6 +636,20 @@ c.Messages(m =>
 
 
 <script>
+
+    function onsele()
+    {
+        var Typ = $("#addlinetyp").val();
+       
+        if (Typ == "1") {
+            $("#addlineallCity").data("kendoMultiSelect").value("")
+
+            $('#divaddlineallCity').css('display', 'none');
+
+        } else {
+            $('#divaddlineallCity').css('display', 'block');
+        }
+    }
     var nb = 0;
     function GetFillters() {
         var fillter = {};
@@ -638,19 +681,40 @@ c.Messages(m =>
         var wnd = $("#AddTRline").data("kendoWindow");
         wnd.center().open();
     });
-    $("#AddNewcity").click(function () {
+    $("#btnAddNewcity").click(function () {
 
         $("#addlineCity2").data("kendoDropDownList").value(-1)
         $("#AddNewtrcity").data("kendoWindow").center().open();
 
     });
+    $("#namepercent").click(function () {
+
+        var perbane = $('#STrline').val();
+        $('#STrline').val("%" + perbane +"%");
+    });
+
+
     function SaveAdd() {
-        var name = $('#addTrline').val();
+
+        var validator = $("#Add_TRline").kendoValidator().data("kendoValidator");
+        if (validator.validate())
+        {
+var name = $('#addTrline').val();
         var City = $("#addlineCity").val();
         var Typ = $("#addlinetyp").val();
         var Min = $("#AddtrlineMINCARS").val();
         var Max = $("#AddtrlinemaxCARS").val();
         var addlineallCity = $("#addlineallCity").data("kendoMultiSelect").value();
+       
+        var windowWidget = $("#AddTRline").data("kendoWindow");
+
+
+
+        if (Typ == "3" && addlineallCity == "") {
+          
+            toastr.error("يجب اختيار محافظات الخط");
+        } else {
+            kendo.ui.progress(windowWidget.element, true);
         $.ajax({
             type: "POST",
             data: { Name: name, city: City, typ: Typ, min: Min, max: Max, allcity: addlineallCity},
@@ -659,7 +723,7 @@ c.Messages(m =>
                     if (response.success) {
                         kendo.ui.progress(windowWidget.element, false);
                         ColseWindow();
-                        $("#grid").data("kendoGrid").dataSource.page(1);
+
 
                         toastr.success("تمت عملية الإضافة بنجاح");
                     } else {
@@ -669,12 +733,19 @@ c.Messages(m =>
 
                 }
             });
+        }
+        }
+
+
+
+
     }
 
-    function Deletecity(e)
+    function Deletecity(NB)
     {
-        var tr = $(e.target).closest("tr");    // get the current table row (tr)
-        var item = this.dataItem(tr);
+        var item = $("#gridcity").data("kendoGrid").dataSource.get(NB);
+        //var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        //var item = this.dataItem(tr);
         var NNB = item.NB;
          $.ajax({
             type: "POST",
@@ -692,18 +763,37 @@ c.Messages(m =>
                 }
             });
     }
-    function Preview(e)
+    function Preview(nb)
     {
-        var tr = $(e.target).closest("tr");    // get the current table row (tr)
-        var item = this.dataItem(tr);          // get the date of this row
+        var item = $("#grid").data("kendoGrid").dataSource.get(nb);
+        //e.preventDefault();
+        //var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        //var item = this.dataItem(tr);          // get the date of this row
+
         iid = item.NB;
+
+        $('#isedite').val(item.SESNB);
         $('#trnb').val(item.NB);
         $("#gridcity").data("kendoGrid").dataSource.read();
+        if (getisedite() > 0) {
+            $("#btnAddNewcity").css("display", "none");
+
+        }
+
+        if (getisedite() == "") {
+
+            $("#btnAddNewcity").css("display", "block");
+
+        }
         var wnd = $("#TRlinecitys").data("kendoWindow");
         wnd.center().open();
-    }
 
+    }
+    function getisedite() {
+        return $('#isedite').val();
+    }
     iid = 0;
+
     function GetCommNbRead()
     {
 
@@ -714,8 +804,10 @@ c.Messages(m =>
 
     function SaveAddcity()
     {
+        var windowWidget = $("#AddNewtrcity").data("kendoWindow");
         var tt = $('#trnb').val();
         var fff = $('#addlineCity2').val();
+        kendo.ui.progress(windowWidget.element, true);
          $.ajax({
             type: "POST",
              data: { linb: tt, city: fff},
@@ -724,8 +816,9 @@ c.Messages(m =>
                     if (response.success) {
                         $("#gridcity").data("kendoGrid").dataSource.page(1);
                         toastr.success("تمت عملية الإضافة بنجاح");
+                        kendo.ui.progress(windowWidget.element, false);
                     } else {
-
+                        kendo.ui.progress(windowWidget.element, false);
                         toastr.error(response.responseText);
                     }
 
@@ -733,10 +826,10 @@ c.Messages(m =>
             });
     }
 
-    function Edit(e)
+    function Edit(nb)
     {
-        var tr = $(e.target).closest("tr");    // get the current table row (tr)
-        var item = this.dataItem(tr);
+        //var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = $("#grid").data("kendoGrid").dataSource.get(nb);
         $('#Etrnb').val(item.NB);
         $('#ETrline').val(item.NAME);
         $("#ElineCity").data("kendoDropDownList").value(item.CITYNB);
@@ -744,14 +837,14 @@ c.Messages(m =>
         $("#EtrlineMINCARS").data("kendoNumericTextBox").value(item.MINCARS);
         $("#EtrlinemaxCARS").data("kendoNumericTextBox").value(item.MAXCARS);
         if (item.STATUS == true) {
-            
+
             $("#EtrlineStatus").data("kendoDropDownList").value(1);
 
         }
         if (item.STATUS == false) {
             $("#EtrlineStatus").data("kendoDropDownList").value(0);
         }
-        
+
         $("#EtrlineCANCELD").data("kendoDropDownList").value(item.ISCANCELD);
 
         $("#EidtTRline").data("kendoWindow").center().open();
@@ -759,6 +852,8 @@ c.Messages(m =>
     }
     function SaveEidt()
     {
+        var windowWidget = $("#EidtTRline").data("kendoWindow");
+        
         var enb = $('#Etrnb').val();
         var ename = $('#ETrline').val();
         var eCity = $("#ElineCity").val();
@@ -767,7 +862,7 @@ c.Messages(m =>
         var eMax = $("#EtrlinemaxCARS").val();
         var eSTATUS = $("#EtrlineStatus").val();
         var eISCANCELD = $("#EtrlineCANCELD").val();
-
+        kendo.ui.progress(windowWidget.element, true);
         $.ajax({
             type: "POST",
             data: { Nb: enb, Name: ename, city: eCity, typ: eTyp, min: eMin, max: eMax, STATUS: eSTATUS, ISCANCELD: eISCANCELD},
@@ -775,13 +870,15 @@ c.Messages(m =>
                 success: function (response) {
                     if (response.success) {
 
-                        $("#grid").data("kendoGrid").dataSource.read();
-                        $("#grid").data("kendoGrid").dataSource.page(1);
+                        //$("#grid").data("kendoGrid").dataSource.read();
+                        //$("#grid").data("kendoGrid").dataSource.page(1);
                         $("#EidtTRline").data("kendoWindow").center().close();
 
                         toastr.success("تمت عملية الإضافة بنجاح");
+                        kendo.ui.progress(windowWidget.element, false);
                     } else {
                         toastr.error(response.responseText);
+                        kendo.ui.progress(windowWidget.element, false);
                     }
 
                 }
@@ -792,6 +889,25 @@ c.Messages(m =>
     function ColseWindow() {
         $("#EidtTRline").data("kendoWindow").center().close();
         $("#AddTRline").data("kendoWindow").center().close();
+        $("#AddNewtrcity").data("kendoWindow").center().close();
+
+
+    }
+
+
+    function getcolor() {
+
+        var grid = $("#grid").data("kendoGrid");
+        var data = grid.dataSource.data();
+        $.each(data, function (i, row) {
+            if (row.SESNB != null)
+                $('tr[data-uid="' + row.uid + '"] ').css("color", "green");
+
+        })
+        setIcons();
+
+
+
     }
 </script>
 

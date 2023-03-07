@@ -1,0 +1,222 @@
+﻿@model IEnumerable<Proced.DataAccess.Models.CF.TRAGREEMENTS>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>PrintNotification</title>
+    <link href="~/Content/bootstrap.rtl.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+    <script src="~/Scripts/toastr.min.js"></script>
+</head>
+<body>
+    @if (ViewBag.agrtyp != 2023)
+    {
+        <div>
+            <table width="100%" style="padding:25px">
+                <tr>
+                    <td width="50%">
+                        <p>الجمهورية العربية السورية</p>
+                        <p>وزارة الادارة المحلية</p>
+
+                        <p>محافظة دمشق</p>
+                        <p>رقم 12/7</p>
+                    </td>
+                    <td width="50%">
+                        <p>@ViewBag.agrname</p>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div style="text-align:center">
+                            <p>  الى @ViewBag.outact </p>
+
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div>
+                            درست لجنة تنظيم نقل الركاب المشترك في محافظة ريف دمشق بجلستها رقم @ViewBag.TRAGR.SESNO تاريخ @Convert.ToDateTime(@ViewBag.TRAGR.SES_DATE).ToString("dd/MM/yyyy")
+                            <br />
+                            طلب السيد : محي مالك الميكروباص ذات
+                            ( الرمز @ViewBag.TRAGR.CARNB ورقم اللوحة @ViewBag.TRAGR.TABNB )
+                            <br />
+                            العامل على خط سير : @ViewBag.linename
+                            <br />
+                            الموافقة على فرزه للعمل على خط سير : دمشق - يلدا - ببيلا
+                            <br />
+                            وقررت الموافقة على الفرز لمدة ثلاثة اشهر من تاريخه فقط
+                            <br />
+                            شريطة التزام الكيطروباص / بالعمل على خط السير المرخص له بعد انتهاء مدة الفرز
+                            <br />
+                            للاطلاع و اجراء المقتضى.
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            دمشق في :   /
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            العضو المقرر
+                            <br />
+                            مدير نقل محافظة ريف دمشق
+                            <br />
+                            محمود زيتون
+                        </p>
+
+                    </td>
+                    <td>
+                        <p>
+                            محافظ ريف دمشق
+                            <br />
+                            المهندس معتز
+                            <br />
+                            بالتفويض
+                            <br />
+                            قائد شرطة محافظة ريف دمشق
+                            <br />
+                            اللواء نزار محمد حسن
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            صورة الى:
+                            <br />
+                            الديوان
+                        </p>
+
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    }
+
+
+    @if (ViewBag.agrtyp == 2023)
+    {
+        <div>
+            <table width="100%" style="padding:25px">
+                <tr>
+                    <td width="50%">
+                        <p>الجمهورية العربية السورية</p>
+                        <p>وزارة الادارة المحلية</p>
+
+                        <p>محافظة دمشق</p>
+                        <p>رقم 12/7</p>
+                    </td>
+                    <td width="50%">
+                        <p>@ViewBag.agrname</p>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div style="text-align:center">
+                            <p>  الى @ViewBag.outact </p>
+
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div>
+                            قررت لجنة تنظيم نقل الركاب المشترك في محافظة ريف دمشق بجلستها رقم @ViewBag.TRAGR.SESNO تاريخ @Convert.ToDateTime(@ViewBag.TRAGR.SES_DATE).ToString("dd/MM/yyyy")
+                            <br />
+                            طلب السيد : محي مالك الميكروباص ذات
+                            ( الرمز @ViewBag.TRAGR.CARNB ورقم اللوحة @ViewBag.TRAGR.TABNB )
+                            <br />
+                            العامل على خط سير : @ViewBag.linename
+                            <br />
+                            بنقل عاملين : مدرسة الاجيال
+                            <br />
+                            وفق المسار التالي:
+                            <br />
+                            لسفرتين يومياً من الساعة 6 صباحً ولغاية 9 صباحاً ومن الساعة 12 ظهراً لغاية الساعة 2 ظهراً
+                            <br />
+                            مسار الخط:
+                            <br />
+                            جرمانا - مزة غربية
+                            <br />
+                            شريطة التزام الكيطروباص / بالعمل على خط السير المرخص له.
+                            <br />
+                            خارج الاوقات المحددة اعلاه
+                            <br />
+                            للاطلاع و اجراء المقتضى.
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            دمشق في :   /
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            العضو المقرر
+                            <br />
+                            مدير نقل محافظة ريف دمشق
+                            <br />
+                            محمود زيتون
+                        </p>
+
+                    </td>
+                    <td>
+                        <p>
+                            محافظ ريف دمشق
+                            <br />
+                            المهندس معتز
+                            <br />
+                            بالتفويض
+                            <br />
+                            قائد شرطة محافظة ريف دمشق
+                            <br />
+                            اللواء نزار محمد حسن
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            صورة الى:
+                            <br />
+                            الديوان
+                        </p>
+
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    }
+
+</body>
+</html>

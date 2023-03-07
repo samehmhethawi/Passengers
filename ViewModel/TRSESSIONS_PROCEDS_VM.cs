@@ -29,6 +29,7 @@ namespace Passengers.ViewModel
 
         public string TYPSNAMEAGR { get; set; }
 
+        public long? ISDONE { get; set; }
 
 
     }
@@ -160,7 +161,8 @@ namespace Passengers.ViewModel
 
         [Display(Name = "محافظات خط المركبة")]
         public string CARLINECITY { get; set; }
-
+        [Display(Name = "الموافقات الممنوحة في المعاملة")]
+        public string AGREEMENTINPROCED { get; set; }
         
 
     }

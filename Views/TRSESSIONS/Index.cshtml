@@ -4,20 +4,21 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
 @section PartialHeader{
     <div class="panel-heading1 " id="searchPanel">
         <div style="padding:10px">
             <div class="row" style="padding-bottom:10px">
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> رقم الجلسة</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @Html.Kendo().TextBox().Name("SSESNO").HtmlAttributes(new { placeholder = " رقم الجلسة" })
                 </div>
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> المحافظة</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر محافظة الجلسة")
                                     .Name("SSESCITYNB")
@@ -33,20 +34,20 @@
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
                                     )
                 </div>
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> التاريخ من</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DatePicker()
                         .Name("SSESDATEStart")
                         .Format("{0:dd/MM/yyyy}")
                         .HtmlAttributes(new { placeholder = "تاريخ الجلسة من", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
                     )
                 </div>
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> التاريخ الى</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DatePicker()
                         .Name("SSESDATEEnd")
                         .Format("{0:dd/MM/yyyy}")
@@ -55,10 +56,10 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-1">
+                <div class="col-lg-1 col-md-2">
                     <label for="template_name"> حالة الجلسة</label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر  حالة الجلسة")
                                     .Name("SSESStatus")
@@ -75,8 +76,8 @@
                                     )
                 </div>
 
-                <div class="col-md-1 col-md-offset-7">
-                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>               
+                <div class="col-lg-2 col-md-4">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
                     <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
                 </div>
             </div>
@@ -219,7 +220,7 @@
         $('#AddSesDate').val("");
         $("#AddSesCity").data("kendoDropDownList").value(1)
         $("#Add_Session span.k-tooltip-validation").hide();
-        openWindow('AddSession');     
+        openWindow('AddSession');
     });
 
 
@@ -227,7 +228,7 @@
     function Edit(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
-        var id = item.NB;      
+        var id = item.NB;
         $('#SesNb').val(item.NB);
         $('#EditSesNo').val(item.SESNO);
         $("#EditSesDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.SESDATE });
@@ -261,7 +262,7 @@
     function ColseWindow() {
         var wnd = $("#AddSession").data("kendoWindow");
         wnd.center().close();
-        $("#EditSession").data("kendoWindow").center().close();       
+        $("#EditSession").data("kendoWindow").center().close();
     }
 </script>
 <script>

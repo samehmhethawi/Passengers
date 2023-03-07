@@ -153,19 +153,19 @@ button:focus{
 	padding: 5px 15px;
 	border: 1px solid #2B6AD0;
 	border-top-left-radius: 50px !important;
-    border-bottom-left-radius: 50px !important;
-	border-top-right-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
+	border-bottom-left-radius: 50px !important;
+	border-top-right-radius: 50px !important;
+	border-bottom-right-radius: 50px !important;
 }
 
 .btn-info:hover {
-	background: transparent;
+	/*background: transparent;*/
 	color: #EBECED;
 	border: 1px solid #2B6AD0;
 }
 
 .btn-info:focus {
-	background: transparent;
+	/*background: transparent;*/
 	color: #EBECED;
 	border: 1px solid #2B6AD0;
 }
@@ -261,9 +261,9 @@ button:focus{
 	border: 1px solid #061E47;
 	border-top-left-radius: 50px;
 	border-bottom-left-radius: 50px;
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
-	margin-right:0;
+	border-top-right-radius: 50px;
+	border-bottom-right-radius: 50px;
+	margin-right: 0;
 	padding: 5px 15px;
 }
 
@@ -273,13 +273,13 @@ button:focus{
 }
 
 .btn-next:hover {
-	background: transparent;
+	/*background: transparent;*/
 	color: #EBECED;
 	border: 1px solid #061E47;
 }
 
 .btn-next:focus {
-	background: transparent;
+	/*background: transparent;*/
 	color: #EBECED;
 	border: 1px solid #061E47;
 }

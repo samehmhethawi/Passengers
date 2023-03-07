@@ -10,6 +10,7 @@ using System.Data.Entity;
 
 namespace Passengers.Controllers
 {
+    [checksession, Authorize, RedirectOnError, CanDoIt]
     public class TRAGREEMENTSController : Controller
     {
         // GET: TRAGREEMENTS
@@ -127,6 +128,10 @@ namespace Passengers.Controllers
             {
                 NB = commm.NB,
                 CARNB = commm.CARNB,
+                TABNB = commm.TABNB,
+                CITYNB = commm.CITYNB,
+                CARREGNB = commm.CARREGNB,
+
                 CARPROCEDSTEPNB = commm.CARPROCEDSTEPNB,
                 STARTDATE = commm.STARTDATE,
                 ENDDATE = commm.ENDDATE,
@@ -144,6 +149,20 @@ namespace Passengers.Controllers
             });
             return Json(result);
 
+        }
+    
+        public ActionResult PrintNotification(long agrnb , long OUTACTSNB ) 
+        {
+
+            var TRAGR = db.TRAGREEMENTS.Find(agrnb);
+            var outact = db.ZOUTACTS.Find(OUTACTSNB);
+            ViewBag.agrtyp = TRAGR.AGREEMENTTYPENB;
+            ViewBag.agrname = db.AGREEMENTTYPES.Where(x => x.NB == TRAGR.AGREEMENTTYPENB).Select(s => s.NAME).FirstOrDefault();
+            ViewBag.outact = outact.NAME;
+            ViewBag.TRAGR = TRAGR;
+            var linnb = db.CARS.Where(x => x.NB == TRAGR.CARNB).Select(s => s.LIN).FirstOrDefault();
+            ViewBag.linename = db.TRLINES.Where(x => x.NB == linnb).Select(x => x.NAME).FirstOrDefault();
+            return View();
         }
     }
 }

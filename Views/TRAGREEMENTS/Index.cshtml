@@ -7,21 +7,19 @@
 <style>
     .laend {
         text-align: end;
-        padding-left:5px;
+        padding-left: 5px;
     }
 
     .colsh {
         padding-right: 0px;
         padding-left: 0px;
-      
     }
-  
 </style>
 @section PartialHeader{
     <div class="panel-heading1 " id="searchPanel" style="font-size:14px">
         <div style="padding:10px">
             <div class="row" style="padding-bottom:10px">
-                <div class="col-md-1 laend" >
+                <div class="col-md-1 laend">
                     <label for="template_name"> رمز المركبة</label>
                 </div>
                 <div class="col-md-2 colsh">
@@ -197,8 +195,8 @@
                                     )
                 </div>
             </div>
-            <div class="row" style = "width: 100%; text-align:center;">
-                <div class="col-md-12 col-lg-12" style = "width: 100%; text-align:center;">
+            <div class="row" style="width: 100%; text-align:center;">
+                <div class="col-md-12 col-lg-12" style="width: 100%; text-align:center;">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
                     <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
                 </div>
@@ -221,35 +219,34 @@
                  "#= renderNumber(data) #"
                ).Width(80);
                 columns.Bound(c => c.NB).Visible(false);
-                columns.Bound(c => c.CARNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); 
+                columns.Bound(c => c.CARNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
 
                 columns.Bound(c => c.TABNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
                 columns.Bound(c => c.CITYNB).Width(150).Visible(false);
                 columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-
-                columns.Bound(c => c.CARREGNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.ForeignKey(c => c.CARREGNB, (System.Collections.IEnumerable)ViewData["zregs"], "ID", "NAME").Title("الفئة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.CARREGNB).Visible(false).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
                 columns.Bound(c => c.CARPROCEDSTEPNB).Width(150).Visible(false);
                 columns.Bound(c => c.AGREEMENTTYPENB).Width(150).Visible(false);
                 columns.ForeignKey(c => c.AGREEMENTTYPENB, (System.Collections.IEnumerable)ViewData["AGREEMENTTYPENB"], "ID", "NAME").Title("نوع الموافقة").Width(250).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-
                 columns.Bound(c => c.STARTDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
                 columns.Bound(c => c.ENDDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
                 columns.Bound(c => c.SESNB).Visible(false);
                 columns.Bound(c => c.SESNO).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
                 columns.Bound(c => c.SES_DATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-                columns.ForeignKey(c => c.SESCITY, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("محافظة الجلسة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); 
+                columns.ForeignKey(c => c.SESCITY, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("محافظة الجلسة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
                 columns.Bound(c => c.AGREENO).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
                 columns.Bound(c => c.AGREEDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
                 columns.Bound(c => c.CARPROCEDNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
                 columns.Bound(c => c.NOTES).Width(350).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-                //columns.Command(command =>
-                //{
-                //    //command.Custom("Preview").Click("Preview").Text(" ");
+                columns.Command(command =>
+                {
+                    //command.Custom("Preview").Click("Preview").Text(" ");
                 //    //command.Custom("Edit").Click("Edit").Text(" ");
                 //    //command.Custom("Delete").Click("Delete").Text(" ");
                 //    //  command.Custom("Details").Click("Details").Text(" ");
-                //    // command.Custom("Finish").Click("Finish").Text(" ");
-                //}).Width(180);
+                     command.Custom("Notification").Click("Notification").Text("اعلام");
+                }).Width(180);
             })
 
             .HtmlAttributes(new { style = "height: aotu  !important;" })
@@ -301,6 +298,52 @@
 
 </div>
 
+
+<!-- Notification -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("Notification")
+            .Title("اعلام بالموافقة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+
+               <div style="padding:10px">
+                    @Html.Hidden("Agrnb")
+                    <div class="row" style="padding-bottom:10px">                     
+                            <div class="col-md-3"> <label for="template_name"> الجهة المراد اعلامها</label></div>
+                            <div class="col-md-6">  @(Html.Kendo().DropDownList()
+                              .Name("OUTACTSNB")
+                              .OptionLabel("اختر الجهة ")
+                              .HtmlAttributes(new { style = "width: 100%;" })
+                              .DataTextField("NAME")
+                              .DataValueField("ID")
+                              .Filter("contains")
+                              .DataSource(source => {
+                                  source.Read(read =>
+                                  {
+                                      read.Action("GetZOUTACTS", "Codes");
+                                  })
+                                  .ServerFiltering(false);
+                              })
+                            )</div>                        
+                    </div>
+               </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveNotification()">اعلام</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(350)
+            .Pinned(true)
+            .HtmlAttributes(new { style = "Width: 100%  !important;" })
+            )
+</div>
+
 <script>
     function renderNumber(data) {
         return data.Seq;
@@ -331,7 +374,7 @@
     }
 
     function rest_filtters() {
-       
+
         $("#SCARNB").data("kendoNumericTextBox").value("");
         $('#STABNB').val("");
         $("#SCITYNB").data("kendoDropDownList").value(-1);
@@ -347,7 +390,40 @@
         $('#SSESDATEEnd').val("");
         $("#SSESCITYNB").data("kendoDropDownList").value(-1);
 
-       
+
         $("#grid").data("kendoGrid").dataSource.data([]);
     }
+
+    function Notification(e) {
+        var tr = $(e.target).closest("tr");
+        var item = this.dataItem(tr);
+
+        $('#Agrnb').val(item.NB);
+
+        $("#Notification").data("kendoWindow").center().open();
+    }
+    function SaveNotification()
+    {
+        var agrnb = $('#Agrnb').val();
+        var OUTACTSNB = $('#OUTACTSNB').val();
+      
+        if (OUTACTSNB == "") {
+            toastr.error("يرجى اختيار الجهة");
+        } else {
+        window.open("@Url.Action("PrintNotification", "TRAGREEMENTS")?agrnb=" + agrnb + "&OUTACTSNB=" + OUTACTSNB, "_blank");
+
+        }
+
+
+
+
+    }
+    function ColseWindow() {
+
+     
+        var wnd = $("#Notification").data("kendoWindow");
+        wnd.center().close();
+
+    }
+
 </script>
