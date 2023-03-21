@@ -7,15 +7,19 @@ namespace Passengers.ViewModel
 {
     public class CityAndLinesChangeVM
     {
+        public long NB   { get; set; }
+        public long PROCEDNB { get; set; }
         public string PROCEDNAME { get; set; }
-        public string PROCEDDATE { get; set; }
-        public string CityName { get; set; }
+        public int? CITYNB { get; set; }
+        public DateTime RECDAT { get; set; }
+        public string RESULT { get; set; }
+        public string NEWLINENAME { get; set; }
+        //public string TPYS { get; set; }
+        public long? LINENB { get; set; }
         public string LINENAME { get; set; }
-        public string TPYS { get; set; }
-        public string STATUS { get; set; }
-        public string ISCANCELD { get; set; }
-        public string LINENAME1 { get; set; }
-        public string LINENAME2 { get; set; }
+        public string DONE { get; set; }
+        public string NOTE { get; set; }
+     //   public string LINENAME2 { get; set; }
 
     }
 }

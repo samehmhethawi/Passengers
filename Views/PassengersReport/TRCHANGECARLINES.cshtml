@@ -56,8 +56,11 @@
                 </div>
 
             </div>
-            <div class="row">
 
+            <div class="row">
+                <div class="col-lg-9 col-md-12">
+                    @Html.Kendo().TextBox().Name("STrline").HtmlAttributes(new { placeholder = " اسم الخط" })
+                </div>
 
                 <div class="col-md-2">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
@@ -66,6 +69,8 @@
 
                 </div>
             </div>
+           
+           
 
 
         </div>
@@ -79,48 +84,24 @@
 
 
 <div>
-    @(Html.Kendo().Grid <Passengers.ViewModel.TRCHANGE_CAR_LINESVM>()
+    @(Html.Kendo().Grid < Proced.DataAccess.Models.CF.TRCHANGE_CAR_LINES>()
             .Name("grid")
             .Columns(columns =>
             {
                 columns.Bound(c => c.NB).Title("الرمز").Visible(false);
                 columns.Bound(c => c.CARNB).Title("رمز المركبة").Width(150);
                 columns.Bound(c => c.TABNU).Title("رقم اللوحة").Width(150);
-
-
-                columns.ForeignKey(c => c.CARCITY, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("محافظة المركبة").Width(150);
-                columns.Bound(c => c.CARCITY).Title("محافظة المركبة").Visible(false);
-
-
+                columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("محافظة المركبة").Width(150);
+                columns.Bound(c => c.CITYNB).Title("محافظة المركبة").Visible(false);
                 columns.ForeignKey(c => c.CARREG, (System.Collections.IEnumerable)ViewData["ZCARREGS"], "ID", "NAME").Title("فئة المركبة").Width(150);
                 columns.Bound(c => c.CARREG).Title("فئة المركبة").Visible(false);
-
-
                 columns.ForeignKey(c => c.CARKIND, (System.Collections.IEnumerable)ViewData["ZCARCATEGORYS"], "ID", "NAME").Title("نوع المركبة").Width(150);
                 columns.Bound(c => c.CARKIND).Title("نوع المركبة").Visible(false);
-
-
-                columns.Bound(c => c.CAR_OLD_LIN).Title("رمز الخط الحالي القديم").Width(150).Visible(false); ;
-                columns.Bound(c => c.CAR_OLD_LIN_NAME).Title("الخط الحالي القديم").Width(250);
-
-
-                columns.Bound(c => c.CAR_NEW_LIN).Title("رمز الخط الحالي الجديد").Width(150).Visible(false); ;
-                columns.Bound(c => c.CAR_NEW_LIN_NAME).Title("الخط الحالي الجديد").Width(250);
-
-
-                columns.Bound(c => c.CAR_OLD_BASELIN).Title("رمز الخط الاساسي القديم").Width(150).Visible(false); ;
-                columns.Bound(c => c.CAR_OLD_BASELIN_NAME).Title("الخط الاساسي القديم").Width(250);
-
-
-                columns.Bound(c => c.CAR_NEW_BASELIN).Title("رمز الخط الاساسي الجديد").Width(150).Visible(false); ;
-                columns.Bound(c => c.CAR_NEW_BASELIN_NAME).Title("الخط الاساسي الجديد").Width(250);
-
-
+                columns.Bound(c => c.LINENB).Title("رمز الخط الحالي القديم").Width(150).Visible(false);
+                columns.Bound(c => c.LINENAME).Title("اسم الخط").Width(250);
+                columns.Bound(c => c.LINE_TYPE).Title("نوع الخط").ClientTemplate("#=LINE_TYPE ? 'حالي':'اساسي' #").Width(100);
+                columns.Bound(c => c.LINE_TYPE).Title("نوع الخط").Visible(false);
                 columns.Bound(c => c.UDATE).Format("{0:dd/MM/yyyy}").Title("تاريخ التغير").Width(110);
-
-
-
-
             })
             .HtmlAttributes(new { style = "height: aotu  !important;" })
             .Scrollable()
@@ -131,7 +112,7 @@
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
             .PageSize(15)
             //.Model(model => model.Id(p => p.NB))
-            .Read(read => read.Action("TRCHANGECARLINES_Read", "PassengersReport")))
+            .Read(read => read.Action("TRCHANGECARLINES_Read", "PassengersReport").Data("GetFillters")))
             .Resizable(resize => resize
             .Columns(true)
             )
@@ -186,3 +167,77 @@
 
 </div>
 
+<script>
+
+    function GetFillters()
+    {
+        var fillter = {};
+        fillter.Carnb = $('#Carnb').val();
+        fillter.StabNO = $('#StabNO').val();
+        fillter.SComDateStart = $('#SComDateStart').val();
+        fillter.SComDateEnd = $('#SComDateEnd').val();
+        fillter.ScarCity = $('#ScarCity').val();
+        fillter.STrline = $('#STrline').val();       
+        return fillter;
+    }
+    function Btn_Search()
+    {
+        $("#grid").data("kendoGrid").dataSource.read();
+    }
+
+    function rest_filtters()
+    {
+        $("#Carnb").data("kendoNumericTextBox").value("");
+        $('#StabNO').val("");
+        $('#STrline').val("");
+        $('#SComDateStart').val("");
+        $('#SComDateEnd').val("");      
+        $("#ScarCity").data("kendoDropDownList").value(-1);       
+        $("#grid").data("kendoGrid").dataSource.data([]);
+    }
+
+    function ExportToPdf() {
+        var fill = {};
+        fill.Carnb = $('#Carnb').val();
+        fill.StabNO = $('#StabNO').val();
+        fill.SComDateStart = $('#SComDateStart').val();
+        fill.SComDateEnd = $('#SComDateEnd').val();
+        fill.ScarCity = $('#ScarCity').val();;
+        fill.STrline = $('#STrline').val();
+
+
+
+        window.open("SessionsAndProceds_PDF?pNB=" + fill.NB
+            + "&psNB=" + fill.sNB
+            + "&psNO=" + fill.sNO
+            + "&psDATESTART=" + fill.sDATESTART
+            + "&psDATEEND=" + fill.sDATEEND
+            + "&psSTATUS=" + fill.sSTATUS
+            + "&SPstatus=" + fill.SPstatus
+            + "&SProcedtyps=" + fill.SProcedtyps
+            + "&pCOMCITYNB=" + fill.COMCITYNB, "_blank"
+        );
+    }
+    function ExportToExcel()
+
+    {
+
+            $.ajax({
+                type: "POST",
+
+                url: "@Url.Action("CommittesAndSessions_ex", "PassengersReport")",
+                success: function (response) {
+                    if (response.success) {
+
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+
+                    }
+
+                }
+            });
+
+
+    }
+</script>

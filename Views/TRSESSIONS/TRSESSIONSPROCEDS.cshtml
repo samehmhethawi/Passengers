@@ -238,11 +238,18 @@
                                         يرجى ادخال نتائج الطلبات مع العلم انه لن يتم انهاء الجلسة الا في حال ادخال نتيجة جميع الطلبات
                                     </label>
                                 }
-                                @if (ViewBag.SessionStatus == "منتهي")
+                                @if (ViewBag.SessionStatus == "منتهي" && ViewBag.FINISH_PRINT == 1)
                                 {
                                     <label style="text-align:center;color:red;">
 
                                         تم الانتهاء من الجلسة شكراً لكم.
+                                    </label>
+                                }
+                                @if (ViewBag.SessionStatus == "منتهي" && ViewBag.FINISH_PRINT == 0)
+                                {
+                                    <label style="text-align:center;color:red;">
+
+                                        تم الانتهاء من جميع الطلبات يرجى طباعة المحضر النهائي.
                                     </label>
                                 }
                                 @if (ViewBag.SessionStatus == "ملغى")
@@ -710,9 +717,11 @@
     }
 
     function PrintSession() {
+
+
         var id = @ViewBag.SessionID;
         window.open("PrintReportSession/" + id, "_blank");
-        location.reload()
+       
     }
 
     function openCancelSession() {

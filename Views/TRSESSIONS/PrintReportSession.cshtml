@@ -484,18 +484,18 @@
             <table border="1" style="text-align:center" class="table" width="100%">
                 <thead>
                     <tr>
-                        <th width="auto">@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
-                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].CARNB)</th>
-                        <th width="45%">@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
-                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
-                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
-                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
-                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].TABNB)</th>
-                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
-                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
-                        <th width="10%">@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
-                        <th width="25%">@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
-                        <th width="5%">@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].ORDR)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].CARNB)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].TABNB)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].FACCOMPNAME)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].FACTYY)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
+                        <th >@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -654,4 +654,14 @@
         //    window.close();
         //}
     })
+
+    $(document).ready(function () {
+        if (window.opener != null && !window.opener.closed) {
+            window.opener.location.reload();
+        } 
+        window.onbeforeunload = RefreshParent;
+    });
+
 </script>
+
+

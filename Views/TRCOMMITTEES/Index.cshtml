@@ -223,8 +223,10 @@
 <script>
 
     $("#AddNew").click(function () {
+        var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
+        $("#AddComDate").data("kendoDatePicker").value(todayDate);
         $('#AddComNo').val("");
-        $('#AddComDate').val("");
+       // $('#AddComDate').val("");
         $("#AddComCity").data("kendoDropDownList").value(1)
         $("#Add_comm span.k-tooltip-validation").hide();
         var wnd = $("#AddCOMMITTEE").data("kendoWindow");
@@ -252,6 +254,7 @@
 
   
     function Details(e) {
+
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         iid = item.NB;

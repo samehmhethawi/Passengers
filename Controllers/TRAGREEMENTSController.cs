@@ -143,8 +143,10 @@ namespace Passengers.Controllers
                 AGREENO = commm.AGREENO,
                 AGREEDATE = commm.AGREEDATE,
                 CARPROCEDNB = commm.CARPROCEDNB,
+                SESCITY = commm.SESCITY,
 
-           
+
+
                 Seq = (request.Page - 1) * request.PageSize + (++index)
             });
             return Json(result);

@@ -123,7 +123,7 @@
             .DataSource(dataSource => dataSource
             .Ajax()
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
-            .PageSize(15)
+            .PageSize(10)
             .Model(model => model.Id(p => p.NB))
             .Read(read => read.Action("Read", "TRSESSIONS").Data("GetFillters")))
             .Resizable(resize => resize
@@ -215,9 +215,11 @@
             $("#" + Id).data("kendoWindow").center().open().maximize();
     }
     $("#AddNew").click(function () {
+        var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
+        $("#AddSesDate").data("kendoDatePicker").value(todayDate);
        var pagewidth = document.body.offsetWidth;
         $('#AddSesNo').val("");
-        $('#AddSesDate').val("");
+      //  $('#AddSesDate').val("");
         $("#AddSesCity").data("kendoDropDownList").value(1)
         $("#Add_Session span.k-tooltip-validation").hide();
         openWindow('AddSession');
@@ -229,12 +231,19 @@
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         var id = item.NB;
-        $('#SesNb').val(item.NB);
-        $('#EditSesNo').val(item.SESNO);
-        $("#EditSesDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.SESDATE });
-        //$("#EditSesCity").data("kendoDropDownList").value(item.SESCITYNB);
-        var wnd = $("#EditSession").data("kendoWindow");
-        wnd.center().open();
+      
+        if (item.STATUS == 1) {
+            $('#SesNb').val(item.NB);
+            $('#EditSesNo').val(item.SESNO);
+            $("#EditSesDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.SESDATE });
+            //$("#EditSesCity").data("kendoDropDownList").value(item.SESCITYNB);
+            var wnd = $("#EditSession").data("kendoWindow");
+            wnd.center().open();
+        }
+        else {
+            toastr.error("لا يمكن تعديل الجلسة لانها ليست قعالة");
+        }
+     
     }
 
     function Delete(e) {

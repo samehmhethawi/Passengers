@@ -759,7 +759,6 @@ namespace Passengers.Controllers
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
 
         }
-
         public ActionResult SessionsAndProceds_PDF(string pNB, string psNB, string psNO, string psDATESTART, string psDATEEND, string psSTATUS, string SPstatus, string SProcedtyps, string pCOMCITYNB)
         {
             string sql = "SELECT ZC.NAME  AS CityName, "
@@ -857,9 +856,6 @@ namespace Passengers.Controllers
                 CustomSwitches = "--page-offset 0 --footer-center [page] --footer-font-size 8"
             };
         }
-
-
-
         public ActionResult CityAndLines()
         {
             return View();
@@ -981,9 +977,74 @@ namespace Passengers.Controllers
 
         public ActionResult CityAndLinesChange()
         {
+            ViewData["zcities"] = db.ZCITYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
             return View();
         }
+        public ActionResult CityAndLinesChange_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            var sql = " SELECT CP.NB           AS NB, "
+      +" CP.PROCEDNB AS PROCEDNB, "
+      + "  ZPT.NAME AS PROCEDNAME, CP.CITYNB AS CITYNB, "
+      + "   to_date(cp.RECDAT,'dd/mm/yyyy') AS RECDAT, "
+      + "  cp.RESULT AS RESULT, "
+      + "  CPL.NAME AS NEWLINENAME, "
+      + "  CPL.LINENB AS LINENB, "
+      + "  TR.NAME AS LINENAME, "
+      + "  CPS.DONE AS DONE, "
+      + "  CPS.NOTE AS NOTE "
+      + " FROM PROCED_LINES CPL "
+      + "  JOIN CARPROCEDS CP ON CP.NB = CPL.CARPROCEDNB "
+      + "  JOIN CARPROCEDSTEPS CPS ON CPS.CARPROCEDNB = CP.NB "
+      + "  LEFT JOIN TRLINES TR ON TR.NB = CPL.LINENB "
+      + "  JOIN ZPROCEDTYPS ZPT ON ZPT.NB = CP.PROCEDNB "
+      + " WHERE CP.PROCEDNB IN(2001, 2002, 2003) AND CPS.STEPNB = 454";
 
+            //var STrName = Request.Form["STrline"].Trim();
+            //var StrlineStatus = Request.Form["StrlineStatus"].Trim();
+            //var StrlineCANCELD = Request.Form["StrlineCANCELD"].Trim();
+            //var Slinetyps = Request.Form["Slinetyps"].Trim();
+            //var SlineCity = Request.Form["SlineCity"].Trim();
+
+
+            //if (STrName != "")
+            //{
+            //    sql += " and TR.NAME like '%" + STrName + "%' ";
+            //}
+            //if (StrlineStatus != "")
+            //{
+            //    sql += " and TR.STATUS =" + StrlineStatus;
+            //}
+            //if (StrlineCANCELD != "")
+            //{
+            //    sql += " and nvl(TR.ISCANCELD,0) =" + StrlineCANCELD;
+            //}
+            //if (Slinetyps != "")
+            //{
+            //    sql += " and TR.TYP =" + Slinetyps;
+            //}
+            //CodesController bb = new CodesController();
+
+            //var ci = bb.GetCityForRead();
+
+            //if (ci == "0")
+            //{
+            //    if (SlineCity != "")
+            //    {
+            //        sql += " and TR.CITYNB =" + SlineCity;
+            //    }
+
+            //}
+            //else
+            //{
+            //    sql += " and TR.CITYNB =" + ci;
+            //}
+            var data = db.Database.SqlQuery<ViewModel.CityAndLinesChangeVM>(sql);
+            return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+        }
 
         public ActionResult LinesAndCarsGroup()
         {
@@ -1758,42 +1819,48 @@ namespace Passengers.Controllers
 
         public ActionResult TRCHANGECARLINES_Read([DataSourceRequest] DataSourceRequest request)
         {
-            string sql = "select * from TRCHANGE_CAR_LINES where 1= 1 ";
+            string sql = "select * from TRCHANGE_CAR_LINES CH where 1= 1 ";
 
-            //var NB = Request.Form["NB"].Trim();
-            //var COMNO = Request.Form["COMNO"].Trim();
-            //var COMDATESTART = Request.Form["COMDATESTART"].Trim();
-            //var COMDATEEND = Request.Form["COMDATEEND"].Trim();
-            //var STATUS = Request.Form["STATUS"].Trim();
-            //var MEMBERNAME = Request.Form["MEMBERNAME"].Trim();
-            //var MEMBERPOSITIONNB = Request.Form["MEMBERPOSITIONNB"].Trim();
-            //var MEMBERSHIPNB = Request.Form["MEMBERSHIPNB"].Trim();
-            //var COMCITYNB = Request.Form["COMCITYNB"].Trim();
+            var Carnb = Request.Form["Carnb"].Trim();
+            var StabNO = Request.Form["StabNO"].Trim();
+            var SComDateStart = Request.Form["SComDateStart"].Trim();
+            var SComDateEnd = Request.Form["SComDateEnd"].Trim();
+            var ScarCity = Request.Form["ScarCity"].Trim();
+
+            var STrline = Request.Form["STrline"].Trim();
 
 
-            //if (NB != "")
-            //{
-            //    sql += " and TM.NB = " + NB;
-            //}
-            //if (COMNO != "")
-            //{
-            //    sql += " and TM.COMNO like '%" + COMNO + "%'";
-            //}
-            //if (STATUS != "")
-            //{
-            //    sql += " and TM.STATUS =" + STATUS;
-            //}
-            //if (COMDATESTART != "")
-            //{
-            //    sql += " and TM.COMDATE >= TO_DATE('" + COMDATESTART + "','DD/MM/YYYY') ";
-            //}
+            
 
-            //if (COMDATEEND != "")
-            //{
-            //    sql += " and TM.COMDATE <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
-            //}
+            if (Carnb != "")
+            {
+                sql += " and CH.Carnb = " + Carnb;
+            }
+            if (StabNO != "")
+            {
+                sql += " and CH.TABNU = " + StabNO;
+            }
 
+            if (SComDateStart != "")
+            {
+                sql += " and CH.UDATE >= TO_DATE('" + SComDateStart + "','DD/MM/YYYY') ";
+            }
 
+            if (SComDateEnd != "")
+            {
+                sql += " and CH.UDATE <= TO_DATE('" + SComDateEnd + "','DD/MM/YYYY') ";
+            }
+            if (ScarCity != "")
+            {
+                sql += " and CH.CITYNB = " + ScarCity;
+            }
+
+            if (STrline != "")
+            {
+                sql += " and CH.LINENAME LIKE '%" + STrline + "%'";
+            }
+
+            sql += " ORDER BY CH.UDATE ASC";
             //CodesController bb = new CodesController();
 
             //var ci = bb.GetCityForRead();
@@ -1819,11 +1886,8 @@ namespace Passengers.Controllers
             //{
             //    sql += " and TMM.MEMBERSHIPNB =" + MEMBERSHIPNB;
             //}
-            //if (MEMBERNAME != "")
-            //{
-            //    sql += " and TMM.MEMBERNAME LIKE '%" + MEMBERNAME + "%' ";
-            //}
-            var data = db.Database.SqlQuery<ViewModel.TRCHANGE_CAR_LINESVM>(sql);
+
+            var data = db.Database.SqlQuery<TRCHANGE_CAR_LINES>(sql);
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
     }

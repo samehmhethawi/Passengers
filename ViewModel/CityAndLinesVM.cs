@@ -6,10 +6,8 @@ using System.Web;
 namespace Passengers.ViewModel
 {
     public class CityAndLinesVM
-    {
-        
+    {    
         public long rr { get; set; }
-
         public string CityName { get; set; }      
         public string LINENAME { get; set; }
         public string TPYS { get; set; }

@@ -7,23 +7,30 @@
             .Content(@<text>
            <div id="Add_comm">
                <div class="row col-11">
-                   <div class="col-md-3" >
-                   <span>  رقم قرار اللجنة
-                       @Html.Kendo().TextBox().Name("AddComNo").HtmlAttributes(new { placeholder = " رقم قرار اللجنة", required = "required", data_required_msg = "هذا الحقل مطلوب"})</span>
+                   <div class="col-sm-12" >
+                     رقم قرار اللجنة
+                       </div>
+                   <div class="col-md-12 col-sm-12">
+                       @Html.Kendo().TextBox().Name("AddComNo").HtmlAttributes(new { placeholder = " رقم قرار اللجنة", required = "required", data_required_msg = "هذا الحقل مطلوب"})
 
 
                        </div>
-                      <div class="col-md-4" >
-                   <span>  تاريخ قرار اللجنة
+                      <div class="col-sm-12" >
+                    تاريخ قرار اللجنة
+                            </div>
+                   <div class="col-md-12 col-sm-12">
                           @(Html.Kendo().DatePicker()
                                         .Name("AddComDate").Format("{0:dd/MM/yyyy}")
                                         .HtmlAttributes(new { placeholder = "تاريخ قرار اللجنة", required = "required", data_required_msg = "هذا الحقل مطلوب" })
-                                    )</span>
+                                        .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
 
 
                        </div>
-                      <div class="col-md-3" >
-                   <span>  محافظة اللجنة
+                      <div class="col-sm-12" >
+                     محافظة اللجنة
+                           </div>
+                   <div class="col-md-12 col-sm-12">
                           @(Html.Kendo().DropDownList()
                                     .Name("AddComCity")
                                     .DataTextField("NAME")
@@ -36,7 +43,7 @@
                                         });
                                     })
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
-                                    )</span>
+                                    )
 
 
                        </div>
@@ -50,8 +57,9 @@
             </text>)
             .Draggable(true)
             .Resizable()
-            .Width(800)
+            .Width(400)
             .Height(300)
+            .Actions(actions => actions.Pin().Minimize().Maximize().Close())
             .Pinned()
             )
 </div>
