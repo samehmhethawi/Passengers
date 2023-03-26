@@ -51,12 +51,12 @@ namespace Passengers.Controllers
             }
             if (COMDATESTART != "")
             {
-                sql += " and TM.COMDATE >= TO_DATE('" + COMDATESTART + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TM.COMDATE) >= TO_DATE('" + COMDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (COMDATEEND != "")
             {
-                sql += " and TM.COMDATE <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TM.COMDATE) <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
             }
 
 
@@ -121,12 +121,12 @@ namespace Passengers.Controllers
             }
             if (COMDATESTART != "")
             {
-                sql += " and TM.COMDATE >= TO_DATE('" + COMDATESTART + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TM.COMDATE) >= TO_DATE('" + COMDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (COMDATEEND != "")
             {
-                sql += " and TM.COMDATE <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TM.COMDATE) <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
             }
 
 
@@ -228,12 +228,12 @@ namespace Passengers.Controllers
             }
             if (COMDATESTART != "")
             {
-                sql += " and TM.COMDATE >= TO_DATE('" + COMDATESTART + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TM.COMDATE) >= TO_DATE('" + COMDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (COMDATEEND != "")
             {
-                sql += " and TM.COMDATE <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TM.COMDATE) <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
             }
 
 
@@ -252,12 +252,12 @@ namespace Passengers.Controllers
             }
             if (sDATESTART != "")
             {
-                sql += " and TCS.SESDATE >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TCS.SESDATE) >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (sDATEEND != "")
             {
-                sql += " and TCS.SESDATE <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TCS.SESDATE) <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
             }
 
 
@@ -335,12 +335,12 @@ namespace Passengers.Controllers
             }
             if (COMDATESTART != "")
             {
-                sql += " and TM.COMDATE >= TO_DATE('" + COMDATESTART + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TM.COMDATE) >= TO_DATE('" + COMDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (COMDATEEND != "")
             {
-                sql += " and TM.COMDATE <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TM.COMDATE) <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
             }
 
 
@@ -359,12 +359,12 @@ namespace Passengers.Controllers
             }
             if (sDATESTART != "")
             {
-                sql += " and TCS.SESDATE >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TCS.SESDATE) >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (sDATEEND != "")
             {
-                sql += " and TCS.SESDATE <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TCS.SESDATE) <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
             }
 
 
@@ -527,12 +527,12 @@ namespace Passengers.Controllers
 
             if (sDATESTART != "")
             {
-                sql += " and TSE.SESDATE >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TSE.SESDATE) >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (sDATEEND != "")
             {
-                sql += " and TSE.SESDATE <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TSE.SESDATE) <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
             }
             if (MemberSH != "")
             {
@@ -620,12 +620,12 @@ namespace Passengers.Controllers
 
             if (sDATESTART != "")
             {
-                sql += " and TSE.SESDATE >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TSE.SESDATE) >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (sDATEEND != "")
             {
-                sql += " and TSE.SESDATE <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TSE.SESDATE) <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
             }
             if (MemberSH != "")
             {
@@ -718,12 +718,12 @@ namespace Passengers.Controllers
 
             if (sDATESTART != "")
             {
-                sql += " and TSE.SESDATE >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TSE.SESDATE) >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (sDATEEND != "")
             {
-                sql += " and TSE.SESDATE <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TSE.SESDATE) <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
             }
 
             if (SPstatus != "")
@@ -813,12 +813,12 @@ namespace Passengers.Controllers
 
             if (sDATESTART != "")
             {
-                sql += " and TSE.SESDATE >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TSE.SESDATE) >= TO_DATE('" + sDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (sDATEEND != "")
             {
-                sql += " and TSE.SESDATE <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(TSE.SESDATE) <= TO_DATE('" + sDATEEND + "','DD/MM/YYYY') ";
             }
 
             if (Pstatus != "")
@@ -989,7 +989,7 @@ namespace Passengers.Controllers
             var sql = " SELECT CP.NB           AS NB, "
       +" CP.PROCEDNB AS PROCEDNB, "
       + "  ZPT.NAME AS PROCEDNAME, CP.CITYNB AS CITYNB, "
-      + "   to_date(cp.RECDAT,'dd/mm/yyyy') AS RECDAT, "
+      + "   cp.RECDAT AS RECDAT, "
       + "  cp.RESULT AS RESULT, "
       + "  CPL.NAME AS NEWLINENAME, "
       + "  CPL.LINENB AS LINENB, "
@@ -1003,29 +1003,31 @@ namespace Passengers.Controllers
       + "  JOIN ZPROCEDTYPS ZPT ON ZPT.NB = CP.PROCEDNB "
       + " WHERE CP.PROCEDNB IN(2001, 2002, 2003) AND CPS.STEPNB = 454";
 
-            //var STrName = Request.Form["STrline"].Trim();
-            //var StrlineStatus = Request.Form["StrlineStatus"].Trim();
-            //var StrlineCANCELD = Request.Form["StrlineCANCELD"].Trim();
-            //var Slinetyps = Request.Form["Slinetyps"].Trim();
-            //var SlineCity = Request.Form["SlineCity"].Trim();
+            var SlineCity = Request.Form["SlineCity"].Trim();
+            var SProcedtyps = Request.Form["SProcedtyps"].Trim();
+            var SSesDateStart = Request.Form["SSesDateStart"].Trim();
+        
+            var SSesDateEnd = Request.Form["SSesDateEnd"].Trim();
 
 
-            //if (STrName != "")
-            //{
-            //    sql += " and TR.NAME like '%" + STrName + "%' ";
-            //}
-            //if (StrlineStatus != "")
-            //{
-            //    sql += " and TR.STATUS =" + StrlineStatus;
-            //}
-            //if (StrlineCANCELD != "")
-            //{
-            //    sql += " and nvl(TR.ISCANCELD,0) =" + StrlineCANCELD;
-            //}
-            //if (Slinetyps != "")
-            //{
-            //    sql += " and TR.TYP =" + Slinetyps;
-            //}
+            if (SProcedtyps != "")
+            {
+                sql += " and CP.PROCEDNB =" + SProcedtyps;
+            }
+
+            if (SSesDateStart != "")
+            {
+                sql += " and TRUNC(cp.RECDAT) >= TO_DATE('" + SSesDateStart + "','DD/MM/YYYY') ";
+            }
+
+            if (SSesDateEnd != "")
+            {
+                sql += " and TRUNC(cp.RECDAT) <= TO_DATE('" + SSesDateEnd + "','DD/MM/YYYY') ";
+            }
+            if (SlineCity != "")
+            {
+                sql += " and CP.CITYNB =" + SlineCity;
+            }
             //CodesController bb = new CodesController();
 
             //var ci = bb.GetCityForRead();
@@ -1045,6 +1047,8 @@ namespace Passengers.Controllers
             var data = db.Database.SqlQuery<ViewModel.CityAndLinesChangeVM>(sql);
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
+
+
 
         public ActionResult LinesAndCarsGroup()
         {
@@ -1640,12 +1644,12 @@ namespace Passengers.Controllers
 
             if (SCarprocedDateStart != "")
             {
-                sql1 += " and CP.RECDAT >= TO_DATE('" + SCarprocedDateStart + "','DD/MM/YYYY') ";
+                sql1 += " and TRUNC(CP.RECDAT) >= TO_DATE('" + SCarprocedDateStart + "','DD/MM/YYYY') ";
             }
 
             if (SCarprocedDateEnd != "")
             {
-                sql1 += " and CP.RECDAT <= TO_DATE('" + SCarprocedDateEnd + "','DD/MM/YYYY') ";
+                sql1 += " and TRUNC(CP.RECDAT) <= TO_DATE('" + SCarprocedDateEnd + "','DD/MM/YYYY') ";
             }
 
             if (Carcity != "")
@@ -1752,12 +1756,12 @@ namespace Passengers.Controllers
 
             if (SCarprocedDateStart != "")
             {
-                sql1 += " and CP.RECDAT >= TO_DATE('" + SCarprocedDateStart + "','DD/MM/YYYY') ";
+                sql1 += " and TRUNC(CP.RECDAT) >= TO_DATE('" + SCarprocedDateStart + "','DD/MM/YYYY') ";
             }
 
             if (SCarprocedDateEnd != "")
             {
-                sql1 += " and CP.RECDAT <= TO_DATE('" + SCarprocedDateEnd + "','DD/MM/YYYY') ";
+                sql1 += " and TRUNC(CP.RECDAT) <= TO_DATE('" + SCarprocedDateEnd + "','DD/MM/YYYY') ";
             }
 
             if (Carcity != "")
@@ -1843,12 +1847,12 @@ namespace Passengers.Controllers
 
             if (SComDateStart != "")
             {
-                sql += " and CH.UDATE >= TO_DATE('" + SComDateStart + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(CH.UDATE) >= TO_DATE('" + SComDateStart + "','DD/MM/YYYY') ";
             }
 
             if (SComDateEnd != "")
             {
-                sql += " and CH.UDATE <= TO_DATE('" + SComDateEnd + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(CH.UDATE) <= TO_DATE('" + SComDateEnd + "','DD/MM/YYYY') ";
             }
             if (ScarCity != "")
             {

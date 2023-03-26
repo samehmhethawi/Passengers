@@ -163,6 +163,56 @@ namespace Passengers.ViewModel
         public string CARLINECITY { get; set; }
         [Display(Name = "الموافقات الممنوحة في المعاملة")]
         public string AGREEMENTINPROCED { get; set; }
+
+
+
+        [Display(Name = "مدة التعاقد (شهر)")]
+        public long? CONTRACT_PERIOD { get; set; }
+
+        [Display(Name = "الفترة الصباحية من الساعة")]
+        public int? DAY_TRIP_FROM { get; set; }
+
+        [Display(Name = "الفترة الصباحية الى الساعة")]
+        public int? DAY_TRIP_TO { get; set; }
+
+        [Display(Name = "الفترة المسائية من الساعة")]
+        public int? NIGHT_TRIP_FROM { get; set; }
+
+        [Display(Name = "الفترة المسائية الى الساعة")]
+        public int? NIGHT_TRIP_TO { get; set; }
+
+        [Display(Name = "مسار السفرات ")]
+        public string TRIP_PATH { get; set; }
+
+        [Display(Name = "تاريخ السفر")]
+        public DateTime? TRAVEL_MONTH { get; set; }
+
+        [Display(Name = "البلد الذي سيتم السفر له")]
+        public string TRAVEL_COUNTRY { get; set; }
+
+        [Display(Name = "المنفذ الحدودي")]
+        public string TRAVEL_BOARDER { get; set; }
+
+        [Display(Name = "نص طلب البريد")]
+        public string POSTMAIL { get; set; }
+
+        [Display(Name = "المرسل")]
+        public string SENDER { get; set; }
+
+
+        [Display(Name = "رقم الكتاب")]
+        public string POSTNO { get; set; }
+
+
+        [Display(Name = "تاريخ الكتاب")]
+        public DateTime? POSTDATE { get; set; }
+
+
+        [Display(Name = "رمز المركبة الثاني")]
+        public long? CARNB2 { get; set; }
+
+
+
         
 
     }

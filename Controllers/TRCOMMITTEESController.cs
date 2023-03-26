@@ -66,12 +66,12 @@ namespace Passengers.Controllers
 
             if (COMDATESTART != "")
             {
-                sql += " and COMDATE >= TO_DATE('"+ COMDATESTART+"','DD/MM/YYYY') ";
+                sql += " and TRUNC(COMDATE) >= TO_DATE('" + COMDATESTART+"','DD/MM/YYYY') ";
             }
 
             if (COMDATEEND != "")
             {
-                sql += " and COMDATE <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(COMDATE) <= TO_DATE('" + COMDATEEND + "','DD/MM/YYYY') ";
             }
 
 

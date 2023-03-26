@@ -45,12 +45,10 @@ namespace Passengers.Controllers
             var STABNB = Request.Form["STABNB"].Trim();
             var SCITYNB = Request.Form["SCITYNB"].Trim();
             var SREGNB = Request.Form["SREGNB"].Trim();
-
             var SAGRNB = Request.Form["SAGRNB"].Trim();
             var SAGRDATEStart = Request.Form["SAGRDATEStart"].Trim();
             var SAGRDATEEnd = Request.Form["SAGRDATEEnd"].Trim();
             var SCARPROCEDNB = Request.Form["SCARPROCEDNB"].Trim();
-
             var SSESNO = Request.Form["SSESNO"].Trim();
             var SSESDATEStart = Request.Form["SSESDATEStart"].Trim();
             var SSESDATEEnd = Request.Form["SSESDATEEnd"].Trim();
@@ -79,11 +77,11 @@ namespace Passengers.Controllers
             }
             if (SAGRDATEStart != "")
             {
-                sql += " and STARTDATE >= TO_DATE('" + SAGRDATEStart + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(STARTDATE) >= TO_DATE('" + SAGRDATEStart + "','DD/MM/YYYY') ";
             }
             if (SAGRDATEEnd != "")
             {
-                sql += " and ENDDATE <= TO_DATE('" + SAGRDATEEnd + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(ENDDATE) <= TO_DATE('" + SAGRDATEEnd + "','DD/MM/YYYY') ";
             }
             if (SCARPROCEDNB != "")
             {
@@ -95,11 +93,11 @@ namespace Passengers.Controllers
             }
             if (SSESDATEStart != "")
             {
-                sql += " and SES_DATE >= TO_DATE('" + SSESDATEStart + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(SES_DATE) >= TO_DATE('" + SSESDATEStart + "','DD/MM/YYYY') ";
             }
             if (SSESDATEEnd != "")
             {
-                sql += " and SES_DATE <= TO_DATE('" + SSESDATEEnd + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(SES_DATE) <= TO_DATE('" + SSESDATEEnd + "','DD/MM/YYYY') ";
             }
          
 
@@ -131,7 +129,6 @@ namespace Passengers.Controllers
                 TABNB = commm.TABNB,
                 CITYNB = commm.CITYNB,
                 CARREGNB = commm.CARREGNB,
-
                 CARPROCEDSTEPNB = commm.CARPROCEDSTEPNB,
                 STARTDATE = commm.STARTDATE,
                 ENDDATE = commm.ENDDATE,

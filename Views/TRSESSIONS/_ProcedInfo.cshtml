@@ -297,7 +297,136 @@
                 <label>@city1</label>
             }*@
     }
+    @if (ViewBag.ProcedNb == 2023)
+    {
+        <label>رمز المركبة: @ViewBag.carnb</label>
+        <label>رقم اللوحة: @ViewBag.tabnb</label>
+        <br />
+        <label>الخط الحالي للمركبة</label><br />
+        foreach (var item7 in ViewBag.LineName)
+        {
+            <label>@item7.NAME</label>
+        }
+        <br />
+        <label>المحافظات المرتبطة بالخط:</label>
+        <br />
+        foreach (var city in ViewBag.LineCity)
+        {
+            <label>@city</label>
+        }
 
+        <label>خط سير السفرة: </label><br />
+        @ViewBag.TRIP_PATH
+        <br />
+        <label>اوقات السفرة:</label>
+        <br />
+        <label>صباحاً:</label>
+        <label> من الساعة </label>
+        @ViewBag.DAY_TRIP_FROM
+        <label>الى الساعة </label>
+        @ViewBag.DAY_TRIP_TO
+        <br />
+
+        <label>مساءاً:</label>
+
+        <label> من الساعة </label>
+        @ViewBag.NIGHT_TRIP_FROM
+        <label>الى الساعة </label>
+        @ViewBag.NIGHT_TRIP_TO
+        <br />
+        <label> مدة التعاقد: </label>
+        <label>@ViewBag.CONTRACT_PERIOD</label>
+        <label> شهراً </label>
+        <div class="row" style="background-color:darkgrey; height:1px; margin:10px; opacity:0.5;">
+        </div>
+
+        @*<label>الخط الجديد: </label>
+            <br />
+            <label>  @ViewBag.LineNew</label>
+            <br />
+            <label>المحافظات المرتبطة بالخط:</label>
+            <br />
+            foreach (var city1 in ViewBag.NEWLineCity)
+            {
+                <label>@city1</label>
+            }*@
+    }
+    @if (ViewBag.ProcedNb == 2022)
+    {
+        <label>رمز المركبة: @ViewBag.carnb</label>
+        <label>رقم اللوحة: @ViewBag.tabnb</label>
+        <br />
+        <label>الخط الحالي للمركبة</label><br />
+        foreach (var item7 in ViewBag.LineName)
+        {
+            <label>@item7.NAME</label>
+        }
+        <br />
+        <label>المحافظات المرتبطة بالخط:</label>
+        <br />
+        foreach (var city in ViewBag.LineCity)
+        {
+            <label>@city</label>
+        }
+
+        <label>البلد الذي سيتم السفر له:  </label><br />
+        @ViewBag.TRAVEL_COUNTRY
+        <br />
+        <label>تاريخ السفر:  </label>
+        @ViewBag.TRAVEL_MONTH
+        <br />
+
+
+        <label>المنفذ الحدودي:  </label>
+        @ViewBag.TRAVEL_BOARDER
+        <br />
+
+        <div class="row" style="background-color:darkgrey; height:1px; margin:10px; opacity:0.5;">
+        </div>
+
+        @*<label>الخط الجديد: </label>
+            <br />
+            <label>  @ViewBag.LineNew</label>
+            <br />
+            <label>المحافظات المرتبطة بالخط:</label>
+            <br />
+            foreach (var city1 in ViewBag.NEWLineCity)
+            {
+                <label>@city1</label>
+            }*@
+    }
+    @if (ViewBag.ProcedNb == 2000)
+    {
+
+
+
+        <label>رقم البريد:  </label>
+
+        @ViewBag.POSTNO
+        <label> تاريخ البريد: </label>
+        @ViewBag.POSTDATE
+
+        <br />
+        <label>المرسل: </label>
+        @ViewBag.SENDER
+        <br />
+        <label>مضمون البريد: </label>
+        <br />
+        @ViewBag.POSTMAIL
+        <div class="row" style="background-color:darkgrey; height:1px; margin:10px; opacity:0.5;">
+        </div>
+
+        @*<label>الخط الجديد: </label>
+            <br />
+            <label>  @ViewBag.LineNew</label>
+            <br />
+            <label>المحافظات المرتبطة بالخط:</label>
+            <br />
+            foreach (var city1 in ViewBag.NEWLineCity)
+            {
+                <label>@city1</label>
+            }*@
+    }
     <div class="window-footer">
         <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
     </div>

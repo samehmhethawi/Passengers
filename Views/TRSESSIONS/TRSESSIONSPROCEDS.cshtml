@@ -5,6 +5,26 @@
 }
 
 <style>
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+        }
     .myborder {
         border: dashed;
         border-color: aquamarine;
@@ -13,6 +33,7 @@
         padding-right: 5px;
     }
 </style>
+
 
 <style>
 
@@ -111,7 +132,40 @@
                                             <label id="UNANSWERED"></label>
                                         </td>
                                     </tr>
-                                </table>
+                                   
+                                        <tr>
+                                            <td colspan="2">
+                                                @if (ViewBag.IS_ARCHIVED == false)
+                                                {
+                                                    <div id="example">
+                                                        @*<input value="اختر ملف" class="Files btn-upload" id="DocumentsFiles" name="DocumentsFiles" type="file" data-role="upload" multiple="multiple" autocomplete="off">*@
+
+
+                                                    </div>
+                                                    <span class="btn btn-primary btn-file">
+                                                        اختر ملف . . <i class="fa fa-upload"></i> <input accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
+                                                    </span>
+
+                                                    <button class="btn btn-primary" onclick="setvvv()"> حفظ ورفع الملف</button>
+                                                }
+                                                @if (ViewBag.IS_ARCHIVED == true)
+                                                {
+                                            <div>
+                                                <label style="text-align:center;color:red;font-size:14px;">
+
+                                                    المحضر مؤرشف
+                                                    <a class='stepLnk' data-toggle='tooltip' onclick='showdoc(@ViewBag.SessionID)'  href='#'><i title="عرض الارشفة" style="font-size:25px;" class='fa fa-folder'></i></a>
+                                                </label>
+                                            </div>
+                                                }
+
+
+                                            </td>
+                                        </tr>
+                                    
+                                    
+
+                                    </table>
                             </div>
                         </div>
                     </td>
@@ -171,6 +225,13 @@
                                 {
                                     <button id="procedsetting" onclick="GetPartialProcedCount()" class="btn btn-next">اعداد طلبات الجلسة</button>
                                 }
+                                @if (ViewBag.SessionStatus == "منتهي" && ViewBag.FINISH_PRINT == 1)
+                                {
+
+                                }
+
+
+
                                 @if (ViewBag.SessionStatus == "منعقدة")
                                 {
                                     <label style="text-align:center;color:red;font-size:14px;">
@@ -209,6 +270,9 @@
                 <tr>
                     <td width="80%">
                         <div class="row SessionInfo" style="margin:0;">
+
+
+
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bordered">
                                 @if (ViewBag.SessionStatus == "فعال" && ViewBag.SessionProExisting == 0)
                                 {
@@ -319,15 +383,16 @@
             .Name("grid")
             .Columns(columns =>
             {
+
                 columns.Bound(c => c.NB).Visible(false);
                 columns.Bound(c => c.ORDR).Title("م.").Width(50).Visible(false);
-                columns.Bound(c => c.CARNB).Title("رمز المركبة").Width(150);
+                columns.Bound(c => c.CARNB).Title("رمز المركبة").ClientTemplate("#= renderCarLink_ToProced(data) #").Width(150);
                 columns.Bound(c => c.PROCEDNAME).Title("نوع المعاملة").ClientTemplate("#= renderCarLink1(data) #").Width(300);
                 columns.Bound(c => c.PROCEDNB).Title("نوع المعاملة").Visible(false);
                 columns.Bound(c => c.TYPSNAMEAGR).Width(100).Title("الموافقة");
                 columns.Bound(c => c.SESSIONNB).Title("رمز الجلسة").Visible(false);
                 columns.Bound(c => c.RECDAT).Format("{0:dd/MM/yyyy}").Title("تاريخ المعاملة").Width(150);
-                columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة").Width(150);
+                columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة").ClientTemplate("#= renderCarProcedLink_ToProced(data) #").Width(150);
                 columns.Bound(c => c.CARPROCEDSTEPNB).Title("رمز الخطوة").Visible(false);
                 columns.Bound(c => c.ISDONE).Title("منفذة").Visible(false);
 
@@ -721,7 +786,7 @@
 
         var id = @ViewBag.SessionID;
         window.open("PrintReportSession/" + id, "_blank");
-       
+
     }
 
     function openCancelSession() {
@@ -734,7 +799,30 @@
     function renderCarLink1(data) {
         return "<button style='Width:88%; text-algin:center;' onclick='GetPartialProcedinfo(" + data.CARPROCEDSTEPNB + "," + data.PROCEDNB + ")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button>";
     }
+    function renderCarLink_ToProced(data) {
+        if (data.CARNB != null) {
+            var link = "<a target='_blank' href=/procedbase/Cars/Index/" + data.CARNB + ">";
 
+            link += data.CARNB;
+
+            link += "</a>";
+
+            return link;
+        } else {
+            return "";
+        }
+       
+    }
+
+    function renderCarProcedLink_ToProced(data) {
+        var link = "<a target='_blank' href=/procedbase/Steps?id=" + data.CARPROCEDNB + ">";
+
+        link += data.CARPROCEDNB;
+
+        link += "</a>";
+
+        return link;
+    }
     function ShowProcedInfo(nb) {
         var wnd = $("#ProcedInfo").data("kendoWindow");
         wnd.center().open();
@@ -789,6 +877,7 @@
 
 
 <script>
+   
     function GetPartialProcedCount() {
 
 
@@ -834,6 +923,71 @@
 </script>
 
 <script>
+    function showdoc(NB) {
+        window.open("@Url.Action("GetReport", "TRSESSIONS")" + "?NB=" + NB , "_blank");
+
+    }
+
+
+    function setvvv() {
+
+        if ($("#DocumentsFiles").val() != "") {
+            var is_pdf = fileValidation($("#DocumentsFiles").val());
+            if (is_pdf)
+            {
+                var is_size = Filevalidationsize();
+                if (is_size)
+                {
+                      var fileUpload = $("#DocumentsFiles").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("Files", files[i]);
+            }
+            fileData.append("sesnb", @ViewBag.SessionID);
+
+
+            $.ajax({
+                url: '@Url.Action("SaveSingleDocument", "TRSESSIONS")',
+                type: "POST",
+                data: fileData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.success == true) {
+                        toastr.success(response.responseText);
+                        location.reload()
+                    } else {
+                        toastr.error(response.responseText);
+
+                    }
+
+
+                }
+            });
+                }
+                else
+                {
+                    toastr.error("حجم الملف يجب ان لا يتجاوز 4 ميغا");
+                }
+
+            } else {
+                toastr.error("يرجى اختيار ملف لاحقته PDF");
+            }
+
+
+        } else
+        {
+            toastr.error("يرجى اختيار الملف اولاً");
+        }
+
+    }
+
+
     $(document).ready(function () {
         $.ajax({
             url:"@Url.Action("GetProcedCountIstrue", "TRSESSIONS")",
@@ -859,3 +1013,40 @@
     });
 </script>
 
+
+<script type="text/javascript">
+    function fileValidation(filesss) {   
+        var fileElement = document.getElementById("DocumentsFiles");
+        var fileElement = fileElement;
+        var fileExtension = "";
+        if (fileElement.value.lastIndexOf(".") > 0) {
+            fileExtension = fileElement.value.substring(fileElement.value.lastIndexOf(".") + 1, fileElement.value.length);
+        }
+        if (fileExtension.toLowerCase() == "pdf") {
+            return true;
+        }
+        else {
+           /* alert("يجب اختيار ملف PDF فقط.");*/
+            fileElement.value = '';
+            return false;
+        }
+    }
+
+    function Filevalidationsize() {
+        const fi = document.getElementById('DocumentsFiles');      
+        if (fi.files.length > 0) {                      
+            const fsize = fi.files.item(0).size;           
+            const file = Math.round((fsize / 1024));
+           
+            if (fsize > 4194304) {
+               
+                    return false;                       
+            } else {
+               
+                    return true;
+                }           
+        }
+    }
+</script>
+<style>
+</style>

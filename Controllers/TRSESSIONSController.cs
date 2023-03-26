@@ -11,12 +11,18 @@ using System.Data.Entity;
 using ClosedXML.Excel;
 using System.IO;
 using Newtonsoft.Json;
+using System.Configuration;
+using System.Net;
+using System.Text;
 
 namespace Passengers.Controllers
 {
+
     [checksession, Authorize, RedirectOnError, CanDoIt]
     public class TRSESSIONSController : Controller
     {
+        public string DateFormat = "yyyy" ;
+       // private static string FTPFileName = "";
         private ProcedContext db = new ProcedContext();
         private ValidationController validation = new ValidationController();
         // GET: TRSESSIONS
@@ -55,8 +61,9 @@ namespace Passengers.Controllers
             var SESDATEEND = Request.Form["SESDATEEND"].Trim();
             var STATUS = Request.Form["STATUS"].Trim();
             var SESCITYNB = Request.Form["SESCITYNB"].Trim();
+            var StrSessArc = Request.Form["StrSessArc"].Trim();
 
-
+            
 
             if (SESNO != "")
             {
@@ -69,14 +76,17 @@ namespace Passengers.Controllers
 
             if (SESDATESTART != "")
             {
-                sql += " and SESDATE >= TO_DATE('" + SESDATESTART + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(SESDATE) >= TO_DATE('" + SESDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (SESDATEEND != "")
             {
-                sql += " and SESDATE <= TO_DATE('" + SESDATEEND + "','DD/MM/YYYY') ";
+                sql += " and TRUNC(SESDATE) <= TO_DATE('" + SESDATEEND + "','DD/MM/YYYY') ";
             }
-
+            if (StrSessArc != "")
+            {
+                sql += " and IS_ARCHIVED =" + StrSessArc;
+            }
 
             CodesController bb = new CodesController();
 
@@ -118,6 +128,9 @@ namespace Passengers.Controllers
                 ORDR = commm.ORDR,
                 IUSER = commm.IUSER,
                 IDATE = commm.IDATE,
+                IS_ARCHIVED = commm.IS_ARCHIVED,
+                FTP_PATH = commm.FTP_PATH,
+
 
 
                 Seq = (request.Page - 1) * request.PageSize + (++index)
@@ -270,7 +283,7 @@ namespace Passengers.Controllers
             ViewBag.FINISH_PRINT = ses.FINISH_PRINT;
             string sql = "SELECT COUNT(*) FROM TRSESSIONS_PROCEDS WHERE SESSIONNB = " + id;
             ViewBag.SessionProExisting = db.Database.SqlQuery<int>(sql).FirstOrDefault();
-
+            ViewBag.IS_ARCHIVED = ses.IS_ARCHIVED;
             ViewBag.SessionIsPrinted = db.Database.SqlQuery<int>("select count(*) from TRSESSIONS_REPORTS where SESSIONNB =" + id).FirstOrDefault();
             return View();
         }
@@ -859,6 +872,91 @@ namespace Passengers.Controllers
 
                 return PartialView("_ProcedInfo");
             }
+
+            else if (PRONB == 2023)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var Proced = db.CARPROCEDS.Find(pro);
+                var car = db.Database.SqlQuery<CAR>("select * from cars where nb = " + Proced.CARNB).FirstOrDefault();
+                ViewBag.carnb = car.NB;
+                ViewBag.tabnb = car.TABNU;
+                var proced_line = db.Database.SqlQuery<PROCED_LINES>("select * from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + car.LIN).ToList();
+                ViewBag.TRIP_PATH = proced_line.TRIP_PATH;
+                ViewBag.CONTRACT_PERIOD = proced_line.CONTRACT_PERIOD;
+                ViewBag.DAY_TRIP_FROM = proced_line.DAY_TRIP_FROM;
+                ViewBag.DAY_TRIP_TO = proced_line.DAY_TRIP_TO;
+                ViewBag.NIGHT_TRIP_FROM = proced_line.NIGHT_TRIP_FROM;
+                ViewBag.NIGHT_TRIP_TO = proced_line.NIGHT_TRIP_TO;
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + car.LIN).ToList();
+              //  var NEWLINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                //ViewBag.NEWLineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + NEWLINENB).ToList();
+              //  ViewBag.NEWLineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + NEWLINENB).ToList();
+
+
+
+                return PartialView("_ProcedInfo");
+            }
+
+            else if (PRONB == 2022)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var Proced = db.CARPROCEDS.Find(pro);
+                var car = db.Database.SqlQuery<CAR>("select * from cars where nb = " + Proced.CARNB).FirstOrDefault();
+                ViewBag.carnb = car.NB;
+                ViewBag.tabnb = car.TABNU;
+                var proced_line = db.Database.SqlQuery<PROCED_LINES>("select * from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + car.LIN).ToList();
+             
+                
+                ViewBag.TRAVEL_MONTH = proced_line.TRAVEL_MONTH;
+                ViewBag.TRAVEL_COUNTRY = proced_line.TRAVEL_COUNTRY;
+                ViewBag.TRAVEL_BOARDER = proced_line.TRAVEL_BOARDER;
+               
+
+
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + car.LIN).ToList();
+                //  var NEWLINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                //ViewBag.NEWLineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + NEWLINENB).ToList();
+                //  ViewBag.NEWLineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + NEWLINENB).ToList();
+
+
+
+                return PartialView("_ProcedInfo");
+            }
+
+            else if (PRONB == 2000)
+            {
+                var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
+                var Proced = db.CARPROCEDS.Find(pro);
+               // var car = db.Database.SqlQuery<CAR>("select * from cars where nb = " + Proced.CARNB).FirstOrDefault();
+               // ViewBag.carnb = car.NB;
+               // ViewBag.tabnb = car.TABNU;
+               var proced_line = db.Database.SqlQuery<PROCED_LINES>("select * from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+               // ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + car.LIN).ToList();
+
+
+                ViewBag.POSTMAIL = proced_line.POSTMAIL;
+                ViewBag.SENDER = proced_line.SENDER;
+                ViewBag.POSTNO = proced_line.POSTNO;
+                ViewBag.POSTDATE = proced_line.POSTDATE;
+
+                
+                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+                ViewBag.ProcedNb = PRONB;
+                //ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + car.LIN).ToList();
+                //  var NEWLINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                //ViewBag.NEWLineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + NEWLINENB).ToList();
+                //  ViewBag.NEWLineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + NEWLINENB).ToList();
+
+
+
+                return PartialView("_ProcedInfo");
+            }
             else
             {
                 return PartialView("_ProcedInfo");
@@ -1104,6 +1202,252 @@ namespace Passengers.Controllers
 
 
         }
-        
+
+       
+
+        public static string UploadFile(byte[] file,string pathNameYear,  string fileName)
+        {
+            var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
+            var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
+            var FTPFullPath = ConfigurationManager.AppSettings["FtpHomeDirectory"];
+            FTPFullPath +=  pathNameYear;
+            var FTPURL = ConfigurationManager.AppSettings["FtpURL"];
+            string uploadedFullPath = FTPURL + FTPFullPath +  fileName;
+            string uploadedRelativePath  = FTPFullPath + fileName;// ((FTPFullPath != null && FTPFullPath.EndsWith("" + '/')) ? "" : "" + '/') + pathToUploadTo + PathSeparator + fileName;
+
+            try
+            {
+                MakeFTPDir(FTPFullPath);
+            }
+            catch (Exception)
+            {
+            }
+           
+
+            try
+            {
+                //Create FTP Request.
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(uploadedFullPath);
+                request.Method = WebRequestMethods.Ftp.UploadFile;
+                request.Timeout = 5000;
+
+                //Enter FTP Server credentials.
+                request.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
+                request.ContentLength = file.Length;
+                request.UsePassive = true;
+                request.UseBinary = true;
+                request.ServicePoint.ConnectionLimit = file.Length;
+                //request.EnableSsl = false;
+
+                using (Stream requestStream = request.GetRequestStream())
+                {
+                    requestStream.Write(file, 0, file.Length);
+                    requestStream.Close();
+                }
+
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+                response.Close();
+            }
+            catch (WebException)
+            {
+                uploadedFullPath = null;
+               // return Json(new { success = false, responseText = "حدث خطأ اثناء الارشفة" }, JsonRequestBehavior.AllowGet);
+
+            }
+            return uploadedRelativePath;
+        }
+        public ActionResult SaveSingleDocument(HttpPostedFileBase Files,long sesnb)
+        {
+            try 
+            {
+                var ses = db.TRSESSIONS.Find(sesnb);
+
+                if(ses.IS_ARCHIVED == true)
+                {
+                    return Json(new { success = false, responseText = "المحضر مؤرشف مسبقاً" }, JsonRequestBehavior.AllowGet);
+
+                }
+                byte[] fileContent = null;
+                using (var reader = new System.IO.BinaryReader(Files.InputStream))
+                {
+                    fileContent = reader.ReadBytes(Files.ContentLength);
+                }
+                var date = DateTime.Now;
+                var pathNameYear = date.ToString("yyyy");
+                pathNameYear += "/" + ses.SESCITYNB + "/";
+
+
+                var uploadedFullPath = UploadFile(fileContent, pathNameYear, Files.FileName);
+
+
+                if (ses != null)
+                {
+                    ses.FTP_PATH = uploadedFullPath;
+                    ses.IS_ARCHIVED = true;
+                    db.Entry(ses).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+            }
+            catch (Exception ex) 
+            { 
+            return Json(new { success = false, responseText = "حدث خطأ اثناء الارشفة" }, JsonRequestBehavior.AllowGet);
+
+            }
+            return Json(new { success = true, responseText = "تم ارشفة الملف" }, JsonRequestBehavior.AllowGet);
+        }
+
+        private static string MakeFTPDir(string pathToCreate)
+        {
+            FtpWebRequest reqFTP = null;
+            Stream ftpStream = null;
+            var FtpHomeDirectory = ConfigurationManager.AppSettings["FtpHomeDirectory"];
+            var FtpURL = ConfigurationManager.AppSettings["FtpURL"];
+         var   FTPFullPath = string.Format("{0}{1}{2}", FtpURL, "/", FtpHomeDirectory);
+            var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
+            var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
+            string currentDir = pathToCreate.Contains(FtpHomeDirectory) ? FtpURL : FTPFullPath;
+
+            string[] subDirs = pathToCreate.Split('/');
+
+            foreach (string subDir in subDirs)
+            {
+                try
+                {
+                    currentDir = currentDir + '/' + subDir;
+                    reqFTP = (FtpWebRequest)FtpWebRequest.Create(currentDir);
+                    reqFTP.Method = WebRequestMethods.Ftp.MakeDirectory;
+                    reqFTP.Timeout = 5000;
+                    reqFTP.UseBinary = true;
+                    reqFTP.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
+                    FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
+                    ftpStream = response.GetResponseStream();
+                    ftpStream.Close();
+                    response.Close();
+                }
+                catch
+                {
+                    //directory already exist I know that is weak but there is no way to check if a folder exist on ftp...
+                }
+            }
+            return currentDir;
+        }
+
+
+        public FileResult GetReport(long NB)
+        {
+            try
+            {
+                var path = db.TRSESSIONS.Find(NB).FTP_PATH;
+                var FTPURL = ConfigurationManager.AppSettings["FtpURL"];
+                string fileName = Path.GetFileName(path);
+                string mimeType = MimeMapping.GetMimeMapping(fileName);
+                string ReportURL = path;
+              //  byte[] FileBytes = System.IO.File.ReadAllBytes(ReportURL);
+                byte[] FileBytes = GetFileContent(path);
+
+                return File(FileBytes, mimeType);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static byte[] GetFileContent(string absolutePathToFile)
+        {
+            try
+            {
+                var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
+                var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
+                var FTPURL = ConfigurationManager.AppSettings["FtpURL"];
+                WebClient request = new WebClient();
+                request.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
+                var path = FTPURL + absolutePathToFile;
+                byte[] fileData = request.DownloadData(path);
+
+                return fileData;
+            }
+            catch (Exception EE)
+            {
+                return null;
+            }
+        }
+
+        public ActionResult DeleteDocument(long sesnb)
+        {
+            try
+            {
+                var data = db.TRSESSIONS.Find(sesnb);
+                if (data != null)
+                {
+                    if (data.IS_ARCHIVED == false)
+                    {
+                        return Json(new { success = false, responseText = "لا يوجد ارشفة لهذه الجلسة " }, JsonRequestBehavior.AllowGet);
+
+                    }
+                    var path = data.FTP_PATH;
+
+                    var is_true = DeleteFTPFile(path);
+                    if (is_true) 
+                    {
+                        data.IS_ARCHIVED = false;
+                        data.FTP_PATH = "";
+                        db.Entry(data).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        return Json(new { success = false, responseText = "حدث خطأ " }, JsonRequestBehavior.AllowGet);
+
+                    }
+
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, responseText = "حدث خطأ " }, JsonRequestBehavior.AllowGet);
+
+            }
+            return Json(new { success = true, responseText = "تم الحذف" }, JsonRequestBehavior.AllowGet);
+
+        }
+
+        public static bool DeleteFTPFile(string fullPathToFileToDelete)
+        {
+            FtpWebRequest reqFTP = null;
+            Stream ftpStream = null;
+            bool success = false;
+            try
+            {
+                var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
+                var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
+                var FTPURL = ConfigurationManager.AppSettings["FtpURL"] + fullPathToFileToDelete;
+
+                reqFTP = (FtpWebRequest)FtpWebRequest.Create(FTPURL);
+                reqFTP.Method = WebRequestMethods.Ftp.DeleteFile;
+                reqFTP.Timeout = 50000;
+                reqFTP.UseBinary = true;
+                reqFTP.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
+                FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
+                ftpStream = response.GetResponseStream();
+                ftpStream.Close();
+                response.Close();
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                success = false;
+
+            }
+            return success;
+        }
     }
 }
+    
+    
