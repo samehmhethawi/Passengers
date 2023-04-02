@@ -70,10 +70,13 @@
 
 
         var windowWidget = $("#AddCOMMITTEE").data("kendoWindow");
-
+        if ($("#AddComCity").val() == "") {
+            toastr.error("يجب اختيار المحافظة");
+        } else {
 
         var validator = $("#Add_comm").kendoValidator().data("kendoValidator");
-        if (validator.validate()) {
+        if (validator.validate())
+        {
             kendo.ui.progress(windowWidget.element, true);
             var model = {
                 COMNO: $('#AddComNo').val(),
@@ -101,5 +104,8 @@
                 }
             });
         }
+        }
+
+
        }
 </script>

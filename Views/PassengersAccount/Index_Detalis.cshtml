@@ -1,0 +1,126 @@
+﻿
+@{
+    ViewBag.Title = "المحاسبة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    #proced_base {
+        position: relative;
+        text-align: center;
+    }
+
+        #proced_base h5 {
+            color: #546E81;
+        }
+
+        #proced_base h1 {
+            color: #2B6AD0;
+        }
+
+        #proced_base .container {
+            position: absolute;
+            top: 100px;
+            right: 0;
+            left: 0;
+            max-width: 1200px;
+        }
+
+        #proced_base .nopadding {
+            padding: 0;
+        }
+
+        #proced_base .grid {
+            height: 300px;
+            width: auto;
+            margin: 5px;
+            border-bottom: 5px solid #2B6AD0;
+            text-align: center;
+            cursor: pointer;
+            -webkit-transform: perspective(1px) translateZ(0);
+            transform: perspective(1px) translateZ(0);
+            box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+            -webkit-transition-duration: 0.3s;
+            transition-duration: 0.3s;
+            -webkit-transition-property: transform;
+            transition-property: transform;
+        }
+
+            #proced_base .grid:hover {
+                -webkit-transform: scale(1.03);
+                transform: scale(1.03);
+            }
+
+        #proced_base .grid-icon {
+            height: 100px;
+            width: auto;
+            margin-top: 60px;
+        }
+
+        #proced_base .grid-title {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+            #proced_base .grid-title h4 {
+                color: #68A4F1
+            }
+
+            #proced_base .grid-title h6 {
+                color: #fff
+            }
+
+</style>
+<div style="height:550px">
+    <div class="row" style="height: 25%; margin-left: 25px; margin-right: 25px">
+        <div class="col-lg-12" style="text-align:center;font-size:24px;margin-top:25px">
+            <span> لجنة نقل ركاب محافظة</span>
+            <span>
+                @ViewBag.cityname
+            </span>
+        </div>
+
+    </div>
+    <div class="row" style="height: 25%; margin-left: 25px; margin-right: 25px">
+        <div class="col-lg-12" style="text-align:center;font-size:24px;" >
+           <span>
+               رصيدك الحالي
+           </span><br />
+            <span style="font-size: 30px; color:red; font-weight:bold;">
+                <span>
+                    @ViewBag.amount
+                </span>
+            </span>
+        </div>
+    </div>
+    <section id="proced_base">
+        <div class="row" style="height: 50%; text-align: center; margin: 25px">
+
+            <div class="col-lg-6" style="text-align:center">
+                <a href="@Url.Action("Index", "ProcedTypes", new { Area = "Indexes" })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-book fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">المصاريف والنفقات</h4>
+                            <h6 class="text-center">اضافة ومعالجة المصاريف والنفقات</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+
+            <div class="col-lg-6" style="text-align:center">
+                <a href="@Url.Action("TRGET_ORDERS_Index", "PassengersAccount", new { citynb = ViewBag.citynb })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-book fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">كتب التحويل</h4>
+                            <h6 class="text-center">اضافة ومعالجة كتب التحويل</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </section>
+</div>
+

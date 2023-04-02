@@ -1,7 +1,10 @@
 ﻿using Proced.DataAccess.Models.CF;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -12,7 +15,7 @@ namespace Passengers.Controllers
         public ProcedContext db = new ProcedContext();
         // GET: Codes
 
-        public bool IsAdmin()
+        public  bool IsAdmin()
         {
 
             var usernb = Utility.MyNB();
@@ -23,7 +26,7 @@ namespace Passengers.Controllers
             { return true; }
 
         }
-        public bool IsAdminCity()
+        public  bool IsAdminCity()
         {
             var usernb = Utility.MyNB();
             var admin = db.Database.SqlQuery<int>("select 1 from APPMGR.USER_ROLES where ROLENB = 1000 and USERNB = " + usernb).FirstOrDefault();
@@ -236,7 +239,151 @@ namespace Passengers.Controllers
             return Json(reg, JsonRequestBehavior.AllowGet);
 
         }
-        
+
+        public ActionResult GetAgrStatus()
+        {
+            var STATUS = db.TRAGREEMENTS_STATUS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(STATUS, JsonRequestBehavior.AllowGet);
+
+        }
+
+
+        public static string UploadFile(byte[] file, string FTPFullPath, string fileName ,string FtpHomeDirectory,long nb)
+        {
+            var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
+            var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
+            var FTPURL = ConfigurationManager.AppSettings["FtpURL"];
+            string uploadedFullPath = FTPURL + FTPFullPath + "(" + nb + ")"+fileName;
+            string uploadedRelativePath = FTPFullPath + "(" + nb + ")" + fileName;// ((FTPFullPath != null && FTPFullPath.EndsWith("" + '/')) ? "" : "" + '/') + pathToUploadTo + PathSeparator + fileName;
+            try
+            {
+                MakeFTPDir(FTPFullPath, FtpHomeDirectory);
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+              //  string uploadfilename = Guid.NewGuid().ToString() + "-" + Path.GetFileName(txtDocFile.FileName);
+                //Create FTP Request.
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(uploadedFullPath);
+                request.Method = WebRequestMethods.Ftp.UploadFile;
+                request.Timeout = 5000;
+                //Enter FTP Server credentials.
+                request.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
+                request.ContentLength = file.Length;
+                request.UsePassive = true;
+                request.UseBinary = true;
+                request.ServicePoint.ConnectionLimit = file.Length;
+                //request.EnableSsl = false;
+                using (Stream requestStream = request.GetRequestStream())
+                {
+                    requestStream.Write(file, 0, file.Length);
+                    requestStream.Close();
+                }
+
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+                response.Close();
+            }
+            catch (WebException)
+            {
+                uploadedFullPath = null;
+                // return Json(new { success = false, responseText = "حدث خطأ اثناء الارشفة" }, JsonRequestBehavior.AllowGet);
+
+            }
+            return uploadedRelativePath;
+        }
+
+        private static string MakeFTPDir(string pathToCreate,string FtpHomeDirectory)
+        {
+            FtpWebRequest reqFTP = null;
+            Stream ftpStream = null;
+            
+            var FtpURL = ConfigurationManager.AppSettings["FtpURL"];
+            var FTPFullPath = string.Format("{0}{1}{2}", FtpURL, "/", FtpHomeDirectory);
+            var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
+            var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
+            string currentDir = pathToCreate.Contains(FtpHomeDirectory) ? FtpURL : FTPFullPath;
+
+            string[] subDirs = pathToCreate.Split('/');
+
+            foreach (string subDir in subDirs)
+            {
+                try
+                {
+                    currentDir = currentDir + '/' + subDir;
+                    reqFTP = (FtpWebRequest)FtpWebRequest.Create(currentDir);
+                    reqFTP.Method = WebRequestMethods.Ftp.MakeDirectory;
+                    reqFTP.Timeout = 5000;
+                    reqFTP.UseBinary = true;
+                    reqFTP.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
+                    FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
+                    ftpStream = response.GetResponseStream();
+                    ftpStream.Close();
+                    response.Close();
+                }
+                catch
+                {
+                    //directory already exist I know that is weak but there is no way to check if a folder exist on ftp...
+                }
+            }
+            return currentDir;
+        }
+
+        public static byte[] GetFileContent(string absolutePathToFile)
+        {
+            try
+            {
+                var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
+                var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
+                var FTPURL = ConfigurationManager.AppSettings["FtpURL"];
+                WebClient request = new WebClient();
+                request.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
+                var path = FTPURL + absolutePathToFile;
+                byte[] fileData = request.DownloadData(path);
+
+                return fileData;
+            }
+            catch (Exception EE)
+            {
+                return null;
+            }
+        }
+
+        public static bool DeleteFTPFile(string fullPathToFileToDelete)
+        {
+            FtpWebRequest reqFTP = null;
+            Stream ftpStream = null;
+            bool success = false;
+            try
+            {
+                var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
+                var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
+                var FTPURL = ConfigurationManager.AppSettings["FtpURL"] + fullPathToFileToDelete;
+
+                reqFTP = (FtpWebRequest)FtpWebRequest.Create(FTPURL);
+                reqFTP.Method = WebRequestMethods.Ftp.DeleteFile;
+                reqFTP.Timeout = 50000;
+                reqFTP.UseBinary = true;
+                reqFTP.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
+                FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
+                ftpStream = response.GetResponseStream();
+                ftpStream.Close();
+                response.Close();
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                success = false;
+
+            }
+            return success;
+        }
     }
     
 }

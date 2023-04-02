@@ -1,0 +1,529 @@
+﻿
+@{
+    ViewBag.Title = "كتب التحويل";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+
+    
+
+    .bordered {
+        border: 1px dashed #a0ddd8;
+        transition: all ease-in-out 0.3s;
+    }
+
+    .row.SessionInfo > .bordered {
+        border: 1px dashed #ccc;
+    }
+
+        .row.SessionInfo > .bordered:hover {
+            border: 2px dashed #5264f3;
+            background-color: #bbc6cc;
+        }
+
+    .row.SessionInfo {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+        .row.SessionInfo > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+            padding-top: 7px;
+        }
+</style>
+
+
+@section PartialHeader{
+    <div class="panel-heading1 " id="searchPanel">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> رقم الكتاب</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @Html.Kendo().TextBox().Name("NO").HtmlAttributes(new { placeholder = " رقم الكتاب" })
+                </div>
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> المحافظة</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر محافظة ")
+                                    .Name("CITYNB")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> التاريخ من</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DatePicker()
+                        .Name("DATEStart")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ الكتاب من", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> التاريخ الى</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DatePicker()
+                        .Name("DATEEnd")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ الكتاب الى", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                    )
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> حالة الكتاب</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر  حالة ")
+                                    .Name("Status")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetStatus", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> حالة الارشفة</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر حالة الارشفة")
+                                    .Name("StrSessArc")
+                                    .DataTextField("Text")
+                                    .DataValueField("Value")
+                                    .BindTo(new List<SelectListItem>() {
+                                          new SelectListItem() {
+                                              Text = "مؤرشفة",
+                                              Value = "1"
+                                          },
+                                          new SelectListItem() {
+                                              Text = "غير مؤرشفة",
+                                              Value = "0"
+                                          }
+                                      })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<!-- Grid  -->
+<div>
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRGET_ORDERS>()
+            .Name("grid").AutoBind(false)
+            .Columns(columns =>
+            {
+                columns.Template(t => { }).Title("م.").ClientTemplate(
+                 "#= isArchived(data) #"
+               ).Width(80);
+                columns.Bound(c => c.FTP_PATH).Visible(false);
+                columns.Bound(c => c.IS_ARCHIVED).Visible(false);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150).Title("المحافظة");
+                columns.Bound(c => c.CITYNB).Visible(false);
+                columns.Bound(c => c.NO).Width(150).Title("رقم الكتاب");
+                columns.Bound(c => c.GDATE).Format("{0:dd/MM/yyyy}").Width(150).Title("تاريخ الكتاب");
+                columns.Bound(c => c.STATUS).Visible(false);
+                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150).Title("الحالة");
+                columns.Bound(c => c.FROMDATE).Format("{0:dd/MM/yyyy}").Width(200).Title("تاريخ الرسوم من");
+                columns.Bound(c => c.TODATE).Format("{0:dd/MM/yyyy}").Width(200).Title("تاريخ الرسوم الى");
+                columns.Bound(c => c.AMOUNT).Width(200).Title("القيمة الاجمالية");
+
+                columns.Bound(c => c.CONFIRM_DATE).Format("{0:dd/MM/yyyy}").Width(200).Title("تاريخ التثبيت");
+
+
+
+                columns.Bound(c => c.NOTES).Width(400).Title("ملاحظات");
+
+                columns.Command(command =>
+                {
+                    //command.Custom("Preview").Click("Preview").Text(" ");
+                    //    command.Custom("Edit").Click("Edit").Text(" ");
+                    //  command.Custom("Delete").Click("Delete").Text(" ");
+                    //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
+                    //  command.Custom("Details2").Click("Details2").Text(" ");
+                    //command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
+                }).Width(180);
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(10)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("TRGET_ORDERS_Read", "PassengersAccount")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+                toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("setIcons2")
+            .DataBound("setIcons2")
+            .Sort("setIcons2")
+            .Filter("setIcons2")
+            .Group("setIcons2")
+            .Page("setIcons2")
+            .Cancel("setIcons2")
+        //.Edit("hideIdField")
+        )
+)
+
+</div>
+
+<!-- Add TRGET_ORDERS-->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("AddTRGET_ORDERS")
+            .Title("اضافة تحويل جديد")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_ORDERS">
+               <div class="row col-11">
+                    <div class="col-lg-1 col-md-1 col-sm-12">
+                     رقم الكتاب
+                    </div>
+
+                   <div class="col-lg-2 col-md-2 col-sm-12">
+                       @Html.Kendo().TextBox().Name("AddORDERSNo").HtmlAttributes(new { placeholder = "رقم الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+
+
+                   </div>
+
+                   <div class="col-lg-1 col-md-1 col-sm-12">
+                    تاريخ الكتاب
+                   </div>
+
+                   <div class="col-lg-2 col-md-2 col-sm-12">
+                          @(Html.Kendo().DatePicker()
+                                  .Name("AddGDATEDate").Format("{0:dd/MM/yyyy}")
+                                  .HtmlAttributes(new { placeholder = "تاريخ الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                  .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                   </div>
+                    <div class="col-lg-1 col-md-1 col-sm-12" >
+                   المحافظة
+                   </div>
+
+                   <div class="col-lg-2 col-md-2 col-sm-12">
+                          @(Html.Kendo().DropDownList()
+                                    .Name("AddCITYNB")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                   </div>
+               </div>
+               <br />
+               <div class="row col-11">
+                    <div class="col-md-1 col-sm-12">
+                        تاريخ الرسوم
+                    </div>
+
+                    <div class="col-md-4 col-sm-12">
+
+                       @(Html.Kendo().DateTimePicker()
+                                        .Name("AddFROMDATE")
+                                        .Format("{0:dd/MM/yyyy HH:mm:ss}")
+                                        .TimeFormat("HH:mm:ss")
+                                        //.Format("dd/MM/yyyy HH:mm")
+                                        .HtmlAttributes(new { placeholder = "تاريخ من", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                        .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                    </div>
+
+                    <div class="col-md-1 col-sm-12">
+                        تاريخ الرسوم
+                    </div>
+
+                    <div class="col-md-4 col-sm-12">
+                              @(Html.Kendo().DateTimePicker()
+                                            .Name("AddTODATE").Format("{0:dd/MM/yyyy HH:mm:ss}")
+                                        .TimeFormat("HH:mm:ss")
+                                            .HtmlAttributes(new { placeholder = "تاريخ الى", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                            .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                        )
+
+
+                    </div>
+               </div>
+
+
+
+               <div class="row col-11">
+                   <div class="col-md-12 col-sm-12" style="text-align:center;">
+                       <button class="btn btn-primary hvr-box-shadow-outset" onclick="GetResult()" >بحث. . </button>
+                   </div>
+               </div>
+               <br />
+
+               <div class="row col-11" id="Result" style="text-align:center;">
+                    <div class="col-lg-12" style="text-align:center;">
+                           <table width="50%" style="margin-left: auto; margin-right: auto;">
+
+                               <tbody>
+                                     <tr>
+                                           <td  style="text-align: center;">
+
+                                               <div class="row  SessionInfo">
+                                                    <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 bordered">
+                                                          <span style="text-align: center;">
+                                                           عدد الرسوم
+                                                           </span>
+                                                    </div>
+
+                                                   <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 bordered">
+                                                          <span style="text-align: center;">
+                                                           القيمة الاجمالية
+                                                           </span>
+                                                   </div>
+                                               </div>
+
+
+
+                                           </td>
+                                       </tr>
+                                       <tr>
+                                           <td  style="text-align: center;">
+                                                <div class="row  SessionInfo">
+                                                     <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 bordered">
+                                                         <span id="Result_count" style="text-align: center;">
+                                               12
+                                               </span>
+                                                    </div>
+
+                                                   <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 bordered">
+                                                          <span id="Result_amount" style="text-align: center;">
+                                               250000
+                                               </span>
+                                                   </div>
+                                                    </div>
+                                               
+                                           </td>
+                                           
+                                       </tr>
+                               </tbody>
+                           </table>
+                    </div>
+               </div>
+               <div class="row col-11">
+
+               </div>
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveAddTRGET_ORDERS()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(1200)
+            .Height(700)
+            .Actions(actions => actions.Pin().Minimize().Maximize().Close())
+            .Pinned()
+            )
+    <!-- Save Add Committee-->
+    <script>
+        function SaveAddTRGET_ORDERS() {
+
+
+            var windowWidget = $("#AddTRGET_ORDERS").data("kendoWindow");
+            if ($("#AddCITYNB").val() == "") {
+            toastr.error("يجب اختيار المحافظة");
+        } else {
+
+                var validator = $("#Add_ORDERS").kendoValidator().data("kendoValidator");
+        if (validator.validate())
+        {
+            kendo.ui.progress(windowWidget.element, true);
+            var model = {
+                CITYNB: $('#AddCITYNB').val(),
+
+                NO: $('#AddORDERSNo').val(),
+                GDATE: $("#AddGDATEDate").val(),
+
+                FROMDATE: $("#AddFROMDATE").val(),
+                TODATE: $("#AddTODATE").val(),
+
+
+            }
+
+            $.ajax({
+                type: "POST",
+                data: model,
+                url: "@Url.Action("TRGET_ORDERS_Create", "PassengersAccount")",
+                success: function (response) {
+                    if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+        }
+        }
+
+
+       }
+    </script>
+
+    <script>
+        function setIcons2() {
+            setIcons();
+            $(".k-grid-Deletear").addClass(" hvr-box-shadow-outset");
+            $(".k-grid-Deletear").kendoButton({
+                icon: "i fa fa-trash text-danger"
+            });
+            $(".k-grid-Deletear").kendoTooltip({
+                content: "حذف الارشفة",
+                position: "left",
+                autoHide: true,
+            });
+        }
+        $("#AddNew").click(function () {
+            var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
+            $("#AddGDATEDate").data("kendoDatePicker").value(todayDate);
+            $('#AddORDERSNo').val("");
+            // $('#AddComDate').val("");
+            $("#AddCITYNB").data("kendoDropDownList").value(1)
+            $("#Add_comm span.k-tooltip-validation").hide();
+
+            var wnd = $("#AddTRGET_ORDERS").data("kendoWindow");
+            wnd.center().open();
+        });
+
+        
+
+        function isArchived(data) {
+            var isArchived = false;
+            if (data != null && data.IS_ARCHIVED == true) {
+                isArchived = true;
+            }
+
+            if (isArchived) {
+                return "<a  class='stepLnk' data-toggle='tooltip' onclick='showdoc(" + data.NB + ")' title='مؤرشفة' href='#'><i class='fa fa-folder'></i> " + data.Seq + "</a>";
+            }
+            else {
+                return data.Seq;
+            }
+
+        }
+
+         function showdoc(NB) {
+
+
+        window.open("@Url.Action("GetReport", "TRCOMMITTEES")" + "?NB=" + NB , "_blank");
+
+    }
+    </script>
+
+    <script>
+
+        function GetResult() {
+
+
+            var CITYNB1= $('#AddCITYNB').val();
+
+              
+            var FROMDATE1 = $('#AddFROMDATE').val();
+
+           // var FROMDATE1 = $("#AddFROMDATE").data("kendoDateTimePicker").value();
+            var TODATE1 =  $('#AddTODATE').val();
+
+            alert(FROMDATE1);
+            $.ajax({
+                type: "POST",
+                data: { citynb: CITYNB1, FROMDATE: FROMDATE1, TODATE: TODATE1},
+                url: "@Url.Action("GetResult", "PassengersAccount")",
+                success: function (response) {
+                    if (response.success) {
+                        
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                      
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+
+        }
+    </script>

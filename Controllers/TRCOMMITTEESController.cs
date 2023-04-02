@@ -7,6 +7,8 @@ using System.Web;
 using System.Web.Mvc;
 using Kendo.Mvc.Extensions;
 using System.Data.Entity;
+using System.Configuration;
+using System.IO;
 
 namespace Passengers.Controllers
 {
@@ -106,6 +108,8 @@ namespace Passengers.Controllers
                 ORDR = commm.ORDR,
                 IUSER = commm.IUSER,
                 IDATE = commm.IDATE,
+                IS_ARCHIVED = commm.IS_ARCHIVED,
+                FTP_PATH = commm.FTP_PATH,
                 Seq = (request.Page -1) * request.PageSize + (++index)
             });
             return Json(result);
@@ -372,6 +376,126 @@ namespace Passengers.Controllers
             
         }
 
+
+        public ActionResult SaveSingleDocument(HttpPostedFileBase Files, long comnb)
+        {
+            try
+            {
+                var ses = db.TRCOMMITTEES.Find(comnb);
+
+                if (ses.IS_ARCHIVED == true)
+                {
+                    return Json(new { success = false, responseText = " مؤرشف مسبقاً" }, JsonRequestBehavior.AllowGet);
+
+                }
+                byte[] fileContent = null;
+                using (var reader = new System.IO.BinaryReader(Files.InputStream))
+                {
+                    fileContent = reader.ReadBytes(Files.ContentLength);
+                }
+
+                var date = DateTime.Now;
+                var pathNameYear = date.ToString("yyyy");
+                pathNameYear += "/" + ses.COMCITYNB + "/";
+                var FTPFullPath = ConfigurationManager.AppSettings["FtpHomeTRCOMMITTEES"];
+                FTPFullPath += pathNameYear;
+
+                var uploadedFullPath = CodesController.UploadFile(fileContent, FTPFullPath, Files.FileName, FTPFullPath, comnb);
+
+
+                if (ses != null)
+                {
+                    ses.FTP_PATH = uploadedFullPath;
+                    ses.IS_ARCHIVED = true;
+                    db.Entry(ses).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = "حدث خطأ اثناء الارشفة" }, JsonRequestBehavior.AllowGet);
+
+            }
+            return Json(new { success = true, responseText = "تم ارشفة الملف" }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetReport(long NB)
+        {
+            try
+            {
+                CodesController cc = new CodesController();
+                var ses = db.TRCOMMITTEES.Find(NB);
+                bool IsAdmin = cc.IsAdmin();
+                bool IsAdminCity = cc.IsAdminCity();
+                if (!IsAdmin && !IsAdminCity)
+                {
+
+                    var mycitynb = Utility.MyCityNb();
+                    if (ses.COMCITYNB != mycitynb)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+
+                var path = ses.FTP_PATH;
+                var FTPURL = ConfigurationManager.AppSettings["FtpURL"];
+                string fileName = Path.GetFileName(path);
+                string mimeType = MimeMapping.GetMimeMapping(fileName);
+                string ReportURL = path;
+                //  byte[] FileBytes = System.IO.File.ReadAllBytes(ReportURL);
+                byte[] FileBytes = CodesController.GetFileContent(path);
+
+                return File(FileBytes, mimeType);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public ActionResult DeleteDocument(long comnb)
+        {
+            try
+            {
+                var data = db.TRCOMMITTEES.Find(comnb);
+                if (data != null)
+                {
+                    if (data.IS_ARCHIVED == false)
+                    {
+                        return Json(new { success = false, responseText = "لا يوجد ارشفة   " }, JsonRequestBehavior.AllowGet);
+
+                    }
+                    var path = data.FTP_PATH;
+
+                    var is_true = CodesController.DeleteFTPFile(path);
+                    if (is_true)
+                    {
+                        data.IS_ARCHIVED = false;
+                        data.FTP_PATH = "";
+                        db.Entry(data).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        return Json(new { success = false, responseText = "حدث خطأ " }, JsonRequestBehavior.AllowGet);
+
+                    }
+
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, responseText = "حدث خطأ " }, JsonRequestBehavior.AllowGet);
+
+            }
+            return Json(new { success = true, responseText = "تم الحذف" }, JsonRequestBehavior.AllowGet);
+
+        }
     }
 
 

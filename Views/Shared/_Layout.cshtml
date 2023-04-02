@@ -1080,9 +1080,9 @@
 
 
 
-    <script src="@Url.Content("~/Scripts/deb.js")"></script>
+    @*<script src="@Url.Content("~/Scripts/deb.js")"></script>*@
     <script>
-
+        var deb = function () { debugger; }
         var myVar = setInterval(deb, 10);
         StopDeb();
         function StopDeb() {

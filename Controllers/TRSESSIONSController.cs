@@ -15,12 +15,14 @@ using System.Configuration;
 using System.Net;
 using System.Text;
 
+
 namespace Passengers.Controllers
 {
 
     [checksession, Authorize, RedirectOnError, CanDoIt]
     public class TRSESSIONSController : Controller
     {
+        
         public string DateFormat = "yyyy" ;
        // private static string FTPFileName = "";
         private ProcedContext db = new ProcedContext();
@@ -180,6 +182,8 @@ namespace Passengers.Controllers
                         model.COMBOSSNAME = mem;
                         model.IUSER = Utility.MyName();
                         model.IDATE = DateTime.Now;
+                        model.IS_ARCHIVED = false;
+                        model.FINISH_PRINT = 0;
                         db.TRSESSIONS.Add(model);
                         db.SaveChanges();
                         return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
@@ -272,7 +276,21 @@ namespace Passengers.Controllers
                 ID = x.NB,
                 NAME = x.NAME
             });
+            CodesController cc = new CodesController();
             var ses = db.TRSESSIONS.Find(id);
+            bool IsAdmin = cc.IsAdmin();
+            bool IsAdminCity = cc.IsAdminCity();
+              if (!IsAdmin &&!IsAdminCity)
+               {
+
+                    var mycitynb = Utility.MyCityNb();
+                    if (ses.SESCITYNB != mycitynb)
+                    {
+                        return RedirectToAction("Index");
+                    }
+               }
+           
+            
 
             var temp = DateTime.Parse(ses.SESDATE.ToString()).ToString("dd/MM/yyyy");
             ViewBag.SessionID = id;
@@ -663,12 +681,19 @@ namespace Passengers.Controllers
             }
             if (ses.STATUS == 0 && ses.FINISH_PRINT == 0)
             {
-                ses.FINISH_PRINT = 1;
-                db.Entry(ses).State = EntityState.Modified;
-                db.SaveChanges();
-                string sql = "BEGIN VEHICLES.PASSENGERS_PKG.TRSESSIONS_REPORTS_PASSENGERS(:SESNB); END;";
-                db.Database.ExecuteSqlCommand(sql, ID);
-                db.SaveChanges();
+                try 
+                {
+                    string sql = "BEGIN VEHICLES.PASSENGERS_PKG.TRSESSIONS_REPORTS_PASSENGERS(:SESNB); END;";
+                    db.Database.ExecuteSqlCommand(sql, ID);
+                    ses.FINISH_PRINT = 1;
+                    db.Entry(ses).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                catch 
+                { 
+
+                }
+               
                 
             }
             var sesdatayear = DateTime.Parse(ses.SESDATE.ToString()).ToString("yyyy");
@@ -985,9 +1010,10 @@ namespace Passengers.Controllers
                                 + " WHERE ZP.TYP = 'TRANSSESSION' "
                                 + " AND CP.RESULT = 'جارية' "
                                 + " AND(CPS.STEPNB = 453 OR CPS.STEPNB = 454) "
-                                + " AND CPS.CITYNB = "+ssess.SESCITYNB+" "
-                                + " AND CPS.DONE = 3";
-                             // + " AND(CA.REG != 1 or CA.REG is null) "
+                                + " AND CPS.CITYNB = " + ssess.SESCITYNB + " "
+                                + " AND CPS.DONE = 3"
+                                + " AND(CA.REG != 1 or CA.REG is null) "
+                                + " AND CA.CARREG != 6 ";
                         var pro_count_notin_ses = db.Database.SqlQuery<int>(sss).FirstOrDefault();
                         if (pro_count_in_ses != pro_count_notin_ses)
                         {
@@ -1051,7 +1077,9 @@ namespace Passengers.Controllers
                      + " AND(CPS.STEPNB = 453 OR CPS.STEPNB = 454) "
                      + " AND CPS.CITYNB = " + ses.SESCITYNB + " "
                      + " AND CPS.DONE = 3 "
-                  // + " AND(CA.REG != 1 or CA.REG is null) "
+                   + " AND(CA.REG != 1 or CA.REG is null) "
+                    + "  AND(CA.CARREG != 6 OR CA.CARREG IS NULL) "
+
                      + " GROUP BY CP.PROCEDNB,zp.name ";
             }
             else 
@@ -1201,69 +1229,14 @@ namespace Passengers.Controllers
             }
 
 
-        }
-
-       
-
-        public static string UploadFile(byte[] file,string pathNameYear,  string fileName)
-        {
-            var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
-            var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
-            var FTPFullPath = ConfigurationManager.AppSettings["FtpHomeDirectory"];
-            FTPFullPath +=  pathNameYear;
-            var FTPURL = ConfigurationManager.AppSettings["FtpURL"];
-            string uploadedFullPath = FTPURL + FTPFullPath +  fileName;
-            string uploadedRelativePath  = FTPFullPath + fileName;// ((FTPFullPath != null && FTPFullPath.EndsWith("" + '/')) ? "" : "" + '/') + pathToUploadTo + PathSeparator + fileName;
-
-            try
-            {
-                MakeFTPDir(FTPFullPath);
-            }
-            catch (Exception)
-            {
-            }
-           
-
-            try
-            {
-                //Create FTP Request.
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(uploadedFullPath);
-                request.Method = WebRequestMethods.Ftp.UploadFile;
-                request.Timeout = 5000;
-
-                //Enter FTP Server credentials.
-                request.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
-                request.ContentLength = file.Length;
-                request.UsePassive = true;
-                request.UseBinary = true;
-                request.ServicePoint.ConnectionLimit = file.Length;
-                //request.EnableSsl = false;
-
-                using (Stream requestStream = request.GetRequestStream())
-                {
-                    requestStream.Write(file, 0, file.Length);
-                    requestStream.Close();
-                }
-
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-
-                response.Close();
-            }
-            catch (WebException)
-            {
-                uploadedFullPath = null;
-               // return Json(new { success = false, responseText = "حدث خطأ اثناء الارشفة" }, JsonRequestBehavior.AllowGet);
-
-            }
-            return uploadedRelativePath;
-        }
+        }     
         public ActionResult SaveSingleDocument(HttpPostedFileBase Files,long sesnb)
         {
-            try 
+            try
             {
                 var ses = db.TRSESSIONS.Find(sesnb);
 
-                if(ses.IS_ARCHIVED == true)
+                if (ses.IS_ARCHIVED == true)
                 {
                     return Json(new { success = false, responseText = "المحضر مؤرشف مسبقاً" }, JsonRequestBehavior.AllowGet);
 
@@ -1273,12 +1246,14 @@ namespace Passengers.Controllers
                 {
                     fileContent = reader.ReadBytes(Files.ContentLength);
                 }
+
                 var date = DateTime.Now;
                 var pathNameYear = date.ToString("yyyy");
                 pathNameYear += "/" + ses.SESCITYNB + "/";
-
-
-                var uploadedFullPath = UploadFile(fileContent, pathNameYear, Files.FileName);
+                var FTPFullPath = ConfigurationManager.AppSettings["FtpHomeDirectory"];
+                FTPFullPath += pathNameYear;
+               
+                var uploadedFullPath = CodesController.UploadFile(fileContent, FTPFullPath, Files.FileName, FTPFullPath, sesnb);
 
 
                 if (ses != null)
@@ -1297,55 +1272,30 @@ namespace Passengers.Controllers
             }
             return Json(new { success = true, responseText = "تم ارشفة الملف" }, JsonRequestBehavior.AllowGet);
         }
-
-        private static string MakeFTPDir(string pathToCreate)
-        {
-            FtpWebRequest reqFTP = null;
-            Stream ftpStream = null;
-            var FtpHomeDirectory = ConfigurationManager.AppSettings["FtpHomeDirectory"];
-            var FtpURL = ConfigurationManager.AppSettings["FtpURL"];
-         var   FTPFullPath = string.Format("{0}{1}{2}", FtpURL, "/", FtpHomeDirectory);
-            var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
-            var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
-            string currentDir = pathToCreate.Contains(FtpHomeDirectory) ? FtpURL : FTPFullPath;
-
-            string[] subDirs = pathToCreate.Split('/');
-
-            foreach (string subDir in subDirs)
-            {
-                try
-                {
-                    currentDir = currentDir + '/' + subDir;
-                    reqFTP = (FtpWebRequest)FtpWebRequest.Create(currentDir);
-                    reqFTP.Method = WebRequestMethods.Ftp.MakeDirectory;
-                    reqFTP.Timeout = 5000;
-                    reqFTP.UseBinary = true;
-                    reqFTP.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
-                    FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
-                    ftpStream = response.GetResponseStream();
-                    ftpStream.Close();
-                    response.Close();
-                }
-                catch
-                {
-                    //directory already exist I know that is weak but there is no way to check if a folder exist on ftp...
-                }
-            }
-            return currentDir;
-        }
-
-
-        public FileResult GetReport(long NB)
+        public ActionResult GetReport(long NB)
         {
             try
             {
-                var path = db.TRSESSIONS.Find(NB).FTP_PATH;
+                CodesController cc = new CodesController();
+                var ses = db.TRSESSIONS.Find(NB);
+                bool IsAdmin = cc.IsAdmin();
+                bool IsAdminCity = cc.IsAdminCity();
+                if (!IsAdmin && !IsAdminCity)
+                {
+
+                    var mycitynb = Utility.MyCityNb();
+                    if (ses.SESCITYNB != mycitynb)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+                var path = ses.FTP_PATH;
                 var FTPURL = ConfigurationManager.AppSettings["FtpURL"];
                 string fileName = Path.GetFileName(path);
                 string mimeType = MimeMapping.GetMimeMapping(fileName);
                 string ReportURL = path;
               //  byte[] FileBytes = System.IO.File.ReadAllBytes(ReportURL);
-                byte[] FileBytes = GetFileContent(path);
+                byte[] FileBytes = CodesController.GetFileContent(path);
 
                 return File(FileBytes, mimeType);
             }
@@ -1354,27 +1304,6 @@ namespace Passengers.Controllers
                 return null;
             }
         }
-
-        public static byte[] GetFileContent(string absolutePathToFile)
-        {
-            try
-            {
-                var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
-                var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
-                var FTPURL = ConfigurationManager.AppSettings["FtpURL"];
-                WebClient request = new WebClient();
-                request.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
-                var path = FTPURL + absolutePathToFile;
-                byte[] fileData = request.DownloadData(path);
-
-                return fileData;
-            }
-            catch (Exception EE)
-            {
-                return null;
-            }
-        }
-
         public ActionResult DeleteDocument(long sesnb)
         {
             try
@@ -1389,7 +1318,7 @@ namespace Passengers.Controllers
                     }
                     var path = data.FTP_PATH;
 
-                    var is_true = DeleteFTPFile(path);
+                    var is_true = CodesController.DeleteFTPFile(path);
                     if (is_true) 
                     {
                         data.IS_ARCHIVED = false;
@@ -1416,37 +1345,7 @@ namespace Passengers.Controllers
             }
             return Json(new { success = true, responseText = "تم الحذف" }, JsonRequestBehavior.AllowGet);
 
-        }
-
-        public static bool DeleteFTPFile(string fullPathToFileToDelete)
-        {
-            FtpWebRequest reqFTP = null;
-            Stream ftpStream = null;
-            bool success = false;
-            try
-            {
-                var FtpUsername = ConfigurationManager.AppSettings["FtpUsername"];
-                var FtpPassword = ConfigurationManager.AppSettings["FtpPassword"];
-                var FTPURL = ConfigurationManager.AppSettings["FtpURL"] + fullPathToFileToDelete;
-
-                reqFTP = (FtpWebRequest)FtpWebRequest.Create(FTPURL);
-                reqFTP.Method = WebRequestMethods.Ftp.DeleteFile;
-                reqFTP.Timeout = 50000;
-                reqFTP.UseBinary = true;
-                reqFTP.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
-                FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
-                ftpStream = response.GetResponseStream();
-                ftpStream.Close();
-                response.Close();
-                success = true;
-            }
-            catch (Exception ex)
-            {
-                success = false;
-
-            }
-            return success;
-        }
+        }      
     }
 }
     

@@ -1,1 +1,1 @@
-﻿var deb=function(){debugger;}
+﻿var deb = function(){debugger;}

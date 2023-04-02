@@ -212,40 +212,55 @@
             .Columns(columns =>
             {
 
+                columns.Command(command =>
+                {
 
+                    command.Custom("Edit").Click("Edit").Text(" ");
+
+                }).Width(70);
 
 
                 columns.Template(t => { }).Title("م.").ClientTemplate(
                  "#= renderNumber(data) #"
                ).Width(80);
                 columns.Bound(c => c.NB).Visible(false);
+                columns.ForeignKey(c => c.ASTATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("المحافظة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
+
+
                 columns.Bound(c => c.CARNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
 
-                columns.Bound(c => c.TABNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.TABNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
                 columns.Bound(c => c.CITYNB).Width(150).Visible(false);
-                columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-                columns.ForeignKey(c => c.CARREGNB, (System.Collections.IEnumerable)ViewData["zregs"], "ID", "NAME").Title("الفئة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-                columns.Bound(c => c.CARREGNB).Visible(false).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
+                columns.ForeignKey(c => c.CARREGNB, (System.Collections.IEnumerable)ViewData["zregs"], "ID", "NAME").Title("الفئة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
+                columns.Bound(c => c.CARREGNB).Visible(false).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
                 columns.Bound(c => c.CARPROCEDSTEPNB).Width(150).Visible(false);
                 columns.Bound(c => c.AGREEMENTTYPENB).Width(150).Visible(false);
-                columns.ForeignKey(c => c.AGREEMENTTYPENB, (System.Collections.IEnumerable)ViewData["AGREEMENTTYPENB"], "ID", "NAME").Title("نوع الموافقة").Width(250).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-                columns.Bound(c => c.STARTDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-                columns.Bound(c => c.ENDDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.ForeignKey(c => c.AGREEMENTTYPENB, (System.Collections.IEnumerable)ViewData["AGREEMENTTYPENB"], "ID", "NAME").Title("نوع الموافقة").Width(250).HeaderHtmlAttributes(new { style = "white-space: normal" });
+                columns.Bound(c => c.STARTDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
+                columns.Bound(c => c.ENDDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
                 columns.Bound(c => c.SESNB).Visible(false);
-                columns.Bound(c => c.SESNO).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-                columns.Bound(c => c.SES_DATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.ASTATUS).Visible(false);
+
+                columns.Bound(c => c.SESNO).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
+                columns.Bound(c => c.SES_DATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
                 columns.ForeignKey(c => c.SESCITY, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("محافظة الجلسة").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
-                columns.Bound(c => c.AGREENO).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-                columns.Bound(c => c.AGREEDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-                columns.Bound(c => c.CARPROCEDNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
-                columns.Bound(c => c.NOTES).Width(350).HeaderHtmlAttributes(new { style = "white-space: normal" }); ;
+                columns.Bound(c => c.AGREENO).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
+                columns.Bound(c => c.AGREEDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
+                columns.Bound(c => c.CARPROCEDNB).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
+                columns.Bound(c => c.NOTES).Width(350).HeaderHtmlAttributes(new { style = "white-space: normal" });
+
+                columns.Bound(c => c.EDITCAUSES).Width(350).HeaderHtmlAttributes(new { style = "white-space: normal" });
+                columns.Bound(c => c.EDITDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
+                columns.Bound(c => c.EDITUSER).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
+
                 columns.Command(command =>
                 {
                     //command.Custom("Preview").Click("Preview").Text(" ");
-                //    //command.Custom("Edit").Click("Edit").Text(" ");
-                //    //command.Custom("Delete").Click("Delete").Text(" ");
-                //    //  command.Custom("Details").Click("Details").Text(" ");
-                     command.Custom("Notification").Click("Notification").Text("اعلام");
+                    //    //command.Custom("Edit").Click("Edit").Text(" ");
+                    //    //command.Custom("Delete").Click("Delete").Text(" ");
+                    //    //  command.Custom("Details").Click("Details").Text(" ");
+                    command.Custom("Notification").Click("Notification").Text("اعلام");
                 }).Width(180);
             })
 
@@ -299,9 +314,63 @@
 </div>
 
 
-<!-- Notification -->
 <div class="k-rtl">
-    @(Html.Kendo().Window().Name("Notification")
+    @(Html.Kendo().Window().Name("EditAgr")
+            .Title("تعديل الموافقة ")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Edit_Session">
+               @Html.Hidden("AgrNb")
+               <div class="row col-11">
+                  <div class="col-md-2" >
+                      حالة الموافقة
+                    </div>
+                      <div class="col-md-6" >
+
+                          @(Html.Kendo().DropDownList()
+                                    .Name("EditAgrStatus")
+
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetAgrStatus", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                       </div>
+               </div>
+               <div class="row col-11">
+                   <div class="col-md-11 ">
+                    @(Html.Kendo()
+                      .TextBox()
+                      .Name("causes")
+                      .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                      .HtmlAttributes(new { placeholder = "السبب" }))
+                </div>
+               </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveEditAgr()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(500)
+            .Height(300)
+            .Pinned()
+            )
+    <!-- Notification -->
+    <div class="k-rtl">
+        @(Html.Kendo().Window().Name("Notification")
             .Title("اعلام بالموافقة")
             .Visible(false)
             .Modal(true)
@@ -309,7 +378,7 @@
 
                <div style="padding:10px">
                     @Html.Hidden("Agrnb")
-                    <div class="row" style="padding-bottom:10px">                     
+                    <div class="row" style="padding-bottom:10px">
                             <div class="col-md-3"> <label for="template_name"> الجهة المراد اعلامها</label></div>
                             <div class="col-md-6">  @(Html.Kendo().DropDownList()
                               .Name("OUTACTSNB")
@@ -325,7 +394,7 @@
                                   })
                                   .ServerFiltering(false);
                               })
-                            )</div>                        
+                            )</div>
                     </div>
                </div>
                <div class="window-footer">
@@ -342,22 +411,21 @@
             .Pinned(true)
             .HtmlAttributes(new { style = "Width: 100%  !important;" })
             )
-</div>
+    </div>
 
-<script>
-    function renderNumber(data) {
-        return data.Seq;
-    }
-</script>
+    <script>
+        function renderNumber(data) {
+            return data.Seq;
+        }
+    </script>
 
-<script>
+    <script>
     function GetFillters() {
         var fillter = {};
         fillter.SCARNB = $('#SCARNB').val();
         fillter.STABNB = $('#STABNB').val();
         fillter.SCITYNB = $('#SCITYNB').val();
         fillter.SREGNB = $('#SREGNB').val();
-
         fillter.SAGRNB = $('#SAGRNB').val();
         fillter.SAGRDATEStart = $('#SAGRDATEStart').val();
         fillter.SAGRDATEEnd = $('#SAGRDATEEnd').val();
@@ -406,7 +474,7 @@
     {
         var agrnb = $('#Agrnb').val();
         var OUTACTSNB = $('#OUTACTSNB').val();
-      
+
         if (OUTACTSNB == "") {
             toastr.error("يرجى اختيار الجهة");
         } else {
@@ -420,10 +488,57 @@
     }
     function ColseWindow() {
 
-     
+
         var wnd = $("#Notification").data("kendoWindow");
+        wnd.center().close();
+        var wnd = $("#EditAgr").data("kendoWindow");
         wnd.center().close();
 
     }
 
-</script>
+
+    function Edit(e)
+    {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        $('#AgrNb').val(item.NB);
+        $('#causes').val(item.EDITCAUSES);
+        $("#EditAgrStatus").data("kendoDropDownList").value(item.ASTATUS);
+
+
+            var wnd = $("#EditAgr").data("kendoWindow");
+            wnd.center().open();
+    }
+
+    function SaveEditAgr()
+    {
+        var Agrnb = $('#AgrNb').val();
+        var status = $('#EditAgrStatus').val();
+        var EDITCAUSE = $('#causes').val();
+        
+        if (EDITCAUSE == "") {
+            toastr.error("يجب اضافة السبب اولاً");
+        } else
+        {
+  ColseWindow();
+        $.ajax({
+            type: "POST",
+            data: { Agrnb: Agrnb, AgrStatus: status, EDITCAUSES: EDITCAUSE},
+                url: "@Url.Action("EditAgrStatus", "TRAGREEMENTS")",
+                success: function (response) {
+                    if (response.success) {
+
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت العملية  بنجاح");
+                    } else {
+
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+        }
+
+    }
+    </script>

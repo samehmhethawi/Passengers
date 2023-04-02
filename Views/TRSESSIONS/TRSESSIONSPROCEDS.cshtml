@@ -302,11 +302,18 @@
                                         يرجى ادخال نتائج الطلبات مع العلم انه لن يتم انهاء الجلسة الا في حال ادخال نتيجة جميع الطلبات
                                     </label>
                                 }
-                                @if (ViewBag.SessionStatus == "منتهي" && ViewBag.FINISH_PRINT == 1)
+                                @if (ViewBag.SessionStatus == "منتهي" && ViewBag.FINISH_PRINT == 1 && ViewBag.IS_ARCHIVED == true)
                                 {
                                     <label style="text-align:center;color:red;">
 
                                         تم الانتهاء من الجلسة شكراً لكم.
+                                    </label>
+                                }
+                                @if (ViewBag.SessionStatus == "منتهي" && ViewBag.FINISH_PRINT == 1 && ViewBag.IS_ARCHIVED == false)
+                                {
+                                    <label style="text-align:center;color:red;">
+
+                                         الجلسة منتهية شكراً لكم ولكن (((يرجى أرشفة المحضر))) 
                                     </label>
                                 }
                                 @if (ViewBag.SessionStatus == "منتهي" && ViewBag.FINISH_PRINT == 0)
@@ -435,7 +442,7 @@
             .Cancel("getcolor")
         )
 )
-
+   
 </div>
 
 
@@ -797,29 +804,32 @@
 <script>
 
     function renderCarLink1(data) {
-        return "<button style='Width:88%; text-algin:center;' onclick='GetPartialProcedinfo(" + data.CARPROCEDSTEPNB + "," + data.PROCEDNB + ")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button>";
+        return "<button style='Width:88%; text-algin:center;' onclick='GetPartialProcedinfo(" + data.CARPROCEDSTEPNB + "," + data.PROCEDNB + ")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button> ";
     }
     function renderCarLink_ToProced(data) {
         if (data.CARNB != null) {
-            var link = "<a target='_blank' href=/procedbase/Cars/Index/" + data.CARNB + ">";
+            var link = "<span style='margin: 15px;'><a id='car" + data.CARNB +"  target='_blank' href=/procedbase/Cars/Index/" + data.CARNB + "> ";
 
-            link += data.CARNB;
+            link += "<span id='1" + data.NB + "'>" + data.CARNB + "</span>";
 
-            link += "</a>";
+            link += "</a></span>     <a href = '#' onclick='myFunction(1" + data.NB + ");' > <i class='fa fa-copy' ></i></a >";
 
             return link;
         } else {
             return "";
         }
-       
+
     }
 
     function renderCarProcedLink_ToProced(data) {
-        var link = "<a target='_blank' href=/procedbase/Steps?id=" + data.CARPROCEDNB + ">";
+        var link = "<span style='margin: 15px;'> <a id='pro" + data.CARPROCEDNB +" ' target='_blank' href=/procedbase/Steps?id=" + data.CARPROCEDNB + ">";
 
-        link += data.CARPROCEDNB;
+        link += "<span id='2" + data.NB + "'>" + data.CARPROCEDNB + "</span>";
+      
 
-        link += "</a>";
+        link += "</a></span>     <a href = '#' onclick='myFunction(2" + data.NB + ");' > <i class='fa fa-copy' ></i></a >";
+
+            //< a href = '#' onclick='myFunction(2" + data.NB + ");' > <i class='fa fa-copy' ></i></a >
 
         return link;
     }
@@ -836,7 +846,16 @@
 
     }
 
-
+    function myFunction(idds) {
+      
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($('#' + idds).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        
+      
+    }
 </script>
 
 <script>
@@ -866,11 +885,10 @@
     }
     function ss(data) {
 
-       // document.getElementById('Proced_Info').innerHTML = data;
+      
        $('#Proced_Info').html(data);
 
-        /* little fade in effect */
-       // $('#divPartial').fadeIn('fast');
+        
     }
 
 </script>
@@ -1048,5 +1066,3 @@
         }
     }
 </script>
-<style>
-</style>

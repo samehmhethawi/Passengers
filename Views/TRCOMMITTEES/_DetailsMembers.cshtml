@@ -1,82 +1,130 @@
 ﻿<!-- Details Grid Members of Committee-->
+<style>
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+        }
+</style>
+
 <div class="k-rtl">
     @(Html.Kendo().Window().Name("DetailsCOMMITTEE")
             .Title("تفاصيل اعضاء اللجنة ")
             .Visible(false)
             .Modal(true)
             .Content(@<text>
-          <div  >
-    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRCOMMITTEES_MEMBERS>()
-            .Name("Detailsgrid")
-            .Columns(columns =>
-            {
-                columns.Template(t => { }).Title("م.").ClientTemplate(
-                 "#= renderNumber(data) #"
-               ).Width(80);
-                columns.Bound(c => c.NB).Visible(false);
-                columns.Bound(c => c.COMMITTEENB).Visible(false);
-                columns.Bound(c => c.MEMBERNAME).Width(500);
-                columns.ForeignKey(c => c.MEMBERSHIPNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERSHIP"], "ID", "NAME").Title("العضوية").Width(150);
-                columns.Bound(c => c.MEMBERSHIPNB).Visible(false).Title("العضوية");
-                // columns.Bound(c => c.STATUS).Visible(false);
-                columns.ForeignKey(c => c.MEMBERPOSITIONNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERPOSITION"], "ID", "NAME").Title("المنصب").Width(150);
-                //columns.Bound(c => c.ORDR);
-                //columns.Bound(c => c.NOTES);
-                columns.Bound(c => c.MEMBERPOSITIONNB).Visible(false).Title("المنصب");
-                columns.Command(command =>
-                {
-                   
-                    command.Custom("Delete").Click("Delete").Text(" ");
-                   
-                }).Width(50);
+          <div>
 
-            })
-            .HtmlAttributes(new { style = "height: aotu  !important;" })
-            .Scrollable()
-            .Sortable()
-            .Filterable()
-            .DataSource(dataSource => dataSource
-            .Ajax()
-            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
-            .PageSize(7)
-            .Model(model => model.Id(p => p.NB))
-            .Read(read => read.Action("Read_MEMBERS", "TRCOMMITTEES").Data("GetCommNbRead")))
-            .Resizable(resize => resize
-            .Columns(true)
+
+
+                    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRCOMMITTEES_MEMBERS>()
+                            .Name("Detailsgrid")
+                            .Columns(columns =>
+                            {
+                                columns.Template(t => { }).Title("م.").ClientTemplate(
+                                 "#= renderNumber(data) #"
+                               ).Width(80);
+                                columns.Bound(c => c.NB).Visible(false);
+                                columns.Bound(c => c.COMMITTEENB).Visible(false);
+                                columns.Bound(c => c.MEMBERNAME).Width(500);
+                                columns.ForeignKey(c => c.MEMBERSHIPNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERSHIP"], "ID", "NAME").Title("العضوية").Width(150);
+                                columns.Bound(c => c.MEMBERSHIPNB).Visible(false).Title("العضوية");
+                                // columns.Bound(c => c.STATUS).Visible(false);
+                                columns.ForeignKey(c => c.MEMBERPOSITIONNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERPOSITION"], "ID", "NAME").Title("المنصب").Width(150);
+                                //columns.Bound(c => c.ORDR);
+                                //columns.Bound(c => c.NOTES);
+                                columns.Bound(c => c.MEMBERPOSITIONNB).Visible(false).Title("المنصب");
+                                columns.Command(command =>
+                                {
+
+                                    command.Custom("Delete").Click("Delete").Text(" ");
+
+                                }).Width(50);
+
+                            })
+                            .HtmlAttributes(new { style = "height: aotu  !important;" })
+                            .Scrollable()
+                            .Sortable()
+                            .Filterable()
+                            .DataSource(dataSource => dataSource
+                            .Ajax()
+                            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+                            .PageSize(7)
+                            .Model(model => model.Id(p => p.NB))
+                            .Read(read => read.Action("Read_MEMBERS", "TRCOMMITTEES").Data("GetCommNbRead")))
+                            .Resizable(resize => resize
+                            .Columns(true)
+                            )
+                            .ToolBar(toolbar =>
+                            {
+                                toolbar.Custom().Name("AddNewMEMBER").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNewMEMBER", @class = "btn btn-primary hvr-box-shadow-outset" });
+                            })
+                                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                                      .Display("العدد الكلي للسجلات :  {2}")
+                                                      )
+                                                    .Refresh(true)
+                                                    .Input(true)
+                                                    .Info(true)
+                          ).Events(events => events
+                            .Change("setIcons")
+                            .DataBound("setIcons")
+                            .Sort("setIcons")
+                            .Filter("setIcons")
+                            .Group("setIcons")
+                            .Page("setIcons")
+                            .Cancel("setIcons")
+                        //.Edit("hideIdField")
+                        )
             )
-            .ToolBar(toolbar =>
-            {
-                toolbar.Custom().Name("AddNewMEMBER").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNewMEMBER", @class = "btn btn-primary hvr-box-shadow-outset" });
-            })
-                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
-                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
-                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
-                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
-                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
-                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
-                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
-                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
-                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
-                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
-                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
-                                      .Display("العدد الكلي للسجلات :  {2}")
-                                      )
-                                    .Refresh(true)
-                                    .Input(true)
-                                    .Info(true)
-          ).Events(events => events
-            .Change("setIcons")
-            .DataBound("setIcons")
-            .Sort("setIcons")
-            .Filter("setIcons")
-            .Group("setIcons")
-            .Page("setIcons")
-            .Cancel("setIcons")
-        //.Edit("hideIdField")
-        )
-)
+              <br />
+              <div class="row col-md-11 IS_ARC" >
+                  <div class="col-md-11" style="text-align:center;">
+                      <span class="btn btn-primary btn-file">
+                         اختر ملف . . <i class="fa fa-upload"></i>
+                          <input accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
+                      </span>
+                        <button class="btn btn-primary" onclick="setvvv()"> حفظ ورفع الملف</button>
+               </div>
 
-</div>
+
+               </div>
+              <div class="row col-md-11 ISNO_ARC">
+                  <div class="col-md-11" style="text-align:center;">
+                          <label style="text-align:center;color:red;font-size:14px;">
+
+                                                   يوجد أرشفة لهذه اللجنة
+                                                    <a class='stepLnk' data-toggle='tooltip' onclick='showdoc2()'  href='#'><i title="عرض الارشفة" style="font-size:25px;" class='fa fa-folder'></i></a>
+                                                </label>
+                  </div>
+                 
+              </div>
+
+            </div>
             </text>)
             .Draggable(true)
             .Resizable()
@@ -87,8 +135,8 @@
 </div>
 
 <script>
-    $("#AddNewMEMBER").click(function () {        
-        var ssts = $('#Comstatus').val();     
+    $("#AddNewMEMBER").click(function () {
+        var ssts = $('#Comstatus').val();
         if (ssts == "1")
         {
             $("#Add_comm_Member span.k-tooltip-validation").hide();
@@ -97,7 +145,7 @@
         } else
         {
             toastr.error("لا يمكن اضافة الاعضاء لان اللجنة غير فعالة");
-        }     
+        }
     });
 
 
@@ -122,5 +170,105 @@
                     }
                 }
             });
+    }
+</script>
+
+<script>
+     function setvvv() {
+
+        if ($("#DocumentsFiles").val() != "") {
+            var is_pdf = fileValidation($("#DocumentsFiles").val());
+            if (is_pdf)
+            {
+                var is_size = Filevalidationsize();
+                if (is_size)
+                {
+                      var fileUpload = $("#DocumentsFiles").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("Files", files[i]);
+            }
+                    fileData.append("comnb", $('#ComMebmerNb').val());
+
+
+            $.ajax({
+                url: '@Url.Action("SaveSingleDocument", "TRCOMMITTEES")',
+                type: "POST",
+                data: fileData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.success == true) {
+                        toastr.success(response.responseText);
+                        $("#grid").data("kendoGrid").dataSource.read();
+                        ColseWindow();
+
+                    } else {
+                        toastr.error(response.responseText);
+
+                    }
+
+
+                }
+            });
+                }
+                else
+                {
+                    toastr.error("حجم الملف يجب ان لا يتجاوز 4 ميغا");
+                }
+
+            } else {
+                toastr.error("يرجى اختيار ملف لاحقته PDF");
+            }
+
+
+        } else
+        {
+            toastr.error("يرجى اختيار الملف اولاً");
+        }
+
+    }
+
+
+</script>
+
+
+<script type="text/javascript">
+    function fileValidation(filesss) {
+        var fileElement = document.getElementById("DocumentsFiles");
+        var fileElement = fileElement;
+        var fileExtension = "";
+        if (fileElement.value.lastIndexOf(".") > 0) {
+            fileExtension = fileElement.value.substring(fileElement.value.lastIndexOf(".") + 1, fileElement.value.length);
+        }
+        if (fileExtension.toLowerCase() == "pdf") {
+            return true;
+        }
+        else {
+            /* alert("يجب اختيار ملف PDF فقط.");*/
+            fileElement.value = '';
+            return false;
+        }
+    }
+
+    function Filevalidationsize() {
+        const fi = document.getElementById('DocumentsFiles');
+        if (fi.files.length > 0) {
+            const fsize = fi.files.item(0).size;
+            const file = Math.round((fsize / 1024));
+
+            if (fsize > 4194304) {
+
+                return false;
+            } else {
+
+                return true;
+            }
+        }
     }
 </script>

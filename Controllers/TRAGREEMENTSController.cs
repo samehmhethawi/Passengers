@@ -35,6 +35,12 @@ namespace Passengers.Controllers
                 ID = x.NB,
                 NAME = x.NAME
             });
+
+            ViewData["STATUS"]  = db.TRAGREEMENTS_STATUS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
             return View();
         }
 
@@ -142,7 +148,12 @@ namespace Passengers.Controllers
                 CARPROCEDNB = commm.CARPROCEDNB,
                 SESCITY = commm.SESCITY,
 
+                CARNB2 = commm.CARNB2,
 
+                ASTATUS = commm.ASTATUS,
+                EDITCAUSES = commm.EDITCAUSES,
+                EDITDATE = commm.EDITDATE,
+                EDITUSER = commm.EDITUSER,
 
                 Seq = (request.Page - 1) * request.PageSize + (++index)
             });
@@ -162,6 +173,38 @@ namespace Passengers.Controllers
             var linnb = db.CARS.Where(x => x.NB == TRAGR.CARNB).Select(s => s.LIN).FirstOrDefault();
             ViewBag.linename = db.TRLINES.Where(x => x.NB == linnb).Select(x => x.NAME).FirstOrDefault();
             return View();
+        }
+    
+        public ActionResult EditAgrStatus(long Agrnb , int AgrStatus,string EDITCAUSES) 
+        {
+            try
+            {
+                var data = db.TRAGREEMENTS.Find(Agrnb);
+                if (data == null)
+                {
+                    return Json(new { success = false, responseText = "الموافقة غير موجودة" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    if(data.ASTATUS != AgrStatus)
+                    {
+                        data.ASTATUS = AgrStatus;
+                        data.EDITCAUSES = EDITCAUSES;
+                        data.EDITUSER= Utility.MyName();
+                        data.EDITDATE = DateTime.Now;
+                        db.Entry(data).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                   
+             
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

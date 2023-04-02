@@ -1,0 +1,239 @@
+﻿
+@{
+    ViewBag.Title = "اختيار محافظة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    #proced_base {
+        position: relative;
+        text-align: center;
+    }
+
+        #proced_base h5 {
+            color: #546E81;
+        }
+
+        #proced_base h1 {
+            color: #2B6AD0;
+        }
+
+        #proced_base .container {
+            position: absolute;
+            top: 100px;
+            right: 0;
+            left: 0;
+            max-width: 1200px;
+        }
+
+        #proced_base .nopadding {
+            padding: 0;
+        }
+
+        #proced_base .grid {
+            height: 200px;
+            width: auto;
+            margin: 5px;
+            border-bottom: 5px solid #2B6AD0;
+            text-align: center;
+            cursor: pointer;
+            -webkit-transform: perspective(1px) translateZ(0);
+            transform: perspective(1px) translateZ(0);
+            box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+            -webkit-transition-duration: 0.3s;
+            transition-duration: 0.3s;
+            -webkit-transition-property: transform;
+            transition-property: transform;
+        }
+
+            #proced_base .grid:hover {
+                -webkit-transform: scale(1.03);
+                transform: scale(1.03);
+            }
+
+        #proced_base .grid-icon {
+            height: 50px;
+            width: auto;
+            margin-top: 60px;
+        }
+
+        #proced_base .grid-title {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+            #proced_base .grid-title h4 {
+                color: #fff
+            }
+
+            #proced_base .grid-title h6 {
+                color: #fff
+            }
+</style>
+<div style="height:550px">
+    <div class="row" style="height: 15%; margin-left: 25px; margin-right: 25px">
+        <div class="col-lg-12" style="text-align:center;font-size:24px;margin-top:25px">
+            يرجى اختيار محافظة
+        </div>
+
+    </div>
+    <section id="proced_base">
+        <div class="row" style="height: 50%; text-align: center; margin-left: 25px; margin-right: 25px" >
+
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new { citynb = 1 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-building fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">دمشق</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new  { citynb = 2 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-building-o fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">ريف دمشق</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new { citynb = 3 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-institution fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">حلب</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new  { citynb = 4 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-building fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">طرطوس</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new { citynb = 5 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-institution fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">اللاذقية</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new  { citynb = 6 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-building-o fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">حمص</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new { citynb = 7 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-building fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">حماة</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new  { citynb = 8 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-institution fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">إدلب</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new { citynb = 9 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-building-o fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">الرقة</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new  { citynb = 10 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-building fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">الحسكة</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new  { citynb = 11 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-building-o fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">دير الزور</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new  { citynb = 12 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-institution fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">درعا</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new  { citynb = 13 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-building fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">السويداء</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2" style="text-align:center">
+                <a href="@Url.Action("Index_Detalis", "PassengersAccount", new  { citynb = 14 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                    <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                        <i class="grid-icon fa fa-institution fa-4x"></i>
+                        <div class="grid-title">
+                            <h4 class="text-center">القنيطرة</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </section>
+
+</div>
+
+
+

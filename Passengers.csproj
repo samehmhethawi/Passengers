@@ -65,14 +65,17 @@
     <Compile Include="Controllers\CodesController.cs" />
     <Compile Include="Controllers\HandleExceptionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PassengersAccountController.cs" />
     <Compile Include="Controllers\PassengersReportController.cs" />
     <Compile Include="Controllers\TRAGREEMENTSController.cs" />
     <Compile Include="Controllers\TRCOMMITTEESController.cs" />
     <Compile Include="Controllers\TRLINESController.cs" />
     <Compile Include="Controllers\TRSESSIONSController.cs" />
     <Compile Include="Controllers\trstController.cs" />
+    <Compile Include="Controllers\TRZEXPENSE_TYPESController.cs" />
     <Compile Include="Controllers\TRZMEMBERPOSITIONController.cs" />
     <Compile Include="Controllers\TRZMEMBERSHIPController.cs" />
+    <Compile Include="Controllers\TRZPAY_OWNER_TYPESController.cs" />
     <Compile Include="Controllers\TRZPROCEDSCARCATController.cs" />
     <Compile Include="Controllers\TRZPROCEDTYPSALLOWController.cs" />
     <Compile Include="Controllers\ValidationController.cs" />
@@ -1295,6 +1298,11 @@
     <Content Include="Views\PassengersReport\CarsAndProceds_PDF.cshtml" />
     <Content Include="Views\TRAGREEMENTS\PrintNotification.cshtml" />
     <Content Include="Views\PassengersReport\TRCHANGECARLINES.cshtml" />
+    <Content Include="Views\PassengersAccount\Index_Detalis.cshtml" />
+    <Content Include="Views\PassengersAccount\Index_city.cshtml" />
+    <Content Include="Views\TRZEXPENSE_TYPES\Index.cshtml" />
+    <Content Include="Views\TRZPAY_OWNER_TYPES\Index.cshtml" />
+    <Content Include="Views\PassengersAccount\TRGET_ORDERS_Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

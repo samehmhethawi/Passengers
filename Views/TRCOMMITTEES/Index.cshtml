@@ -86,7 +86,7 @@
                 <div class="col-lg-1 col-md-2">
                     <label for="template_name"> التاريخ من</label>
                 </div>
-                <div class="col-lg-2 col-md-4" >
+                <div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DatePicker()
                         .Name("SComDateStart")
                         .Format("{0:dd/MM/yyyy}")
@@ -128,7 +128,7 @@
 
                 <div class="col-lg-2 col-md-4">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
-                
+
                     <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
 
                 </div>
@@ -143,7 +143,7 @@
             .Columns(columns =>
             {
                 columns.Template(t => { }).Title("م.").ClientTemplate(
-                 "#= renderNumber(data) #"
+                 "#= isArchived(data) #"
                ).Width(80);
                 columns.Bound(c => c.NB).Visible(false);
                 columns.Bound(c => c.COMNO).Width(150);
@@ -155,13 +155,16 @@
                 columns.Bound(c => c.ORDR).Width(150).Visible(false);
                 columns.Bound(c => c.IUSER).Width(200);
                 columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}").Width(150);
+                columns.Bound(c => c.FTP_PATH).Visible(false);
+                columns.Bound(c => c.IS_ARCHIVED).Visible(false);
                 columns.Command(command =>
                 {
                     //command.Custom("Preview").Click("Preview").Text(" ");
                     command.Custom("Edit").Click("Edit").Text(" ");
                     //command.Custom("Delete").Click("Delete").Text(" ");
                     command.Custom("Details").Click("Details").Text(" ");
-                   // command.Custom("Finish").Click("Finish").Text(" ");
+                    // command.Custom("Finish").Click("Finish").Text(" ");
+                    command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
                 }).Width(180);
             })
             .HtmlAttributes(new { style = "height: aotu  !important;" })
@@ -198,18 +201,52 @@
                                     .Input(true)
                                     .Info(true)
           ).Events(events => events
-            .Change("setIcons")
-            .DataBound("setIcons")
-            .Sort("setIcons")
-            .Filter("setIcons")
-            .Group("setIcons")
-            .Page("setIcons")
-            .Cancel("setIcons")
+            .Change("setIcons2")
+            .DataBound("setIcons2")
+            .Sort("setIcons2")
+            .Filter("setIcons2")
+            .Group("setIcons2")
+            .Page("setIcons2")
+            .Cancel("setIcons2")
         //.Edit("hideIdField")
 
 
         )
 )
+
+</div>
+
+
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("DeleteArc")
+            .Title("حذف الارشفة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="delete_S">
+               <div>
+                    @Html.Hidden("DeleteArcSesNb")
+                   <div class="col-md-11" >
+                   <h1 style="text-align:center"> هل انت متأكد من هذف أرشفة هذه الجلسة؟ </h1>
+
+
+                   </div>
+
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="DeleteArcSession()" style="font-size:30px">نعم</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()" style="font-size:30px"> لا    </button>
+
+               </div>
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(300)
+            .Pinned()
+            )
 
 </div>
 
@@ -226,14 +263,15 @@
         var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
         $("#AddComDate").data("kendoDatePicker").value(todayDate);
         $('#AddComNo').val("");
-       // $('#AddComDate').val("");
+        // $('#AddComDate').val("");
         $("#AddComCity").data("kendoDropDownList").value(1)
         $("#Add_comm span.k-tooltip-validation").hide();
+
         var wnd = $("#AddCOMMITTEE").data("kendoWindow");
         wnd.center().open();
     });
 
-  
+
 
     function Edit(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
@@ -246,37 +284,48 @@
         $("#EditComStatus").data("kendoDropDownList").value(item.STATUS);
 
 
-        
+
         var wnd = $("#EditCOMMITTEE").data("kendoWindow");
         wnd.center().open();
 
     }
 
-  
+
     function Details(e) {
 
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         iid = item.NB;
-
         $('#OwnerNB').val("");
         $("#Detailsgrid").data("kendoGrid").dataSource.read();
         $('#ComMebmerNb').val(item.NB);
-
+        $("#DocumentsFiles").val("");
         $('#Comstatus').val(item.STATUS);
+        var isarc = item.IS_ARCHIVED;
+
+        if (isarc == true) {
+            $(".IS_ARC").css("display", "none");
+            $(".ISNO_ARC").css("display", "block");
+
+        }
+        if (isarc == false) {
+            $(".IS_ARC").css("display", "block");
+            $(".ISNO_ARC").css("display", "none");
+        }
+
 
         var wnd = $("#DetailsCOMMITTEE").data("kendoWindow");
         wnd.center().open();
     }
 
-    
+
     function Finish(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
-       alert(item.NB);
+        alert(item.NB);
 
-    
-    
+
+
     }
 
     function ColseWindow() {
@@ -294,6 +343,9 @@
 
         var wnd = $("#AddCOMMITTEEMEMBER").data("kendoWindow");
         wnd.center().close();
+        var wnd = $("#DetailsCOMMITTEE").data("kendoWindow");
+        wnd.center().close();
+
 
     }
 </script>
@@ -305,3 +357,85 @@
 </script>
 
 
+<script>
+    function setIcons2() {
+        setIcons();
+        $(".k-grid-Deletear").addClass(" hvr-box-shadow-outset");
+        $(".k-grid-Deletear").kendoButton({
+            icon: "i fa fa-trash text-danger"
+        });
+        $(".k-grid-Deletear").kendoTooltip({
+            content: "حذف الارشفة",
+            position: "left",
+            autoHide: true,
+        });
+    }
+    function isArchived(data) {
+        var isArchived = false;
+        if (data != null && data.IS_ARCHIVED == true) {
+            isArchived = true;
+        }
+
+        if (isArchived) {
+            return "<a  class='stepLnk' data-toggle='tooltip' onclick='showdoc(" + data.NB+")' title='مؤرشفة' href='#'><i class='fa fa-folder'></i> " + data.Seq + "</a>";
+        }
+        else {
+            return data.Seq;
+        }
+
+    }
+
+    function showdoc(NB) {
+
+       
+        window.open("@Url.Action("GetReport", "TRCOMMITTEES")" + "?NB=" + NB , "_blank");
+
+    }
+
+     function showdoc2() {
+         var NB2 = $('#ComMebmerNb').val();
+       
+        window.open("@Url.Action("GetReport", "TRCOMMITTEES")" + "?NB=" + NB2 , "_blank");
+
+    }
+</script>
+
+<script>
+    function DeleteARCHIVED(e) {
+        e.preventDefault();
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        var id = item.NB;
+        if (item.IS_ARCHIVED == false) {
+            toastr.error("لا يوجد ارشفة ");
+        } else {
+            $('#DeleteArcSesNb').val(item.NB);
+            $("#DeleteArc").data("kendoWindow").center().open();
+        }
+
+    }
+
+    function DeleteArcSession() {
+
+        var delarcses = $('#DeleteArcSesNb').val();
+
+        $("#DeleteArc").data("kendoWindow").center().close();
+         $.ajax({
+            url: '@Url.Action("DeleteDocument", "TRCOMMITTEES")',
+
+             data: { comnb: delarcses},
+
+            success: function (response) {
+                if (response.success == true) {
+                    toastr.success(response.responseText);
+                    $("#grid").data("kendoGrid").dataSource.read();
+                } else {
+                    toastr.error(response.responseText);
+
+                }
+
+
+            }
+         });
+    }
+</script>

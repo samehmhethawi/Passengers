@@ -1,0 +1,322 @@
+﻿
+@{
+    ViewBag.Title = "انواع النفقات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!-- Grid  -->
+<div>
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRZEXPENSE_TYPES>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Template(t => { }).Title("م.").ClientTemplate(
+                 "#= renderNumber(data) #"
+               ).Width(80);
+                columns.Bound(c => c.NB).Title("الرمز الالكتروني").Width(150); 
+                columns.Bound(c => c.NAME).Width(150).Title("الاسم").Width(250);
+
+
+                columns.Command(command =>
+                {
+                    //    //command.Custom("Preview").Click("Preview").Text(" ");
+                    command.Custom("Edit").Click("Edit").Text(" ");
+                    command.Custom("Delete").Click("Delete").Text(" ");
+                    //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
+                    //      command.Custom("Details2").Click("Details2").Text(" ");
+                }).Width(100);
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("Read", "TRZEXPENSE_TYPES")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+                toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("setIcons")
+            .DataBound("setIcons")
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Cancel("setIcons")
+        //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+
+
+<!-- Add -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("Add")
+            .Title("اضافة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_S">
+               <div class="row col-11">
+                   <div class="col-md-10" >
+
+                   <span>  الاسم
+                       @Html.Kendo().TextBox().Name("AddName").HtmlAttributes(new { placeholder = " الاسم", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+                       </span>
+
+
+                       </div>
+
+
+               </div>
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveAdd()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(300)
+            .Pinned()
+            )
+</div>
+
+<!-- Edit -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("Edit")
+            .Title("تعديل")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_E">
+                  @Html.Hidden("NBB")
+               <div class="row col-11">
+                   <div class="col-md-10" >
+                   <span>  الاسم
+                       @Html.Kendo().TextBox().Name("EditName").HtmlAttributes(new { placeholder = " الاسم", required = "required", data_required_msg = "هذا الحقل مطلوب"})
+                       </span>
+
+
+                       </div>
+
+
+               </div>
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveEdit()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(300)
+            .Pinned()
+            )
+</div>
+
+
+<!-- delete -->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("delete")
+            .Title("حذف")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="delete_S">
+               <div>
+                    @Html.Hidden("deleteNBB")
+                   <div class="col-md-11" >
+                   <h1 style="text-align:center">هل انت متأكد من حذف السجل؟</h1>
+                   </div>
+                   <div class="window-footer">
+                       <button class="btn btn-primary" onclick="Savedelete()" style="font-size:30px">نعم</button>
+                       <button class="btn btn-danger" onclick="ColseWindow()" style="font-size:30px"> لا    </button>
+                   </div>
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(300)
+            .Pinned()
+            )
+
+</div>
+<!-- Save Add-->
+<script>
+    function SaveAdd() {
+
+
+        var windowWidget = $("#Add").data("kendoWindow");
+
+
+        var validator = $("#Add_S").kendoValidator().data("kendoValidator");
+        if (validator.validate()) {
+            kendo.ui.progress(windowWidget.element, true);
+            var model = {
+                NAME: $('#AddName').val(),
+
+            }
+
+            $.ajax({
+                type: "POST",
+                data: model,
+                url: "@Url.Action("Create", "TRZEXPENSE_TYPES")",
+                success: function (response) {
+                    if (response.success) {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+                        kendo.ui.progress(windowWidget.element, false);
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+        }
+       }
+</script>
+<script>
+    function renderNumber(data) {
+
+        return data.Seq;
+    }
+
+
+    $("#AddNew").click(function () {
+        $('#AddName').val("");
+
+        var wnd = $("#Add").data("kendoWindow");
+        wnd.center().open();
+    });
+
+    function ColseWindow() {
+        var wnd = $("#Add").data("kendoWindow");
+        wnd.center().close();
+        var wnd = $("#Edit").data("kendoWindow");
+        wnd.center().close();
+        var wnd = $("#delete").data("kendoWindow");
+        wnd.center().close();
+    }
+
+    function Edit(e) {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        $('#NBB').val(item.NB);
+        $('#EditName').val(item.NAME);
+
+        var wnd = $("#Edit").data("kendoWindow");
+        wnd.center().open();
+    }
+
+
+    function SaveEdit()
+    {
+                   var windowWidget = $("#Edit").data("kendoWindow");
+                   var validator = $("#Add_E").kendoValidator().data("kendoValidator");
+                        if (validator.validate()) {
+                            kendo.ui.progress(windowWidget.element, true);
+                            var model = {
+                                NB: $('#NBB').val(),
+                                NAME: $('#EditName').val(),
+
+                            }
+                            $.ajax({
+                                type: "POST",
+                                data: model,
+                                url: "@Url.Action("Update", "TRZEXPENSE_TYPES")",
+                                success: function (response) {
+                                    if (response.success) {
+                                        kendo.ui.progress(windowWidget.element, false);
+                                        ColseWindow();
+                                        $("#grid").data("kendoGrid").dataSource.page(1);
+
+                                        toastr.success("تمت عملية الإضافة بنجاح");
+                                    } else {
+                                        kendo.ui.progress(windowWidget.element, false);
+                                        toastr.error(response.responseText);
+                                    }
+
+                                }
+                            });
+                        }
+    }
+
+
+    function Delete(e)
+    {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);
+        $('#deleteNBB').val(item.NB);
+        var wnd = $("#delete").data("kendoWindow");
+        wnd.center().open();
+
+    }
+
+    function Savedelete()
+    {
+        var windowWidget = $("#delete").data("kendoWindow");
+        var id = $('#deleteNBB').val();
+
+        $.ajax(
+            {
+                type: "POST",
+              data: { NB: id},
+                url: "@Url.Action("Delete", "TRZEXPENSE_TYPES")",
+              success: function (response)
+              {
+                  if (response.success)
+                  {
+                        kendo.ui.progress(windowWidget.element, false);
+                        ColseWindow();
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                  } else
+                  {
+                      kendo.ui.progress(windowWidget.element, false);
+                      toastr.error(response.responseText);
+                  }
+
+                }
+            });
+    }
+</script>
