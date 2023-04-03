@@ -1,11 +1,11 @@
 ﻿
 @{
-    ViewBag.Title = "كتب التحويل";
+    ViewBag.Title = "كتب التحويل" + " - " + @ViewBag.cityname;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
 
-    
+
 
     .bordered {
         border: 1px dashed #a0ddd8;
@@ -47,10 +47,10 @@
                 <div class="col-lg-2 col-md-4">
                     @Html.Kendo().TextBox().Name("NO").HtmlAttributes(new { placeholder = " رقم الكتاب" })
                 </div>
-                <div class="col-lg-1 col-md-2">
+                @*<div class="col-lg-1 col-md-2">
                     <label for="template_name"> المحافظة</label>
-                </div>
-                <div class="col-lg-2 col-md-4">
+                </div>*@
+                @*<div class="col-lg-2 col-md-4">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر محافظة ")
                                     .Name("CITYNB")
@@ -65,7 +65,7 @@
                                     })
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
                                     )
-                </div>
+                </div>*@
                 <div class="col-lg-1 col-md-2">
                     <label for="template_name"> التاريخ من</label>
                 </div>
@@ -159,8 +159,8 @@
                 columns.Bound(c => c.GDATE).Format("{0:dd/MM/yyyy}").Width(150).Title("تاريخ الكتاب");
                 columns.Bound(c => c.STATUS).Visible(false);
                 columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150).Title("الحالة");
-                columns.Bound(c => c.FROMDATE).Format("{0:dd/MM/yyyy}").Width(200).Title("تاريخ الرسوم من");
-                columns.Bound(c => c.TODATE).Format("{0:dd/MM/yyyy}").Width(200).Title("تاريخ الرسوم الى");
+                columns.Bound(c => c.FROMDATE).Format("{0:dd/MM/yyyy HH:mm:ss}").Width(200).Title("تاريخ الرسوم من");
+                columns.Bound(c => c.TODATE).Format("{0:dd/MM/yyyy HH:mm:ss}").Width(200).Title("تاريخ الرسوم الى");
                 columns.Bound(c => c.AMOUNT).Width(200).Title("القيمة الاجمالية");
 
                 columns.Bound(c => c.CONFIRM_DATE).Format("{0:dd/MM/yyyy}").Width(200).Title("تاريخ التثبيت");
@@ -226,6 +226,7 @@
 
 </div>
 
+
 <!-- Add TRGET_ORDERS-->
 <div class="k-rtl">
     @(Html.Kendo().Window().Name("AddTRGET_ORDERS")
@@ -239,7 +240,7 @@
                      رقم الكتاب
                     </div>
 
-                   <div class="col-lg-2 col-md-2 col-sm-12">
+                   <div class="col-lg-4 col-md-2 col-sm-12">
                        @Html.Kendo().TextBox().Name("AddORDERSNo").HtmlAttributes(new { placeholder = "رقم الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
 
 
@@ -249,7 +250,7 @@
                     تاريخ الكتاب
                    </div>
 
-                   <div class="col-lg-2 col-md-2 col-sm-12">
+                   <div class="col-lg-4 col-md-2 col-sm-12">
                           @(Html.Kendo().DatePicker()
                                   .Name("AddGDATEDate").Format("{0:dd/MM/yyyy}")
                                   .HtmlAttributes(new { placeholder = "تاريخ الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
@@ -258,11 +259,11 @@
 
 
                    </div>
-                    <div class="col-lg-1 col-md-1 col-sm-12" >
+                    @*<div class="col-lg-1 col-md-1 col-sm-12" >
                    المحافظة
-                   </div>
+                   </div>*@
 
-                   <div class="col-lg-2 col-md-2 col-sm-12">
+                   @*<div class="col-lg-2 col-md-2 col-sm-12">
                           @(Html.Kendo().DropDownList()
                                     .Name("AddCITYNB")
                                     .DataTextField("NAME")
@@ -278,7 +279,7 @@
                                     )
 
 
-                   </div>
+                   </div>*@
                </div>
                <br />
                <div class="row col-11">
@@ -325,7 +326,7 @@
                </div>
                <br />
 
-               <div class="row col-11" id="Result" style="text-align:center;">
+               <div class="row col-11" id="Result" style="text-align:center; display:none">
                     <div class="col-lg-12" style="text-align:center;">
                            <table width="50%" style="margin-left: auto; margin-right: auto;">
 
@@ -336,7 +337,7 @@
                                                <div class="row  SessionInfo">
                                                     <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 bordered">
                                                           <span style="text-align: center;">
-                                                           عدد الرسوم
+                                                           عدد الايصالات
                                                            </span>
                                                     </div>
 
@@ -356,31 +357,66 @@
                                                 <div class="row  SessionInfo">
                                                      <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 bordered">
                                                          <span id="Result_count" style="text-align: center;">
-                                               12
+
                                                </span>
                                                     </div>
 
                                                    <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 bordered">
                                                           <span id="Result_amount" style="text-align: center;">
-                                               250000
+
                                                </span>
                                                    </div>
                                                     </div>
-                                               
+
                                            </td>
-                                           
+
                                        </tr>
                                </tbody>
                            </table>
                     </div>
                </div>
-               <div class="row col-11">
+
+               <div id="Include_Exclude" class="row col-11" style="display:none">
+                   <div class="col-lg-5 col-md-5">
+                       <span> المعاملات المستثنات من التحويل</span>
+                       <div id="container_ex">
+
+                                    <button id="add-new-btn_ex" class="btn btn-primary">اضافة رمز معاملة</button>
+                                    @*<button id="delete-btn">Delete Row</button>*@
+                                    <br>
+                                    <br>
+                                    <table id="employee-table_ex">
+
+                                    </table>
+                       </div>
+                   </div>
+                    <div class="col-lg-1 col-md-1">
+
+                     </div>
+                     <div class="col-lg-5 col-md-5">
+                       <span> المعاملات المراد تضمينها في التحويل</span>
+                       <div id="container_in">
+
+                                    <button id="add-new-btn_in" class="btn btn-primary">اضافة رمز معاملة</button>
+                                    @*<button id="delete-btn">Delete Row</button>*@
+                                    <br>
+                                    <br>
+                                    <table id="employee-table_in">
+
+                                    </table>
+                       </div>
+                   </div>
+
 
                </div>
 
-               <div class="window-footer">
-                   <button class="btn btn-primary" onclick="SaveAddTRGET_ORDERS()">حفظ</button>
+
+
+                   <div class="window-footer">
+                    <button class="btn btn-primary" onclick="SaveAddTRGET_ORDERS()">حفظ</button>
                    <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+
+
 
                </div>
            </div>
@@ -392,13 +428,50 @@
             .Actions(actions => actions.Pin().Minimize().Maximize().Close())
             .Pinned()
             )
-    <!-- Save Add Committee-->
-    <script>
-        function SaveAddTRGET_ORDERS() {
+</div>
+<script>
+    function Btn_Search() {
+        $("#grid").data("kendoGrid").dataSource.read();
+    }
 
+</script>
+
+
+
+<script>
+    function SaveAddTRGET_ORDERS() {
+
+
+
+
+
+            var listex = [];
+            $("#employee-table_ex").find('tr').each(function () {
+
+                var data1 = $(this).find("td input[type='text']").val();
+                if (data1 != "") {
+                    listex.push(data1);
+                }
+
+
+
+            });
+
+
+            var listin = [];
+            $("#employee-table_in").find('tr').each(function () {
+
+                var data1 = $(this).find("td input[type='text']").val();
+                if (data1 != "") {
+                    listin.push(data1);
+                }
+
+
+
+            });
 
             var windowWidget = $("#AddTRGET_ORDERS").data("kendoWindow");
-            if ($("#AddCITYNB").val() == "") {
+            if (@ViewBag.citynb == "") {
             toastr.error("يجب اختيار المحافظة");
         } else {
 
@@ -407,7 +480,7 @@
         {
             kendo.ui.progress(windowWidget.element, true);
             var model = {
-                CITYNB: $('#AddCITYNB').val(),
+                CITYNB: @ViewBag.citynb,
 
                 NO: $('#AddORDERSNo').val(),
                 GDATE: $("#AddGDATEDate").val(),
@@ -417,15 +490,17 @@
 
 
             }
+            var FROMDATE1 = $('#AddFROMDATE').val();
+            var TODATE1 = $('#AddTODATE').val();
 
             $.ajax({
                 type: "POST",
-                data: model,
+                data: { model: model, FROMDATE: FROMDATE1, TODATE:TODATE1, EXCLUDES: listex, INCLUDES: listin},
                 url: "@Url.Action("TRGET_ORDERS_Create", "PassengersAccount")",
                 success: function (response) {
                     if (response.success) {
                         kendo.ui.progress(windowWidget.element, false);
-                        ColseWindow();
+
                         $("#grid").data("kendoGrid").dataSource.page(1);
 
                         toastr.success("تمت عملية الإضافة بنجاح");
@@ -441,9 +516,9 @@
 
 
        }
-    </script>
+</script>
 
-    <script>
+<script>
         function setIcons2() {
             setIcons();
             $(".k-grid-Deletear").addClass(" hvr-box-shadow-outset");
@@ -461,14 +536,31 @@
             $("#AddGDATEDate").data("kendoDatePicker").value(todayDate);
             $('#AddORDERSNo').val("");
             // $('#AddComDate').val("");
-            $("#AddCITYNB").data("kendoDropDownList").value(1)
+            //$("#AddCITYNB").data("kendoDropDownList").value(1)
+            $("#AddFROMDATE").val("");
+            $("#AddTODATE").val("");
             $("#Add_comm span.k-tooltip-validation").hide();
+
+            $("#employee-table_ex").find('tr').each(function () {
+
+                deleteallRowin(this);
+
+            });
+            $("#employee-table_in").find('tr').each(function () {
+
+                deleteallRowin(this);
+
+            });
+            document.getElementById('Result_count').innerHTML = 0;
+            document.getElementById('Result_amount').innerHTML = 0;
+            $('#Result').css('display', 'none');
+            $('#Include_Exclude').css('display', 'none');
 
             var wnd = $("#AddTRGET_ORDERS").data("kendoWindow");
             wnd.center().open();
         });
 
-        
+
 
         function isArchived(data) {
             var isArchived = false;
@@ -491,39 +583,209 @@
         window.open("@Url.Action("GetReport", "TRCOMMITTEES")" + "?NB=" + NB , "_blank");
 
     }
-    </script>
+</script>
 
-    <script>
+<script>
 
         function GetResult() {
 
+            var windowWidget = $("#AddTRGET_ORDERS").data("kendoWindow");
+            var CITYNB1 = @ViewBag.citynb;
 
-            var CITYNB1= $('#AddCITYNB').val();
 
-              
             var FROMDATE1 = $('#AddFROMDATE').val();
-
-           // var FROMDATE1 = $("#AddFROMDATE").data("kendoDateTimePicker").value();
             var TODATE1 =  $('#AddTODATE').val();
-
-            alert(FROMDATE1);
-            $.ajax({
+            if ( FROMDATE1 == "" || TODATE1=="") {
+                toastr.error("يرجى اختيار التواريخ");
+            } else {
+                kendo.ui.progress(windowWidget.element, true);
+                 $.ajax({
                 type: "POST",
                 data: { citynb: CITYNB1, FROMDATE: FROMDATE1, TODATE: TODATE1},
                 url: "@Url.Action("GetResult", "PassengersAccount")",
                 success: function (response) {
                     if (response.success) {
-                        
-                        $("#grid").data("kendoGrid").dataSource.page(1);
+                        document.getElementById('Result_count').innerHTML = response.CARBILLS_COUNT2;
+                        document.getElementById('Result_amount').innerHTML = response.TOTVA2L;
+                        $('#Result').css('display', 'block');
+                        $('#Include_Exclude').css('display', 'block');
+                        kendo.ui.progress(windowWidget.element, false);
 
-                        toastr.success("تمت عملية الإضافة بنجاح");
+
+
+
                     } else {
-                      
+                        kendo.ui.progress(windowWidget.element, false);
                         toastr.error(response.responseText);
                     }
 
                 }
             });
+            }
+
+
 
         }
-    </script>
+</script>
+
+
+
+
+<script>
+
+    /* This event will fire on 'Add New Row' button click */
+    $("#add-new-btn_ex").on("click", function () {
+        //calling method to add new row
+        addNewRow();
+    });
+
+    /* This event will fire on 'Delete Row' button click */
+    $("#delete-btn").on("click", function () {
+        //calling method to delete the last row
+        deleteRow();
+    });
+
+    /* This method will add a new row */
+    function addNewRow() {
+        var tableex = $('#employee-table_ex')[0];
+        var rowCountin2222 = tableex.rows.length;
+        var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
+      // late   //  + '<td> <span class="item"><span class="toggle-pill-color"><input type="checkbox" id="ex' + rowCountin2222 + '" name="check"><label for="ex' + rowCountin2222 + '"></label></span></span></td>'
+
+            + '<td><a class="btn"  onclick="deleteRow(this)" > <i style="color: white" class="fa fa-trash" ></i></a ></td></tr>';
+
+        $("#employee-table_ex").append(rowHtml);
+    }
+
+    /* This method will delete a row */
+    function deleteRow(ele) {
+        var table = $('#employee-table_ex')[0];
+        var rowCount = table.rows.length;
+        if (rowCount <= 0) {
+            alert("There is no row available to delete!");
+            return;
+        }
+        if (ele) {
+            //delete specific row
+            $(ele).parent().parent().remove();
+        }
+        else {
+            //delete last row
+            table.deleteRow(rowCount - 1);
+        }
+    }
+</script>
+<script>
+
+    /* This event will fire on 'Add New Row' button click */
+    $("#add-new-btn_in").on("click", function () {
+        //calling method to add new row
+        addNewRowin();
+    });
+
+    /* This event will fire on 'Delete Row' button click */
+    $("#delete-btn").on("click", function () {
+        //calling method to delete the last row
+        deleteRowin();
+    });
+
+
+    /* This method will add a new row */
+    function addNewRowin() {
+        var tablein = $('#employee-table_in')[0];
+        var rowCountin22 = tablein.rows.length;
+        var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
+      // late    //   + '<td> <span class="item"><span class="toggle-pill-color"><input type="checkbox" value="in' + rowCountin22 + '" id="in' + rowCountin22 + '" name="check"><label for="in' + rowCountin22 + '"></label></span></span></td>'
+
+            + '<td><a class="btn"  onclick="deleteRowin(this)" > <i style="color: white" class="fa fa-trash" ></i></a ></td></tr>';
+        // late    // + '<td><a class="btn"  onclick="selectin(' + rowCountin22 + ')" > <i style="color: white" class="fa fa-check" ></i></a ></td></tr>';
+
+        $("#employee-table_in").append(rowHtml);
+     // late   // $("input[value='in" + rowCountin22 + "']").prop("disabled", true);
+       
+    }
+
+    /* This method will delete a row */
+    function deleteRowin(ele) {
+        var tablein = $('#employee-table_in')[0];
+        var rowCountin = tablein.rows.length;
+        if (rowCountin <= 0) {
+            alert("There is no row available to delete!");
+            return;
+        }
+        if (ele) {
+            //delete specific row
+            $(ele).parent().parent().remove();
+        }
+        else {
+            //delete last row
+            tablein.deleteRow(rowCountin - 1);
+        }
+    }
+
+    function deleteallRowin(ele) {
+
+        $(ele).remove();
+    }
+
+  // late   //function selectin(idc) {
+    //    alert(idc);
+    //    $('#in' + idc).prop("checked", true);
+    //}
+</script>
+
+
+<style>
+    .item {
+        margin-bottom: 2em;
+    }
+    /* toggle-pill-color */
+    .toggle-pill-color input[type="checkbox"] {
+        display: none;
+    }
+
+        .toggle-pill-color input[type="checkbox"] + label {
+            display: block;
+            position: relative;
+            width: 3em;
+            height: 1.6em;
+            /*  margin-bottom: 20px;*/
+            border-radius: 1em;
+            background: #e84d4d;
+            box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-transition: background 0.1s ease-in-out;
+            transition: background 0.1s ease-in-out;
+        }
+
+            .toggle-pill-color input[type="checkbox"] + label:before {
+                content: "";
+                display: block;
+                width: 1.2em;
+                height: 1.2em;
+                border-radius: 1em;
+                background: #fff;
+                box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
+                position: absolute;
+                left: 0.2em;
+                top: 0.2em;
+                -webkit-transition: all 0.2s ease-in-out;
+                transition: all 0.2s ease-in-out;
+            }
+
+        .toggle-pill-color input[type="checkbox"]:checked + label {
+            background: #47cf73;
+        }
+
+            .toggle-pill-color input[type="checkbox"]:checked + label:before {
+                box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.2);
+                left: 1.6em;
+            }
+    /* toggle-pill-color end */
+
+</style>
+
+

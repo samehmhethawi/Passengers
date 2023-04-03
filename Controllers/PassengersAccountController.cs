@@ -5,6 +5,7 @@ using Proced.DataAccess.Models.CF;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -61,6 +62,17 @@ namespace Passengers.Controllers
 
         public ActionResult TRGET_ORDERS_Index(int citynb)
         {
+
+            CodesController cc = new CodesController();
+            bool IsAdmin = cc.IsAdmin();
+            bool IsAdminCity = cc.IsAdminCity();
+            if (!IsAdmin && !IsAdminCity)
+            {
+                var mycitynb = Utility.MyCityNb();
+                if (mycitynb != citynb)
+                    return RedirectToAction("Index");
+            }
+
             ViewData["STATUS"] = db.TRSTATUS.Select(x => new
             {
                 ID = x.NB,
@@ -72,6 +84,8 @@ namespace Passengers.Controllers
                 ID = x.NB,
                 NAME = x.NAME
             });
+            ViewBag.cityname = db.ZCITYS.Find(citynb).NAME;
+            ViewBag.citynb = citynb;
             return View();
 
         }
@@ -130,7 +144,7 @@ namespace Passengers.Controllers
             //}
             ////  var total = db.Database.SqlQuery<int>(" select /*+ NO_CPU_COSTING */  count(nb)  FROM ("+sql+")").SingleOrDefault();
 
-            //sql += " order by nb desc";
+            sql += " order by nb desc";
             ////OFFSET " + request.PageSize * (request.Page - 1) + " ROWS FETCH NEXT " + request.PageSize + " ROWS ONLY ";
 
 
@@ -169,40 +183,93 @@ namespace Passengers.Controllers
 
         public ActionResult GetResult(int citynb , string FROMDATE, string TODATE)
         {
+            System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("ar-sa");
+           
 
-          var FROMDATE2 = "to_date('"+FROMDATE+ "','DD/MM/YYYY HH24:MI:SS')";
-            var TODATE2 = "to_date('" + TODATE + "','DD/MM/YYYY HH24:MI:SS')"; ;
+            DateTime FROMDATE2 = DateTime.ParseExact(FROMDATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+            DateTime TODATE2 = DateTime.ParseExact(TODATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
 
-
-             
-            string sql = "BEGIN VEHICLES.PASSENGERS_PKG.GetResult_PASSENGER_TAX(:PCITYNB,"+ FROMDATE2 + ","+ TODATE2 + " ,:CARBILLS_COUNT,:TOTVAL); END;";
+            string sql = "BEGIN VEHICLES.PASSENGERS_PKG.GETRESULT_PASSENGER_TAX(:PCITYNB,:FROMDATE, :TODATE,:CARBILLS_COUNT,:TOTVAL); END;";
             var PCITYNB = new OracleParameter("PCITYNB", OracleDbType.Double, citynb, ParameterDirection.Input);
+            var PFROMDATE = new OracleParameter("FROMDATE", OracleDbType.Date, FROMDATE2, ParameterDirection.Input);
+            var PTODATE = new OracleParameter("TODATE", OracleDbType.Date, TODATE2, ParameterDirection.Input);
+
+
             var bills = new OracleParameter("CARBILLS_COUNT", OracleDbType.Double, ParameterDirection.Output);
             var totals = new OracleParameter("TOTVAL", OracleDbType.Double, ParameterDirection.Output);
-            db.Database.ExecuteSqlCommand(sql, PCITYNB, bills, totals);
+            db.Database.ExecuteSqlCommand(sql, PCITYNB, PFROMDATE, PTODATE,bills, totals);
             var x = bills.Value;
             var y = totals.Value;
-            return Json(new { success = true, CARBILLS_COUNT2 = x, TOTVA2L = y}, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, CARBILLS_COUNT2 = x.ToString(), TOTVA2L = y.ToString() }, JsonRequestBehavior.AllowGet);
 
         }
 
-        public ActionResult TRGET_ORDERS_Create(TRGET_ORDERS model)
+        public ActionResult TRGET_ORDERS_Create(TRGET_ORDERS model, string FROMDATE, string TODATE, List<long?> EXCLUDES, List<long?> INCLUDES)
         {
-            try
-            {        
-                        model.STATUS = 0;         
-                        model.IS_ARCHIVED = false;
-                        db.TRGET_ORDERS.Add(model);
-                        db.SaveChanges();
-                        return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
-                    
-             }
-
-             catch (Exception ex)
+            using (DbContextTransaction transaction = db.Database.BeginTransaction())
             {
-                var ss = validation.OracleExceptionValidation(ex);
-                return Json(new { success = false, responseText = ss });
+                try
+                {
+                    long? totalval = 0;
+                    long? EXCLUDESval = 0;
+                    long? INCLUDESval = 0;
+                    System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("ar-sa");
+
+
+                    DateTime FROMDATE2 = DateTime.ParseExact(FROMDATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+                    DateTime TODATE2 = DateTime.ParseExact(TODATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+
+                    model.STATUS = 0;
+                    model.IS_ARCHIVED = false;
+                    model.FROMDATE = FROMDATE2;
+                    model.TODATE = TODATE2;
+                    db.TRGET_ORDERS.Add(model);
+
+                    db.SaveChanges();
+                    var NB = model.NB;
+                    if (EXCLUDES != null)
+                    {
+                        foreach (var item in EXCLUDES)
+                        {
+                            TRGET_ORDER_EXCLUDES ex = new TRGET_ORDER_EXCLUDES();
+                            ex.NB = 1;
+                            ex.GNB = NB;
+                            ex.CARPROCEDNB = item;
+                            ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + item + ") FROM DUAL").FirstOrDefault();
+                            db.TRGET_ORDER_EXCLUDES.Add(ex);
+                            db.SaveChanges();
+                            EXCLUDESval += ex.AMOUNT;
+                        }
+                    }
+                    if (INCLUDES != null)
+                    {
+                        foreach (var item in INCLUDES)
+                        {
+                            TRGET_ORDER_INCLUDES ex = new TRGET_ORDER_INCLUDES();
+                            ex.NB = 1;
+                            ex.GNB = NB;
+                            ex.CARPROCEDNB = item;
+                            ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED("+ item + ") FROM DUAL").FirstOrDefault();
+                            db.TRGET_ORDER_INCLUDES.Add(ex);
+                            db.SaveChanges();
+                            INCLUDESval += ex.AMOUNT;
+                        }
+                    }
+                   
+
+                    transaction.Commit();
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+
+                }
+
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    var ss = validation.OracleExceptionValidation(ex);
+                    return Json(new { success = false, responseText = ss });
+                }
             }
+                
         }
     }
 }
