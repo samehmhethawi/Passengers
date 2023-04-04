@@ -4,8 +4,10 @@ using Oracle.ManagedDataAccess.Client;
 using Proced.DataAccess.Models.CF;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -94,61 +96,42 @@ namespace Passengers.Controllers
         {
             var sql = " select * from TRGET_ORDERS where 1 = 1 ";
 
-            //var SESNO = Request.Form["SESNO"].Trim();
-            //var SESDATESTART = Request.Form["SESDATESTART"].Trim();
-            //var SESDATEEND = Request.Form["SESDATEEND"].Trim();
-            //var STATUS = Request.Form["STATUS"].Trim();
-            //var SESCITYNB = Request.Form["SESCITYNB"].Trim();
-            //var StrSessArc = Request.Form["StrSessArc"].Trim();
+            var NO = Request.Form["NO"].Trim();
+            var DATEStart = Request.Form["DATEStart"].Trim();
+            var ssGDATE = Request.Form["ssGDATE"].Trim();
+            var Status = Request.Form["Status"].Trim();
+            var StrSessArc = Request.Form["StrSessArc"].Trim();
+            var citynb = Request.Form["citynb"].Trim();
 
 
+            if (citynb != "")
+            {
+                sql += " and CITYNB = " + citynb;
+            }
+            if (NO != "")
+            {
+                sql += " and NO like '" + NO + "'";
+            }
 
-            //if (SESNO != "")
-            //{
-            //    sql += " and SESNO like '%" + SESNO + "%'";
-            //}
-            //if (STATUS != "")
-            //{
-            //    sql += " and STATUS =" + STATUS;
-            //}
+            if (ssGDATE != "")
+            {
+                sql += " and TRUNC(GDATE) = TO_DATE('" + ssGDATE + "','DD/MM/YYYY') ";
+            }
+            if (DATEStart != "")
+            {
+                sql += "  AND (TO_DATE ('" + DATEStart + "', 'DD/MM/YYYY') BETWEEN TRUNC (FROMDATE)  AND TRUNC(TODATE)) ";
+            }
 
-            //if (SESDATESTART != "")
-            //{
-            //    sql += " and TRUNC(SESDATE) >= TO_DATE('" + SESDATESTART + "','DD/MM/YYYY') ";
-            //}
+           
+            if (StrSessArc != "")
+            {
+                sql += " and IS_ARCHIVED =" + StrSessArc;
+            }
 
-            //if (SESDATEEND != "")
-            //{
-            //    sql += " and TRUNC(SESDATE) <= TO_DATE('" + SESDATEEND + "','DD/MM/YYYY') ";
-            //}
-            //if (StrSessArc != "")
-            //{
-            //    sql += " and IS_ARCHIVED =" + StrSessArc;
-            //}
 
-            //CodesController bb = new CodesController();
-
-            //var ci = bb.GetCityForRead();
-
-            //if (ci == "0")
-            //{
-            //    if (SESCITYNB != "")
-            //    {
-            //        sql += " and SESCITYNB =" + SESCITYNB;
-            //    }
-
-            //}
-            //else
-            //{
-            //    sql += " and SESCITYNB =" + ci;
-            //}
-            ////  var total = db.Database.SqlQuery<int>(" select /*+ NO_CPU_COSTING */  count(nb)  FROM ("+sql+")").SingleOrDefault();
 
             sql += " order by nb desc";
-            ////OFFSET " + request.PageSize * (request.Page - 1) + " ROWS FETCH NEXT " + request.PageSize + " ROWS ONLY ";
 
-
-            ////var sql_ = "select ROWNUM +" + (request.Page - 1) + "*" + request.PageSize + " seq, aa.*from(" + sql + ")aa";
 
             var data = db.Database.SqlQuery<TRGET_ORDERS>(sql).ToList();
 
@@ -165,7 +148,6 @@ namespace Passengers.Controllers
                 NOTES = commm.NOTES,
                 CONFIRM_DATE = commm.CONFIRM_DATE,
                 TODATE = commm.TODATE,
-             
                 IS_ARCHIVED = commm.IS_ARCHIVED,
                 FTP_PATH = commm.FTP_PATH,
 
@@ -173,7 +155,6 @@ namespace Passengers.Controllers
 
                 Seq = (request.Page - 1) * request.PageSize + (++index)
             });
-            //  result.Total = total;
 
             return Json(result);
 
@@ -204,12 +185,16 @@ namespace Passengers.Controllers
 
         }
 
-        public ActionResult TRGET_ORDERS_Create(TRGET_ORDERS model, string FROMDATE, string TODATE, List<long?> EXCLUDES, List<long?> INCLUDES)
+        public ActionResult TRGET_ORDERS_Create(HttpPostedFileBase Files ,string NO , DateTime GDATE, int CITYNB, string FROMDATE, string TODATE,string EXCLUDES, string INCLUDES ,long? PTOTALVAL)
         {
             using (DbContextTransaction transaction = db.Database.BeginTransaction())
             {
                 try
                 {
+                    TRGET_ORDERS Model = new TRGET_ORDERS();
+                    Model.NO = NO;
+                    Model.GDATE = GDATE;
+                    Model.CITYNB= CITYNB;
                     long? totalval = 0;
                     long? EXCLUDESval = 0;
                     long? INCLUDESval = 0;
@@ -219,44 +204,74 @@ namespace Passengers.Controllers
                     DateTime FROMDATE2 = DateTime.ParseExact(FROMDATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
                     DateTime TODATE2 = DateTime.ParseExact(TODATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
 
-                    model.STATUS = 0;
-                    model.IS_ARCHIVED = false;
-                    model.FROMDATE = FROMDATE2;
-                    model.TODATE = TODATE2;
-                    db.TRGET_ORDERS.Add(model);
+                    Model.STATUS = 0;
+                    Model.IS_ARCHIVED = false;
+                    Model.FROMDATE = FROMDATE2;
+                    Model.TODATE = TODATE2;
+                    db.TRGET_ORDERS.Add(Model);
 
                     db.SaveChanges();
-                    var NB = model.NB;
+                    var NB = Model.NB;
                     if (EXCLUDES != null)
                     {
-                        foreach (var item in EXCLUDES)
+                        var xx = EXCLUDES.Split(',');
+                        foreach (var item in xx)
                         {
-                            TRGET_ORDER_EXCLUDES ex = new TRGET_ORDER_EXCLUDES();
-                            ex.NB = 1;
-                            ex.GNB = NB;
-                            ex.CARPROCEDNB = item;
-                            ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + item + ") FROM DUAL").FirstOrDefault();
-                            db.TRGET_ORDER_EXCLUDES.Add(ex);
-                            db.SaveChanges();
-                            EXCLUDESval += ex.AMOUNT;
+                            if (item != null)
+                            {
+                                TRGET_ORDER_EXCLUDES ex = new TRGET_ORDER_EXCLUDES();
+                                ex.NB = 1;
+                                ex.GNB = NB;
+                                ex.CARPROCEDNB = long.Parse(item);
+                                ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + item + ") FROM DUAL").FirstOrDefault();
+                                db.TRGET_ORDER_EXCLUDES.Add(ex);
+                                db.SaveChanges();
+                                EXCLUDESval += ex.AMOUNT;
+
+                            }
+                           
                         }
                     }
                     if (INCLUDES != null)
                     {
-                        foreach (var item in INCLUDES)
+                        var ss = INCLUDES.Split(',');
+                        foreach (var item in ss)
                         {
-                            TRGET_ORDER_INCLUDES ex = new TRGET_ORDER_INCLUDES();
-                            ex.NB = 1;
-                            ex.GNB = NB;
-                            ex.CARPROCEDNB = item;
-                            ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED("+ item + ") FROM DUAL").FirstOrDefault();
-                            db.TRGET_ORDER_INCLUDES.Add(ex);
-                            db.SaveChanges();
-                            INCLUDESval += ex.AMOUNT;
+                            if (item != null)
+                            {
+                                TRGET_ORDER_INCLUDES ex = new TRGET_ORDER_INCLUDES();
+                                ex.NB = 1;
+                                ex.GNB = NB;
+                                ex.CARPROCEDNB = long.Parse(item);
+                                ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + item + ") FROM DUAL").FirstOrDefault();
+                                db.TRGET_ORDER_INCLUDES.Add(ex);
+                                db.SaveChanges();
+                                INCLUDESval += ex.AMOUNT;
+                            }
                         }
                     }
-                   
 
+                    byte[] fileContent = null;
+                    using (var reader = new System.IO.BinaryReader(Files.InputStream))
+                    {
+                        fileContent = reader.ReadBytes(Files.ContentLength);
+                    }
+
+                    var date = DateTime.Now;
+                    var pathNameYear = date.ToString("yyyy");
+
+                    pathNameYear += "/" + Model.CITYNB + "/";
+
+                    var FTPFullPath = ConfigurationManager.AppSettings["FtpHomeTRGETORDERS"];
+                    FTPFullPath += pathNameYear;
+
+                    var uploadedFullPath = CodesController.UploadFile(fileContent, FTPFullPath, Files.FileName, FTPFullPath, NB);
+
+                    Model.FTP_PATH = uploadedFullPath;
+                    Model.IS_ARCHIVED = true;
+                    totalval = PTOTALVAL + INCLUDESval - EXCLUDESval;
+                    Model.AMOUNT = (long)totalval;
+                    db.SaveChanges();
                     transaction.Commit();
                     return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
 
@@ -270,6 +285,40 @@ namespace Passengers.Controllers
                 }
             }
                 
+        }
+
+
+        public ActionResult GetReport(long NB)
+        {
+            try
+            {
+                CodesController cc = new CodesController();
+                var ses = db.TRGET_ORDERS.Find(NB);
+                bool IsAdmin = cc.IsAdmin();
+                bool IsAdminCity = cc.IsAdminCity();
+                if (!IsAdmin && !IsAdminCity)
+                {
+
+                    var mycitynb = Utility.MyCityNb();
+                    if (ses.CITYNB != mycitynb)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+                var path = ses.FTP_PATH;
+                var FTPURL = ConfigurationManager.AppSettings["FtpURL"];
+                string fileName = Path.GetFileName(path);
+                string mimeType = MimeMapping.GetMimeMapping(fileName);
+                string ReportURL = path;
+                //  byte[] FileBytes = System.IO.File.ReadAllBytes(ReportURL);
+                byte[] FileBytes = CodesController.GetFileContent(path);
+
+                return File(FileBytes, mimeType);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

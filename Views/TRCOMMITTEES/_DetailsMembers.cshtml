@@ -174,63 +174,70 @@
 </script>
 
 <script>
-     function setvvv() {
+    function setvvv()
+    {
 
-        if ($("#DocumentsFiles").val() != "") {
+         if ($("#DocumentsFiles").val() != "")
+         {
             var is_pdf = fileValidation($("#DocumentsFiles").val());
             if (is_pdf)
             {
                 var is_size = Filevalidationsize();
+
                 if (is_size)
                 {
                       var fileUpload = $("#DocumentsFiles").get(0);
-            var files = fileUpload.files;
+                      var files = fileUpload.files;
 
-            // Create FormData object
-            var fileData = new FormData();
+                    // Create FormData object
+                      var fileData = new FormData();
 
-            // Looping over all files and add it to FormData object
-            for (var i = 0; i < files.length; i++) {
-                fileData.append("Files", files[i]);
-            }
-                    fileData.append("comnb", $('#ComMebmerNb').val());
-
-
-            $.ajax({
-                url: '@Url.Action("SaveSingleDocument", "TRCOMMITTEES")',
-                type: "POST",
-                data: fileData,
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    if (response.success == true) {
-                        toastr.success(response.responseText);
-                        $("#grid").data("kendoGrid").dataSource.read();
-                        ColseWindow();
-
-                    } else {
-                        toastr.error(response.responseText);
-
-                    }
+                    // Looping over all files and add it to FormData object
+                        for (var i = 0; i < files.length; i++)
+                        {
+                             fileData.append("Files", files[i]);
+                        }
+                        fileData.append("comnb", $('#ComMebmerNb').val());
 
 
-                }
-            });
+                        $.ajax({
+                            url: '@Url.Action("SaveSingleDocument", "TRCOMMITTEES")',
+                            type: "POST",
+                            data: fileData,
+                            contentType: false,
+                            processData: false,
+                            success: function (response) {
+                                if (response.success == true) {
+                                    toastr.success(response.responseText);
+                                    $("#grid").data("kendoGrid").dataSource.read();
+                                    ColseWindow();
+
+                                } else {
+                                    toastr.error(response.responseText);
+
+                                }
+
+
+                            }
+                        });
                 }
                 else
                 {
                     toastr.error("حجم الملف يجب ان لا يتجاوز 4 ميغا");
                 }
 
-            } else {
+            }
+            else
+            {
                 toastr.error("يرجى اختيار ملف لاحقته PDF");
             }
 
 
-        } else
-        {
-            toastr.error("يرجى اختيار الملف اولاً");
-        }
+         }
+         else
+         {
+                toastr.error("يرجى اختيار الملف اولاً");
+         }
 
     }
 

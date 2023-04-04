@@ -36,7 +36,9 @@
         }
 </style>
 
-
+<script>
+    var totalval = 0;
+</script>
 @section PartialHeader{
     <div class="panel-heading1 " id="searchPanel">
         <div style="padding:10px">
@@ -47,45 +49,55 @@
                 <div class="col-lg-2 col-md-4">
                     @Html.Kendo().TextBox().Name("NO").HtmlAttributes(new { placeholder = " رقم الكتاب" })
                 </div>
-                @*<div class="col-lg-1 col-md-2">
-                    <label for="template_name"> المحافظة</label>
-                </div>*@
-                @*<div class="col-lg-2 col-md-4">
-                    @(Html.Kendo().DropDownList()
-                                    .OptionLabel("اختر محافظة ")
-                                    .Name("CITYNB")
-                                    .DataTextField("NAME")
-                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
-                                    .DataSource(source =>
-                                    {
-                                        source.Read(read =>
-                                        {
-                                            read.Action("GetCity", "Codes");
-                                        });
-                                    })
-                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
-                                    )
-                </div>*@
                 <div class="col-lg-1 col-md-2">
-                    <label for="template_name"> التاريخ من</label>
+            <label for="template_name"> تاريخ الكتاب</label>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            @(Html.Kendo().DatePicker()
+                .Name("ssGDATE")
+                .Format("{0:dd/MM/yyyy}")
+                .HtmlAttributes(new { placeholder = "تاريخ الكتاب ", style = "width: 100%; text-align:center;" })
+            )
+        </div>
+                @*<div class="col-lg-1 col-md-2">
+            <label for="template_name"> المحافظة</label>
+        </div>*@
+                @*<div class="col-lg-2 col-md-4">
+            @(Html.Kendo().DropDownList()
+                            .OptionLabel("اختر محافظة ")
+                            .Name("CITYNB")
+                            .DataTextField("NAME")
+                            .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                            .DataSource(source =>
+                            {
+                                source.Read(read =>
+                                {
+                                    read.Action("GetCity", "Codes");
+                                });
+                            })
+                            .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                            )
+        </div>*@
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> التاريخ الرسوم </label>
                 </div>
-                <div class="col-lg-2 col-md-4">
+                <div class="col-lg-3 col-md-4">
                     @(Html.Kendo().DatePicker()
                         .Name("DATEStart")
                         .Format("{0:dd/MM/yyyy}")
-                        .HtmlAttributes(new { placeholder = "تاريخ الكتاب من", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+                        .HtmlAttributes(new { placeholder = "ادخل تاريخ ضمن مجال الرسوم",  style = "width: 100%; text-align:center;" })
                     )
                 </div>
-                <div class="col-lg-1 col-md-2">
-                    <label for="template_name"> التاريخ الى</label>
-                </div>
-                <div class="col-lg-2 col-md-4">
-                    @(Html.Kendo().DatePicker()
-                        .Name("DATEEnd")
-                        .Format("{0:dd/MM/yyyy}")
-                        .HtmlAttributes(new { placeholder = "تاريخ الكتاب الى", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
-                    )
-                </div>
+                @*<div class="col-lg-1 col-md-2">
+            <label for="template_name"> التاريخ الى</label>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            @(Html.Kendo().DatePicker()
+                .Name("DATEEnd")
+                .Format("{0:dd/MM/yyyy}")
+                .HtmlAttributes(new { placeholder = "تاريخ الكتاب الى", required = "required", validationmessage = "*", style = "width: 100%; text-align:center;" })
+            )
+        </div>*@
             </div>
             <div class="row">
                 <div class="col-lg-1 col-md-2">
@@ -96,7 +108,7 @@
                                     .OptionLabel("اختر  حالة ")
                                     .Name("Status")
                                     .DataTextField("NAME")
-                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataValueField("ID")
                                     .DataSource(source =>
                                     {
                                         source.Read(read =>
@@ -188,7 +200,7 @@
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
             .PageSize(10)
             .Model(model => model.Id(p => p.NB))
-            .Read(read => read.Action("TRGET_ORDERS_Read", "PassengersAccount")))
+            .Read(read => read.Action("TRGET_ORDERS_Read", "PassengersAccount").Data("GetFillters")))
             .Resizable(resize => resize
             .Columns(true)
             )
@@ -281,6 +293,14 @@
 
                    </div>*@
                </div>
+               <br />
+               <div class="row col-11">
+                   <div class="col-lg-12 col-md-12 col-sm-12">
+                       @Html.Kendo().TextBox().Name("AddNOTES").HtmlAttributes(new { placeholder = "ملاحظات" })
+
+
+                   </div>
+                </div>
                <br />
                <div class="row col-11">
                     <div class="col-md-1 col-sm-12">
@@ -382,7 +402,7 @@
                        <div id="container_ex">
 
                                     <button id="add-new-btn_ex" class="btn btn-primary">اضافة رمز معاملة</button>
-                                    @*<button id="delete-btn">Delete Row</button>*@
+
                                     <br>
                                     <br>
                                     <table id="employee-table_ex">
@@ -398,7 +418,7 @@
                        <div id="container_in">
 
                                     <button id="add-new-btn_in" class="btn btn-primary">اضافة رمز معاملة</button>
-                                    @*<button id="delete-btn">Delete Row</button>*@
+
                                     <br>
                                     <br>
                                     <table id="employee-table_in">
@@ -410,15 +430,24 @@
 
                </div>
 
+                <div class="row col-11">
+                       <div class="col-lg-5 col-md-5 col-sm-12" style="text-align: center; border-top: 1px solid #e5e5e5;margin-top:10px ">
+                         <button class="btn btn-primary" onclick="SaveAddTRGET_ORDERS()">حفظ</button>
+                         <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+                       </div>
 
+                       <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: center; border-top: 1px solid #e5e5e5;margin-top:10px ">
 
-                   <div class="window-footer">
-                    <button class="btn btn-primary" onclick="SaveAddTRGET_ORDERS()">حفظ</button>
-                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+                               <span class="btn btn-primary btn-file">
+                                                        اختر ملف . . <i class="fa fa-upload"></i> <input accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
+                                                    </span>
 
+                             @*   <button class="btn btn-primary" onclick="setvvv()"> حفظ ورفع الملف</button>*@
 
+                       </div>
 
-               </div>
+                 </div>
+
            </div>
             </text>)
             .Draggable(true)
@@ -428,97 +457,157 @@
             .Actions(actions => actions.Pin().Minimize().Maximize().Close())
             .Pinned()
             )
-</div>
-<script>
+    <script>
     function Btn_Search() {
         $("#grid").data("kendoGrid").dataSource.read();
     }
-
-</script>
-
-
-
-<script>
-    function SaveAddTRGET_ORDERS() {
-
-
-
+    function GetFillters() {
+        var fillter = {};
+        fillter.NO = $('#NO').val();
+        fillter.DATEStart = $('#DATEStart').val();
+        fillter.ssGDATE = $('#ssGDATE').val();
+        fillter.Status = $('#Status').val();
+        fillter.StrSessArc = $('#StrSessArc').val();
+        fillter.citynb = @ViewBag.citynb;
 
 
-            var listex = [];
-            $("#employee-table_ex").find('tr').each(function () {
-
-                var data1 = $(this).find("td input[type='text']").val();
-                if (data1 != "") {
-                    listex.push(data1);
-                }
+        return fillter;
+    }
+    </script>
 
 
 
-            });
-
-
-            var listin = [];
-            $("#employee-table_in").find('tr').each(function () {
-
-                var data1 = $(this).find("td input[type='text']").val();
-                if (data1 != "") {
-                    listin.push(data1);
-                }
-
-
-
-            });
-
-            var windowWidget = $("#AddTRGET_ORDERS").data("kendoWindow");
-            if (@ViewBag.citynb == "") {
-            toastr.error("يجب اختيار المحافظة");
-        } else {
-
-                var validator = $("#Add_ORDERS").kendoValidator().data("kendoValidator");
-        if (validator.validate())
+    <script>
+        function SaveAddTRGET_ORDERS()
         {
-            kendo.ui.progress(windowWidget.element, true);
-            var model = {
-                CITYNB: @ViewBag.citynb,
-
-                NO: $('#AddORDERSNo').val(),
-                GDATE: $("#AddGDATEDate").val(),
-
-                FROMDATE: $("#AddFROMDATE").val(),
-                TODATE: $("#AddTODATE").val(),
-
-
-            }
             var FROMDATE1 = $('#AddFROMDATE').val();
             var TODATE1 = $('#AddTODATE').val();
+            if (FROMDATE1 != "" || TODATE1 != "") {
+                if ($("#DocumentsFiles").val() != "") {
+                    var is_pdf = fileValidation($("#DocumentsFiles").val());
+                    if (is_pdf) {
 
-            $.ajax({
-                type: "POST",
-                data: { model: model, FROMDATE: FROMDATE1, TODATE:TODATE1, EXCLUDES: listex, INCLUDES: listin},
-                url: "@Url.Action("TRGET_ORDERS_Create", "PassengersAccount")",
-                success: function (response) {
-                    if (response.success) {
-                        kendo.ui.progress(windowWidget.element, false);
+                        var is_size = Filevalidationsize();
+                        if (is_size) {
+                           
 
-                        $("#grid").data("kendoGrid").dataSource.page(1);
 
-                        toastr.success("تمت عملية الإضافة بنجاح");
-                    } else {
-                        kendo.ui.progress(windowWidget.element, false);
-                        toastr.error(response.responseText);
+                           
+
+                            var windowWidget = $("#AddTRGET_ORDERS").data("kendoWindow");
+
+                            if (@ViewBag.citynb == "") {
+                                toastr.error("يجب اختيار المحافظة");
+                            }
+                            else {
+
+
+                                var validator = $("#Add_ORDERS").kendoValidator().data("kendoValidator");
+
+                                if (validator.validate()) {
+                                    kendo.ui.progress(windowWidget.element, true);
+                                    var listex = [];
+                                    $("#employee-table_ex").find('tr').each(function () {
+                                       
+
+                                        var data1 = $(this).find("td input[type='text']").val();
+                                       
+                                        if (data1 != "") {
+                                            listex.push(data1);
+                                        }
+                                    });
+                                    var listin = [];
+                                  
+                                    $("#employee-table_in").find('tr').each(function () {
+                                       
+                                        var data2 = $(this).find("td input[type='text']").val();
+                                        if (data2 != "") {
+                                            alert(data2);
+
+                                            listin.push(data2);
+                                        }
+                                    });
+                                    alert(listin);
+                                    alert(listex);
+
+                                    
+                                    var CITYNB = @ViewBag.citynb;
+
+                                    var NO = $('#AddORDERSNo').val();
+                                    var GDATE = $("#AddGDATEDate").val();
+
+                                    // var   FROMDATE: $("#AddFROMDATE").val(),
+                                    //var    TODATE: $("#AddTODATE").val(),
+
+
+
+                                    var fileUpload = $("#DocumentsFiles").get(0);
+                                    var files = fileUpload.files;
+
+                                    // Create FormData object
+                                    var fileData = new FormData();
+
+                                    // Looping over all files and add it to FormData object
+                                    for (var i = 0; i < files.length; i++) {
+                                        fileData.append("Files", files[i]);
+                                    }
+                                    fileData.append("NO", NO);
+                                    fileData.append("GDATE", GDATE);
+                                    fileData.append("CITYNB", CITYNB);
+                                    fileData.append("FROMDATE", FROMDATE1);
+                                    fileData.append("TODATE", TODATE1);
+                                   fileData.append("EXCLUDES", listex);
+                                    fileData.append("INCLUDES", listin);
+                                    fileData.append("PTOTALVAL", totalval);
+
+                                    
+                                    // { Files: files[0], NO: NO, GDATE: GDATE, CITYNB: CITYNB, FROMDATE: FROMDATE1, TODATE: TODATE1, PTOTALVAL: totalval ,EXCLUDES: listex, INCLUDES: listin},
+                                    // { fileData, EXCLUDES: listex, INCLUDES: listin}
+
+                                    $.ajax({
+                                        url: '@Url.Action("TRGET_ORDERS_Create", "PassengersAccount")',
+                                        type: "POST",
+                                        data: fileData,
+                                        contentType: false,
+                                        processData: false,
+                                        success: function (response) {
+                                            if (response.success == true) {
+                                                toastr.success(response.responseText);
+                                                kendo.ui.progress(windowWidget.element, false);
+                                            } else {
+                                                toastr.error(response.responseText);
+                                                kendo.ui.progress(windowWidget.element, false);
+
+                                            }
+
+
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        else {
+                            toastr.error("حجم الملف يجب ان لا يتجاوز 4 ميغا");
+                        }
                     }
-
+                    else {
+                        toastr.error("يرجى اختيار ملف لاحقته PDF");
+                    }
                 }
-            });
+                else {
+                    toastr.error("يرجى اختيار الملف اولاً");
+                }
+            }
+            else
+            {
+                toastr.error("يرجى ادخال التواريخ");
+            }
+
+
         }
-        }
+    </script>
 
-
-       }
-</script>
-
-<script>
+    <script>
         function setIcons2() {
             setIcons();
             $(".k-grid-Deletear").addClass(" hvr-box-shadow-outset");
@@ -580,12 +669,12 @@
          function showdoc(NB) {
 
 
-        window.open("@Url.Action("GetReport", "TRCOMMITTEES")" + "?NB=" + NB , "_blank");
+        window.open("@Url.Action("GetReport", "PassengersAccount")" + "?NB=" + NB , "_blank");
 
     }
-</script>
+    </script>
 
-<script>
+    <script>
 
         function GetResult() {
 
@@ -599,193 +688,250 @@
                 toastr.error("يرجى اختيار التواريخ");
             } else {
                 kendo.ui.progress(windowWidget.element, true);
-                 $.ajax({
-                type: "POST",
-                data: { citynb: CITYNB1, FROMDATE: FROMDATE1, TODATE: TODATE1},
-                url: "@Url.Action("GetResult", "PassengersAccount")",
-                success: function (response) {
-                    if (response.success) {
-                        document.getElementById('Result_count').innerHTML = response.CARBILLS_COUNT2;
-                        document.getElementById('Result_amount').innerHTML = response.TOTVA2L;
-                        $('#Result').css('display', 'block');
-                        $('#Include_Exclude').css('display', 'block');
-                        kendo.ui.progress(windowWidget.element, false);
+                     $.ajax({
+                    type: "POST",
+                    data: { citynb: CITYNB1, FROMDATE: FROMDATE1, TODATE: TODATE1},
+                    url: "@Url.Action("GetResult", "PassengersAccount")",
+                    success: function (response) {
+                        if (response.success) {
+                            totalval = response.TOTVA2L;
+                            document.getElementById('Result_count').innerHTML = response.CARBILLS_COUNT2;
+                            document.getElementById('Result_amount').innerHTML = response.TOTVA2L;
+                            $('#Result').css('display', 'block');
+                            $('#Include_Exclude').css('display', 'block');
+                            kendo.ui.progress(windowWidget.element, false);
 
 
 
 
-                    } else {
-                        kendo.ui.progress(windowWidget.element, false);
-                        toastr.error(response.responseText);
+                        } else {
+                            kendo.ui.progress(windowWidget.element, false);
+                            toastr.error(response.responseText);
+                        }
+
                     }
-
-                }
-            });
+                });
             }
 
 
 
         }
-</script>
+    </script>
 
 
 
 
-<script>
+    <script>
 
-    /* This event will fire on 'Add New Row' button click */
-    $("#add-new-btn_ex").on("click", function () {
-        //calling method to add new row
-        addNewRow();
-    });
+        /* This event will fire on 'Add New Row' button click */
+        $("#add-new-btn_ex").on("click", function () {
+            //calling method to add new row
+            addNewRow();
+        });
 
-    /* This event will fire on 'Delete Row' button click */
-    $("#delete-btn").on("click", function () {
-        //calling method to delete the last row
-        deleteRow();
-    });
+        /* This event will fire on 'Delete Row' button click */
+        $("#delete-btn").on("click", function () {
+            //calling method to delete the last row
+            deleteRow();
+        });
 
-    /* This method will add a new row */
-    function addNewRow() {
-        var tableex = $('#employee-table_ex')[0];
-        var rowCountin2222 = tableex.rows.length;
-        var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
-      // late   //  + '<td> <span class="item"><span class="toggle-pill-color"><input type="checkbox" id="ex' + rowCountin2222 + '" name="check"><label for="ex' + rowCountin2222 + '"></label></span></span></td>'
+        /* This method will add a new row */
+        function addNewRow() {
+            var tableex = $('#employee-table_ex')[0];
+            var rowCountin2222 = tableex.rows.length;
+            var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
+                // late   //  + '<td> <span class="item"><span class="toggle-pill-color"><input type="checkbox" id="ex' + rowCountin2222 + '" name="check"><label for="ex' + rowCountin2222 + '"></label></span></span></td>'
 
-            + '<td><a class="btn"  onclick="deleteRow(this)" > <i style="color: white" class="fa fa-trash" ></i></a ></td></tr>';
+                + '<td><a class="btn"  onclick="deleteRow(this)" > <i style="color: white" class="fa fa-trash" ></i></a ></td></tr>';
 
-        $("#employee-table_ex").append(rowHtml);
-    }
-
-    /* This method will delete a row */
-    function deleteRow(ele) {
-        var table = $('#employee-table_ex')[0];
-        var rowCount = table.rows.length;
-        if (rowCount <= 0) {
-            alert("There is no row available to delete!");
-            return;
-        }
-        if (ele) {
-            //delete specific row
-            $(ele).parent().parent().remove();
-        }
-        else {
-            //delete last row
-            table.deleteRow(rowCount - 1);
-        }
-    }
-</script>
-<script>
-
-    /* This event will fire on 'Add New Row' button click */
-    $("#add-new-btn_in").on("click", function () {
-        //calling method to add new row
-        addNewRowin();
-    });
-
-    /* This event will fire on 'Delete Row' button click */
-    $("#delete-btn").on("click", function () {
-        //calling method to delete the last row
-        deleteRowin();
-    });
-
-
-    /* This method will add a new row */
-    function addNewRowin() {
-        var tablein = $('#employee-table_in')[0];
-        var rowCountin22 = tablein.rows.length;
-        var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
-      // late    //   + '<td> <span class="item"><span class="toggle-pill-color"><input type="checkbox" value="in' + rowCountin22 + '" id="in' + rowCountin22 + '" name="check"><label for="in' + rowCountin22 + '"></label></span></span></td>'
-
-            + '<td><a class="btn"  onclick="deleteRowin(this)" > <i style="color: white" class="fa fa-trash" ></i></a ></td></tr>';
-        // late    // + '<td><a class="btn"  onclick="selectin(' + rowCountin22 + ')" > <i style="color: white" class="fa fa-check" ></i></a ></td></tr>';
-
-        $("#employee-table_in").append(rowHtml);
-     // late   // $("input[value='in" + rowCountin22 + "']").prop("disabled", true);
-       
-    }
-
-    /* This method will delete a row */
-    function deleteRowin(ele) {
-        var tablein = $('#employee-table_in')[0];
-        var rowCountin = tablein.rows.length;
-        if (rowCountin <= 0) {
-            alert("There is no row available to delete!");
-            return;
-        }
-        if (ele) {
-            //delete specific row
-            $(ele).parent().parent().remove();
-        }
-        else {
-            //delete last row
-            tablein.deleteRow(rowCountin - 1);
-        }
-    }
-
-    function deleteallRowin(ele) {
-
-        $(ele).remove();
-    }
-
-  // late   //function selectin(idc) {
-    //    alert(idc);
-    //    $('#in' + idc).prop("checked", true);
-    //}
-</script>
-
-
-<style>
-    .item {
-        margin-bottom: 2em;
-    }
-    /* toggle-pill-color */
-    .toggle-pill-color input[type="checkbox"] {
-        display: none;
-    }
-
-        .toggle-pill-color input[type="checkbox"] + label {
-            display: block;
-            position: relative;
-            width: 3em;
-            height: 1.6em;
-            /*  margin-bottom: 20px;*/
-            border-radius: 1em;
-            background: #e84d4d;
-            box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            -webkit-transition: background 0.1s ease-in-out;
-            transition: background 0.1s ease-in-out;
+            $("#employee-table_ex").append(rowHtml);
         }
 
-            .toggle-pill-color input[type="checkbox"] + label:before {
-                content: "";
+        /* This method will delete a row */
+        function deleteRow(ele) {
+            var table = $('#employee-table_ex')[0];
+            var rowCount = table.rows.length;
+            if (rowCount <= 0) {
+                alert("There is no row available to delete!");
+                return;
+            }
+            if (ele) {
+                //delete specific row
+                $(ele).parent().parent().remove();
+            }
+            else {
+                //delete last row
+                table.deleteRow(rowCount - 1);
+            }
+        }
+    </script>
+    <script>
+
+        /* This event will fire on 'Add New Row' button click */
+        $("#add-new-btn_in").on("click", function () {
+            //calling method to add new row
+            addNewRowin();
+        });
+
+        /* This event will fire on 'Delete Row' button click */
+        $("#delete-btn").on("click", function () {
+            //calling method to delete the last row
+            deleteRowin();
+        });
+
+
+        /* This method will add a new row */
+        function addNewRowin() {
+            var tablein = $('#employee-table_in')[0];
+            var rowCountin22 = tablein.rows.length;
+            var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
+                // late    //   + '<td> <span class="item"><span class="toggle-pill-color"><input type="checkbox" value="in' + rowCountin22 + '" id="in' + rowCountin22 + '" name="check"><label for="in' + rowCountin22 + '"></label></span></span></td>'
+
+                + '<td><a class="btn"  onclick="deleteRowin(this)" > <i style="color: white" class="fa fa-trash" ></i></a ></td></tr>';
+            // late    // + '<td><a class="btn"  onclick="selectin(' + rowCountin22 + ')" > <i style="color: white" class="fa fa-check" ></i></a ></td></tr>';
+
+            $("#employee-table_in").append(rowHtml);
+            // late   // $("input[value='in" + rowCountin22 + "']").prop("disabled", true);
+
+        }
+
+        /* This method will delete a row */
+        function deleteRowin(ele) {
+            var tablein = $('#employee-table_in')[0];
+            var rowCountin = tablein.rows.length;
+            if (rowCountin <= 0) {
+                alert("There is no row available to delete!");
+                return;
+            }
+            if (ele) {
+                //delete specific row
+                $(ele).parent().parent().remove();
+            }
+            else {
+                //delete last row
+                tablein.deleteRow(rowCountin - 1);
+            }
+        }
+
+        function deleteallRowin(ele) {
+
+            $(ele).remove();
+        }
+
+        // late   //function selectin(idc) {
+        //    alert(idc);
+        //    $('#in' + idc).prop("checked", true);
+        //}
+    </script>
+
+
+    <style>
+        .item {
+            margin-bottom: 2em;
+        }
+        /* toggle-pill-color */
+        .toggle-pill-color input[type="checkbox"] {
+            display: none;
+        }
+
+            .toggle-pill-color input[type="checkbox"] + label {
                 display: block;
-                width: 1.2em;
-                height: 1.2em;
+                position: relative;
+                width: 3em;
+                height: 1.6em;
+                /*  margin-bottom: 20px;*/
                 border-radius: 1em;
-                background: #fff;
-                box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
-                position: absolute;
-                left: 0.2em;
-                top: 0.2em;
-                -webkit-transition: all 0.2s ease-in-out;
-                transition: all 0.2s ease-in-out;
+                background: #e84d4d;
+                box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.3);
+                cursor: pointer;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                -webkit-transition: background 0.1s ease-in-out;
+                transition: background 0.1s ease-in-out;
             }
 
-        .toggle-pill-color input[type="checkbox"]:checked + label {
-            background: #47cf73;
+                .toggle-pill-color input[type="checkbox"] + label:before {
+                    content: "";
+                    display: block;
+                    width: 1.2em;
+                    height: 1.2em;
+                    border-radius: 1em;
+                    background: #fff;
+                    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
+                    position: absolute;
+                    left: 0.2em;
+                    top: 0.2em;
+                    -webkit-transition: all 0.2s ease-in-out;
+                    transition: all 0.2s ease-in-out;
+                }
+
+            .toggle-pill-color input[type="checkbox"]:checked + label {
+                background: #47cf73;
+            }
+
+                .toggle-pill-color input[type="checkbox"]:checked + label:before {
+                    box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.2);
+                    left: 1.6em;
+                }
+        /* toggle-pill-color end */
+
+    </style>
+
+
+    <style>
+        .btn-file {
+            position: relative;
+            overflow: hidden;
         }
 
-            .toggle-pill-color input[type="checkbox"]:checked + label:before {
-                box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.2);
-                left: 1.6em;
+            .btn-file input[type=file] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 100%;
+                min-height: 100%;
+                font-size: 100px;
+                text-align: right;
+                filter: alpha(opacity=0);
+                opacity: 0;
+                outline: none;
+                background: white;
+                cursor: inherit;
+                display: block;
             }
-    /* toggle-pill-color end */
+    </style>
+    <script type="text/javascript">
+        function fileValidation(filesss) {
+            var fileElement = document.getElementById("DocumentsFiles");
+            var fileElement = fileElement;
+            var fileExtension = "";
+            if (fileElement.value.lastIndexOf(".") > 0) {
+                fileExtension = fileElement.value.substring(fileElement.value.lastIndexOf(".") + 1, fileElement.value.length);
+            }
+            if (fileExtension.toLowerCase() == "pdf") {
+                return true;
+            }
+            else {
+                /* alert("يجب اختيار ملف PDF فقط.");*/
+                fileElement.value = '';
+                return false;
+            }
+        }
 
-</style>
+        function Filevalidationsize() {
+            const fi = document.getElementById('DocumentsFiles');
+            if (fi.files.length > 0) {
+                const fsize = fi.files.item(0).size;
+                const file = Math.round((fsize / 1024));
 
+                if (fsize > 4194304) {
 
+                    return false;
+                } else {
+
+                    return true;
+                }
+            }
+        }
+    </script>

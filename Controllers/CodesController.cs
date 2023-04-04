@@ -115,7 +115,6 @@ namespace Passengers.Controllers
             return Json(status, JsonRequestBehavior.AllowGet);
         }
 
-
         public int GetMaxOrdr(string TableName)
         {
            var sql = "SELECT NVL(MAX(ORDR),0) FROM " + TableName;
@@ -219,16 +218,7 @@ namespace Passengers.Controllers
             return Json(reg, JsonRequestBehavior.AllowGet);
 
         }
-        //public ActionResult GETTRLINES_TYPES_DURATIONS()
-        //{
-        //    var city = db.TRLINES_TYPES_DURATIONS.Select(x => new
-        //    {
-        //        ID = x.NB,
-        //        NAME = x.NAME,
-        //    });
-        //    return Json(city, JsonRequestBehavior.AllowGet);
 
-        //}
         public ActionResult GetZOUTACTS()
         {
             var reg = db.ZOUTACTS.Select(x => new
@@ -250,7 +240,6 @@ namespace Passengers.Controllers
             return Json(STATUS, JsonRequestBehavior.AllowGet);
 
         }
-
 
         public static string UploadFile(byte[] file, string FTPFullPath, string fileName ,string FtpHomeDirectory,long nb)
         {
