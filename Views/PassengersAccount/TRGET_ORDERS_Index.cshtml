@@ -38,6 +38,7 @@
 
 <script>
     var totalval = 0;
+    iid = 0;
 </script>
 @section PartialHeader{
     <div class="panel-heading1 " id="searchPanel">
@@ -113,7 +114,7 @@
                                     {
                                         source.Read(read =>
                                         {
-                                            read.Action("GetStatus", "Codes");
+                                            read.Action("GETTRPASSENGER_ACCOUNT_STATUS", "Codes");
                                         });
                                     })
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
@@ -159,6 +160,16 @@
             .Name("grid").AutoBind(false)
             .Columns(columns =>
             {
+                columns.Command(command =>
+                {
+                    //command.Custom("Preview").Click("Preview").Text(" ");
+                    //    command.Custom("Edit").Click("Edit").Text(" ");
+                    //  command.Custom("Delete").Click("Delete").Text(" ");
+                        command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
+                    //  command.Custom("Details2").Click("Details2").Text(" ");
+                    //command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
+                    command.Custom("SHOWCONFIRM").Click("SHOWCONFIRM").Text(" ");
+                }).Width(180);
                 columns.Template(t => { }).Title("م.").ClientTemplate(
                  "#= isArchived(data) #"
                ).Width(80);
@@ -181,15 +192,7 @@
 
                 columns.Bound(c => c.NOTES).Width(400).Title("ملاحظات");
 
-                columns.Command(command =>
-                {
-                    //command.Custom("Preview").Click("Preview").Text(" ");
-                    //    command.Custom("Edit").Click("Edit").Text(" ");
-                    //  command.Custom("Delete").Click("Delete").Text(" ");
-                    //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
-                    //  command.Custom("Details2").Click("Details2").Text(" ");
-                    //command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
-                }).Width(180);
+
             })
             .HtmlAttributes(new { style = "height: aotu  !important;" })
             .Scrollable()
@@ -248,50 +251,85 @@
             .Content(@<text>
            <div id="Add_ORDERS">
                <div class="row col-11">
-                    <div class="col-lg-1 col-md-1 col-sm-12">
-                     رقم الكتاب
-                    </div>
+                    @if(ViewBag.IsAdmin == true)
+                        {
+                                <div class="col-lg-1 col-md-1 col-sm-12">
+                                 رقم الكتاب
+                                </div>
 
-                   <div class="col-lg-4 col-md-2 col-sm-12">
-                       @Html.Kendo().TextBox().Name("AddORDERSNo").HtmlAttributes(new { placeholder = "رقم الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
-
-
-                   </div>
-
-                   <div class="col-lg-1 col-md-1 col-sm-12">
-                    تاريخ الكتاب
-                   </div>
-
-                   <div class="col-lg-4 col-md-2 col-sm-12">
-                          @(Html.Kendo().DatePicker()
-                                  .Name("AddGDATEDate").Format("{0:dd/MM/yyyy}")
-                                  .HtmlAttributes(new { placeholder = "تاريخ الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
-                                  .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
-                                    )
+                               <div class="col-lg-2 col-md-2 col-sm-12">
+                                   @Html.Kendo().TextBox().Name("AddORDERSNo").HtmlAttributes(new { placeholder = "رقم الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
 
 
-                   </div>
-                    @*<div class="col-lg-1 col-md-1 col-sm-12" >
-                   المحافظة
-                   </div>*@
+                               </div>
 
-                   @*<div class="col-lg-2 col-md-2 col-sm-12">
-                          @(Html.Kendo().DropDownList()
-                                    .Name("AddCITYNB")
-                                    .DataTextField("NAME")
-                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
-                                    .DataSource(source =>
-                                    {
-                                        source.Read(read =>
-                                        {
-                                            read.Action("GetCity", "Codes");
-                                        });
-                                    })
-                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
-                                    )
+                               <div class="col-lg-1 col-md-1 col-sm-12">
+                                تاريخ الكتاب
+                               </div>
+
+                               <div class="col-lg-2 col-md-2 col-sm-12">
+                                      @(Html.Kendo().DatePicker()
+                                              .Name("AddGDATEDate").Format("{0:dd/MM/yyyy}")
+                                              .HtmlAttributes(new { placeholder = "تاريخ الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                              .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                )
 
 
-                   </div>*@
+                               </div>
+
+                                  <div class="col-lg-1 col-md-1 col-sm-12" >
+                                                   المحافظة
+                                  </div>
+
+                               <div class="col-lg-2 col-md-2 col-sm-12">
+                                      @(Html.Kendo().DropDownList()
+                                                .Name("AddCITYNB")
+                                                .OptionLabel("اختر  المحافظة ")
+                                                .DataTextField("NAME")
+                                                .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("GetCity", "Codes");
+                                                    });
+                                                })
+                                                .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                )
+
+
+                               </div>
+                        }
+
+                    @if(ViewBag.IsAdmin == false)
+                        {
+                                <div class="col-lg-1 col-md-1 col-sm-12">
+                                 رقم الكتاب
+                                </div>
+
+                               <div class="col-lg-4 col-md-2 col-sm-12">
+                                   @Html.Kendo().TextBox().Name("AddORDERSNo").HtmlAttributes(new { placeholder = "رقم الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+
+
+                               </div>
+
+                               <div class="col-lg-1 col-md-1 col-sm-12">
+                                تاريخ الكتاب
+                               </div>
+
+                               <div class="col-lg-4 col-md-2 col-sm-12">
+                                      @(Html.Kendo().DatePicker()
+                                              .Name("AddGDATEDate").Format("{0:dd/MM/yyyy}")
+                                              .HtmlAttributes(new { placeholder = "تاريخ الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                              .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                )
+
+
+                               </div>
+
+
+                        }
+
                </div>
                <br />
                <div class="row col-11">
@@ -412,6 +450,7 @@
                    </div>
                     <div class="col-lg-1 col-md-1">
 
+
                      </div>
                      <div class="col-lg-5 col-md-5">
                        <span> المعاملات المراد تضمينها في التحويل</span>
@@ -426,7 +465,8 @@
                                     </table>
                        </div>
                    </div>
-
+                  
+                    
 
                </div>
 
@@ -468,140 +508,217 @@
         fillter.ssGDATE = $('#ssGDATE').val();
         fillter.Status = $('#Status').val();
         fillter.StrSessArc = $('#StrSessArc').val();
-        fillter.citynb = @ViewBag.citynb;
+        //fillter.citynb = @ViewBag.citynb;
 
 
         return fillter;
-    }
+        }
+
+        function setIcons2() {
+            setIcons();
+            $(".k-grid-Deletear").addClass(" hvr-box-shadow-outset");
+            $(".k-grid-Deletear").kendoButton({
+                icon: "i fa fa-trash text-danger"
+            });
+            $(".k-grid-Deletear").kendoTooltip({
+                content: "حذف الارشفة",
+                position: "left",
+                autoHide: true,
+            });
+
+
+
+
+        }
+        function rest_filtters() {
+            $('#NO').val("");
+            $('#DATEStart').val("");
+             $('#ssGDATE').val("");
+
+            $("#StrSessArc").data("kendoDropDownList").value(-1);
+            $("#Status").data("kendoDropDownList").value(-1);
+
+            $("#grid").data("kendoGrid").dataSource.data([]);
+        }
     </script>
 
 
 
     <script>
+
+
+
+
         function SaveAddTRGET_ORDERS()
         {
-            var FROMDATE1 = $('#AddFROMDATE').val();
-            var TODATE1 = $('#AddTODATE').val();
-            if (FROMDATE1 != "" || TODATE1 != "") {
-                if ($("#DocumentsFiles").val() != "") {
-                    var is_pdf = fileValidation($("#DocumentsFiles").val());
-                    if (is_pdf) {
+            var isok = 0;
+            var listcheckbox = [];
+            $("#employee-table_ex").find('tr').each(function () {
 
-                        var is_size = Filevalidationsize();
-                        if (is_size) {
-                           
+                var data2 = $(this).find("td input[type='checkbox']").is(':checked');
+                if (data2 == true) {
 
 
-                           
+                    listcheckbox.push("true");
+                } else {
+                    listcheckbox.push("false");
+                }
 
-                            var windowWidget = $("#AddTRGET_ORDERS").data("kendoWindow");
+            });
 
-                            if (@ViewBag.citynb == "") {
-                                toastr.error("يجب اختيار المحافظة");
-                            }
-                            else {
+            $("#employee-table_in").find('tr').each(function () {
+
+                var data2 = $(this).find("td input[type='checkbox']").is(':checked');
+                if (data2 == true) {
 
 
-                                var validator = $("#Add_ORDERS").kendoValidator().data("kendoValidator");
+                    listcheckbox.push("true");
+                } else {
+                    listcheckbox.push("false");
+                }
 
-                                if (validator.validate()) {
-                                    kendo.ui.progress(windowWidget.element, true);
-                                    var listex = [];
-                                    $("#employee-table_ex").find('tr').each(function () {
-                                       
+            });
+            for (var i = 0; i < listcheckbox.length; i++) {
 
-                                        var data1 = $(this).find("td input[type='text']").val();
-                                       
-                                        if (data1 != "") {
-                                            listex.push(data1);
+                if (listcheckbox[i] == "false") {
+                    isok = 1;
+                }
+
+            }
+            if (isok == 0) {
+                var FROMDATE1 = $('#AddFROMDATE').val();
+                var TODATE1 = $('#AddTODATE').val();
+                if (FROMDATE1 != "" || TODATE1 != "") {
+                    if ($("#DocumentsFiles").val() != "") {
+                        var is_pdf = fileValidation($("#DocumentsFiles").val());
+                        if (is_pdf) {
+
+                            var is_size = Filevalidationsize();
+                            if (is_size) {
+
+
+
+
+
+                                var windowWidget = $("#AddTRGET_ORDERS").data("kendoWindow");
+
+                                if (@ViewBag.citynb == "") {
+                                    toastr.error("يجب اختيار المحافظة");
+                                }
+                                else {
+
+
+                                    var validator = $("#Add_ORDERS").kendoValidator().data("kendoValidator");
+
+                                    if (validator.validate()) {
+                                        kendo.ui.progress(windowWidget.element, true);
+                                        var listex = [];
+                                        $("#employee-table_ex").find('tr').each(function () {
+
+
+                                            var data1 = $(this).find("td input[type='text']").val();
+
+                                            if (data1 != "") {
+                                                listex.push(data1);
+                                            }
+                                        });
+                                        var listin = [];
+
+                                        $("#employee-table_in").find('tr').each(function () {
+
+                                            var data2 = $(this).find("td input[type='text']").val();
+                                            if (data2 != "") {
+                                              
+
+                                                listin.push(data2);
+                                            }
+                                        });
+
+                                        var CITYNB = $('#AddCITYNB').val();
+
+
+
+
+
+
+
+                                        var NO = $('#AddORDERSNo').val();
+                                        var GDATE = $("#AddGDATEDate").val();
+
+                                        var AddNOTES = $("#AddNOTES").val();
+                                        // var   FROMDATE: $("#AddFROMDATE").val(),
+                                        //var    TODATE: $("#AddTODATE").val(),
+
+
+
+                                        var fileUpload = $("#DocumentsFiles").get(0);
+                                        var files = fileUpload.files;
+
+                                        // Create FormData object
+                                        var fileData = new FormData();
+
+                                        // Looping over all files and add it to FormData object
+                                        for (var i = 0; i < files.length; i++) {
+                                            fileData.append("Files", files[i]);
                                         }
-                                    });
-                                    var listin = [];
-                                  
-                                    $("#employee-table_in").find('tr').each(function () {
-                                       
-                                        var data2 = $(this).find("td input[type='text']").val();
-                                        if (data2 != "") {
-                                            alert(data2);
-
-                                            listin.push(data2);
-                                        }
-                                    });
-                                    alert(listin);
-                                    alert(listex);
-
-                                    
-                                    var CITYNB = @ViewBag.citynb;
-
-                                    var NO = $('#AddORDERSNo').val();
-                                    var GDATE = $("#AddGDATEDate").val();
-
-                                    // var   FROMDATE: $("#AddFROMDATE").val(),
-                                    //var    TODATE: $("#AddTODATE").val(),
+                                        fileData.append("NO", NO);
+                                        fileData.append("GDATE", GDATE);
+                                        fileData.append("CITYNB", CITYNB);
+                                        fileData.append("FROMDATE", FROMDATE1);
+                                        fileData.append("TODATE", TODATE1);
+                                        fileData.append("EXCLUDES", listex);
+                                        fileData.append("INCLUDES", listin);
+                                        fileData.append("PTOTALVAL", totalval);
+                                        fileData.append("AddNOTES", AddNOTES);
 
 
 
-                                    var fileUpload = $("#DocumentsFiles").get(0);
-                                    var files = fileUpload.files;
 
-                                    // Create FormData object
-                                    var fileData = new FormData();
+                                        // { Files: files[0], NO: NO, GDATE: GDATE, CITYNB: CITYNB, FROMDATE: FROMDATE1, TODATE: TODATE1, PTOTALVAL: totalval ,EXCLUDES: listex, INCLUDES: listin},
+                                        // { fileData, EXCLUDES: listex, INCLUDES: listin}
 
-                                    // Looping over all files and add it to FormData object
-                                    for (var i = 0; i < files.length; i++) {
-                                        fileData.append("Files", files[i]);
-                                    }
-                                    fileData.append("NO", NO);
-                                    fileData.append("GDATE", GDATE);
-                                    fileData.append("CITYNB", CITYNB);
-                                    fileData.append("FROMDATE", FROMDATE1);
-                                    fileData.append("TODATE", TODATE1);
-                                   fileData.append("EXCLUDES", listex);
-                                    fileData.append("INCLUDES", listin);
-                                    fileData.append("PTOTALVAL", totalval);
+                                        $.ajax({
+                                            url: '@Url.Action("TRGET_ORDERS_Create", "PassengersAccount")',
+                                            type: "POST",
+                                            data: fileData,
+                                            contentType: false,
+                                            processData: false,
+                                            success: function (response) {
+                                                if (response.success == true) {
+                                                    toastr.success(response.responseText);
+                                                    kendo.ui.progress(windowWidget.element, false);
+                                                } else {
+                                                    toastr.error(response.responseText);
+                                                    kendo.ui.progress(windowWidget.element, false);
 
-                                    
-                                    // { Files: files[0], NO: NO, GDATE: GDATE, CITYNB: CITYNB, FROMDATE: FROMDATE1, TODATE: TODATE1, PTOTALVAL: totalval ,EXCLUDES: listex, INCLUDES: listin},
-                                    // { fileData, EXCLUDES: listex, INCLUDES: listin}
+                                                }
 
-                                    $.ajax({
-                                        url: '@Url.Action("TRGET_ORDERS_Create", "PassengersAccount")',
-                                        type: "POST",
-                                        data: fileData,
-                                        contentType: false,
-                                        processData: false,
-                                        success: function (response) {
-                                            if (response.success == true) {
-                                                toastr.success(response.responseText);
-                                                kendo.ui.progress(windowWidget.element, false);
-                                            } else {
-                                                toastr.error(response.responseText);
-                                                kendo.ui.progress(windowWidget.element, false);
 
                                             }
-
-
-                                        }
-                                    });
+                                        });
+                                    }
                                 }
+                            }
+                            else {
+                                toastr.error("حجم الملف يجب ان لا يتجاوز 4 ميغا");
                             }
                         }
                         else {
-                            toastr.error("حجم الملف يجب ان لا يتجاوز 4 ميغا");
+                            toastr.error("يرجى اختيار ملف لاحقته PDF");
                         }
                     }
                     else {
-                        toastr.error("يرجى اختيار ملف لاحقته PDF");
+                        toastr.error("يرجى اختيار الملف اولاً");
                     }
                 }
                 else {
-                    toastr.error("يرجى اختيار الملف اولاً");
+                    toastr.error("يرجى ادخال التواريخ");
                 }
             }
-            else
-            {
-                toastr.error("يرجى ادخال التواريخ");
+            else {
+                toastr.error("يوجد معاملات غير محققة");
             }
+
 
 
         }
@@ -628,6 +745,9 @@
             //$("#AddCITYNB").data("kendoDropDownList").value(1)
             $("#AddFROMDATE").val("");
             $("#AddTODATE").val("");
+            $("#AddNOTES").val("");
+
+
             $("#Add_comm span.k-tooltip-validation").hide();
 
             $("#employee-table_ex").find('tr').each(function () {
@@ -679,7 +799,12 @@
         function GetResult() {
 
             var windowWidget = $("#AddTRGET_ORDERS").data("kendoWindow");
-            var CITYNB1 = @ViewBag.citynb;
+
+
+                var CITYNB1 = $('#AddCITYNB').val();
+
+
+
 
 
             var FROMDATE1 = $('#AddFROMDATE').val();
@@ -736,15 +861,23 @@
         });
 
         /* This method will add a new row */
-        function addNewRow() {
+        function addNewRow()
+        {
             var tableex = $('#employee-table_ex')[0];
             var rowCountin2222 = tableex.rows.length;
-            var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
-                // late   //  + '<td> <span class="item"><span class="toggle-pill-color"><input type="checkbox" id="ex' + rowCountin2222 + '" name="check"><label for="ex' + rowCountin2222 + '"></label></span></span></td>'
+            var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input  id="inputex' + rowCountin2222 + '" class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
+                  ////////////////////////////////////
+            ///////////////////////////////////
+            ///////////////////////////////////
+                + '<td> <span class="item"><span class="toggle-pill-color"><input type="checkbox" " id="ex' + rowCountin2222 + '" name="check"><label for="ex' + rowCountin2222 + '"></label></span></span></td>'
 
-                + '<td><a class="btn"  onclick="deleteRow(this)" > <i style="color: white" class="fa fa-trash" ></i></a ></td></tr>';
+                + '<td><a class="btn"  onclick="deleteRow(this)" > <i style="color: white" class="fa fa-trash" ></i></a ></td>'
+            + '<td><a class="btn"  onclick="selectex(' + rowCountin2222 + ')" > <i style="color: white" class="fa fa-check" ></i></a ></td></tr>';
 
             $("#employee-table_ex").append(rowHtml);
+
+            $("input[id='ex" + rowCountin2222 + "']").prop("disabled", true);
+           
         }
 
         /* This method will delete a row */
@@ -781,17 +914,28 @@
 
 
         /* This method will add a new row */
-        function addNewRowin() {
+        function addNewRowin()
+        {
             var tablein = $('#employee-table_in')[0];
             var rowCountin22 = tablein.rows.length;
-            var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
-                // late    //   + '<td> <span class="item"><span class="toggle-pill-color"><input type="checkbox" value="in' + rowCountin22 + '" id="in' + rowCountin22 + '" name="check"><label for="in' + rowCountin22 + '"></label></span></span></td>'
+            var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input  id="inputin' + rowCountin22 + '" class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
+                  ////////////////////////////////////
+            ///////////////////////////////////
+            ///////////////////////////////////
+                  + '<td> <span class="item"><span class="toggle-pill-color"><input type="checkbox" value="in' + rowCountin22 + '" id="in' + rowCountin22 + '" name="check"><label for="in' + rowCountin22 + '"></label></span></span></td>'
 
-                + '<td><a class="btn"  onclick="deleteRowin(this)" > <i style="color: white" class="fa fa-trash" ></i></a ></td></tr>';
-            // late    // + '<td><a class="btn"  onclick="selectin(' + rowCountin22 + ')" > <i style="color: white" class="fa fa-check" ></i></a ></td></tr>';
+                + '<td><a class="btn"  onclick="deleteRowin(this)" > <i style="color: white" class="fa fa-trash" ></i></a ></td>'
+              ////////////////////////////////////
+            ///////////////////////////////////
+            ///////////////////////////////////
+            + '<td><a class="btn"  onclick="selectin(' + rowCountin22 + ')" > <i style="color: white" class="fa fa-check" ></i></a ></td></tr>';
 
             $("#employee-table_in").append(rowHtml);
-            // late   // $("input[value='in" + rowCountin22 + "']").prop("disabled", true);
+            ////////////////////////////////////
+            ///////////////////////////////////
+            ///////////////////////////////////
+            $("input[id='in" + rowCountin22 + "']").prop("disabled", true);
+          
 
         }
 
@@ -817,11 +961,77 @@
 
             $(ele).remove();
         }
+        ////////////////////
+        ////////////////////////////////////////
+        ///////////////////////////////
+        function selectin(idc) {
+            var ccccc = $('#inputin' + idc).val();
 
-        // late   //function selectin(idc) {
-        //    alert(idc);
-        //    $('#in' + idc).prop("checked", true);
-        //}
+            $.when(CheckAllProced(ccccc)).done(function (s1) {
+
+                if (s1.success) {
+                   
+                    $('#in' + idc).prop("checked", true);
+                }
+                else {
+                    $('#in' + idc).prop("checked", false);
+                    toastr.error(s1.responseText, "خطأ");
+                }
+
+            });
+           
+          
+        }
+        function selectex(idc) {
+
+          
+            var fffff = $('#inputex' + idc).val();
+           
+            $.when(CheckAllProced(fffff)).done(function (s1) {
+               
+                if (s1.success) {
+                   
+                    $('#ex' + idc).prop("checked", true);
+                }
+                else {
+                    $('#ex' + idc).prop("checked", false);
+                    toastr.error(s1.responseText, "خطأ");
+                }
+
+            });
+           
+        }
+
+         function CheckAllProced(idv)
+        {
+
+
+           // var tableex = $('#employee-table_ex')[0];
+           // var CheckAllProcedrowCountex = tableex.rows.length;
+
+           // var rowIndex = $('#employee tr').index(0);
+           //var xx =  rowIndex.find("td input[type='text']").val();
+           // alert(xx);
+
+             return $.ajax({
+                type: "GET",
+                     data: { procednb: idv },
+                     url: "@Url.Action("CheckAllProced", "PassengersAccount")",
+                     success:  function (response) {
+                        if (response.success) {
+                            // document.getElementById('AmountUnConfierm').innerHTML = response.TOTVA2L;
+                            
+                           // toastr.success("تمت عملية الإضافة بنجاح");
+                        } else {
+                           
+                        }
+
+                    }
+            });
+
+
+
+        }
     </script>
 
 
@@ -934,4 +1144,205 @@
                 }
             }
         }
+    </script>
+
+
+
+
+    <div class="k-rtl">
+        @(Html.Kendo().Window().Name("TRGETORDERSITEMS")
+            .Title("تفاصيل كتاب التحويل")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+    <div>
+          @Html.Hidden("GET_ORDERS_NB")
+
+
+
+
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRGET_ORDERS_ITEMS>()
+            .Name("gridITEMS").AutoBind(false)
+            .Columns(columns =>
+            {
+
+                columns.Bound(c => c.NB).Visible(false);
+
+
+                // columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150).Title("المحافظة");
+                columns.Bound(c => c.CITYNB).Visible(false);
+                columns.Bound(c => c.AMOUNT).Width(200).Title("القيمة الاجمالية");
+
+               // columns.Bound(c => c.NO).Width(150).Title("رقم الكتاب");
+               // columns.Bound(c => c.GDATE).Format("{0:dd/MM/yyyy}").Width(150).Title("تاريخ الكتاب");
+                columns.Bound(c => c.STATUS).Visible(false);
+                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150).Title("الحالة");
+                columns.Bound(c => c.FROMDATE).Format("{0:dd/MM/yyyy HH:mm:ss}").Width(200).Title("تاريخ الرسوم من");
+                columns.Bound(c => c.TODATE).Format("{0:dd/MM/yyyy HH:mm:ss}").Width(200).Title("تاريخ الرسوم الى");
+
+                columns.Bound(c => c.CONFIRM_DATE).Format("{0:dd/MM/yyyy}").Width(200).Title("تاريخ التثبيت");
+
+
+
+                columns.Bound(c => c.NOTES).Width(400).Title("ملاحظات");
+
+
+                //columns.Command(command =>
+                //{
+
+
+                //    command.Custom("Delete").Click("Deletecity").Text(" ");
+                //}).Width(100);
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("Read_TRGET_ORDERS_ITEMS", "PassengersAccount").Data("GetCommNbRead")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+
+                //  toolbar.Custom().Name("AddNewcity").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNewcity", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("setIcons")
+            .DataBound("setIcons")
+            .Sort("setIcons")
+            .Filter("setIcons")
+            .Group("setIcons")
+            .Page("setIcons")
+            .Cancel("setIcons")
+        //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+             </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(1200)
+            .Height(750)
+            .Pinned()
+            .HtmlAttributes(new { style = "Width: 100%  !important;" })
+            )
+    </div>
+
+
+    <div class="k-rtl">
+        @(Html.Kendo().Window().Name("fin")
+            .Title("تثبيت كتاب التحويل")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="delete_S">
+               <div>
+                    @Html.Hidden("Nb")
+                   <div class="col-md-11" >
+                   <h1 style="text-align:center">                هل انت متأكد من تثبيت كتاب التحويل؟       </h1>
+
+
+                   </div>
+
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SAVECONFIRM()" style="font-size:30px">نعم</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()" style="font-size:30px"> لا    </button>
+
+               </div>
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(300)
+            .Pinned()
+            )
+
+    </div>
+    <script>
+    function DetailsMembers(e)
+    {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);
+        iid = item.NB;
+        $("#gridITEMS").data("kendoGrid").dataSource.read();
+        var wnd = $("#TRGETORDERSITEMS").data("kendoWindow");
+        wnd.center().open();
+    }
+
+    function SHOWCONFIRM(e) {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+
+        if (item.STATUS == 1) {
+            $('#Nb').val(item.NB);
+            var wnd = $("#fin").data("kendoWindow");
+            wnd.center().open();
+        }
+
+        if (item.STATUS != 1) {
+            toastr.error("لا يمكن تثبيت هذا الكتاب");
+        }
+    }
+
+        function SAVECONFIRM() {
+        var nb = $('#Nb').val();
+
+
+          $.ajax({
+                type: "POST",
+              data: { NB: nb},
+                url: "@Url.Action("SAVECONFIRM_GET", "PassengersAccount")",
+                success: function (response) {
+                    if (response.success) {
+
+                          $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success(response.responseText);
+                    } else {
+
+                        toastr.error(response.responseText);
+                    }
+
+                }
+             });
+
+
+    }
+
+    function GetCommNbRead() {
+
+        return {
+            Nb: iid
+        }
+    }
     </script>

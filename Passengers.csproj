@@ -70,6 +70,7 @@
     <Compile Include="Controllers\TRAGREEMENTSController.cs" />
     <Compile Include="Controllers\TRCOMMITTEESController.cs" />
     <Compile Include="Controllers\TRLINESController.cs" />
+    <Compile Include="Controllers\TRPASSENGERS_CREDITSController.cs" />
     <Compile Include="Controllers\TRSESSIONSController.cs" />
     <Compile Include="Controllers\trstController.cs" />
     <Compile Include="Controllers\TRZEXPENSE_TYPESController.cs" />
@@ -1303,6 +1304,9 @@
     <Content Include="Views\TRZEXPENSE_TYPES\Index.cshtml" />
     <Content Include="Views\TRZPAY_OWNER_TYPES\Index.cshtml" />
     <Content Include="Views\PassengersAccount\TRGET_ORDERS_Index.cshtml" />
+    <Content Include="Views\PassengersAccount\TRPAY_ORDERS_Index.cshtml" />
+    <Content Include="Views\TRPASSENGERS_CREDITS\Index.cshtml" />
+    <Content Include="Views\TRPASSENGERS_CREDITS\Index_Detalis.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

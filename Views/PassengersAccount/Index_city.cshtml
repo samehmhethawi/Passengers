@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<Proced.DataAccess.Models.CF.TRPASSENGERS_CREDITSVM>
 @{
     ViewBag.Title = "اختيار محافظة";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -30,7 +30,7 @@
         }
 
         #proced_base .grid {
-            height: 200px;
+            height: 250px;
             width: auto;
             margin: 5px;
             border-bottom: 5px solid #2B6AD0;
@@ -77,9 +77,25 @@
 
     </div>
     <section id="proced_base">
-        <div class="row" style="height: 50%; text-align: center; margin-left: 25px; margin-right: 25px" >
-
-            <div class="col-lg-2" style="text-align:center">
+        <div class="row" style="height: 50%; text-align: center; margin-left: 25px; margin-right: 25px">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-2" style="text-align:center">
+                    <a href="@Url.Action("Index_Detalis", "PassengersAccount", new { citynb = item.CITYNB })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
+                        <div class="grid darkBlue" data-toggle="modal" data-target="#request">
+                            <i class="grid-icon fa fa-institution fa-4x"></i>
+                            <div class="grid-title">
+                                <h4 class="text-center">@item.CITYNAME</h4>
+                            </div>
+                            <div class="grid-title">
+                                <h4 class="text-center">@item.AMOUNT</h4>
+                            </div>
+                        </div>
+                        
+                    </a>
+                </div>
+            }
+            @*<div class="col-lg-2" style="text-align:center">
                 <a href="@Url.Action("Index_Detalis", "PassengersAccount", new { citynb = 1 })" class="col-lg-10 col-md-12 col-sm-12 nopadding">
                     <div class="grid darkBlue" data-toggle="modal" data-target="#request">
                         <i class="grid-icon fa fa-building fa-4x"></i>
@@ -228,7 +244,7 @@
                         </div>
                     </div>
                 </a>
-            </div>
+            </div>*@
         </div>
 
     </section>

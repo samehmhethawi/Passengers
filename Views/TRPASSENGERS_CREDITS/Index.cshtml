@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "القيم المبدئية" + " - " + @ViewBag.cityname;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="height:550px">
+    <div class="row" style="height: 25%; margin-left: 25px; margin-right: 25px">
+        <div class="col-lg-12" style="text-align:center;font-size:24px;margin-top:25px">
+            <span> لجنة نقل ركاب محافظة</span>
+            <span>
+                @ViewBag.cityname
+            </span>
+        </div>
+
+    </div>
+    <div class="row" style="height: 25%; margin-left: 25px; margin-right: 25px">
+        <div class="col-lg-12" style="text-align:center;font-size:24px;">
+            <span style="font-size: 24px;">
+                ادخل رصيدك الحالي
+            </span>
+            <br />
+            <span style="font-size: 15px;">
+                مع العلم انه اذا تم اضافة كتب تحويل او اوامر صرف وتثبيتها لن يمكنك تعديل القيمة المبدئية
+            </span>
+            <br />
+            <br />
+            <span style="width: 25%; text-align: center; font-size: 30px; color: red; font-weight: bold;">
+
+                @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("SAmount").Min(0)
+                                .HtmlAttributes(new { placeholder = "القيمة", style = "text-align:center;" })
+
+                                )
+
+            </span>
+
+            <br />
+            <br />
+            <span>
+                <button  class="btn btn-primary" onclick="SaveAmount()"> حفظ القيمة </button>
+            </span>
+        </div>
+    </div>
+   
+</div>
+
+
+<script>
+
+    var ss = @ViewBag.amount;
+     //  $("#SAmount").data("kendoNumericTextBox").value(ss);
+
+    $('#SAmount').val(ss);
+    function SaveAmount()
+    {
+        var Amo = $('#SAmount').val();
+
+        if (Amo != "")
+        {
+            $.ajax({
+                type: "POST",
+                data: { citynb: @ViewBag.citynb , Amount: Amo},
+                url: "@Url.Action("UpdateAmount", "TRPASSENGERS_CREDITS")",
+                success: function (response) {
+                    if (response.success) {
+
+                        toastr.success("تمت عملية الإضافة بنجاح");
+                    } else {
+
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+        }
+        else
+        {
+            toastr.error("يرجى ادخال القيمة اولاً");
+        }
+
+    }
+
+
+
+</script>
+
+
+

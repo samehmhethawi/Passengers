@@ -379,6 +379,17 @@
             //------------------------------------------------------------------------------
 
 
+            $(".k-grid-SHOWCONFIRM").addClass(" hvr-box-shadow-outset");
+            $(".k-grid-SHOWCONFIRM").kendoButton({
+                icon: "i fa fa-check text-success"
+            });
+            $(".k-grid-SHOWCONFIRM").kendoTooltip({
+                content: "تثبيت",
+                position: "left",
+                autoHide: true,
+            });
+            //------------------------------------------------------------------------------
+
             $(".k-grid-Delete").addClass(" hvr-box-shadow-outset");
             $(".k-grid-Delete").kendoButton({
                 icon: "i fa fa-trash text-danger"
@@ -388,7 +399,8 @@
                 position: "left",
                 autoHide: true,
             });
-            //------------------------------------------------------------------------------
+
+            //-----------------------------------------------------
             $(".k-grid-Details").addClass("hvr-box-shadow-outset");
 
             $(".k-grid-Details").kendoButton({

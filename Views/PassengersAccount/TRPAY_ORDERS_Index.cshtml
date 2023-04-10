@@ -1,0 +1,1108 @@
+﻿
+@{
+    ViewBag.Title = "المصاريف والنفقات" + " - " + @ViewBag.cityname;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+        }
+</style>
+
+@section PartialHeader{
+    <div class="panel-heading1 " id="searchPanel">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> رقم الكتاب</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @Html.Kendo().TextBox().Name("NO").HtmlAttributes(new { placeholder = " رقم الكتاب" })
+                </div>
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> تاريخ الكتاب</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DatePicker()
+                .Name("SPDATE")
+                .Format("{0:dd/MM/yyyy}")
+                .HtmlAttributes(new { placeholder = "تاريخ الكتاب ", style = "width: 100%; text-align:center;" })
+                  )
+                </div>
+                <div class="col-lg-1 col-md-1 col-sm-12">
+                    الجهة
+                </div>
+
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @(Html.Kendo().DropDownList()
+                                    .Name("SOWNERTYPENB")
+                                    .OptionLabel("اختر الجهة المصدرة")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETTRZPAY_OWNER_TYPES", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                </div>
+
+                <div class="col-lg-1 col-md-1 col-sm-12">
+                    نوع امر اصرف
+                </div>
+
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @(Html.Kendo().DropDownList()
+                                    .Name("SEXPENSETYPENB")
+                                    .OptionLabel("اختر  النوع ")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETTRZEXPENSE_TYPES", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="col-lg-1 col-md-1 col-sm-12">
+                    القيمة
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 bordered">
+                    @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("SAmount").Min(0)
+                                .HtmlAttributes(new { placeholder = "القيمة",  style = "width: 100%;" }))
+                </div>
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> حالة الكتاب</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر  حالة ")
+                                    .Name("Status")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETTRPASSENGER_ACCOUNT_STATUS", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> حالة الارشفة</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر حالة الارشفة")
+                                    .Name("StrSessArc")
+                                    .DataTextField("Text")
+                                    .DataValueField("Value")
+                                    .BindTo(new List<SelectListItem>() {
+                                          new SelectListItem() {
+                                              Text = "مؤرشفة",
+                                              Value = "1"
+                                          },
+                                          new SelectListItem() {
+                                              Text = "غير مؤرشفة",
+                                              Value = "0"
+                                          }
+                                      })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<!-- Grid  -->
+<div>
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRPAY_ORDERS>()
+            .Name("grid").AutoBind(false)
+            .Columns(columns =>
+            {
+                columns.Command(command =>
+                {
+                    //command.Custom("Preview").Click("Preview").Text(" ");
+                      command.Custom("Edit").Click("Edit").Text(" ");
+                    //  command.Custom("Delete").Click("Delete").Text(" ");
+                    //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
+                    //  command.Custom("Details2").Click("Details2").Text(" ");
+                    command.Custom("SHOWCONFIRM").Click("SHOWCONFIRM").Text(" ");
+                    command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
+                }).Width(150);
+                columns.Template(t => { }).Title("م.").ClientTemplate(
+                 "#= isArchived(data) #"
+               ).Width(80);
+                columns.Bound(c => c.FTP_PATH).Visible(false);
+                columns.Bound(c => c.IS_ARCHIVED).Visible(false);
+                columns.Bound(c => c.NB).Visible(false);
+                columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150).Title("المحافظة");
+                columns.Bound(c => c.CITYNB).Visible(false);
+                columns.Bound(c => c.NO).Width(150).Title("رقم الكتاب");
+                columns.Bound(c => c.PDATE).Format("{0:dd/MM/yyyy}").Width(150).Title("تاريخ الكتاب");
+                columns.Bound(c => c.AMOUNT).Width(200).Title("القيمة ");
+                columns.Bound(c => c.STATUS).Visible(false);
+                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150).Title("الحالة");
+
+                columns.ForeignKey(c => c.PAY_OWNER_TYPENB, (System.Collections.IEnumerable)ViewData["TRZPAY_OWNER_TYPES"], "ID", "NAME").Title("الجهة المصدر").Width(150);
+                columns.Bound(c => c.PAY_OWNER_TYPENB).Visible(false);
+
+                columns.ForeignKey(c => c.EXPENSE_TYPENB, (System.Collections.IEnumerable)ViewData["TRZEXPENSE_TYPES"], "ID", "NAME").Title("نوع النفقة").Width(150);
+                columns.Bound(c => c.EXPENSE_TYPENB).Visible(false);
+                columns.Bound(c => c.CAUSES).Width(400).Title("أسباب الصرف");
+
+
+                columns.Bound(c => c.NOTES).Width(400).Title("ملاحظات");
+
+
+
+            })
+            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .Scrollable()
+            .Sortable()
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(10)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("TRPAY_ORDERS_Read", "PassengersAccount").Data("GetFillters")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+                toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("setIcons2")
+            .DataBound("setIcons2")
+            .Sort("setIcons2")
+            .Filter("setIcons2")
+            .Group("setIcons2")
+            .Page("setIcons2")
+            .Cancel("setIcons2")
+        //.Edit("hideIdField")
+        )
+)
+
+</div>
+
+<script>
+    function Btn_Search() {
+        $("#grid").data("kendoGrid").dataSource.read();
+    }
+    function GetFillters() {
+        var fillter = {};
+        fillter.NO = $('#NO').val();
+        fillter.SPDATE = $('#SPDATE').val();
+        fillter.SOWNERTYPENB = $('#SOWNERTYPENB').val();
+        fillter.SEXPENSETYPENB = $('#SEXPENSETYPENB').val();
+        fillter.SAmount = $('#SAmount').val();
+        fillter.Status = $('#Status').val();
+        fillter.StrSessArc = $('#StrSessArc').val();
+        fillter.citynb = @ViewBag.citynb;
+
+
+        return fillter;
+    }
+
+    function setIcons2() {
+        setIcons();
+        $(".k-grid-Deletear").addClass(" hvr-box-shadow-outset");
+        $(".k-grid-Deletear").kendoButton({
+            icon: "i fa fa-trash text-danger"
+        });
+        $(".k-grid-Deletear").kendoTooltip({
+            content: "حذف الارشفة",
+            position: "left",
+            autoHide: true,
+        });
+
+
+
+
+    }
+
+    function isArchived(data)
+    {
+        var isArchived = false;
+        if (data != null && data.IS_ARCHIVED == true) {
+            isArchived = true;
+        }
+
+        if (isArchived) {
+            return "<a  class='stepLnk' data-toggle='tooltip' onclick='showdoc(" + data.NB + ")' title='مؤرشفة' href='#'><i class='fa fa-folder'></i> " + data.Seq + "</a>";
+        }
+        else {
+            return data.Seq;
+        }
+
+    }
+
+    function showdoc(NB)
+    {
+        window.open("@Url.Action("GetReportPAY", "PassengersAccount")" + "?NB=" + NB , "_blank");
+    }
+
+    function rest_filtters() {
+        $('#NO').val("");
+        $('#SPDATE').val("");
+      //  $('#SSESDATEEnd').val("");
+        $("#SOWNERTYPENB").data("kendoDropDownList").value(-1);
+        $("#SEXPENSETYPENB").data("kendoDropDownList").value(-1);
+        $("#StrSessArc").data("kendoDropDownList").value(-1);
+        $("#Status").data("kendoDropDownList").value(-1);
+        $("#SAmount").data("kendoNumericTextBox").value("");
+
+
+        $("#grid").data("kendoGrid").dataSource.data([]);
+    }
+</script>
+
+
+
+<!-- Add TRGET_ORDERS-->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("AddTRPAY_ORDERS")
+            .Title("أمر صرف او نفقة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Add_ORDERS">
+               <div class="row col-11">
+                    <div class="col-lg-1 col-md-1 col-sm-12">
+                     رقم الكتاب
+                    </div>
+
+                   <div class="col-lg-2 col-md-2 col-sm-12">
+                       @Html.Kendo().TextBox().Name("AddPAYNo").HtmlAttributes(new { placeholder = "رقم الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+
+
+                   </div>
+
+                   <div class="col-lg-1 col-md-1 col-sm-12">
+                    تاريخ الكتاب
+                   </div>
+
+                   <div class="col-lg-3 col-md-3 col-sm-12">
+                          @(Html.Kendo().DatePicker()
+                                  .Name("AddPDATEDate").Format("{0:dd/MM/yyyy}")
+                                  .HtmlAttributes(new { placeholder = "تاريخ الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                  .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                   </div>
+                    <div class="col-lg-1 col-md-1 col-sm-12">
+                   القيمة
+                   </div>
+                   <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 bordered">
+                                @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("AddAmount").Min(0)
+                                .HtmlAttributes(new { placeholder = "القيمة",  style = "width: 100%;" }))
+                    </div>
+
+               </div>
+               <br />
+               <div class="row col-11">
+                   <div class="col-lg-12 col-md-12 col-sm-12">
+                       @Html.Kendo().TextBox().Name("AddNOTES").HtmlAttributes(new { placeholder = "ملاحظات" })
+
+
+                   </div>
+                </div>
+                <br />
+               <div class="row col-11">
+                   <div class="col-lg-12 col-md-12 col-sm-12">
+                       @Html.Kendo().TextBox().Name("AddCAUSES").HtmlAttributes(new { placeholder = "السبب" })
+
+
+                   </div>
+                </div>
+               <br />
+               <div class="row col-11">
+                      <div class="col-lg-2 col-md-2 col-sm-12" >
+                   الجهة المصدرة لامر الصرف
+                   </div>
+
+                   <div class="col-lg-3 col-md-3 col-sm-12">
+                          @(Html.Kendo().DropDownList()
+                                    .Name("AddPAY_OWNER_TYPENB")
+                                    .OptionLabel("اختر  الجهة ")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETTRZPAY_OWNER_TYPES", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                   </div>
+
+                      <div class="col-lg-2 col-md-2 col-sm-12" >
+                   نوع النفقة او امر الصرف
+                   </div>
+
+                   <div class="col-lg-3 col-md-3 col-sm-12">
+                          @(Html.Kendo().DropDownList()
+                                    .Name("AddEXPENSE_TYPENB")
+                                    .OptionLabel("اختر  النوع ")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETTRZEXPENSE_TYPES", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                   </div>
+               </div>
+                <div class="row col-11">
+                       <div class="col-lg-5 col-md-5 col-sm-12" style="text-align: center; border-top: 1px solid #e5e5e5;margin-top:10px ">
+                         <button class="btn btn-primary" onclick="SaveAddTRGET_ORDERS()">حفظ</button>
+                         <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+                       </div>
+
+                       <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: center; border-top: 1px solid #e5e5e5;margin-top:10px ">
+
+                               <span class="btn btn-primary btn-file">
+                                                        اختر ملف . . <i class="fa fa-upload"></i> <input accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
+                                                    </span>
+
+                             @*   <button class="btn btn-primary" onclick="setvvv()"> حفظ ورفع الملف</button>*@
+
+                       </div>
+
+                 </div>
+
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(1200)
+            .Height(450)
+            .Actions(actions => actions.Pin().Minimize().Maximize().Close())
+            .Pinned()
+            )
+</div>
+
+<script>
+    $("#AddNew").click(function ()
+    {
+        //var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
+        //$("#AddGDATEDate").data("kendoDatePicker").value(todayDate);
+        //$('#AddORDERSNo').val("");
+        //// $('#AddComDate').val("");
+        ////$("#AddCITYNB").data("kendoDropDownList").value(1)
+        //$("#AddFROMDATE").val("");
+        //$("#AddTODATE").val("");
+        //$("#Add_comm span.k-tooltip-validation").hide();
+
+
+
+
+
+        var wnd = $("#AddTRPAY_ORDERS").data("kendoWindow");
+        wnd.center().open();
+    });
+
+
+     function SaveAddTRGET_ORDERS()
+        {
+         var PDATE = $('#AddPDATEDate').val();
+
+         if (PDATE != "" ) {
+                if ($("#DocumentsFiles").val() != "") {
+                    var is_pdf = fileValidation($("#DocumentsFiles").val());
+                    if (is_pdf) {
+
+                        var is_size = Filevalidationsize();
+                        if (is_size) {
+
+
+
+
+
+                            var windowWidget = $("#AddTRPAY_ORDERS").data("kendoWindow");
+
+                            if (@ViewBag.citynb == "") {
+                                toastr.error("يجب اختيار المحافظة");
+                            }
+                            else {
+
+
+                                var validator = $("#Add_ORDERS").kendoValidator().data("kendoValidator");
+
+                                if (validator.validate()) {
+                                    kendo.ui.progress(windowWidget.element, true);
+
+
+
+
+
+
+                                    var CITYNB = @ViewBag.citynb;
+
+                                    var AddPAYNo = $('#AddPAYNo').val();
+                                    var AddPDATEDate = $("#AddPDATEDate").val();
+                                    var AddNOTES = $("#AddNOTES").val();
+                                    var AddCAUSES = $("#AddCAUSES").val();
+                                    var OWNERTYPENB = $("#AddPAY_OWNER_TYPENB").val();
+                                    var EXPENSETYPENB = $("#AddEXPENSE_TYPENB").val();
+
+                                    var Amount = $("#AddAmount").val();
+                                    var fileUpload = $("#DocumentsFiles").get(0);
+                                    var files = fileUpload.files;
+
+                                    // Create FormData object
+                                    var fileData = new FormData();
+
+                                    // Looping over all files and add it to FormData object
+                                    for (var i = 0; i < files.length; i++) {
+                                        fileData.append("Files", files[i]);
+                                    }
+                                    fileData.append("AddPAYNo", AddPAYNo);
+                                    fileData.append("AddPDATEDate", AddPDATEDate);
+                                    fileData.append("CITYNB", CITYNB);
+                                    fileData.append("AddNOTES", AddNOTES);
+                                    fileData.append("AddCAUSES", AddCAUSES);
+                                    fileData.append("OWNERTYPENB", OWNERTYPENB);
+                                    fileData.append("EXPENSETYPENB", EXPENSETYPENB);
+                                    fileData.append("Amount", Amount);
+
+
+
+                                    // { Files: files[0], NO: NO, GDATE: GDATE, CITYNB: CITYNB, FROMDATE: FROMDATE1, TODATE: TODATE1, PTOTALVAL: totalval ,EXCLUDES: listex, INCLUDES: listin},
+                                    // { fileData, EXCLUDES: listex, INCLUDES: listin}
+
+                                    $.ajax({
+                                        url: '@Url.Action("TRPAY_ORDERS_Create", "PassengersAccount")',
+                                        type: "POST",
+                                        data: fileData,
+                                        contentType: false,
+                                        processData: false,
+                                        success: function (response) {
+                                            if (response.success == true) {
+                                                toastr.success(response.responseText);
+                                                kendo.ui.progress(windowWidget.element, false);
+                                            } else {
+                                                toastr.error(response.responseText);
+                                                kendo.ui.progress(windowWidget.element, false);
+
+                                            }
+
+
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        else {
+                            toastr.error("حجم الملف يجب ان لا يتجاوز 4 ميغا");
+                        }
+                    }
+                    else {
+                        toastr.error("يرجى اختيار ملف لاحقته PDF");
+                    }
+                }
+                else {
+                    toastr.error("يرجى اختيار الملف اولاً");
+                }
+            }
+            else
+            {
+                toastr.error("يرجى ادخال تاريخ الكتاب");
+            }
+
+
+        }
+
+</script>
+
+
+
+<script type="text/javascript">
+    function fileValidation(filesss) {
+        var fileElement = document.getElementById("DocumentsFiles");
+        var fileElement = fileElement;
+        var fileExtension = "";
+        if (fileElement.value.lastIndexOf(".") > 0) {
+            fileExtension = fileElement.value.substring(fileElement.value.lastIndexOf(".") + 1, fileElement.value.length);
+        }
+        if (fileExtension.toLowerCase() == "pdf") {
+            return true;
+        }
+        else {
+            /* alert("يجب اختيار ملف PDF فقط.");*/
+            fileElement.value = '';
+            return false;
+        }
+    }
+
+    function Filevalidationsize() {
+        const fi = document.getElementById('DocumentsFiles');
+        if (fi.files.length > 0) {
+            const fsize = fi.files.item(0).size;
+            const file = Math.round((fsize / 1024));
+
+            if (fsize > 4194304) {
+
+                return false;
+            } else {
+
+                return true;
+            }
+        }
+    }
+
+
+    function fileValidation1(filesss) {
+        var fileElement = document.getElementById("DocumentsFiles1");
+        var fileElement = fileElement;
+        var fileExtension = "";
+        if (fileElement.value.lastIndexOf(".") > 0) {
+            fileExtension = fileElement.value.substring(fileElement.value.lastIndexOf(".") + 1, fileElement.value.length);
+        }
+        if (fileExtension.toLowerCase() == "pdf") {
+            return true;
+        }
+        else {
+            /* alert("يجب اختيار ملف PDF فقط.");*/
+            fileElement.value = '';
+            return false;
+        }
+    }
+
+    function Filevalidationsize1() {
+        const fi = document.getElementById('DocumentsFiles1');
+        if (fi.files.length > 0) {
+            const fsize = fi.files.item(0).size;
+            const file = Math.round((fsize / 1024));
+
+            if (fsize > 4194304) {
+
+                return false;
+            } else {
+
+                return true;
+            }
+        }
+    }
+</script>
+
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("fin")
+            .Title("تثبيت امر الصرف")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="delete_S">
+               <div>
+                    @Html.Hidden("Nb")
+                   <div class="col-md-11" >
+                   <h1 style="text-align:center">                هل انت متأكد من تثبيت امر الصرف؟       </h1>
+
+
+                   </div>
+
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SAVECONFIRM()" style="font-size:30px">نعم</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()" style="font-size:30px"> لا    </button>
+
+               </div>
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(300)
+            .Pinned()
+            )
+
+</div>
+
+
+<script>
+
+    function SHOWCONFIRM(e) {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        if (item.IS_ARCHIVED == true) {
+            if (item.STATUS == 1) {
+                $('#Nb').val(item.NB);
+                var wnd = $("#fin").data("kendoWindow");
+                wnd.center().open();
+            }
+
+            if (item.STATUS != 1) {
+                toastr.error("لا يمكن تثبيت هذا الكتاب");
+            }
+        } else {
+            toastr.error("يرجى أرشفة الكتاب قبل تثبيته");
+        }
+        
+
+    }
+
+    function SAVECONFIRM() {
+        var nb = $('#Nb').val();
+
+
+          $.ajax({
+                type: "POST",
+              data: { NB: nb},
+                url: "@Url.Action("SAVECONFIRMPAY", "PassengersAccount")",
+                success: function (response) {
+                    if (response.success) {
+
+                          $("#grid").data("kendoGrid").dataSource.page(1);
+
+                        toastr.success(response.responseText);
+                    } else {
+
+                        toastr.error(response.responseText);
+                    }
+
+                }
+             });
+
+
+    }
+</script>
+
+<script>
+    function Edit(e) {
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+       
+        if (item.STATUS == 1) {
+            $('#Nb').val(item.NB);
+            var isarc = item.IS_ARCHIVED;
+            $('#EditPAYNo').val(item.NO);
+           // $("#EditPDATEDate").val(item.PDATE);
+            $('#EditNOTES').val(item.NOTES);
+            $('#EditCAUSES').val(item.CAUSES);
+            $("#EditPDATEDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.PDATE });
+            $("#EditAmount").data("kendoNumericTextBox").value(item.AMOUNT);
+            $("#EditPAY_OWNER_TYPENB").data("kendoDropDownList").value(item.PAY_OWNER_TYPENB);
+            $("#EditEXPENSE_TYPENB").data("kendoDropDownList").value(item.EXPENSE_TYPENB);
+            if (isarc == true) {
+                $(".IS_ARC").css("display", "none");
+               
+
+            }
+            if (isarc == false) {
+                $(".IS_ARC").css("display", "block");
+               
+            }
+
+            var wnd = $("#EditTRPAY_ORDERS").data("kendoWindow");
+            wnd.center().open();
+        } else {
+            toastr.error("لا يمكن تعديل هذا الكتاب");
+        }
+    }
+</script>
+
+
+<!-- Edit TRGET_ORDERS-->
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("EditTRPAY_ORDERS")
+            .Title("أمر صرف او نفقة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Edit_ORDERS">
+               <div class="row col-11">
+                    <div class="col-lg-1 col-md-1 col-sm-12">
+                     رقم الكتاب
+                    </div>
+
+                   <div class="col-lg-2 col-md-2 col-sm-12">
+                       @Html.Kendo().TextBox().Name("EditPAYNo").HtmlAttributes(new { placeholder = "رقم الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+
+
+                   </div>
+
+                   <div class="col-lg-1 col-md-1 col-sm-12">
+                    تاريخ الكتاب
+                   </div>
+
+                   <div class="col-lg-3 col-md-3 col-sm-12">
+                          @(Html.Kendo().DatePicker()
+                                  .Name("EditPDATEDate").Format("{0:dd/MM/yyyy}")
+                                  .HtmlAttributes(new { placeholder = "تاريخ الكتاب", required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                  .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                   </div>
+                    <div class="col-lg-1 col-md-1 col-sm-12">
+                   القيمة
+                   </div>
+                   <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 bordered">
+                                @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("EditAmount").Min(0)
+                                .HtmlAttributes(new { placeholder = "القيمة",  style = "width: 100%;" }))
+                    </div>
+
+               </div>
+               <br />
+               <div class="row col-11">
+                   <div class="col-lg-12 col-md-12 col-sm-12">
+                       @Html.Kendo().TextBox().Name("EditNOTES").HtmlAttributes(new { placeholder = "ملاحظات" })
+
+
+                   </div>
+                </div>
+                <br />
+               <div class="row col-11">
+                   <div class="col-lg-12 col-md-12 col-sm-12">
+                       @Html.Kendo().TextBox().Name("EditCAUSES").HtmlAttributes(new { placeholder = "السبب" })
+
+
+                   </div>
+                </div>
+               <br />
+               <div class="row col-11">
+                      <div class="col-lg-2 col-md-2 col-sm-12" >
+                   الجهة المصدرة لامر الصرف
+                   </div>
+
+                   <div class="col-lg-3 col-md-3 col-sm-12">
+                          @(Html.Kendo().DropDownList()
+                                    .Name("EditPAY_OWNER_TYPENB")
+                                    .OptionLabel("اختر  الجهة ")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETTRZPAY_OWNER_TYPES", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                   </div>
+
+                      <div class="col-lg-2 col-md-2 col-sm-12" >
+                   نوع النفقة او امر الصرف
+                   </div>
+
+                   <div class="col-lg-3 col-md-3 col-sm-12">
+                          @(Html.Kendo().DropDownList()
+                                    .Name("EditEXPENSE_TYPENB")
+                                    .OptionLabel("اختر  النوع ")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب" })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GETTRZEXPENSE_TYPES", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+
+                   </div>
+               </div>
+                <div class="row col-11">
+                       <div class="col-lg-5 col-md-5 col-sm-12" style="text-align: center; border-top: 1px solid #e5e5e5;margin-top:10px ">
+                         <button class="btn btn-primary" onclick="SaveEditTRGET_ORDERS()">حفظ</button>
+                         <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+                       </div>
+
+                       <div  class="col-lg-6 col-md-6 col-sm-12 IS_ARC" style="text-align: center; border-top: 1px solid #e5e5e5;margin-top:10px ">
+
+                               <span class="btn btn-primary btn-file">
+                                                        اختر ملف . . <i class="fa fa-upload"></i> <input accept=".PDF" id="DocumentsFiles1" name="DocumentsFiles1" type="file">
+                                                    </span>
+
+                             @*   <button class="btn btn-primary" onclick="setvvv()"> حفظ ورفع الملف</button>*@
+
+                       </div>
+
+                 </div>
+
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(1200)
+            .Height(450)
+            .Actions(actions => actions.Pin().Minimize().Maximize().Close())
+            .Pinned()
+            )
+</div>
+<script>
+    function SaveEditTRGET_ORDERS()
+    {
+
+        var ePDATE = $('#EditPDATEDate').val();
+
+         if (ePDATE != "" ) {
+                if ($("#DocumentsFiles1").val() != "") {
+                    var is_pdf = fileValidation1($("#DocumentsFiles1").val());
+                    if (is_pdf) {
+
+                        var is_size = Filevalidationsize1();
+                        if (is_size) {
+
+
+
+
+
+                            var windowWidget = $("#EditTRPAY_ORDERS").data("kendoWindow");
+
+                            if (@ViewBag.citynb == "") {
+                                toastr.error("يجب اختيار المحافظة");
+                            }
+                            else {
+
+
+                                var validator = $("#Edit_ORDERS").kendoValidator().data("kendoValidator");
+
+                                if (validator.validate()) {
+                                    kendo.ui.progress(windowWidget.element, true);
+
+
+
+
+
+
+                                    var CITYNB = @ViewBag.citynb; 
+                                    var EditPAYNb = $('#Nb').val();
+
+                                    var EditPAYNo = $('#EditPAYNo').val();
+                                    var EditPDATEDate = $("#EditPDATEDate").val();
+                                    var EditNOTES = $("#EditNOTES").val();
+                                    var EditCAUSES = $("#EditCAUSES").val();
+                                    var EditOWNERTYPENB = $("#EditPAY_OWNER_TYPENB").val();
+                                    var EditEXPENSETYPENB = $("#EditEXPENSE_TYPENB").val();
+
+                                    var EditAmount = $("#EditAmount").val();
+                                    var  EditfileUpload = $("#DocumentsFiles1").get(0);
+                                    var  Editfiles =  EditfileUpload.files;
+
+                                    // Create FormData object
+                                    var  EditfileData = new FormData();
+
+                                    // Looping over all files and add it to FormData object
+                                    for (var i = 0; i < Editfiles.length; i++) {
+                                        EditfileData.append("Files", Editfiles[i]);
+                                    }
+                                    EditfileData.append("PAYNb", EditPAYNb);
+                                    EditfileData.append("AddPAYNo", EditPAYNo);
+                                    EditfileData.append("AddPDATEDate", EditPDATEDate);
+                                    EditfileData.append("CITYNB", CITYNB);
+                                    EditfileData.append("AddNOTES", EditNOTES);
+                                    EditfileData.append("AddCAUSES", EditCAUSES);
+                                    EditfileData.append("OWNERTYPENB", EditOWNERTYPENB);
+                                    EditfileData.append("EXPENSETYPENB", EditEXPENSETYPENB);
+                                    EditfileData.append("Amount", EditAmount);
+
+
+
+                                    // { Files: files[0], NO: NO, GDATE: GDATE, CITYNB: CITYNB, FROMDATE: FROMDATE1, TODATE: TODATE1, PTOTALVAL: totalval ,EXCLUDES: listex, INCLUDES: listin},
+                                    // { fileData, EXCLUDES: listex, INCLUDES: listin}
+
+                                    $.ajax({
+                                        url: '@Url.Action("TRPAY_ORDERS_Update", "PassengersAccount")',
+                                        type: "POST",
+                                        data: EditfileData,
+                                        contentType: false,
+                                        processData: false,
+                                        success: function (response) {
+                                            if (response.success == true) {
+                                                toastr.success(response.responseText);
+                                                kendo.ui.progress(windowWidget.element, false);
+                                            } else {
+                                                toastr.error(response.responseText);
+                                                kendo.ui.progress(windowWidget.element, false);
+
+                                            }
+
+
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        else {
+                            toastr.error("حجم الملف يجب ان لا يتجاوز 4 ميغا");
+                        }
+                    }
+                    else {
+                        toastr.error("يرجى اختيار ملف لاحقته PDF");
+                    }
+                }
+                else {
+                    toastr.error("يرجى اختيار الملف اولاً");
+                }
+            }
+            else
+            {
+                toastr.error("يرجى ادخال تاريخ الكتاب");
+            }
+
+    }
+</script>
+
+
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("DeleteArc")
+            .Title("حذف الارشفة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="delete_S">
+               <div>
+                    @Html.Hidden("DeleteArcSesNb")
+                   <div class="col-md-11" >
+                   <h1 style="text-align:center"> هل انت متأكد من حذف الأرشفة؟ </h1>
+
+
+                   </div>
+
+
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="DeleteArcSession()" style="font-size:30px">نعم</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()" style="font-size:30px"> لا    </button>
+
+               </div>
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(600)
+            .Height(300)
+            .Pinned()
+            )
+
+</div>
+
+<script>
+
+    function DeleteARCHIVED(e) {
+        e.preventDefault();
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);          // get the date of this row
+        var id = item.NB;
+        if (item.IS_ARCHIVED == false) {
+            toastr.error("لا يوجد ارشفة للجلسة");
+        } else {
+            $('#DeleteArcSesNb').val(item.NB);
+            $("#DeleteArc").data("kendoWindow").center().open();
+        }
+
+    }
+
+      function DeleteArcSession() {
+
+        var delarcses = $('#DeleteArcSesNb').val();
+
+        $("#DeleteArc").data("kendoWindow").center().close();
+         $.ajax({
+            url: '@Url.Action("DeleteDocument", "PassengersAccount")',
+
+             data: { paynb: delarcses},
+
+            success: function (response) {
+                if (response.success == true) {
+                    toastr.success(response.responseText);
+                    $("#grid").data("kendoGrid").dataSource.read();
+                } else {
+                    toastr.error(response.responseText);
+
+                }
+
+
+            }
+         });
+    }
+</script>

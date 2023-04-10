@@ -40,7 +40,29 @@ namespace Passengers.Controllers
 
         public ActionResult Index_city()
         {
-            return View();
+            List<TRPASSENGERS_CREDITSVM> TRPASSENGERS_CREDITS1 = new List<TRPASSENGERS_CREDITSVM>();
+          
+
+            for (var i = 1; i <= 14; i++)
+            {
+                var sql = "SELECT * FROM( SELECT  TP.NB, TP.CITYNB, ZC.NAME     AS CITYNAME, TP.AMOUNT, TP.CDATE FROM TRPASSENGERS_CREDITS TP JOIN ZCITYS ZC ON TP.CITYNB = ZC.NB WHERE CITYNB = "+i+ " ORDER BY FIXDATE DESC) WHERE ROWNUM =1 ";
+              
+                var data = db.Database.SqlQuery<TRPASSENGERS_CREDITSVM>(sql).FirstOrDefault();
+
+                if (data != null)
+                {
+                    long? alllong = long.Parse(data.AMOUNT);
+                    var all = alllong.GetValueOrDefault().ToString("###,###");
+                    if (all == "" || all == null)
+                    {
+                        all = "0";
+                    }
+                    data.AMOUNT = all;
+                    TRPASSENGERS_CREDITS1.Add(data);
+                }
+
+            }
+            return View(TRPASSENGERS_CREDITS1);
         }
 
         public ActionResult Index_Detalis(int citynb)
@@ -54,14 +76,23 @@ namespace Passengers.Controllers
                 if (mycitynb != citynb)
                 return RedirectToAction("Index");
             }
-            var amount = db.TRPASSENGERS_CREDITS.Find(citynb).AMOUNT;
+            var sql = "SELECT * FROM(SELECT * FROM TRPASSENGERS_CREDITS WHERE CITYNB = "+ citynb + " ORDER BY FIXDATE DESC) WHERE ROWNUM = 1 ";
+            var DDD = db.Database.SqlQuery<TRPASSENGERS_CREDITS>(sql).FirstOrDefault();
+            long? alllong = DDD.AMOUNT;
+          
+            var all = alllong.GetValueOrDefault().ToString("###,###");
+            if (all == "" || all == null)
+            {
+                all = "0";
+            }
             var cityname = db.ZCITYS.Find(citynb).NAME;
-            ViewBag.amount = amount;
+            ViewBag.amount = all;
             ViewBag.cityname = cityname;
             ViewBag.citynb = citynb;
             return View();
         }
-
+        ///////////////////////////////////////////////////////////////////
+        ///-----------------------------------------------
         public ActionResult TRGET_ORDERS_Index(int citynb)
         {
 
@@ -75,7 +106,7 @@ namespace Passengers.Controllers
                     return RedirectToAction("Index");
             }
 
-            ViewData["STATUS"] = db.TRSTATUS.Select(x => new
+            ViewData["STATUS"] = db.TRPASSENGER_ACCOUNT_STATUS.Select(x => new
             {
                 ID = x.NB,
                 NAME = x.NAME
@@ -88,6 +119,15 @@ namespace Passengers.Controllers
             });
             ViewBag.cityname = db.ZCITYS.Find(citynb).NAME;
             ViewBag.citynb = citynb;
+            if (IsAdmin || IsAdminCity) 
+            {
+                ViewBag.IsAdmin = true;
+            }
+            else
+            {
+                ViewBag.IsAdmin = false;
+            }
+            
             return View();
 
         }
@@ -101,13 +141,13 @@ namespace Passengers.Controllers
             var ssGDATE = Request.Form["ssGDATE"].Trim();
             var Status = Request.Form["Status"].Trim();
             var StrSessArc = Request.Form["StrSessArc"].Trim();
-            var citynb = Request.Form["citynb"].Trim();
+            //var citynb = Request.Form["citynb"].Trim();
 
 
-            if (citynb != "")
-            {
-                sql += " and CITYNB = " + citynb;
-            }
+            //if (citynb != "")
+            //{
+            //    sql += " and CITYNB = " + citynb;
+            //}
             if (NO != "")
             {
                 sql += " and NO like '" + NO + "'";
@@ -162,13 +202,15 @@ namespace Passengers.Controllers
 
         }
 
-        public ActionResult GetResult(int citynb , string FROMDATE, string TODATE)
+        public ActionResult GetResult(int? citynb , string FROMDATE, string TODATE)
         {
             System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("ar-sa");
            
 
             DateTime FROMDATE2 = DateTime.ParseExact(FROMDATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
             DateTime TODATE2 = DateTime.ParseExact(TODATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+
+           
 
             string sql = "BEGIN VEHICLES.PASSENGERS_PKG.GETRESULT_PASSENGER_TAX(:PCITYNB,:FROMDATE, :TODATE,:CARBILLS_COUNT,:TOTVAL); END;";
             var PCITYNB = new OracleParameter("PCITYNB", OracleDbType.Double, citynb, ParameterDirection.Input);
@@ -185,7 +227,31 @@ namespace Passengers.Controllers
 
         }
 
-        public ActionResult TRGET_ORDERS_Create(HttpPostedFileBase Files ,string NO , DateTime GDATE, int CITYNB, string FROMDATE, string TODATE,string EXCLUDES, string INCLUDES ,long? PTOTALVAL)
+
+        public ActionResult CheckAllProced(string procednb)
+        {
+            try {
+              long data =0;
+                var sql = "select count(*) from carproceds where nb = " + procednb;
+                var datacount = db.Database.SqlQuery<int>(sql).FirstOrDefault();
+                if (datacount == 0)
+                {
+                    return Json(new { success = false,  responseText = "المعاملة "+ procednb + " غير موجودة" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    data  = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + procednb + " , NULL) FROM DUAL").FirstOrDefault();
+                }
+
+                return Json(new { success = true, TOTVA2L = data , responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex) {
+
+                return Json(new { success = false, responseText = "حصل خطأ اثناء التحقق" }, JsonRequestBehavior.AllowGet);
+            }
+            
+        }
+        public ActionResult TRGET_ORDERS_Create(HttpPostedFileBase Files ,string NO , DateTime GDATE, int? CITYNB, string FROMDATE, string TODATE,string EXCLUDES, string INCLUDES ,long? PTOTALVAL , string AddNOTES)
         {
             using (DbContextTransaction transaction = db.Database.BeginTransaction())
             {
@@ -194,7 +260,8 @@ namespace Passengers.Controllers
                     TRGET_ORDERS Model = new TRGET_ORDERS();
                     Model.NO = NO;
                     Model.GDATE = GDATE;
-                    Model.CITYNB= CITYNB;
+                    Model.CITYNB = CITYNB;
+                    Model.NOTES = AddNOTES;
                     long? totalval = 0;
                     long? EXCLUDESval = 0;
                     long? INCLUDESval = 0;
@@ -204,7 +271,7 @@ namespace Passengers.Controllers
                     DateTime FROMDATE2 = DateTime.ParseExact(FROMDATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
                     DateTime TODATE2 = DateTime.ParseExact(TODATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
 
-                    Model.STATUS = 0;
+                    Model.STATUS = 1;
                     Model.IS_ARCHIVED = false;
                     Model.FROMDATE = FROMDATE2;
                     Model.TODATE = TODATE2;
@@ -217,13 +284,13 @@ namespace Passengers.Controllers
                         var xx = EXCLUDES.Split(',');
                         foreach (var item in xx)
                         {
-                            if (item != null)
+                            if (item != null && item !="")
                             {
                                 TRGET_ORDER_EXCLUDES ex = new TRGET_ORDER_EXCLUDES();
                                 ex.NB = 1;
                                 ex.GNB = NB;
                                 ex.CARPROCEDNB = long.Parse(item);
-                                ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + item + ") FROM DUAL").FirstOrDefault();
+                                ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + item + " , NULL) FROM DUAL").FirstOrDefault();
                                 db.TRGET_ORDER_EXCLUDES.Add(ex);
                                 db.SaveChanges();
                                 EXCLUDESval += ex.AMOUNT;
@@ -232,18 +299,18 @@ namespace Passengers.Controllers
                            
                         }
                     }
-                    if (INCLUDES != null)
+                    if (INCLUDES != null )
                     {
                         var ss = INCLUDES.Split(',');
                         foreach (var item in ss)
                         {
-                            if (item != null)
+                            if (item != null && item != "")
                             {
                                 TRGET_ORDER_INCLUDES ex = new TRGET_ORDER_INCLUDES();
                                 ex.NB = 1;
                                 ex.GNB = NB;
                                 ex.CARPROCEDNB = long.Parse(item);
-                                ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + item + ") FROM DUAL").FirstOrDefault();
+                                ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + item + " , NULL) FROM DUAL").FirstOrDefault();
                                 db.TRGET_ORDER_INCLUDES.Add(ex);
                                 db.SaveChanges();
                                 INCLUDESval += ex.AMOUNT;
@@ -272,6 +339,40 @@ namespace Passengers.Controllers
                     totalval = PTOTALVAL + INCLUDESval - EXCLUDESval;
                     Model.AMOUNT = (long)totalval;
                     db.SaveChanges();
+
+                    if (CITYNB == null)
+                    {
+                        for ( var i = 1; i <=14;i++)
+                        {
+                            TRGET_ORDERS_ITEMS Model2 = new TRGET_ORDERS_ITEMS();
+                            Model2.NO = NO;
+                            Model2.GDATE = GDATE;
+                            Model2.CITYNB = i;
+                            Model2.TRGET_ORDERNB = Model.NB;
+                            Model2.STATUS = 1;
+                            Model2.FROMDATE = FROMDATE2;
+                            Model2.TODATE = TODATE2;
+                            db.TRGET_ORDERS_ITEMS.Add(Model2);
+                            db.SaveChanges();
+                        }
+
+
+                    }
+                    else
+                    {
+                        TRGET_ORDERS_ITEMS Model2 = new TRGET_ORDERS_ITEMS();
+                        Model2.NO = NO;
+                        Model2.GDATE = GDATE;
+                        Model2.CITYNB = CITYNB;
+                        Model2.TRGET_ORDERNB = Model.NB;
+                        Model2.STATUS = 1;
+                        Model2.FROMDATE = FROMDATE2;
+                        Model2.TODATE = TODATE2;
+                        db.TRGET_ORDERS_ITEMS.Add(Model2);
+                        db.SaveChanges();
+                    }
+
+
                     transaction.Commit();
                     return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
 
@@ -286,7 +387,6 @@ namespace Passengers.Controllers
             }
                 
         }
-
 
         public ActionResult GetReport(long NB)
         {
@@ -319,6 +419,539 @@ namespace Passengers.Controllers
             {
                 return null;
             }
+        }
+       
+      
+        public ActionResult Read_TRGET_ORDERS_ITEMS([DataSourceRequest] DataSourceRequest request, long? Nb )
+        {
+            var sql = " select * from TRGET_ORDERS_ITEMS where 1 = 1 and TRGET_ORDERNB = "+ Nb;
+
+
+
+            CodesController cc = new CodesController();
+            bool IsAdmin = cc.IsAdmin();
+            bool IsAdminCity = cc.IsAdminCity();
+            if (!IsAdmin && !IsAdminCity)
+            {
+                var mycitynb = Utility.MyCityNb();
+                sql += " and CITYNB = " + mycitynb;
+            }
+
+
+            var data = db.Database.SqlQuery<TRGET_ORDERS_ITEMS>(sql).ToList();
+
+            int index = 0;
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,
+                CITYNB = commm.CITYNB,
+                NO = commm.NO,
+                GDATE = commm.GDATE,
+                AMOUNT = commm.AMOUNT,
+                FROMDATE = commm.FROMDATE,
+                STATUS = commm.STATUS,
+                NOTES = commm.NOTES,
+                CONFIRM_DATE = commm.CONFIRM_DATE,
+                TODATE = commm.TODATE,
+            
+
+
+
+                Seq = (request.Page - 1) * request.PageSize + (++index)
+            });
+
+            return Json(result);
+
+
+
+        }
+
+
+        public ActionResult SAVECONFIRM_GET(long NB)
+        {
+            try
+            {
+                var data = db.TRGET_ORDERS.Find(NB);
+                if (data == null)
+                {
+                    return Json(new { success = false, responseText = "لا يوجد سجل" });
+                }
+                else
+                {
+                    if (data.STATUS == 2)
+                    {
+                        return Json(new { success = false, responseText = "امر الصرف مثبت سابقاً" });
+                    }
+                    if (data.STATUS == 3)
+                    {
+                        return Json(new { success = false, responseText = "امر الصرف ملغى" });
+                    }
+                    if (data.STATUS == 1)
+                    {
+                        string sql = "BEGIN VEHICLES.PASSENGERS_PKG.CONFIRM_GET_ORDER(:PNB,:PSTATUS); END;";
+                        var PNB = new OracleParameter("PNB", OracleDbType.Double, NB, ParameterDirection.Input);
+
+
+
+                        var STATUS = new OracleParameter("PSTATUS", OracleDbType.Double, ParameterDirection.Output);
+
+                        db.Database.ExecuteSqlCommand(sql, PNB, STATUS);
+                        var x = STATUS.Value;
+                        if (x.ToString() == "0")
+                        {
+                            return Json(new { success = false, responseText = "حصل خطأ اثناء التنفيذ" });
+                        }
+
+
+                    }
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = "حصل خطأ اثناء التنفيث" });
+            }
+
+        }
+        
+
+        /////////////////////////////////////////////////////////////////    
+        ///----------------------------------------------------
+        public ActionResult TRPAY_ORDERS_Index(int citynb)
+        {
+
+            CodesController cc = new CodesController();
+            bool IsAdmin = cc.IsAdmin();
+            bool IsAdminCity = cc.IsAdminCity();
+            if (!IsAdmin && !IsAdminCity)
+            {
+                var mycitynb = Utility.MyCityNb();
+                if (mycitynb != citynb)
+                    return RedirectToAction("Index");
+            }
+
+            ViewData["STATUS"] = db.TRPASSENGER_ACCOUNT_STATUS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            ViewData["TRZEXPENSE_TYPES"] = db.TRZEXPENSE_TYPES.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            ViewData["TRZPAY_OWNER_TYPES"] = db.TRZPAY_OWNER_TYPES.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            
+            ViewData["zcities"] = db.ZCITYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            ViewBag.cityname = db.ZCITYS.Find(citynb).NAME;
+            ViewBag.citynb = citynb;
+            return View();
+
+        }
+        public ActionResult TRPAY_ORDERS_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            var sql = " select * from TRPAY_ORDERS where 1 = 1 ";
+
+            var NO = Request.Form["NO"].Trim();
+            
+            var SPDATE = Request.Form["SPDATE"].Trim();
+            var SOWNERTYPENB = Request.Form["SOWNERTYPENB"].Trim();
+            var SEXPENSETYPENB = Request.Form["SEXPENSETYPENB"].Trim();
+            var SAmount = Request.Form["SAmount"].Trim();
+
+            var Status = Request.Form["Status"].Trim();
+            var StrSessArc = Request.Form["StrSessArc"].Trim();
+            var citynb = Request.Form["citynb"].Trim();
+
+            //var CAUSES = Request.Form["CAUSES"].Trim();
+
+
+
+
+
+
+
+            if (citynb != "")
+            {
+                sql += " and CITYNB = " + citynb;
+            }
+            if (NO != "")
+            {
+                sql += " and NO like '" + NO + "'";
+            }
+
+            if (SPDATE != "")
+            {
+                sql += " and TRUNC(PDATE) = TO_DATE('" + SPDATE + "','DD/MM/YYYY') ";
+            }
+           
+
+
+            if (StrSessArc != "")
+            {
+                sql += " and IS_ARCHIVED =" + StrSessArc;
+            }
+
+            if (Status != "")
+            {
+                sql += " and STATUS =" + Status;
+            }
+
+            if (SOWNERTYPENB != "")
+            {
+                sql += " and PAY_OWNER_TYPENB =" + SOWNERTYPENB;
+            }
+
+            if (SEXPENSETYPENB != "")
+            {
+                sql += " and EXPENSE_TYPENB =" + SEXPENSETYPENB;
+            }
+
+            if (SAmount != "")
+            {
+                sql += " and AMOUNT =" + SAmount;
+            }
+
+            sql += " order by nb desc";
+
+
+            var data = db.Database.SqlQuery<TRPAY_ORDERS>(sql).ToList();
+
+            int index = 0;
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,
+                CITYNB = commm.CITYNB,
+                NO = commm.NO,
+                PDATE = commm.PDATE,
+                AMOUNT = commm.AMOUNT,
+                CAUSES = commm.CAUSES,
+                STATUS = commm.STATUS,
+                NOTES = commm.NOTES,
+                EXPENSE_TYPENB = commm.EXPENSE_TYPENB,
+                PAY_OWNER_TYPENB = commm.PAY_OWNER_TYPENB,
+                IS_ARCHIVED = commm.IS_ARCHIVED,
+                FTP_PATH = commm.FTP_PATH,
+
+
+
+                Seq = (request.Page - 1) * request.PageSize + (++index)
+            });
+
+            return Json(result);
+
+
+
+        }
+   
+        public ActionResult TRPAY_ORDERS_Create(HttpPostedFileBase Files ,string AddPAYNo, DateTime AddPDATEDate, int CITYNB, string AddNOTES, string AddCAUSES, int OWNERTYPENB, int EXPENSETYPENB,long Amount)
+        {
+            using (DbContextTransaction transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var OwnerAmount = db.TRZPAY_OWNER_TYPES.Find(OWNERTYPENB).MAXAMOUNT;
+                    if (OwnerAmount != null)
+                    {
+                        if (OwnerAmount < Amount)
+                        {
+                            return Json(new { success = false, responseText = "قيمة امر الصرف تجاوز الحد الاعلى المسموح به"});
+                        }
+                    }
+
+
+
+                    TRPAY_ORDERS Model = new TRPAY_ORDERS();
+                    Model.NO = AddPAYNo;
+                    Model.PDATE = AddPDATEDate;
+                    Model.CITYNB= CITYNB;
+                    Model.STATUS = 1;
+                  
+                    Model.NOTES = AddNOTES;
+                    Model.CAUSES = AddCAUSES;
+                    Model.EXPENSE_TYPENB = EXPENSETYPENB;
+                    Model.PAY_OWNER_TYPENB = OWNERTYPENB;
+                    Model.AMOUNT = Amount;
+                    db.TRPAY_ORDERS.Add(Model);
+
+                    db.SaveChanges();
+                    var NB = Model.NB;
+                    
+                   
+
+                    byte[] fileContent = null;
+                    using (var reader = new System.IO.BinaryReader(Files.InputStream))
+                    {
+                        fileContent = reader.ReadBytes(Files.ContentLength);
+                    }
+
+                    var date = DateTime.Now;
+                    var pathNameYear = date.ToString("yyyy");
+
+                    pathNameYear += "/" + Model.CITYNB + "/";
+
+                    var FTPFullPath = ConfigurationManager.AppSettings["FtpHomeTRPAYORDERS"];
+                    FTPFullPath += pathNameYear;
+
+                    var uploadedFullPath = CodesController.UploadFile(fileContent, FTPFullPath, Files.FileName, FTPFullPath, NB);
+
+                    Model.FTP_PATH = uploadedFullPath;
+                    Model.IS_ARCHIVED = true;
+                   
+                
+                    db.SaveChanges();
+                    transaction.Commit();
+                    return Json(new { success = true, responseText = "تمت الاضافة بنجاح" }, JsonRequestBehavior.AllowGet);
+
+                }
+
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    var ss = validation.OracleExceptionValidation(ex);
+                    return Json(new { success = false, responseText = ss });
+                }
+            }
+                
+        }
+
+
+        public ActionResult TRPAY_ORDERS_Update(HttpPostedFileBase Files, long PAYNb, string AddPAYNo, DateTime AddPDATEDate, int CITYNB, string AddNOTES, string AddCAUSES, int OWNERTYPENB, int EXPENSETYPENB, long Amount)
+        {
+            using (DbContextTransaction transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var data = db.TRPAY_ORDERS.Find(PAYNb);
+                    if (data == null)
+                    {
+                        return Json(new { success = false, responseText = "السجل غير موجود" });
+                    }
+
+                    if (data.AMOUNT != Amount)
+                    {
+                        var OwnerAmount = db.TRZPAY_OWNER_TYPES.Find(OWNERTYPENB).MAXAMOUNT;
+                        if (OwnerAmount != null)
+                        {
+                            if (OwnerAmount < Amount)
+                            {
+                                return Json(new { success = false, responseText = "قيمة امر الصرف تجاوز الحد الاعلى المسموح به" });
+                            }
+                            else
+                            {
+                                data.AMOUNT = Amount;
+                            }
+                        }
+
+                       
+                    }
+
+                   
+                     if (data.NO != AddPAYNo)
+                    {
+                        data.NO = AddPAYNo;
+                    }
+
+                    if (data.PDATE != AddPDATEDate)
+                    {
+                        data.PDATE = AddPDATEDate;
+                    }
+                    if (data.NOTES != AddNOTES)
+                    {
+                        data.NOTES = AddNOTES;
+                    }
+                    if (data.CAUSES != AddCAUSES)
+                    {
+                        data.CAUSES = AddCAUSES;
+                    }
+                    if (data.PAY_OWNER_TYPENB != OWNERTYPENB)
+                    {
+                        data.PAY_OWNER_TYPENB = OWNERTYPENB;
+                    }
+                    if (data.EXPENSE_TYPENB != EXPENSETYPENB)
+                    {
+                        data.EXPENSE_TYPENB = EXPENSETYPENB;
+                    }
+
+
+                 
+
+                    db.SaveChanges();
+                    var NB = data.NB;
+
+
+
+                    byte[] fileContent = null;
+                    using (var reader = new System.IO.BinaryReader(Files.InputStream))
+                    {
+                        fileContent = reader.ReadBytes(Files.ContentLength);
+                    }
+
+                    var date = DateTime.Now;
+                    var pathNameYear = date.ToString("yyyy");
+
+                    pathNameYear += "/" + data.CITYNB + "/";
+
+                    var FTPFullPath = ConfigurationManager.AppSettings["FtpHomeTRPAYORDERS"];
+                    FTPFullPath += pathNameYear;
+
+                    var uploadedFullPath = CodesController.UploadFile(fileContent, FTPFullPath, Files.FileName, FTPFullPath, NB);
+
+                    data.FTP_PATH = uploadedFullPath;
+                    data.IS_ARCHIVED = true;
+
+                    db.Entry(data).State = EntityState.Modified;
+                   
+                    db.SaveChanges();
+                    transaction.Commit();
+                    return Json(new { success = true, responseText = "تمت التعديل بنجاح" }, JsonRequestBehavior.AllowGet);
+
+                }
+
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    var ss = validation.OracleExceptionValidation(ex);
+                    return Json(new { success = false, responseText = ss });
+                }
+            }
+
+        }
+
+
+
+        
+
+        public ActionResult GetReportPAY(long NB)
+        {
+            try
+            {
+                CodesController cc = new CodesController();
+                var ses = db.TRPAY_ORDERS.Find(NB);
+                bool IsAdmin = cc.IsAdmin();
+                bool IsAdminCity = cc.IsAdminCity();
+                if (!IsAdmin && !IsAdminCity)
+                {
+
+                    var mycitynb = Utility.MyCityNb();
+                    if (ses.CITYNB != mycitynb)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+                var path = ses.FTP_PATH;
+                var FTPURL = ConfigurationManager.AppSettings["FtpURL"];
+                string fileName = Path.GetFileName(path);
+                string mimeType = MimeMapping.GetMimeMapping(fileName);
+                string ReportURL = path;
+                //  byte[] FileBytes = System.IO.File.ReadAllBytes(ReportURL);
+                byte[] FileBytes = CodesController.GetFileContent(path);
+
+                return File(FileBytes, mimeType);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+   
+    
+        public ActionResult SAVECONFIRMPAY(long NB)
+        {
+            try 
+            {
+                var data = db.TRPAY_ORDERS.Find(NB);
+                if (data == null)
+                {
+                    return Json(new { success = false, responseText ="لا يوجد سجل" });
+                }
+                else
+                {
+                    if (data.STATUS == 2)
+                    {
+                        return Json(new { success = false, responseText = "امر الصرف مثبت سابقاً" });
+                    }
+                    if (data.STATUS == 3)
+                    {
+                        return Json(new { success = false, responseText = "امر الصرف ملغى" });
+                    }
+                    if (data.STATUS == 1)
+                    {
+                        string sql = "BEGIN VEHICLES.PASSENGERS_PKG.CONFIRM_PAY_ORDER(:PNB,:PSTATUS); END;";
+                        var PNB = new OracleParameter("PNB", OracleDbType.Double, NB, ParameterDirection.Input);
+                        
+
+
+                        var STATUS = new OracleParameter("PSTATUS", OracleDbType.Double, ParameterDirection.Output);
+                 
+                        db.Database.ExecuteSqlCommand(sql, PNB, STATUS);
+                        var x = STATUS.Value;
+                        if (x.ToString() == "0")
+                        {
+                            return Json(new { success = false, responseText = "حصل خطأ اثناء التنفيذ" });
+                        }
+
+                        
+                    }
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }
+            }catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = "حصل خطأ اثناء التنفيث" });
+            }
+
+        }
+
+
+        public ActionResult DeleteDocument(long paynb)
+        {
+            try
+            {
+                var data = db.TRPAY_ORDERS.Find(paynb);
+                if (data != null)
+                {
+                    if (data.IS_ARCHIVED == false)
+                    {
+                        return Json(new { success = false, responseText = "لا يوجد ارشفة  " }, JsonRequestBehavior.AllowGet);
+
+                    }
+                    var path = data.FTP_PATH;
+
+                    var is_true = CodesController.DeleteFTPFile(path);
+                    if (is_true)
+                    {
+                        data.IS_ARCHIVED = false;
+                        data.FTP_PATH = "";
+                        db.Entry(data).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        return Json(new { success = false, responseText = "حدث خطأ " }, JsonRequestBehavior.AllowGet);
+
+                    }
+
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, responseText = "حدث خطأ " }, JsonRequestBehavior.AllowGet);
+
+            }
+            return Json(new { success = true, responseText = "تم الحذف" }, JsonRequestBehavior.AllowGet);
+
         }
     }
 }

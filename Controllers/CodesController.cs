@@ -373,6 +373,42 @@ namespace Passengers.Controllers
             }
             return success;
         }
+
+
+        public ActionResult GETTRZEXPENSE_TYPES()
+        {
+            var reg = db.TRZEXPENSE_TYPES.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(reg, JsonRequestBehavior.AllowGet);
+
+        }
+
+        public ActionResult GETTRZPAY_OWNER_TYPES()
+        {
+            var reg = db.TRZPAY_OWNER_TYPES.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(reg, JsonRequestBehavior.AllowGet);
+
+        }
+
+        public ActionResult GETTRPASSENGER_ACCOUNT_STATUS()
+        {
+            var reg = db.TRPASSENGER_ACCOUNT_STATUS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME,
+            });
+            return Json(reg, JsonRequestBehavior.AllowGet);
+
+        }
+
+        
     }
     
 }

@@ -734,24 +734,24 @@
            ID :id
         }
         kendo.ui.progress(windowWidget.element, true);
-     $.ajax({
-                type: "POST",
-               data: model,
-                url: "@Url.Action("ConSession", "TRSESSIONS")",
-                success: function (response) {
-                    if (response.success) {
-                        kendo.ui.progress(windowWidget.element, false);
-                        location.reload()
-                      //  $("#grid").data("kendoGrid").dataSource.page(1);
+                 $.ajax({
+                            type: "POST",
+                           data: model,
+                            url: "@Url.Action("ConSession", "TRSESSIONS")",
+                            success: function (response) {
+                                if (response.success) {
+                                    kendo.ui.progress(windowWidget.element, false);
+                                    location.reload()
+                                  //  $("#grid").data("kendoGrid").dataSource.page(1);
 
-                        toastr.success("تمت العملية  بنجاح");
-                    } else {
-                        kendo.ui.progress(windowWidget.element, false);
-                        toastr.error(response.responseText);
-                    }
+                                    toastr.success("تمت العملية  بنجاح");
+                                } else {
+                                    kendo.ui.progress(windowWidget.element, false);
+                                    toastr.error(response.responseText);
+                                }
 
-                }
-            });
+                            }
+                        });
     }
     function openFinishSession() {
         $("#fin").data("kendoWindow").center().open();
