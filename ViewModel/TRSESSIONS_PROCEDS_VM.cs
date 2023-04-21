@@ -30,6 +30,7 @@ namespace Passengers.ViewModel
         public string TYPSNAMEAGR { get; set; }
 
         public long? ISDONE { get; set; }
+        public string NOTES { get; set; }
 
 
     }
@@ -211,9 +212,13 @@ namespace Passengers.ViewModel
         [Display(Name = "رمز المركبة الثاني")]
         public long? CARNB2 { get; set; }
 
+        [Display(Name = "ملاحظات")]
+        public string NOTES { get; set; }
 
 
-        
+
+
+
 
     }
 

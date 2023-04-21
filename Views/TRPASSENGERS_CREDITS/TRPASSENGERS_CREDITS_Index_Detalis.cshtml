@@ -1,0 +1,236 @@
+﻿
+@{
+    ViewBag.Title = "تفاصيل" + " - "+ @ViewBag.cityname;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section PartialHeader{
+    <div class="panel-heading1 " id="searchPanel">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+                @*<div class="col-lg-1 col-md-2">
+            <label for="template_name"> رقم الكتاب</label>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            @Html.Kendo().TextBox().Name("NO").HtmlAttributes(new { placeholder = " رقم الكتاب" })
+        </div>*@
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> تاريخ الرصيد</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DatePicker()
+                .Name("SFromCDATE")
+                .Format("{0:dd/MM/yyyy}")
+                .HtmlAttributes(new { placeholder = "تاريخ الرصيد من ", style = "width: 100%; text-align:center;" })
+            )
+                </div>
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> تاريخ الرصيد</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DatePicker()
+                .Name("SToCDATE")
+                .Format("{0:dd/MM/yyyy}")
+                .HtmlAttributes(new { placeholder = "تاريخ الرصيد الى ", style = "width: 100%; text-align:center;" })
+            )
+                </div>
+
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> نوع العملية</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر")
+                                    .Name("SCTYPE")
+                                    .DataTextField("Text")
+                                    .DataValueField("Value")
+                                    .BindTo(new List<SelectListItem>() {
+                                          new SelectListItem() {
+                                              Text = "تحويل",
+                                              Value = "1"
+                                          },
+                                          new SelectListItem() {
+                                              Text = "صرف",
+                                              Value = "2"
+                                          }
+                                      })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+                </div>
+              
+            </div>
+
+        </div>
+    </div>
+}
+
+<!-- Grid  -->
+<div>
+    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRPASSENGERS_CREDITS>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Template(t => { }).Title("م.").ClientTemplate(
+                 "#= renderNumber(data) #"
+               ).Width(80);
+                columns.Bound(c => c.NB).Title("الرمز الالكتروني").Width(150).Visible(false);
+                columns.Bound(c => c.CITYNB).Width(150).Title("الاسم").Width(100).Visible(false);
+                columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(100);
+                columns.Bound(c => c.AMOUNT).Format("{0:n0}").Width(150).Title("الرصيد بعد العملية").Width(150);
+                columns.Bound(c => c.CDATE).Format("{0:dd/MM/yyyy}").Width(150).Title("تاريخ الرصيد");
+                columns.Bound(c => c.ITEM_AMOUNT).Format("{0:n0}").Width(150).Title("قيمة  العملية").Width(250);
+                columns.Bound(c => c.CTYPE).Width(150).Title("نوع العملية").Width(150).Visible(false);
+                columns.Bound(c => c.CTYPE).Title("نوع العملية").ClientTemplate("#=GetCtype(data.CTYPE)#").Width(100);
+
+                columns.Bound(c => c.FIXDATE).Format("{0:dd/MM/yyyy}").Width(150).Title("تاريخ التثبيت");
+
+            })
+                        .HtmlAttributes(new { style = "height: 600px !important;" })
+
+            .Scrollable()
+            .Sortable()
+            .Filterable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
+            .PageSize(15)
+            .Model(model => model.Id(p => p.NB))
+            .Read(read => read.Action("Read", "TRPASSENGERS_CREDITS").Data("GetFillters")))
+            .Resizable(resize => resize
+            .Columns(true)
+            )
+            .ToolBar(toolbar =>
+            {
+            //   toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            toolbar.Template(@<text>
+                                        <div >
+                                            <div>
+                                                <button class="btn btn-green" href="#" onclick="ExportToPdf()">
+                                                     تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                                                </button>
+                                                @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
+                                                <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
+                                               @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
+                                                     تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
+                                                </button>*@
+                                            </div>
+                                        </div>
+                             </text>);
+
+            })
+                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                                       .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
+                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                                      .Display("العدد الكلي للسجلات :  {2}")
+                                      )
+                                    .Refresh(true)
+                                    .Input(true)
+                                    .Info(true)
+          ).Events(events => events
+            .Change("getcolor")
+            .DataBound("getcolor")
+            .Sort("getcolor")
+            .Filter("getcolor")
+            .Group("getcolor")
+            .Page("getcolor")
+            .Cancel("getcolor")
+        //.Edit("hideIdField")
+
+
+        )
+)
+
+</div>
+
+<script>
+    function renderNumber(data) {
+
+        return data.Seq;
+    }
+
+    function GetCtype(data) {
+        if (data == 1) {
+            return "تحويل";
+        } if (data == 2) {
+            return "صرف";
+        }
+    }
+
+    function getcolor() {
+
+        var grid = $("#grid").data("kendoGrid");
+        var data = grid.dataSource.data();
+        $.each(data, function (i, row) {
+            if (row.CTYPE == "1")
+                $('tr[data-uid="' + row.uid + '"] ').css("background-color", "#dff0d8");
+            if (row.CTYPE == "2")
+                $('tr[data-uid="' + row.uid + '"] ').css("background-color", "#f2dede");
+
+        })
+        setIcons();
+
+
+
+    }
+
+    function GetFillters() {
+        var fillter = {};
+        fillter.SFromCDATE = $('#SFromCDATE').val();
+        fillter.SToCDATE = $('#SToCDATE').val();
+        fillter.SCTYPE = $('#SCTYPE').val();
+        fillter.citynb = @ViewBag.citynb;
+
+
+
+        return fillter;
+    }
+
+    function Btn_Search() {
+        $("#grid").data("kendoGrid").dataSource.read();
+    }
+
+    function rest_filtters() {
+        $('#SFromCDATE').val("");
+        $('#SToCDATE').val("");
+
+        $("#SCTYPE").data("kendoDropDownList").value(-1);
+
+
+
+        $("#grid").data("kendoGrid").dataSource.data([]);
+    }
+
+    function ExportToPdf() {
+        var fill = {};
+        fill.SFromCDATE = $('#SFromCDATE').val();
+        fill.SToCDATE = $('#SToCDATE').val();
+        fill.SCTYPE = $('#SCTYPE').val();
+        fill.citynb = @ViewBag.citynb;
+
+
+
+
+
+
+        window.open("TRPASSENGERS_CREDITS_PDF?SCTYPE=" + fill.SCTYPE
+            + "&SFromCDATE=" + fill.SFromCDATE
+            + "&SToCDATE=" + fill.SToCDATE
+            + "&citynb=" + fill.citynb , "_blank"
+        );
+    }
+    function ExportToExcel() {
+
+    }
+</script>

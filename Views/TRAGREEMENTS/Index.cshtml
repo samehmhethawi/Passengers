@@ -16,7 +16,7 @@
     }
 </style>
 @section PartialHeader{
-    <div class="panel-heading1 " id="searchPanel" style="font-size:14px">
+    <div class="panel-heading1 " id="searchPanel" style="font-size:14px" >
         <div style="padding:10px">
             <div class="row" style="padding-bottom:10px">
                 <div class="col-md-1 laend">
@@ -206,7 +206,7 @@
 }
 
 <!-- Gridn AGREEMENTS -->
-<div>
+<div class="all-page-hi">
     @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRAGREEMENTS>()
             .Name("grid")
             .Columns(columns =>
@@ -263,17 +263,20 @@
                     command.Custom("Notification").Click("Notification").Text("اعلام");
                 }).Width(180);
             })
-
-            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .HtmlAttributes(new { style = "height: 500px !important;" })
+            //.HtmlAttributes(new { style = "height: 300px  !important;" })
             .Scrollable()
+
             .Sortable()
             .Filterable()
             .DataSource(dataSource => dataSource
             .Ajax()
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
-            .PageSize(15)
+            .PageSize(20)
             .Model(model => model.Id(p => p.NB))
-            .Read(read => read.Action("Read", "TRAGREEMENTS").Data("GetFillters")))
+            .Read(read => read.Action("Read", "TRAGREEMENTS").Data("GetFillters"))
+
+            )
             .Resizable(resize => resize
             .Columns(true)
             )
@@ -281,23 +284,26 @@
             {
                 //  toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
             })
-                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
-                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
-                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
-                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
-                                       .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
-                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
-                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
-                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
-                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
-                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
-                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
-                                      .Display("العدد الكلي للسجلات :  {2}")
-                                      )
-                                    .Refresh(true)
-                                    .Input(true)
-                                    .Info(true)
-          ).Events(events => events
+    .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+                          .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+                          .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+                          .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+                           .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+                          .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+                          .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+                          .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+                          .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+                          .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+                          .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+                          .Display("العدد الكلي للسجلات :  {2}")
+                          )
+                        .Refresh(true)
+                        .Input(true)
+
+                        .Info(true)
+          )
+   
+    .Events(events => events
             .Change("setIcons")
             .DataBound("setIcons")
             .Sort("setIcons")
@@ -437,7 +443,8 @@
         fillter.SSESCITYNB = $('#SSESCITYNB').val();
         return fillter;
     }
-    function Btn_Search() {
+        function Btn_Search() {
+            $("#grid").data("kendoGrid").dataSource.page([1]);
         $("#grid").data("kendoGrid").dataSource.read();
     }
 
@@ -466,7 +473,7 @@
         var tr = $(e.target).closest("tr");
         var item = this.dataItem(tr);
 
-        $('#Agrnb').val(item.NB);
+        $('#Agrnb').val(item.CARPROCEDNB);
 
         $("#Notification").data("kendoWindow").center().open();
     }
@@ -474,13 +481,15 @@
     {
         var agrnb = $('#Agrnb').val();
         var OUTACTSNB = $('#OUTACTSNB').val();
+        var pCarprocedNB = 250005645078;
 
         if (OUTACTSNB == "") {
             toastr.error("يرجى اختيار الجهة");
         } else {
-        window.open("@Url.Action("PrintNotification", "TRAGREEMENTS")?agrnb=" + agrnb + "&OUTACTSNB=" + OUTACTSNB, "_blank");
+           // agrnb = 0;
+            window.open("@Url.Action("PrintNotification", "TRAGREEMENTS")?&OUTACTSNB=" + OUTACTSNB + "&pCarprocedNB=" + pCarprocedNB, "_blank");
 
-        }
+        } 
 
 
 

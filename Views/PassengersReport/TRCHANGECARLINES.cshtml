@@ -85,7 +85,7 @@
 
 <div>
     @(Html.Kendo().Grid < Proced.DataAccess.Models.CF.TRCHANGE_CAR_LINES>()
-            .Name("grid")
+            .Name("grid").AutoBind(false)
             .Columns(columns =>
             {
                 columns.Bound(c => c.NB).Title("الرمز").Visible(false);

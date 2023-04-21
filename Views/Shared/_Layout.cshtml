@@ -121,13 +121,17 @@
                  font-size: 14px !important;
                  font-weight: normal !important;
         }*/
-        .k-grid-content 
-        {
-            height: auto !important;
+        .k-grid-content {
+            /*height: auto !important;*/
             overflow-y: auto !important;
-            min-height: 150px !important;
+            /*min-height: 150px !important;*/
+           
         }
-
+        /*.k-grid {*/
+            /*height: auto !important;*/
+            /*max-height: 500px !important;*/
+            /*margin-bottom: 100px;*/
+        /*}*/
         .k-pager-info 
         {
             color: #4f67ea;
@@ -719,18 +723,48 @@
         <!--==========================
             Home Page
         ============================-->
-        <div class="main" style='margin-bottom:75px;'>
+        <div id="AllMainPage" class="main" @*style='margin-bottom:75px;*@'>
             <section id="indexes">
-                <div style="padding-left: 30px; padding-right: 30px">
+                <div style="padding-left: 30px; padding-right: 30px; background: #EBECED;" >
+                  
                     @RenderSection("PartialHeader", false)
                 </div>
-                <div class="container-fluid">
+                <div class="container-fluid" >
+                  
                     @RenderBody()
                 </div>
             </section>
         </div>
     </main>
+    <script>
+        var bvbvbvb = $("#header").height();
+        $("#AllMainPage").css("margin-top", bvbvbvb);
 
+        //$('.sch').css("top", bvbvbvb);
+
+        //var schheight = $("#schr").height();
+      
+        //$('.all-page-hi').css("margin-top", bvbvbvb+ schheight);
+    </script>
+
+    <style>
+        #main-page {
+            min-height:auto !important;
+        }
+      /*  .sch {
+            padding: 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            transition: all 0.5s;
+            z-index: 997;
+        }
+        .all-page-hi 
+        {
+
+        }*/
+    </style>
     <!--==========================
     Footer
     ============================-->
@@ -763,7 +797,7 @@
                             <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-6 nopadding">
                                 <a href="@Url.Action("CommittesAndMembers", "PassengersReport")">
                                     <div class="grid">
-                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                                        <img src="@Url.Content("~/Content/v2/img/icon/5.png")" class="grid-icon" alt="" style="margin-top:0px !important">
                                         <h5 class="grid-title">1-اللجان واعضائها</h5>
                                     </div>
                                 </a>
@@ -771,7 +805,7 @@
                             <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-6 nopadding">
                                 <a href="@Url.Action("CommittesAndSessions", "PassengersReport")">
                                     <div class="grid">
-                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                                        <img src="@Url.Content("~/Content/v2/img/icon/5.png")" class="grid-icon" alt="" style="margin-top:0px !important">
                                         <h5 class="grid-title">2-اللجان وجلساتها</h5>
                                     </div>
                                 </a>
@@ -779,7 +813,7 @@
                             <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-6 nopadding">
                                 <a href="@Url.Action("SessionsAndMembers", "PassengersReport")">
                                     <div class="grid" style="position:relative">
-                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                                        <img src="@Url.Content("~/Content/v2/img/icon/5.png")" class="grid-icon" alt="" style="margin-top:0px !important">
                                         <h5 class="grid-title" style="position:absolute">3-الجلسات واعضائها</h5>
                                     </div>
                                 </a>
@@ -787,7 +821,7 @@
                             <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-6 nopadding">
                                 <a href="@Url.Action("SessionsAndProceds", "PassengersReport")">
                                     <div class="grid">
-                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                                        <img src="@Url.Content("~/Content/v2/img/icon/5.png")" class="grid-icon" alt="" style="margin-top:0px !important">
                                         <h5 class="grid-title">4-الجلسات وطلباتها</h5>
                                     </div>
                                 </a>
@@ -795,7 +829,7 @@
                             <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-6 nopadding">
                                 <a href="@Url.Action("CityAndLines", "PassengersReport")">
                                     <div class="grid">
-                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                                        <img src="@Url.Content("~/Content/v2/img/icon/5.png")" class="grid-icon" alt="" style="margin-top:0px !important">
                                         <h5 class="grid-title">5-المحافظات وخطوطها</h5>
                                     </div>
                                 </a>
@@ -803,7 +837,7 @@
                             <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-6 nopadding">
                                 <a href="@Url.Action("CityAndLinesChange", "PassengersReport")">
                                     <div class="grid">
-                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                                        <img src="@Url.Content("~/Content/v2/img/icon/5.png")" class="grid-icon" alt="" style="margin-top:0px !important">
                                         <h5 class="grid-title">6-المحافظة والتغيرات على خطوطها</h5>
                                     </div>
                                 </a>
@@ -811,7 +845,7 @@
                             <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-6 nopadding">
                                 <a href="@Url.Action("LinesAndCarsGroup", "PassengersReport")">
                                     <div class="grid">
-                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                                        <img src="@Url.Content("~/Content/v2/img/icon/5.png")" class="grid-icon" alt="" style="margin-top:0px !important">
                                         <h5 class="grid-title">7-الخطوط والمركبات تجميعي</h5>
                                     </div>
 
@@ -820,7 +854,7 @@
                             <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-6 nopadding">
                                 <a href="@Url.Action("LinesAndCarsDetalis", "PassengersReport")">
                                     <div class="grid">
-                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                                        <img src="@Url.Content("~/Content/v2/img/icon/5.png")" class="grid-icon" alt="" style="margin-top:0px !important">
                                         <h5 class="grid-title">8-الخطوط والمركبات تفصيلي</h5>
                                     </div>
 
@@ -829,7 +863,7 @@
                             <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-6 nopadding">
                                 <a href="@Url.Action("CarsAndProceds", "PassengersReport")">
                                     <div class="grid">
-                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                                        <img src="@Url.Content("~/Content/v2/img/icon/5.png")" class="grid-icon" alt="" style="margin-top:0px !important">
                                         <h5 class="grid-title">10-المركبات وطلباتها</h5>
                                     </div>
 
@@ -839,7 +873,7 @@
                             <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-6 nopadding">
                                 <a href="@Url.Action("TRCHANGECARLINES", "PassengersReport")">
                                     <div class="grid">
-                                        <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="" style="margin-top:0px !important">
+                                        <img src="@Url.Content("~/Content/v2/img/icon/5.png")" class="grid-icon" alt="" style="margin-top:0px !important">
                                         <h5 class="grid-title">11-تغير الخطوط على المركبات</h5>
                                     </div>
 
@@ -903,7 +937,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/AppsManager" target="_blank">
                                 <div class="grid navyBlue">
-                                    <img src="~/Content/v2/img/icon/1.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/1.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">صلاحيات المراقبة</h5>
                                 </div>
                             </a>
@@ -911,7 +945,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/TransStatistics" target="_blank">
                                 <div class="grid red">
-                                    <img src="~/Content/v2/img/icon/3.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/3.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">الإحصائيات</h5>
                                 </div>
                             </a>
@@ -925,7 +959,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/DynamicReportsV2" target="_blank">
                                 <div class="grid teal">
-                                    <img src="~/Content/v2/img/icon/5.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/5.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">مولد التقارير</h5>
                                 </div>
                             </a>
@@ -933,14 +967,14 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/ProcedManagment" target="_blank">
                                 <div class="grid teal">
-                                    <img src="~/Content/v2/img/icon/6.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/6.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">إدارة المعاملات</h5>
                                 </div>
                             </a>
                         </div>  <div class="col-lg-4 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/ProcedBase" target="_blank">
                                 <div class="grid tealGreen">
-                                    <img src="~/Content/v2/img/icon/7.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/7.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">المعاملات</h5>
                                 </div>
                             </a>
@@ -948,7 +982,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/Taxes" target="_blank">
                                 <div class="grid royalBlue">
-                                    <img src="~/Content/v2/img/icon/8.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/8.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">الرسوم</h5>
                                 </div>
                             </a>
@@ -956,7 +990,7 @@
                         <div class="col-lg-4 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/Snd" target="_blank">
                                 <div class="grid navyBlue">
-                                    <img src="~/Content/v2/img/icon/9.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/9.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">سند التمليك</h5>
                                 </div>
                             </a>
@@ -964,7 +998,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/Mail" target="_blank">
                                 <div class="grid red">
-                                    <img src="~/Content/v2/img/icon/10.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/10.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">المراسلات</h5>
                                 </div>
                             </a>
@@ -972,7 +1006,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/Announces" target="_blank">
                                 <div class="grid coral">
-                                    <img src="~/Content/v2/img/icon/11.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/11.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">النشرات الفنية</h5>
                                 </div>
                             </a>
@@ -980,7 +1014,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/Tablu" target="_blank">
                                 <div class="grid coral">
-                                    <img src="~/Content/v2/img/icon/13.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/13.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">اللوحات</h5>
                                 </div>
                             </a>
@@ -988,7 +1022,7 @@
                         <div class="col-lg-4 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/License" target="_blank">
                                 <div class="grid red">
-                                    <img src="~/Content/v2/img/icon/12.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/12.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">رخص السير</h5>
                                 </div>
                             </a>
@@ -1005,7 +1039,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/Indexes" target="_blank">
                                 <div class="grid royalBlue">
-                                    <img src="~/Content/v2/img/icon/15.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/15.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">الفهارس</h5>
                                 </div>
                             </a>
@@ -1013,7 +1047,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/EpayLog" target="_blank">
                                 <div class="grid navyBlue">
-                                    <img src="~/Content/v2/img/icon/16.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/16.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">الدفع الالكتروني</h5>
                                 </div>
                             </a>
@@ -1021,7 +1055,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/VehicleDataAudit" target="_blank">
                                 <div class="grid tealGreen">
-                                    <img src="~/Content/v2/img/icon/14.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/14.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">تدقيق المركبات</h5>
                                 </div>
                             </a>
@@ -1029,7 +1063,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/Award" target="_blank">
                                 <div class="grid teal">
-                                    <img src="~/Content/v2/img/icon/8.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/8.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">الحوافز</h5>
                                 </div>
                             </a>
@@ -1037,7 +1071,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/Offline" target="_blank">
                                 <div class="grid red">
-                                    <img src="~/Content/v2/img/icon/Offline_logo.svg" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/Offline_logo.svg")" class="grid-icon" alt="">
                                     <h5 class="grid-title">خارج الخدمة</h5>
                                 </div>
                             </a>
@@ -1045,7 +1079,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/DbEditor" target="_blank">
                                 <div class="grid coral">
-                                    <img src="~/Content/v2/img/icon/sql_editor.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/sql_editor.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">تعديل  البيانات</h5>
                                 </div>
                             </a>
@@ -1053,7 +1087,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/MergeData" target="_blank">
                                 <div class="grid royalBlue">
-                                    <img src="~/Content/v2/img/icon/database-merge-512.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/database-merge-512.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">دمج البيانات</h5>
                                 </div>
                             </a>
@@ -1061,7 +1095,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/Complaints" target="_blank">
                                 <div class="grid navyBlue">
-                                    <img src="~/Content/v2/img/icon/complaints.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/complaints.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">الشكاوى</h5>
                                 </div>
                             </a>
@@ -1069,7 +1103,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/Indicators" target="_blank">
                                 <div class="grid red">
-                                    <img src="~/Content/v2/img/icon/performance.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/performance.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">مؤشرات الأداء</h5>
                                 </div>
                             </a>
@@ -1077,7 +1111,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6 nopadding">
                             <a href="/HelpSystem" target="_blank">
                                 <div class="grid teal">
-                                    <img src="~/Content/v2/img/icon/helpme.png" class="grid-icon" alt="">
+                                    <img src="@Url.Content("~/Content/v2/img/icon/helpme.png")" class="grid-icon" alt="">
                                     <h5 class="grid-title">المساعدة</h5>
                                 </div>
                             </a>
@@ -1174,7 +1208,7 @@
         });
         $.fn.modal.Constructor.prototype.enforceFocus = function () { };
     </script>
-    <script src="~/Scripts/kendo/2017.1.118/cultures/kendo.culture.ar-SY.min.js"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2017.1.118/cultures/kendo.culture.ar-SY.min.js")"></script>
     <script type="text/javascript">
         kendo.culture("ar-SY");
     </script>

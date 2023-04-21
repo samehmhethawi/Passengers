@@ -7,10 +7,19 @@
             <div class="row" style="padding-bottom:10px">
                 <div class="col-lg-1 col-md-2">
                     <label for="template_name"> الاسم</label>
-                    <label >(<i id="namepercent" class="fa fa-percent"></i>)</label>
+                    <label>(<i id="namepercent" class="fa fa-percent"></i>)</label>
                 </div>
-                <div class="col-lg-9 col-md-12">
+                <div class="col-lg-8 col-md-8">
                     @Html.Kendo().TextBox().Name("STrline").HtmlAttributes(new { placeholder = " اسم الخط" })
+                </div>
+                <div class="col-lg-2 col-md-2">
+                    @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("STrnb").Min(0)
+                                .HtmlAttributes(new { placeholder = "رمز الخط", style = "width: 100%;" }))
+
                 </div>
             </div>
 
@@ -80,6 +89,11 @@
                                     )
 
                 </div>
+
+             
+
+
+               
                 <div class="col-lg-2 col-md-4">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
 
@@ -137,6 +151,8 @@
   {
       toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
   })
+            .HtmlAttributes(new { style = "height: 550px !important;" })
+
 .ColumnMenu(c =>
 c.Messages(m =>
      m.Columns(HelperLib.ControlLabelsAR.KendoGridColumns)
@@ -187,9 +203,7 @@ c.Messages(m =>
 .Ajax()
 .Model(model => model.Id(p => p.NB))
 .Read(read => read.Action("TrLines_Read", "TrLines").Data("GetFillters"))
-.Create(create => create.Action("TrLines_Read", "TrLines"))
-.Update(update => update.Action("TrLines_Read", "TrLines"))
-.Destroy(destroy => destroy.Action("TrLines_Read", "TrLines"))
+
 //.Events(events => events.RequestEnd("onRequestEnd").Sync("sync_handler"))
 ).Events(events => events
 
@@ -657,10 +671,14 @@ c.Messages(m =>
         fillter.SlineCity = $('#SlineCity').val();
         fillter.StrlineStatus = $('#StrlineStatus').val();
         fillter.StrlineCANCELD = $('#StrlineCANCELD').val();
+        fillter.STrnb = $('#STrnb').val();
+
+        
         return fillter;
     }
 
     function Btn_Search() {
+        $("#grid").data("kendoGrid").dataSource.page([1]);
         $("#grid").data("kendoGrid").dataSource.read();
     }
     function rest_filtters() {
@@ -668,6 +686,8 @@ c.Messages(m =>
         $("#StrlineCANCELD").data("kendoDropDownList").value(-1);
         $("#SlineCity").data("kendoDropDownList").value(-1);
         $("#StrlineStatus").data("kendoDropDownList").value(-1);
+        $("#STrnb").data("kendoNumericTextBox").value("");
+        $("#grid").data("kendoGrid").dataSource.page([1]);
         $("#grid").data("kendoGrid").dataSource.data([]);
     }
 
@@ -817,6 +837,8 @@ var name = $('#addTrline').val();
                         $("#gridcity").data("kendoGrid").dataSource.page(1);
                         toastr.success("تمت عملية الإضافة بنجاح");
                         kendo.ui.progress(windowWidget.element, false);
+                        $("#AddNewtrcity").data("kendoWindow").center().close();
+
                     } else {
                         kendo.ui.progress(windowWidget.element, false);
                         toastr.error(response.responseText);

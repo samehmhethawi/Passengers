@@ -110,7 +110,7 @@
 
 
 <!-- Grid  -->
-<div>
+<div class="all-page-hi">
     @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRSESSIONS>()
             .Name("grid").AutoBind(false)
             .Columns(columns =>
@@ -141,14 +141,14 @@
                     command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
                 }).Width(180);
             })
-            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .HtmlAttributes(new { style = "height: 550px !important;" })
             .Scrollable()
             .Sortable()
             .Filterable()
             .DataSource(dataSource => dataSource
             .Ajax()
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
-            .PageSize(10)
+            .PageSize(20)
             .Model(model => model.Id(p => p.NB))
             .Read(read => read.Action("Read", "TRSESSIONS").Data("GetFillters")))
             .Resizable(resize => resize

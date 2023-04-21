@@ -34,24 +34,26 @@ namespace Passengers.Controllers
                 return RedirectToAction("Index_city");
 
             }
-           
+
         }
-         
+
 
         public ActionResult Index_city()
         {
             List<TRPASSENGERS_CREDITSVM> TRPASSENGERS_CREDITS1 = new List<TRPASSENGERS_CREDITSVM>();
-          
 
+            long? totalamount = 0;
             for (var i = 1; i <= 14; i++)
             {
-                var sql = "SELECT * FROM( SELECT  TP.NB, TP.CITYNB, ZC.NAME     AS CITYNAME, TP.AMOUNT, TP.CDATE FROM TRPASSENGERS_CREDITS TP JOIN ZCITYS ZC ON TP.CITYNB = ZC.NB WHERE CITYNB = "+i+ " ORDER BY FIXDATE DESC) WHERE ROWNUM =1 ";
-              
+                var sql = "SELECT * FROM( SELECT  TP.NB, TP.CITYNB, ZC.NAME     AS CITYNAME, TP.AMOUNT, TP.CDATE FROM TRPASSENGERS_CREDITS TP JOIN ZCITYS ZC ON TP.CITYNB = ZC.NB WHERE CITYNB = " + i + " ORDER BY FIXDATE DESC) WHERE ROWNUM =1 ";
+
                 var data = db.Database.SqlQuery<TRPASSENGERS_CREDITSVM>(sql).FirstOrDefault();
 
                 if (data != null)
                 {
+
                     long? alllong = long.Parse(data.AMOUNT);
+                    totalamount = totalamount + alllong;
                     var all = alllong.GetValueOrDefault().ToString("###,###");
                     if (all == "" || all == null)
                     {
@@ -61,6 +63,12 @@ namespace Passengers.Controllers
                     TRPASSENGERS_CREDITS1.Add(data);
                 }
 
+            }
+
+            ViewBag.TotalAmount = totalamount.GetValueOrDefault().ToString("###,###");
+            if (ViewBag.TotalAmount == "" || ViewBag.TotalAmount == null)
+            {
+                ViewBag.TotalAmount = "0";
             }
             return View(TRPASSENGERS_CREDITS1);
         }
@@ -74,12 +82,12 @@ namespace Passengers.Controllers
             {
                 var mycitynb = Utility.MyCityNb();
                 if (mycitynb != citynb)
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
             }
-            var sql = "SELECT * FROM(SELECT * FROM TRPASSENGERS_CREDITS WHERE CITYNB = "+ citynb + " ORDER BY FIXDATE DESC) WHERE ROWNUM = 1 ";
+            var sql = "SELECT * FROM(SELECT * FROM TRPASSENGERS_CREDITS WHERE CITYNB = " + citynb + " ORDER BY FIXDATE DESC) WHERE ROWNUM = 1 ";
             var DDD = db.Database.SqlQuery<TRPASSENGERS_CREDITS>(sql).FirstOrDefault();
             long? alllong = DDD.AMOUNT;
-          
+
             var all = alllong.GetValueOrDefault().ToString("###,###");
             if (all == "" || all == null)
             {
@@ -119,7 +127,7 @@ namespace Passengers.Controllers
             });
             ViewBag.cityname = db.ZCITYS.Find(citynb).NAME;
             ViewBag.citynb = citynb;
-            if (IsAdmin || IsAdminCity) 
+            if (IsAdmin || IsAdminCity)
             {
                 ViewBag.IsAdmin = true;
             }
@@ -127,7 +135,7 @@ namespace Passengers.Controllers
             {
                 ViewBag.IsAdmin = false;
             }
-            
+
             return View();
 
         }
@@ -162,7 +170,7 @@ namespace Passengers.Controllers
                 sql += "  AND (TO_DATE ('" + DATEStart + "', 'DD/MM/YYYY') BETWEEN TRUNC (FROMDATE)  AND TRUNC(TODATE)) ";
             }
 
-           
+
             if (StrSessArc != "")
             {
                 sql += " and IS_ARCHIVED =" + StrSessArc;
@@ -202,15 +210,291 @@ namespace Passengers.Controllers
 
         }
 
-        public ActionResult GetResult(int? citynb , string FROMDATE, string TODATE)
+
+        public ActionResult Read_Proced_ex([DataSourceRequest] DataSourceRequest request, long? Nb)
+        {
+            var sql = " select * from TRGET_ORDER_EXCLUDES where 1 = 1 and GNB=" + Nb;
+
+
+
+
+
+            var data = db.Database.SqlQuery<TRGET_ORDER_EXCLUDES>(sql).ToList();
+
+            int index = 0;
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,
+                GNB = commm.GNB,
+                CARPROCEDNB = commm.CARPROCEDNB,
+
+
+
+
+                Seq = (request.Page - 1) * request.PageSize + (++index)
+            });
+
+            return Json(result);
+
+
+
+        }
+        public ActionResult Read_Proced_in([DataSourceRequest] DataSourceRequest request, long? Nb)
+        {
+            var sql = " select * from TRGET_ORDER_INCLUDES where 1 = 1 and GNB=" + Nb;
+
+
+
+
+
+            var data = db.Database.SqlQuery<TRGET_ORDER_INCLUDES>(sql).ToList();
+
+            int index = 0;
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,
+                GNB = commm.GNB,
+                CARPROCEDNB = commm.CARPROCEDNB,
+
+
+
+
+                Seq = (request.Page - 1) * request.PageSize + (++index)
+            });
+
+            return Json(result);
+
+
+
+        }
+
+        public ActionResult Delete_proced_EX(long nb)
+        {
+            try
+            {
+
+                var dd = db.TRGET_ORDER_EXCLUDES.Find(nb);
+
+
+
+                if (dd == null)
+                {
+                    return Json(new { success = false, responseText = " لا يوجد سجل" }, JsonRequestBehavior.AllowGet);
+
+                }
+                else
+                {
+                    var stauts_payget = db.TRGET_ORDERS.Find(dd.GNB).STATUS;
+                    if (stauts_payget == 1)
+                    {
+                        using (var transaction = db.Database.BeginTransaction())
+                        {
+                            try
+                            {
+                                if (dd != null)
+                                {
+
+                                    db.TRGET_ORDER_EXCLUDES.Attach(dd);
+                                    db.TRGET_ORDER_EXCLUDES.Remove(dd);
+                                    db.SaveChanges();
+                                    transaction.Commit();
+
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                var SS = validation.OracleExceptionValidation(e);
+                                transaction.Rollback();
+                                return Json(new { success = false, responseText = SS }, JsonRequestBehavior.AllowGet);
+
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return Json(new { success = false, responseText = "لا يمكن حذف هذه المعاملة لان الكتاب مثبت مسبقاً أو ملغى" }, JsonRequestBehavior.AllowGet);
+                    }
+
+                }
+
+
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var SS = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = SS }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
+        public ActionResult Delete_proced_IN(long nb)
+        {
+            try
+            {
+
+                var dd = db.TRGET_ORDER_INCLUDES.Find(nb);
+
+                if (dd == null)
+                {
+                    return Json(new { success = false, responseText = " لا يوجد سجل" }, JsonRequestBehavior.AllowGet);
+
+                }
+                else
+                {
+                    var stauts_payget = db.TRGET_ORDERS.Find(dd.GNB).STATUS;
+                    if (stauts_payget == 1)
+                    {
+                        using (var transaction = db.Database.BeginTransaction())
+                        {
+                            try
+                            {
+                                if (dd != null)
+                                {
+
+                                    db.TRGET_ORDER_INCLUDES.Attach(dd);
+                                    db.TRGET_ORDER_INCLUDES.Remove(dd);
+                                    db.SaveChanges();
+                                    transaction.Commit();
+
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                var SS = validation.OracleExceptionValidation(e);
+                                transaction.Rollback();
+                                return Json(new { success = false, responseText = SS }, JsonRequestBehavior.AllowGet);
+
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return Json(new { success = false, responseText = " لا يمكن حذف هذه المعاملة لان الكتاب مثبت مسبقاً أو ملغى" }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+
+
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var SS = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = SS }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
+
+        public ActionResult Add_proced_IN(long Gnb,long procednb)
+        {
+            try 
+            {
+                var sql = "select count(*) from carproceds where nb = " + procednb;
+                var datacount = db.Database.SqlQuery<int>(sql).FirstOrDefault();
+                if (datacount == 0)
+                {
+                    return Json(new { success = false, responseText = "المعاملة " + procednb + " غير موجودة" }, JsonRequestBehavior.AllowGet);
+                }
+
+
+                var data = db.TRGET_ORDERS.Find(Gnb);
+
+                if (data.STATUS == 1) 
+                {
+                    TRGET_ORDER_INCLUDES model = new TRGET_ORDER_INCLUDES();
+                    model.GNB = Gnb;
+                    model.CARPROCEDNB = procednb;
+                    db.TRGET_ORDER_INCLUDES.Add(model);
+                    db.SaveChanges();
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, responseText = " لا يمكن اضافة هذه المعاملة لان الكتاب مثبت مسبقاً أو ملغى" }, JsonRequestBehavior.AllowGet);
+
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
+            }
+           
+        }
+
+        public ActionResult Add_proced_EX (long Gnb, long procednb)
+        {
+            try
+            {
+                var sql = "select count(*) from carproceds where nb = " + procednb;
+                var datacount = db.Database.SqlQuery<int>(sql).FirstOrDefault();
+                if (datacount == 0)
+                {
+                    return Json(new { success = false, responseText = "المعاملة " + procednb + " غير موجودة" }, JsonRequestBehavior.AllowGet);
+                }
+
+
+                var data = db.TRGET_ORDERS.Find(Gnb);
+
+                if (data.STATUS == 1)
+                {
+                    TRGET_ORDER_EXCLUDES model = new TRGET_ORDER_EXCLUDES();
+                    model.GNB = Gnb;
+                    model.CARPROCEDNB = procednb;
+                    db.TRGET_ORDER_EXCLUDES.Add(model);
+                    db.SaveChanges();
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, responseText = " لا يمكن اضافة هذه المعاملة لان الكتاب مثبت مسبقاً أو ملغى" }, JsonRequestBehavior.AllowGet);
+
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                var ss = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
+        public ActionResult GetResult(int? citynb, string FROMDATE, string TODATE, int numoftry)
         {
             System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("ar-sa");
-           
+
 
             DateTime FROMDATE2 = DateTime.ParseExact(FROMDATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
             DateTime TODATE2 = DateTime.ParseExact(TODATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+            if (numoftry == 1)
+            {
+                List<DateTime> alldatte = new List<DateTime>();
+                for (DateTime i = FROMDATE2; i <= TODATE2;)
+                {
+                    alldatte.Add(i);
+                    i = i.AddDays(1);
+                }
 
-           
+                foreach (DateTime item in alldatte)
+                {
+                    var sql2 = "select count(*) from TRGET_ORDERS where  (TO_DATE ('" + item.ToString("dd/MM/yyyy") + "', 'DD/MM/YYYY') BETWEEN TRUNC (FROMDATE)  AND TRUNC(TODATE))";
+
+
+                    var count = db.Database.SqlQuery<long?>(sql2).FirstOrDefault();
+                    if (count != 0)
+                    {
+                        return Json(new { success = false, numoftry = 1, responseText = "يوجد كتاب تحويل تواريخه متداخلة مع التواريخ المدخلة" });
+                    }
+                }
+            }
+
 
             string sql = "BEGIN VEHICLES.PASSENGERS_PKG.GETRESULT_PASSENGER_TAX(:PCITYNB,:FROMDATE, :TODATE,:CARBILLS_COUNT,:TOTVAL); END;";
             var PCITYNB = new OracleParameter("PCITYNB", OracleDbType.Double, citynb, ParameterDirection.Input);
@@ -220,7 +504,7 @@ namespace Passengers.Controllers
 
             var bills = new OracleParameter("CARBILLS_COUNT", OracleDbType.Double, ParameterDirection.Output);
             var totals = new OracleParameter("TOTVAL", OracleDbType.Double, ParameterDirection.Output);
-            db.Database.ExecuteSqlCommand(sql, PCITYNB, PFROMDATE, PTODATE,bills, totals);
+            db.Database.ExecuteSqlCommand(sql, PCITYNB, PFROMDATE, PTODATE, bills, totals);
             var x = bills.Value;
             var y = totals.Value;
             return Json(new { success = true, CARBILLS_COUNT2 = x.ToString(), TOTVA2L = y.ToString() }, JsonRequestBehavior.AllowGet);
@@ -230,28 +514,30 @@ namespace Passengers.Controllers
 
         public ActionResult CheckAllProced(string procednb)
         {
-            try {
-              long data =0;
+            try
+            {
+                long data = 0;
                 var sql = "select count(*) from carproceds where nb = " + procednb;
                 var datacount = db.Database.SqlQuery<int>(sql).FirstOrDefault();
                 if (datacount == 0)
                 {
-                    return Json(new { success = false,  responseText = "المعاملة "+ procednb + " غير موجودة" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = false, responseText = "المعاملة " + procednb + " غير موجودة" }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
-                    data  = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + procednb + " , NULL) FROM DUAL").FirstOrDefault();
+                    data = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + procednb + " , NULL) FROM DUAL").FirstOrDefault();
                 }
 
-                return Json(new { success = true, TOTVA2L = data , responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, TOTVA2L = data, responseText = "ok" }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
 
                 return Json(new { success = false, responseText = "حصل خطأ اثناء التحقق" }, JsonRequestBehavior.AllowGet);
             }
-            
+
         }
-        public ActionResult TRGET_ORDERS_Create(HttpPostedFileBase Files ,string NO , DateTime GDATE, int? CITYNB, string FROMDATE, string TODATE,string EXCLUDES, string INCLUDES ,long? PTOTALVAL , string AddNOTES)
+        public ActionResult TRGET_ORDERS_Create(HttpPostedFileBase Files, string NO, DateTime GDATE, int? CITYNB, string FROMDATE, string TODATE, string EXCLUDES, string INCLUDES, long? PTOTALVAL, string AddNOTES)
         {
             using (DbContextTransaction transaction = db.Database.BeginTransaction())
             {
@@ -284,7 +570,7 @@ namespace Passengers.Controllers
                         var xx = EXCLUDES.Split(',');
                         foreach (var item in xx)
                         {
-                            if (item != null && item !="")
+                            if (item != null && item != "")
                             {
                                 TRGET_ORDER_EXCLUDES ex = new TRGET_ORDER_EXCLUDES();
                                 ex.NB = 1;
@@ -296,10 +582,10 @@ namespace Passengers.Controllers
                                 EXCLUDESval += ex.AMOUNT;
 
                             }
-                           
+
                         }
                     }
-                    if (INCLUDES != null )
+                    if (INCLUDES != null)
                     {
                         var ss = INCLUDES.Split(',');
                         foreach (var item in ss)
@@ -342,7 +628,7 @@ namespace Passengers.Controllers
 
                     if (CITYNB == null)
                     {
-                        for ( var i = 1; i <=14;i++)
+                        for (var i = 1; i <= 14; i++)
                         {
                             TRGET_ORDERS_ITEMS Model2 = new TRGET_ORDERS_ITEMS();
                             Model2.NO = NO;
@@ -385,7 +671,7 @@ namespace Passengers.Controllers
                     return Json(new { success = false, responseText = ss });
                 }
             }
-                
+
         }
 
         public ActionResult GetReport(long NB)
@@ -420,11 +706,11 @@ namespace Passengers.Controllers
                 return null;
             }
         }
-       
-      
-        public ActionResult Read_TRGET_ORDERS_ITEMS([DataSourceRequest] DataSourceRequest request, long? Nb )
+
+
+        public ActionResult Read_TRGET_ORDERS_ITEMS([DataSourceRequest] DataSourceRequest request, long? Nb)
         {
-            var sql = " select * from TRGET_ORDERS_ITEMS where 1 = 1 and TRGET_ORDERNB = "+ Nb;
+            var sql = " select * from TRGET_ORDERS_ITEMS where 1 = 1 and TRGET_ORDERNB = " + Nb;
 
 
 
@@ -453,7 +739,7 @@ namespace Passengers.Controllers
                 NOTES = commm.NOTES,
                 CONFIRM_DATE = commm.CONFIRM_DATE,
                 TODATE = commm.TODATE,
-            
+
 
 
 
@@ -471,7 +757,31 @@ namespace Passengers.Controllers
         {
             try
             {
+
+
                 var data = db.TRGET_ORDERS.Find(NB);
+
+                List<DateTime> alldatte = new List<DateTime>();
+                for (DateTime i = data.FROMDATE; i <= data.TODATE;)
+                {
+                    alldatte.Add(i);
+                    i = i.AddDays(1);
+                }
+
+                foreach (DateTime item in alldatte)
+                {
+                    var sql2 = "select count(*) from TRGET_ORDERS where nb != " + NB + "and  (TO_DATE ('" + item.ToString("dd/MM/yyyy") + "', 'DD/MM/YYYY') BETWEEN TRUNC (FROMDATE)  AND TRUNC(TODATE))";
+
+
+                    var count = db.Database.SqlQuery<long?>(sql2).FirstOrDefault();
+                    if (count != 0)
+                    {
+                        return Json(new { success = false, responseText = "يوجد كتاب تحويل تواريخه متداخلة مع التواريخ المدخلة" });
+                    }
+                }
+
+
+
                 if (data == null)
                 {
                     return Json(new { success = false, responseText = "لا يوجد سجل" });
@@ -513,8 +823,49 @@ namespace Passengers.Controllers
             }
 
         }
-        
 
+        public ActionResult DeleteDocumentGET(long paynb)
+        {
+            try
+            {
+                var data = db.TRGET_ORDERS.Find(paynb);
+                if (data != null)
+                {
+                    if (data.IS_ARCHIVED == false)
+                    {
+                        return Json(new { success = false, responseText = "لا يوجد ارشفة  " }, JsonRequestBehavior.AllowGet);
+
+                    }
+                    var path = data.FTP_PATH;
+
+                    var is_true = CodesController.DeleteFTPFile(path);
+                    if (is_true)
+                    {
+                        data.IS_ARCHIVED = false;
+                        data.FTP_PATH = "";
+                        db.Entry(data).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        return Json(new { success = false, responseText = "حدث خطأ " }, JsonRequestBehavior.AllowGet);
+
+                    }
+
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, responseText = "حدث خطأ " }, JsonRequestBehavior.AllowGet);
+
+            }
+            return Json(new { success = true, responseText = "تم الحذف" }, JsonRequestBehavior.AllowGet);
+
+        }
         /////////////////////////////////////////////////////////////////    
         ///----------------------------------------------------
         public ActionResult TRPAY_ORDERS_Index(int citynb)
@@ -545,7 +896,7 @@ namespace Passengers.Controllers
                 ID = x.NB,
                 NAME = x.NAME
             });
-            
+
             ViewData["zcities"] = db.ZCITYS.Select(x => new
             {
                 ID = x.NB,
@@ -561,7 +912,7 @@ namespace Passengers.Controllers
             var sql = " select * from TRPAY_ORDERS where 1 = 1 ";
 
             var NO = Request.Form["NO"].Trim();
-            
+
             var SPDATE = Request.Form["SPDATE"].Trim();
             var SOWNERTYPENB = Request.Form["SOWNERTYPENB"].Trim();
             var SEXPENSETYPENB = Request.Form["SEXPENSETYPENB"].Trim();
@@ -592,7 +943,7 @@ namespace Passengers.Controllers
             {
                 sql += " and TRUNC(PDATE) = TO_DATE('" + SPDATE + "','DD/MM/YYYY') ";
             }
-           
+
 
 
             if (StrSessArc != "")
@@ -651,8 +1002,8 @@ namespace Passengers.Controllers
 
 
         }
-   
-        public ActionResult TRPAY_ORDERS_Create(HttpPostedFileBase Files ,string AddPAYNo, DateTime AddPDATEDate, int CITYNB, string AddNOTES, string AddCAUSES, int OWNERTYPENB, int EXPENSETYPENB,long Amount)
+
+        public ActionResult TRPAY_ORDERS_Create(HttpPostedFileBase Files, string AddPAYNo, DateTime AddPDATEDate, int CITYNB, string AddNOTES, string AddCAUSES, int OWNERTYPENB, int EXPENSETYPENB, long Amount)
         {
             using (DbContextTransaction transaction = db.Database.BeginTransaction())
             {
@@ -663,7 +1014,7 @@ namespace Passengers.Controllers
                     {
                         if (OwnerAmount < Amount)
                         {
-                            return Json(new { success = false, responseText = "قيمة امر الصرف تجاوز الحد الاعلى المسموح به"});
+                            return Json(new { success = false, responseText = "قيمة امر الصرف تجاوز الحد الاعلى المسموح به" });
                         }
                     }
 
@@ -672,9 +1023,9 @@ namespace Passengers.Controllers
                     TRPAY_ORDERS Model = new TRPAY_ORDERS();
                     Model.NO = AddPAYNo;
                     Model.PDATE = AddPDATEDate;
-                    Model.CITYNB= CITYNB;
+                    Model.CITYNB = CITYNB;
                     Model.STATUS = 1;
-                  
+
                     Model.NOTES = AddNOTES;
                     Model.CAUSES = AddCAUSES;
                     Model.EXPENSE_TYPENB = EXPENSETYPENB;
@@ -684,8 +1035,8 @@ namespace Passengers.Controllers
 
                     db.SaveChanges();
                     var NB = Model.NB;
-                    
-                   
+
+
 
                     byte[] fileContent = null;
                     using (var reader = new System.IO.BinaryReader(Files.InputStream))
@@ -705,8 +1056,8 @@ namespace Passengers.Controllers
 
                     Model.FTP_PATH = uploadedFullPath;
                     Model.IS_ARCHIVED = true;
-                   
-                
+
+
                     db.SaveChanges();
                     transaction.Commit();
                     return Json(new { success = true, responseText = "تمت الاضافة بنجاح" }, JsonRequestBehavior.AllowGet);
@@ -720,7 +1071,7 @@ namespace Passengers.Controllers
                     return Json(new { success = false, responseText = ss });
                 }
             }
-                
+
         }
 
 
@@ -751,11 +1102,11 @@ namespace Passengers.Controllers
                             }
                         }
 
-                       
+
                     }
 
-                   
-                     if (data.NO != AddPAYNo)
+
+                    if (data.NO != AddPAYNo)
                     {
                         data.NO = AddPAYNo;
                     }
@@ -782,7 +1133,7 @@ namespace Passengers.Controllers
                     }
 
 
-                 
+
 
                     db.SaveChanges();
                     var NB = data.NB;
@@ -809,7 +1160,7 @@ namespace Passengers.Controllers
                     data.IS_ARCHIVED = true;
 
                     db.Entry(data).State = EntityState.Modified;
-                   
+
                     db.SaveChanges();
                     transaction.Commit();
                     return Json(new { success = true, responseText = "تمت التعديل بنجاح" }, JsonRequestBehavior.AllowGet);
@@ -828,7 +1179,7 @@ namespace Passengers.Controllers
 
 
 
-        
+
 
         public ActionResult GetReportPAY(long NB)
         {
@@ -862,16 +1213,16 @@ namespace Passengers.Controllers
                 return null;
             }
         }
-   
-    
+
+
         public ActionResult SAVECONFIRMPAY(long NB)
         {
-            try 
+            try
             {
                 var data = db.TRPAY_ORDERS.Find(NB);
                 if (data == null)
                 {
-                    return Json(new { success = false, responseText ="لا يوجد سجل" });
+                    return Json(new { success = false, responseText = "لا يوجد سجل" });
                 }
                 else
                 {
@@ -887,11 +1238,11 @@ namespace Passengers.Controllers
                     {
                         string sql = "BEGIN VEHICLES.PASSENGERS_PKG.CONFIRM_PAY_ORDER(:PNB,:PSTATUS); END;";
                         var PNB = new OracleParameter("PNB", OracleDbType.Double, NB, ParameterDirection.Input);
-                        
+
 
 
                         var STATUS = new OracleParameter("PSTATUS", OracleDbType.Double, ParameterDirection.Output);
-                 
+
                         db.Database.ExecuteSqlCommand(sql, PNB, STATUS);
                         var x = STATUS.Value;
                         if (x.ToString() == "0")
@@ -899,11 +1250,12 @@ namespace Passengers.Controllers
                             return Json(new { success = false, responseText = "حصل خطأ اثناء التنفيذ" });
                         }
 
-                        
+
                     }
                     return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return Json(new { success = false, responseText = "حصل خطأ اثناء التنفيث" });
             }

@@ -324,7 +324,11 @@ namespace Passengers.Controllers
                    + "       TSP.ORDR AS ORDR, "
                    + "       TSP.CARPROCEDSTEPNB AS CARPROCEDSTEPNB, "
                    + "       TSP.TYPSNAMEAGR AS TYPSNAMEAGR, "
-                   + "       TSP.ISDONE AS ISDONE "
+                   + "       TSP.ISDONE AS ISDONE, "
+
+                    + "       TSP.NOTES AS NOTES "
+
+                  
                    + "    FROM TRSESSIONS_PROCEDS TSP "
                    + "       JOIN CARPROCEDS CP ON CP.NB = TSP.CARPROCEDNB "
                    + "        JOIN ZPROCEDTYPS ZP ON ZP.NB = CP.PROCEDNB "
@@ -439,11 +443,13 @@ namespace Passengers.Controllers
 
             return Json(new { success = true, TOTALCOUNT = data.TOTALCOUNT, AGREE = data.AGREE, NOTAGREE = data.NOTAGREE, DELAYED = data.DELAYED, UNANSWERED = data.UNANSWERED, countproced = countproced }, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult Agree(long nb)
+        public ActionResult Agree(long nb, string note)
         {
             try
             {
-                var data = db.TRSESSIONS_PROCEDS.Find(nb);
+               // var data = db.TRSESSIONS_PROCEDS.Find(nb);
+
+                var data = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("select * from TRSESSIONS_PROCEDS where nb ="+ nb).FirstOrDefault();
                 var setp = db.CARPROCEDSTEPS.Find(data.CARPROCEDSTEPNB);
                 var proced = db.CARPROCEDS.Find(data.CARPROCEDNB);
                 if (proced.RESULT != "جارية")
@@ -456,6 +462,7 @@ namespace Passengers.Controllers
                 }
 
                 data.PSTATUS = 1;
+                data.NOTES = note;
                 data.RESPONSABLE = Utility.MyName();
                 data.RESPONSABLENB = Utility.MyNB();
                 db.Entry(data).State = EntityState.Modified;
@@ -527,11 +534,11 @@ namespace Passengers.Controllers
                 return false;
             }
         }
-        public ActionResult NotAgree(long nb)
+        public ActionResult NotAgree(long nb, string note)
         {
             try
             {
-                var data = db.TRSESSIONS_PROCEDS.Find(nb);
+                var data = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("select * from TRSESSIONS_PROCEDS where nb =" + nb).FirstOrDefault();
                 var setp = db.CARPROCEDSTEPS.Find(data.CARPROCEDSTEPNB);
                 var proced = db.CARPROCEDS.Find(data.CARPROCEDNB);
                 if (proced.RESULT != "جارية")
@@ -543,6 +550,7 @@ namespace Passengers.Controllers
                     return Json(new { success = false, responseText = "الخطوة منفذة" }, JsonRequestBehavior.AllowGet);
                 }
                 data.PSTATUS = 2;
+                data.NOTES = note;
                 data.RESPONSABLE = Utility.MyName();
                 data.RESPONSABLENB = Utility.MyNB();
                 db.Entry(data).State = EntityState.Modified;
@@ -555,11 +563,12 @@ namespace Passengers.Controllers
                 return Json(new { success = false, responseText = ss }, JsonRequestBehavior.AllowGet);
             }
         }
-        public ActionResult Delay(long nb)
+        public ActionResult Delay(long nb,string note)
         {
             try
             {
-                var data = db.TRSESSIONS_PROCEDS.Find(nb);
+              
+                var data = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("select * from TRSESSIONS_PROCEDS where nb =" + nb).FirstOrDefault();
                 var setp = db.CARPROCEDSTEPS.Find(data.CARPROCEDSTEPNB);
                 var proced = db.CARPROCEDS.Find(data.CARPROCEDNB);
                 if (proced.RESULT != "جارية")
@@ -571,6 +580,7 @@ namespace Passengers.Controllers
                     return Json(new { success = false, responseText = "الخطوة منفذة" }, JsonRequestBehavior.AllowGet);
                 }
                 data.PSTATUS = 3;
+                data.NOTES = note;
                 data.RESPONSABLE = Utility.MyName();
                 data.RESPONSABLENB = Utility.MyNB();
                 db.Entry(data).State = EntityState.Modified;

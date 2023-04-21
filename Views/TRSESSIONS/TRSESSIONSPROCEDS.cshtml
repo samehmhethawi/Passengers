@@ -64,6 +64,16 @@
             flex-direction: column;
             padding-top: 7px;
         }
+    .k-grid-content {
+        height: auto !important;
+        overflow-y: auto !important;
+        /*min-height: 150px !important;*/
+       
+    }
+    .k-grid {
+        margin-bottom: 70px;
+    }
+    
 </style>
 
 @section PartialHeader{
@@ -142,25 +152,36 @@
 
 
                                                     </div>
-                                                    <span class="btn btn-primary btn-file">
-                                                        اختر ملف . . <i class="fa fa-upload"></i> <input accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
-                                                    </span>
 
-                                                    <button class="btn btn-primary" onclick="setvvv()"> حفظ ورفع الملف</button>
-                                                }
-                                                @if (ViewBag.IS_ARCHIVED == true)
-                                                {
-                                            <div>
-                                                <label style="text-align:center;color:red;font-size:14px;">
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-danger clear-file" style="display: none;"><i class="fa fa-close"></i></button>
+                                                        <button type="button" class="btn btn-primary upload-btn" id="upload-btn22222">
+                                                            <i class="fa fa-upload"></i> اختيار ملف <span class="selectedFileName" style="color:white"></span>
+                                                        </button>
+                                                    </div>
+                                                    <input hidden accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
+                                                    //  <input hidden type="file" name="DocumentsFiles" id="DocumentsFiles" accept="image/*,.pdf" class="form-control" />
 
-                                                    المحضر مؤرشف
-                                                    <a class='stepLnk' data-toggle='tooltip' onclick='showdoc(@ViewBag.SessionID)'  href='#'><i title="عرض الارشفة" style="font-size:25px;" class='fa fa-folder'></i></a>
-                                                </label>
-                                            </div>
-                                                }
+                                                    @*<span class="btn btn-primary btn-file">
+                اختر ملف . . <i class="fa fa-upload"></i> <input accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
+            </span>*@
+                                         
+                                                <button class="btn btn-primary upload-btn" onclick="setvvv()"> حفظ ورفع الملف</button>
+                                           
+                                                        }
+                                                        @if (ViewBag.IS_ARCHIVED == true)
+                                                        {
+                                                            <div>
+                                                                <label style="text-align:center;color:red;font-size:14px;">
+
+                                                                    المحضر مؤرشف
+                                                                    <a class='stepLnk' data-toggle='tooltip' onclick='showdoc(@ViewBag.SessionID)' href='#'><i title="عرض الارشفة" style="font-size:25px;" class='fa fa-folder'></i></a>
+                                                                </label>
+                                                            </div>
+                                                        }
 
 
-                                            </td>
+                                                </td>
                                         </tr>
                                     
                                     
@@ -384,7 +405,7 @@
     </div>
 </fieldset>
 
-<!-- Grid Committee -->
+<!-- Grid  -->
 <div style="padding-top:20px">
     @(Html.Kendo().Grid <Passengers.ViewModel.TRSESSIONS_PROCEDS_VM>()
             .Name("grid")
@@ -402,6 +423,8 @@
                 columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة").ClientTemplate("#= renderCarProcedLink_ToProced(data) #").Width(150);
                 columns.Bound(c => c.CARPROCEDSTEPNB).Title("رمز الخطوة").Visible(false);
                 columns.Bound(c => c.ISDONE).Title("منفذة").Visible(false);
+                columns.Bound(c => c.NOTES).ClientTemplate("#= GETNOTES(data) #").Width(300).Title("ملاحظات");
+
 
                 columns.ForeignKey(c => c.PSTATUS, (System.Collections.IEnumerable)ViewData["TRSESSIONSPROCEDSTATUS"], "ID", "NAME").Title("الحالة").Width(100);
 
@@ -410,7 +433,7 @@
                     columns.Bound(c => c.PSTATUS).ClientTemplate
                   (" # if (ISDONE != 1) if " +
                   "(1 == 1)" +
-                  "{#<button id='' title='موافقة' class='btn btn-success' onclick='Agree(#=NB# , #=PROCEDNB# , #=CARPROCEDSTEPNB#)'> <i  class='fa fa-check'></i> </button> #" +
+                  "{#<button id='' title='موافقة' class='btn btn-success' onclick='Agree(#=NB# , #=PROCEDNB# , #=CARPROCEDSTEPNB# )'> <i  class='fa fa-check'></i> </button> #" +
                   " #<button id='' title='عدم موافقة' class='btn btn-danger' onclick='NotAgree(#=NB#)'> <i  class='fa fa-close'></i> </button>  # " +
                   " #<button id='' title='تأجيل' class='btn btn-text-info' onclick='Delay(#=NB#)'> <i  class='fa fa-repeat'></i> </button># " +
                   "} #")
@@ -419,11 +442,29 @@
                 }
             })
             .Filterable()
-            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            //.HtmlAttributes(new { style = "height: auto  !important;" })
+            .HtmlAttributes(new { style = "height: auto !important;" })
             .Scrollable()
+            //.Selectable(selectable => selectable
+            //.Mode(GridSelectionMode.Multiple))
+
             .DataSource(dataSource => dataSource
             .Ajax()
-            .Model(model => model.Id(p => p.NB))
+            .Model(model =>
+            {
+                model.Id(p => p.NB);
+                model.Field(p => p.RECDAT).Editable(false);
+                model.Field(p => p.PSTATUS).Editable(false);
+                model.Field(p => p.CARPROCEDNB).Editable(false);
+                model.Field(p => p.TYPSNAMEAGR).Editable(false);
+                model.Field(p => p.PROCEDNB).Editable(false);
+                model.Field(p => p.PROCEDNAME).Editable(false);
+                model.Field(p => p.CARNB).Editable(false);
+
+
+
+            })
+            .PageSize(1000)
             .Read(read => read.Action("TRSESSIONSPROCEDS_Read", "TRSESSIONS").Data("GETSESSIONNB")))
             .Resizable(resize => resize
             .Columns(true)
@@ -547,7 +588,33 @@
 </div>
 
 <script>
+    $("#upload-btn22222").click(function (e) {
+        e.preventDefault();
+        $("#DocumentsFiles").trigger("click");
+    });
 
+    $('#DocumentsFiles').change(function (e) {
+        try {
+            var fileName = e.target.files[0].name;
+            if (e.target.files && e.target.files.length > 0) {
+                $(".clear-file").show();
+            } else {
+                $(".clear-file").hide();
+            }
+            $(".selectedFileName").text(fileName);
+        } catch (ex) {
+            $(".selectedFileName").text("");
+            $(".clear-file").hide();
+        }
+    });
+    $(".clear-file").kendoTooltip({
+        content: "إلغاء تحديد الملف",
+        position: "bottom",
+        autoHide: true,
+    });
+    $(".clear-file").click(function () {
+        $('#DocumentsFiles').val(null).trigger("change");
+    });
     function GETSESSIONNB() {
         var fillter = {};
         fillter.nb =  @ViewBag.SessionID;
@@ -600,10 +667,17 @@
 </script>
 <script>
     function Agree(id) {
-
-
+        var not = $('#input' + id).val();
+        //var entityGrid = $("#grid").data("kendoGrid");
+        //var rows = entityGrid.select();
+        //rows.each(function (index, row) {
+        //    var selectedItem = entityGrid.dataItem(row);
+        //    alert(selectedItem.NOTES);
+        //});
+       
         var model = {
-            nb: id
+            nb: id,
+            note: not
 
         }
            $.ajax({
@@ -625,9 +699,10 @@
 
     }
     function NotAgree(id) {
-
+        var not = $('#input' + id).val();
         var model = {
-            nb: id
+            nb: id,
+            note: not
 
         }
            $.ajax({
@@ -649,9 +724,11 @@
     }
 
     function Delay(id) {
-
+        var not = $('#input' + id).val();
+        alert(not)
         var model = {
-            nb: id
+            nb: id,
+            note: not
 
         }
            $.ajax({
@@ -670,6 +747,29 @@
 
                 }
             });
+    }
+
+    function GETNOTES(data) {
+       
+        if (data.ISDONE == 0)
+        {
+            
+            var val = "";
+        
+            if (data.NOTES != null ) {
+                val = data.NOTES;
+            } 
+            return "<input  id='input" + data.NB + "' class='k-formatted-value k-input'  type='text' value='" + val +"'/>";
+        }
+        if (data.ISDONE == 1)
+        {
+            var val = "";
+            if (data.NOTES != null && data.NOTES != "" && data.NOTES != 'null') {
+                val = data.NOTES;
+            }
+            return "<span  id='sinput" + data.NB + "' >" + val +" </span>";
+        }
+       
     }
 </script>
 
@@ -812,7 +912,7 @@
 
             link += "<span id='1" + data.NB + "'>" + data.CARNB + "</span>";
 
-            link += "</a></span>     <a href = '#' onclick='myFunction(1" + data.NB + ");' > <i class='fa fa-copy' ></i></a >";
+            link += "</a></span>     <a href = 'javascript:void(0);' onclick='myFunction(1" + data.NB + ");' > <i class='fa fa-copy' ></i></a >";
 
             return link;
         } else {
@@ -827,7 +927,7 @@
         link += "<span id='2" + data.NB + "'>" + data.CARPROCEDNB + "</span>";
       
 
-        link += "</a></span>     <a href = '#' onclick='myFunction(2" + data.NB + ");' > <i class='fa fa-copy' ></i></a >";
+        link += "</a></span>     <a href = 'javascript:void(0);' onclick='myFunction(2" + data.NB + ");' > <i class='fa fa-copy' ></i></a >";
 
             //< a href = '#' onclick='myFunction(2" + data.NB + ");' > <i class='fa fa-copy' ></i></a >
 

@@ -60,6 +60,13 @@ namespace Passengers.Controllers
             var SlineCity = Request.Form["SlineCity"].Trim();
             var StrlineStatus = Request.Form["StrlineStatus"].Trim();
             var StrlineCANCELD = Request.Form["StrlineCANCELD"].Trim();
+            var STrnb = Request.Form["STrnb"].Trim();
+
+
+            if (STrnb != "")
+            {
+                sql += " and nb = " + STrnb ;
+            }
 
             if (STrline != "") 
             {

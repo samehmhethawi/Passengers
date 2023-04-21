@@ -1,0 +1,32 @@
+﻿<table style="border:none;margin:0; direction:ltr;text-align:left;">
+    <tr>
+        @if (ViewBag.CarProcedQRCode != null)
+        {
+            <td style="border:none !important; padding:0 !important; padding-right:15px !important;padding-top:5px !important;">
+                <table style="border:none !important;margin:0; !important">
+                    <tr style="border:none !important;">
+                        <td style="border:none !important; padding:0 !important; vertical-align:middle !important;text-align:center !important;">P</td>
+                        <td style="border:none !important; padding:0;"><img style="border:none !important" src="@(ViewBag.CarProcedQRCode)" width="50" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border:none !important;vertical-align:middle;text-align:center;padding:0;font-size:9pt !important;">@(ViewBag.CarProcedNb)</td>
+                    </tr>
+                </table>
+            </td>
+        }
+        @if (ViewBag.CarQRCode != null)
+        {
+            <td style="border:none !important; padding-left:15px;padding-top:5px;width:5cm;">
+                <table style="border:none !important;margin:0;float:right;">
+                    <tr style="border:none !important;">
+                        <td style="border:none !important; padding:0; vertical-align:middle;text-align:center;">C</td>
+                        <td style="border:none !important; padding:0;"><img style="border:none !important" src="@(ViewBag.CarQRCode)" width="50" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border:none !important;vertical-align:middle;text-align:center;padding:0;font-size:9pt !important;">@(ViewBag.CarNb)</td>
+                    </tr>
+                </table>
+            </td>
+        }
+    </tr>
+</table>

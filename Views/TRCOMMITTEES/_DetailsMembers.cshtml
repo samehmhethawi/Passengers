@@ -104,10 +104,13 @@
               <br />
               <div class="row col-md-11 IS_ARC" >
                   <div class="col-md-11" style="text-align:center;">
-                      <span class="btn btn-primary btn-file">
-                         اختر ملف . . <i class="fa fa-upload"></i>
-                          <input accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
-                      </span>
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-danger clear-file" style="display: none;"><i class="fa fa-close"></i></button>
+                        <button type="button" class="btn btn-primary upload-btn" id="upload-btn22222">
+                            <i class="fa fa-upload"></i> اختيار ملف <span class="selectedFileName" style="color:white"></span>
+                        </button>
+                           <input hidden accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
+                    </div>
                         <button class="btn btn-primary" onclick="setvvv()"> حفظ ورفع الملف</button>
                </div>
 
@@ -121,7 +124,7 @@
                                                     <a class='stepLnk' data-toggle='tooltip' onclick='showdoc2()'  href='#'><i title="عرض الارشفة" style="font-size:25px;" class='fa fa-folder'></i></a>
                                                 </label>
                   </div>
-                 
+
               </div>
 
             </div>
@@ -135,6 +138,35 @@
 </div>
 
 <script>
+    $("#upload-btn22222").click(function (e) {
+        e.preventDefault();
+        $("#DocumentsFiles").trigger("click");
+    });
+
+    $('#DocumentsFiles').change(function (e) {
+        try {
+            var fileName = e.target.files[0].name;
+            if (e.target.files && e.target.files.length > 0) {
+                $(".clear-file").show();
+            } else {
+                $(".clear-file").hide();
+            }
+            $(".selectedFileName").text(fileName);
+        } catch (ex) {
+            $(".selectedFileName").text("");
+            $(".clear-file").hide();
+        }
+    });
+    $(".clear-file").kendoTooltip({
+        content: "إلغاء تحديد الملف",
+        position: "bottom",
+        autoHide: true,
+    });
+    $(".clear-file").click(function () {
+        $('#DocumentsFiles').val(null).trigger("change");
+    });
+
+
     $("#AddNewMEMBER").click(function () {
         var ssts = $('#Comstatus').val();
         if (ssts == "1")

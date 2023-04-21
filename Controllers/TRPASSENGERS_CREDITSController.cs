@@ -1,5 +1,9 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
+using Oracle.ManagedDataAccess.Client;
+using Passengers.ViewModel;
 using Proced.DataAccess.Models.CF;
+using Rotativa;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,7 +26,8 @@ namespace Passengers.Controllers
 
             if (rwo_cont == 1 )
             {
-                long? amount = db.TRPASSENGERS_CREDITS.Find(mycitynb).AMOUNT;
+                var ddd = db.TRPASSENGERS_CREDITS.Find(mycitynb);
+                long? amount = ddd.AMOUNT;
                 var cityname = db.ZCITYS.Find(mycitynb).NAME;
                 var all = amount.GetValueOrDefault().ToString("###,###");
                 if (all == "" || all == null)
@@ -30,9 +35,10 @@ namespace Passengers.Controllers
                     all = "0";
                 }
                 ViewBag.amount = all;
+                ViewBag.amount222 = amount;
                 ViewBag.cityname = cityname;
                 ViewBag.citynb = mycitynb;
-
+                ViewBag.CDATE = ddd.CDATE.ToString("dd/MM/yyyy"); 
                 return View();
             }
             else 
@@ -64,13 +70,14 @@ namespace Passengers.Controllers
             return View();
         }
    
-        public ActionResult UpdateAmount(int citynb , long Amount)
+        public ActionResult UpdateAmount(int citynb , long Amount , DateTime SSdate)
         {
             try
             {
                 var data = db.TRPASSENGERS_CREDITS.Find(citynb);
                 data.AMOUNT = Amount;
-
+                data.CDATE = SSdate;
+                data.FIXDATE = DateTime.Now;
 
                     db.Entry(data).State = EntityState.Modified;
                     db.SaveChanges();
@@ -141,5 +148,196 @@ namespace Passengers.Controllers
             }
 
         }
+    
+    
+    public ActionResult TRPASSENGERS_CREDITS_Index_Detalis(int citynb)
+        {
+            CodesController cc = new CodesController();
+            bool IsAdmin = cc.IsAdmin();
+            bool IsAdminCity = cc.IsAdminCity();
+            if (!IsAdmin && !IsAdminCity)
+            {
+                var mycitynb = Utility.MyCityNb();
+                if (mycitynb != citynb)
+                    return RedirectToAction("Index_Detalis", "PassengersAccount", new { citynb = mycitynb });
+            }
+            ViewData["zcities"] = db.ZCITYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            var cityname = db.ZCITYS.Find(citynb).NAME;
+            ViewBag.citynb = citynb;
+            ViewBag.cityname = cityname;
+            return View();
+
+        }
+
+        public ActionResult Read([DataSourceRequest] DataSourceRequest request)
+        {
+
+            var SFromCDATE = Request.Form["SFromCDATE"].Trim();
+            var SToCDATE = Request.Form["SToCDATE"].Trim();
+            var SCTYPE = Request.Form["SCTYPE"].Trim();
+
+            var mycitynb = Request.Form["citynb"].Trim();
+            var sql = "SELECT * FROM TRPASSENGERS_CREDITS WHERE 1 = 1 and CITYNB = "+ mycitynb;
+
+            if (SCTYPE != "")
+            {
+                sql += " and CTYPE =" + SCTYPE;
+            }
+
+            if (SFromCDATE != "")
+            {
+                sql += " and TRUNC(CDATE) >= TO_DATE('" + SFromCDATE + "','DD/MM/YYYY') ";
+            }
+
+            if (SToCDATE != "")
+            {
+                sql += " and TRUNC(CDATE) <= TO_DATE('" + SToCDATE + "','DD/MM/YYYY') ";
+            }
+            sql += " order by  CDATE asc , nb asc";
+            var data = db.Database.SqlQuery<TRPASSENGERS_CREDITS>(sql).ToList();
+            int index = 0;
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,
+                CITYNB = commm.CITYNB,
+                CDATE = commm.CDATE,
+                AMOUNT = commm.AMOUNT,
+                NOTES = commm.NOTES,
+                FIXDATE = commm.FIXDATE,
+                CTYPE = commm.CTYPE,
+                ITEM_AMOUNT = commm.ITEM_AMOUNT,
+
+
+
+
+
+                Seq = (request.Page - 1) * request.PageSize + (++index)
+            });
+            return Json(result);
+        }
+
+
+
+        public ActionResult TRPASSENGERS_CREDITS_PDF(int? SCTYPE, string SFromCDATE, string SToCDATE ,int citynb)
+        {
+            CodesController cc = new CodesController();
+            bool IsAdmin = cc.IsAdmin();
+            bool IsAdminCity = cc.IsAdminCity();
+            if (!IsAdmin && !IsAdminCity)
+            {
+                var xmycitynb = Utility.MyCityNb();
+                if (xmycitynb != citynb)
+                {
+                    citynb = xmycitynb;
+                }
+                    
+            }
+            var pFromCDATE = SFromCDATE;
+            var pToCDATE = SToCDATE;
+            var pCTYPE = SCTYPE;
+
+            var mycitynb = citynb;
+            var sql = "SELECT TR.NB , ZC.NAME  AS CITYNB, TRUNC(TR.CDATE) as CDATEss, TR.AMOUNT, TR.NOTES,  TR.FIXDATE , CASE  WHEN TR.CTYPE = 1 THEN 'تحويل' WHEN TR.CTYPE = 2 THEN 'صرف' END as CTYPE, TR.ITEM_AMOUNT  FROM TRPASSENGERS_CREDITS TR JOIN ZCITYS ZC ON TR.CITYNB = ZC.NB WHERE 1 = 1 and TR.CITYNB = " + mycitynb;
+
+            if (pCTYPE.HasValue)
+            {
+                sql += " and TR.CTYPE =" + SCTYPE;
+            }
+
+            if (pFromCDATE != "")
+            {
+                sql += " and TRUNC(TR.CDATE) >= TO_DATE('" + pFromCDATE + "','DD/MM/YYYY') ";
+            }
+
+            if (pToCDATE != "")
+            {
+                sql += " and TRUNC(TR.CDATE) <= TO_DATE('" + pToCDATE + "','DD/MM/YYYY') ";
+            }
+            sql += " order by  TR.CDATE asc , TR.nb asc";
+            var data = db.Database.SqlQuery<TRPASSENGERS_CREDITSVMPDF>(sql).ToList();
+            return new ViewAsPdf(data)
+            {
+                CustomSwitches = "--page-offset 0 --footer-center [page] --footer-font-size 8"
+            };
+
+        }
+        //public ActionResult TRPASSENGERS_CREDITS_ex()
+        //{
+
+
+        //    string query = "SELECT ZC.NAME AS CityName,"
+        //           + " TM.NB AS CommNb, "
+        //           + " TM.COMNO AS CommNo, "
+        //    + " TO_DATE(TM.COMDATE,'DD/MM/YYYY') AS CommDate, "
+        //    + " TS.NAME AS CommStatus, "
+        //    + " TCS.NB AS SessNb, "
+        //    + " TCS.SESNO AS SessNo, "
+        //    + " TO_DATE(TCS.SESDATE,'DD/MM/YYYY') AS SessDate, "
+        //    + " TS2.NAME AS SessStatus, "
+        //    + " TMM.MEMBERNAME AS BossName, "
+        //    + " ZP.NAME AS BossPostion "
+        //    + " FROM TRCOMMITTEES TM "
+        //    + " JOIN TRCOMMITTEES_MEMBERS TMM ON TMM.COMMITTEENB = TM.NB "
+        //    + " JOIN ZCITYS ZC ON ZC.NB = TM.COMCITYNB "
+        //    + " JOIN TRSTATUS TS ON TS.NB = TM.STATUS "
+        //    + " JOIN TRZMEMBERPOSITION ZP ON ZP.NB = TMM.MEMBERPOSITIONNB "
+        //    + " JOIN TRSESSIONS TCS ON TCS.COMMITTEENB = TM.NB "
+        //    + " JOIN TRSTATUS TS2 ON TS2.NB = TCS.STATUS "
+        //    + " WHERE 1 = 1 AND TMM.MEMBERSHIPNB = 1 ";
+
+        //    var data = db.Database.SqlQuery<ViewModel.CommittesAndSessions>(query);
+
+        //    var data2 = from e in data
+        //                select new
+        //                {
+        //                    المحافظة = e.CityName,
+        //                    رمز_اللجنة = e.CommNb,
+        //                    رقم_اللجنة = e.CommNo,
+        //                    تاريخ_اللجنة = e.CommDate,
+        //                    حالة_اللجنة = e.CommStatus,
+        //                    رمز_الجلسة = e.SessNb,
+        //                    رقم_الجلسة = e.SessNo,
+        //                    تاريخ_الجلسة = e.SessDate,
+        //                    حالة_الجلسة = e.SessStatus,
+        //                    اسم_رئيس_الجلسة = e.BossName,
+        //                    منصب_رئيس_الجلسة = e.BossPostion,
+        //                };
+
+        //    string sheetName = "تقرير اللجان وجلساتها";
+        //    XLWorkbook wb = new XLWorkbook();
+        //    var ws = wb.Worksheets.Add(sheetName);
+        //    ws.Cell(1, 1).InsertTable(data2);
+
+        //    ws.RightToLeft = true;
+        //    ws.ColumnWidth = 30;
+
+
+        //    //ws.Style.Font.Bold = true;
+        //    ws.Style.Font.FontSize = 12;
+        //    for (int i = 1; i <= 11; i++)
+        //    {
+        //        ws.Column(i).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+        //    }
+
+        //    Response.Clear();
+        //    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        //    Response.AddHeader("content-disposition", String.Format(@"attachment;filename={0}.xlsx", sheetName.Replace(" ", "_")));
+
+        //    using (MemoryStream memoryStream = new MemoryStream())
+        //    {
+        //        wb.SaveAs(memoryStream);
+        //        memoryStream.WriteTo(Response.OutputStream);
+        //        memoryStream.Close();
+        //    }
+
+        //    Response.End();
+
+        //    return View();
+        //}
+
     }
 }

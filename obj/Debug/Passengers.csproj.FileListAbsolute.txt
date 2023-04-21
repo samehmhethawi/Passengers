@@ -13,6 +13,8 @@ D:\sit\Passengers\bin\Rotativa.dll
 D:\sit\Passengers\bin\System.IO.Packaging.dll
 D:\sit\Passengers\bin\System.Linq.Dynamic.Core.dll
 D:\sit\Passengers\bin\System.ValueTuple.dll
+D:\sit\Passengers\bin\zxing.dll
+D:\sit\Passengers\bin\zxing.presentation.dll
 D:\sit\Passengers\bin\Syncfusion.Pdf.Base.dll
 D:\sit\Passengers\bin\Syncfusion.HtmlConverter.Base.dll
 D:\sit\Passengers\bin\Telerik.Windows.Documents.Flow.dll
@@ -32,6 +34,8 @@ D:\sit\Passengers\bin\MoreLinq.xml
 D:\sit\Passengers\bin\System.Linq.Dynamic.Core.pdb
 D:\sit\Passengers\bin\System.Linq.Dynamic.Core.xml
 D:\sit\Passengers\bin\System.ValueTuple.xml
+D:\sit\Passengers\bin\zxing.xml
+D:\sit\Passengers\bin\zxing.presentation.xml
 D:\sit\Passengers\obj\Debug\Passengers.csproj.AssemblyReference.cache
 D:\sit\Passengers\obj\Debug\Passengers.Resources.resources
 D:\sit\Passengers\obj\Debug\Passengers.csproj.GenerateResource.cache

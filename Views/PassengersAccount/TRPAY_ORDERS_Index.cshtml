@@ -201,7 +201,8 @@
 
 
             })
-            .HtmlAttributes(new { style = "height: aotu  !important;" })
+                        .HtmlAttributes(new { style = "height: 550px !important;" })
+
             .Scrollable()
             .Sortable()
             .Filterable()
@@ -317,6 +318,7 @@
 
 
         $("#grid").data("kendoGrid").dataSource.data([]);
+        $("#grid").data("kendoGrid").dataSource.page([1]);
     }
 </script>
 
@@ -439,9 +441,13 @@
 
                        <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: center; border-top: 1px solid #e5e5e5;margin-top:10px ">
 
-                               <span class="btn btn-primary btn-file">
-                                                        اختر ملف . . <i class="fa fa-upload"></i> <input accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
-                                                    </span>
+                                <div class="btn-group">
+                        <button type="button" class="btn btn-danger clear-file" style="display: none;"><i class="fa fa-close"></i></button>
+                        <button type="button" class="btn btn-primary upload-btn" id="upload-btn22222">
+                            <i class="fa fa-upload"></i> اختيار ملف <span class="selectedFileName" style="color:white"></span>
+                        </button>
+                           <input hidden accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
+                    </div>
 
                              @*   <button class="btn btn-primary" onclick="setvvv()"> حفظ ورفع الملف</button>*@
 
@@ -461,6 +467,33 @@
 </div>
 
 <script>
+    $("#upload-btn22222").click(function (e) {
+        e.preventDefault();
+        $("#DocumentsFiles").trigger("click");
+    });
+
+    $('#DocumentsFiles').change(function (e) {
+        try {
+            var fileName = e.target.files[0].name;
+            if (e.target.files && e.target.files.length > 0) {
+                $(".clear-file").show();
+            } else {
+                $(".clear-file").hide();
+            }
+            $(".selectedFileName").text(fileName);
+        } catch (ex) {
+            $(".selectedFileName").text("");
+            $(".clear-file").hide();
+        }
+    });
+    $(".clear-file").kendoTooltip({
+        content: "إلغاء تحديد الملف",
+        position: "bottom",
+        autoHide: true,
+    });
+    $(".clear-file").click(function () {
+        $('#DocumentsFiles').val(null).trigger("change");
+    });
     $("#AddNew").click(function ()
     {
         //var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
@@ -559,6 +592,7 @@
                                             if (response.success == true) {
                                                 toastr.success(response.responseText);
                                                 kendo.ui.progress(windowWidget.element, false);
+                                                $("#AddTRPAY_ORDERS").data("kendoWindow").center().close();
                                             } else {
                                                 toastr.error(response.responseText);
                                                 kendo.ui.progress(windowWidget.element, false);
@@ -1082,7 +1116,21 @@
 
     }
 
-      function DeleteArcSession() {
+
+    function ColseWindow()
+    {
+        $("#AddTRPAY_ORDERS").data("kendoWindow").center().close();
+        $("#DeleteArc").data("kendoWindow").center().close();
+        $("#EditTRPAY_ORDERS").data("kendoWindow").center().close();
+        $("#fin").data("kendoWindow").center().close();
+
+        $("#AddTRPAY_ORDERS").data("kendoWindow").center().close();
+
+        
+    }
+
+    function DeleteArcSession()
+    {
 
         var delarcses = $('#DeleteArcSesNb').val();
 

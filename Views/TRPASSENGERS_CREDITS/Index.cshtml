@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<Proced.DataAccess.Models.CF.TRPASSENGERS_CREDITS>
 @{
     ViewBag.Title = "القيم المبدئية" + " - " + @ViewBag.cityname;
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,8 +14,8 @@
         </div>
 
     </div>
-    <div class="row" style="height: 25%; margin-left: 25px; margin-right: 25px">
-        <div class="col-lg-12" style="text-align:center;font-size:24px;">
+    <div class="row justify-content-md-center justify-content-lg-center" style="height: 25%; margin-left: 25px; margin-right: 25px">
+        <div class="col-lg-12" style="text-align:center;">
             <span style="font-size: 24px;">
                 ادخل رصيدك الحالي
             </span>
@@ -24,58 +24,95 @@
                 مع العلم انه اذا تم اضافة كتب تحويل او اوامر صرف وتثبيتها لن يمكنك تعديل القيمة المبدئية
             </span>
             <br />
+
             <br />
-            <span style="width: 25%; text-align: center; font-size: 30px; color: red; font-weight: bold;">
+
+        </div>
+    </div>
+
+    <div class="row justify-content-lg-center">
+        <div class="col-lg-3 col-md-3">
+            <span style="color: red; font-weight: bold;">
+                @(Html.Kendo().DatePicker()
+                        .Name("SSDATE")
+                        .Format("{0:dd/MM/yyyy}")
+                        .HtmlAttributes(new { placeholder = "تاريخ ", style = " text-align:center;" })
+                    )
+
+
+            </span>
+        </div>
+
+    </div>
+    <div class="row justify-content-lg-center">
+        <br />
+        <br />
+        <div class="col-lg-3 col-md-3">
+            <span style="color: red; font-weight: bold;">
 
                 @(Html.Kendo()
                                 .NumericTextBox()
                                 .Spinners(false)
                                 .Format("0")
                                 .Name("SAmount").Min(0)
-                                .HtmlAttributes(new { placeholder = "القيمة", style = "text-align:center;" })
+                                .HtmlAttributes(new { placeholder = "القيمة", style = "width: 100%; text-align:center;" })
 
                                 )
-
             </span>
 
-            <br />
-            <br />
+        </div>
+        <br />
+
+        <br />
+    </div>
+    <div class="row justify-content-lg-center">
             <span>
-                <button  class="btn btn-primary" onclick="SaveAmount()"> حفظ القيمة </button>
+                <button class="btn btn-primary" onclick="SaveAmount()"> حفظ القيمة </button>
             </span>
         </div>
-    </div>
-   
-</div>
 
 
-<script>
 
-    var ss = @ViewBag.amount;
+
+        <script>
+
+
+    var xxx = @ViewBag.amount222;
+
      //  $("#SAmount").data("kendoNumericTextBox").value(ss);
+   // $("#SAmount").data("kendoNumericTextBox").value(xxx);
+    $('#SAmount').val(xxx);
 
-    $('#SAmount').val(ss);
+   // var todayDate = kendo.toString(parseDate(ViewBag.CDATE), 'dd/MM/yyyy');
+   // $("#SSDATE").data("kendoDatePicker").value(ViewBag.CDATE);
+  //  $('#SSDATE').val(cccc);
+    $("#SSDATE").kendoDatePicker({ format: "dd/MM/yyyy", value: '@ViewBag.CDATE'});
     function SaveAmount()
     {
         var Amo = $('#SAmount').val();
+        var Sdate = $('#SSDATE').val();
 
         if (Amo != "")
         {
-            $.ajax({
-                type: "POST",
-                data: { citynb: @ViewBag.citynb , Amount: Amo},
-                url: "@Url.Action("UpdateAmount", "TRPASSENGERS_CREDITS")",
-                success: function (response) {
-                    if (response.success) {
+            if (Sdate != "") {
+                $.ajax({
+                    type: "POST",
+                    data: { citynb: @ViewBag.citynb , Amount: Amo, SSdate: Sdate },
+                    url: "@Url.Action("UpdateAmount", "TRPASSENGERS_CREDITS")",
+                    success: function (response) {
+                        if (response.success) {
 
-                        toastr.success("تمت عملية الإضافة بنجاح");
-                    } else {
+                            toastr.success("تمت عملية الإضافة بنجاح");
+                        } else {
 
-                        toastr.error(response.responseText);
+                            toastr.error(response.responseText);
+                        }
+
                     }
-
-                }
-            });
+                });
+            } else {
+                toastr.error("يرجى ادخال التاريخ اولاً");
+            }
         }
         else
         {
@@ -86,7 +123,7 @@
 
 
 
-</script>
+        </script>
 
 
 

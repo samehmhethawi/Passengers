@@ -111,6 +111,7 @@
     <Compile Include="ViewModel\SessionsAndMembersVM.cs" />
     <Compile Include="ViewModel\SessionsAndProcedsVM.cs" />
     <Compile Include="ViewModel\TRCHANGE_CAR_LINESVM.cs" />
+    <Compile Include="ViewModel\TRPASSENGERS_CREDITSVMPDF.cs" />
     <Compile Include="ViewModel\TRPROCEDS_AVAILABLEVM.cs" />
     <Compile Include="ViewModel\TRSESSIONS_MEMBERS_PRESENTVM.cs" />
     <Compile Include="ViewModel\TRSESSIONS_PROCEDS_VM.cs" />
@@ -1307,6 +1308,9 @@
     <Content Include="Views\PassengersAccount\TRPAY_ORDERS_Index.cshtml" />
     <Content Include="Views\TRPASSENGERS_CREDITS\Index.cshtml" />
     <Content Include="Views\TRPASSENGERS_CREDITS\Index_Detalis.cshtml" />
+    <Content Include="Views\TRPASSENGERS_CREDITS\TRPASSENGERS_CREDITS_Index_Detalis.cshtml" />
+    <Content Include="Views\TRPASSENGERS_CREDITS\TRPASSENGERS_CREDITS_PDF.cshtml" />
+    <Content Include="Views\Home\PrintQR.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1474,6 +1478,12 @@
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="zxing, Version=0.16.9.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\sln\packages\ZXing.Net.0.16.9\lib\net47\zxing.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.presentation, Version=0.16.9.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\sln\packages\ZXing.Net.0.16.9\lib\net47\zxing.presentation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HelperLib\HelperLib.csproj">

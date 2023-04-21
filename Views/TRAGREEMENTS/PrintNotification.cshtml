@@ -16,21 +16,40 @@
     <link href="~/Content/toastr.min.css" rel="stylesheet" />
     <script src="~/Scripts/toastr.min.js"></script>
 </head>
-<body>
-    @if (ViewBag.agrtyp != 2023)
+<body style="margin-top:0px !important;">
+
+    @if (ViewBag.agrtyp == 2023)
     {
         <div>
-            <table width="100%" style="padding:25px">
+            <table width="100%" style="padding-right: 25px; padding-left: 25px; padding-top: 5px; padding-bottom: 5px ">
                 <tr>
                     <td width="50%">
                         <p>الجمهورية العربية السورية</p>
                         <p>وزارة الادارة المحلية</p>
 
-                        <p>محافظة دمشق</p>
-                        <p>رقم 12/7</p>
+                        <p>محافظة @ViewBag.SESCITY</p>
+                        <p>رقم ?????????</p>
+
                     </td>
+                    
                     <td width="50%">
-                        <p>@ViewBag.agrname</p>
+                        <p>
+                            @Html.Action("PrintCarQrCode", "Home", new { area = "", carNb = ViewBag.CarNb, carProcedNb = ViewBag.CarProcedNb })
+
+                        </p>
+                    
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">
+                        
+
+                    </td>
+                    <td width="50%" style="text-align:center !important;">
+                        <p>
+                            نوع الموافقة:
+                            @ViewBag.agrname
+                        </p>
                     </td>
 
                 </tr>
@@ -46,18 +65,28 @@
                 <tr>
                     <td colspan="2">
                         <div>
-                            درست لجنة تنظيم نقل الركاب المشترك في محافظة ريف دمشق بجلستها رقم @ViewBag.TRAGR.SESNO تاريخ @Convert.ToDateTime(@ViewBag.TRAGR.SES_DATE).ToString("dd/MM/yyyy")
+
+                            قررت لجنة تنظيم نقل الركاب المشترك في محافظة  @ViewBag.SESCITY بجلستها رقم @ViewBag.TRAGR.SESNO تاريخ @Convert.ToDateTime(@ViewBag.TRAGR.SES_DATE).ToString("dd/MM/yyyy")
                             <br />
-                            طلب السيد : محي مالك الميكروباص ذات
+                            طلب السيد: @ViewBag.fullname للمركبة ذات:
+
                             ( الرمز @ViewBag.TRAGR.CARNB ورقم اللوحة @ViewBag.TRAGR.TABNB )
                             <br />
                             العامل على خط سير : @ViewBag.linename
                             <br />
-                            الموافقة على فرزه للعمل على خط سير : دمشق - يلدا - ببيلا
+                            السبب : ؟؟؟؟؟؟
                             <br />
-                            وقررت الموافقة على الفرز لمدة ثلاثة اشهر من تاريخه فقط
+                            وفق المسار التالي:
                             <br />
-                            شريطة التزام الكيطروباص / بالعمل على خط السير المرخص له بعد انتهاء مدة الفرز
+                            لسفرتين يومياً من الساعة @ViewBag.PROCED_LINES.DAY_TRIP_FROM صباحً ولغاية @ViewBag.PROCED_LINES.DAY_TRIP_TO صباحاً ومن الساعة @ViewBag.PROCED_LINES.NIGHT_TRIP_FROM ظهراً لغاية الساعة @ViewBag.PROCED_LINES.NIGHT_TRIP_TO ظهراً
+                            <br />
+                            مسار الخط:
+                            <br />
+                            @ViewBag.PROCED_LINES.TRIP_PATH
+                            <br />
+                            شريطة التزامه  / بالعمل على خط السير المرخص له.
+                            <br />
+                            خارج الاوقات المحددة اعلاه
                             <br />
                             للاطلاع و اجراء المقتضى.
 
@@ -67,33 +96,33 @@
                 <tr>
                     <td>
                         <p>
-                            دمشق في :   /
+                            @ViewBag.SESCITY في :   /
                         </p>
 
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <p>
+                        <p style="text-align:center;">
                             العضو المقرر
                             <br />
-                            مدير نقل محافظة ريف دمشق
+                            مدير نقل محافظة @ViewBag.SESCITY
                             <br />
-                            محمود زيتون
+                            @ViewBag.Member3
                         </p>
 
                     </td>
                     <td>
-                        <p>
-                            محافظ ريف دمشق
+                        <p style="text-align:center;">
+                            محافظ @ViewBag.SESCITY
                             <br />
-                            المهندس معتز
+                            @ViewBag.Member1
                             <br />
                             بالتفويض
                             <br />
-                            قائد شرطة محافظة ريف دمشق
+                            قائد شرطة محافظة @ViewBag.SESCITY
                             <br />
-                            اللواء نزار محمد حسن
+                            @ViewBag.Member2
                         </p>
 
                     </td>
@@ -102,6 +131,564 @@
                     <td>
                         <p>
                             صورة الى:
+                            <br />
+                            قيادة شرطة محافظة @ViewBag.SESCITY
+                            <br />
+                            مكتب السيد المدير
+                            <br />
+                            اضبارة اللجنة
+                            <br />
+                            دائرة نقل الركاب
+                            <br />
+                            الديوان
+                        </p>
+
+                    </td>
+                   
+                </tr>
+
+            </table>
+        </div>
+    }
+    @if (ViewBag.agrtyp == 2022)
+    {
+        <div>
+            <table width="100%" style="padding:25px">
+                <tr>
+                    <td width="50%">
+                        <p>الجمهورية العربية السورية</p>
+                        <p>وزارة الادارة المحلية</p>
+
+                        <p>محافظة @ViewBag.SESCITY</p>
+                        <p>رقم ?????????</p>
+
+                    </td>
+
+                    <td width="50%">
+                        <p>
+                            @Html.Action("PrintCarQrCode", "Home", new { area = "", carNb = ViewBag.CarNb, carProcedNb = ViewBag.CarProcedNb })
+
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">
+                    </td>
+                    <td width="50%" style="text-align:center !important;">
+                        <p>
+                            نوع الموافقة:
+                            @ViewBag.agrname
+                        </p>
+                    </td>
+
+                </tr>
+
+
+
+                <tr>
+                    <td colspan="2">
+                        <div style="text-align:center">
+                            <p>  الى @ViewBag.outact </p>
+
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div>
+
+                            قررت لجنة تنظيم نقل الركاب المشترك في محافظة  @ViewBag.SESCITY بجلستها رقم @ViewBag.TRAGR.SESNO تاريخ @Convert.ToDateTime(@ViewBag.TRAGR.SES_DATE).ToString("dd/MM/yyyy")
+                            <br />
+                            طلب السيد: @ViewBag.fullname للمركبة ذات:
+
+                            ( الرمز @ViewBag.TRAGR.CARNB ورقم اللوحة @ViewBag.TRAGR.TABNB )
+                            <br />
+                            العامل على خط سير : @ViewBag.linename
+
+                            <br />
+
+
+                            السفر الى بلد : @ViewBag.PROCED_LINES.TRAVEL_COUNTRY
+                            <br />
+                            من خلال المنفذ الحدودي : @ViewBag.PROCED_LINES.TRAVEL_BOARDER
+                            <br />
+                            ضمن الشهر : @Convert.ToDateTime(@ViewBag.TRAGR.SES_DATE).ToString("MM/yyyy")
+                            <br />
+
+                            <br />
+                            للاطلاع و اجراء المقتضى.
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            @ViewBag.SESCITY في :   /
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="text-align:center;">
+                            العضو المقرر
+                            <br />
+                            مدير نقل محافظة @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member3
+                        </p>
+
+                    </td>
+                    <td>
+                        <p style="text-align:center;">
+                            محافظ @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member1
+                            <br />
+                            بالتفويض
+                            <br />
+                            قائد شرطة محافظة @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member2
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            صورة الى:
+                            <br />
+                            قيادة شرطة محافظة @ViewBag.SESCITY
+                            <br />
+                            مكتب السيد المدير
+                            <br />
+                            اضبارة اللجنة
+                            <br />
+                            دائرة نقل الركاب
+                            <br />
+                            الديوان
+                        </p>
+
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    }
+
+    @if (ViewBag.agrtyp == 2006 || ViewBag.agrtyp == 2016 || ViewBag.agrtyp == 2018)
+    {
+        <div>
+            <table width="100%" style="padding:25px">
+              
+                <tr>
+                    <td width="50%">
+                        <p>الجمهورية العربية السورية</p>
+                        <p>وزارة الادارة المحلية</p>
+
+                        <p>محافظة @ViewBag.SESCITY</p>
+                        <p>رقم ?????????</p>
+
+                    </td>
+
+                    <td width="50%">
+                        <p>
+                            @Html.Action("PrintCarQrCode", "Home", new { area = "", carNb = ViewBag.CarNb, carProcedNb = ViewBag.CarProcedNb })
+
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">
+                    </td>
+
+                    <td width="50%" style="text-align:center !important;">
+                        <p>
+                            نوع الموافقة:
+                            @ViewBag.agrname
+                        </p>
+                        @if (ViewBag.PROCED_LINES.DURATIONNB != null)
+                        {
+                            <p>
+                                فرز مؤقت لمدة @ViewBag.PROCED_LINES.DURATIONNB شهور
+                            </p>
+                        }
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <div style="text-align:center">
+                            <p>  الى @ViewBag.outact </p>
+
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div>
+                            @if (ViewBag.TRAGR.SESNO != null)
+                            {
+                                <p>
+                                    قررت لجنة تنظيم نقل الركاب المشترك في محافظة  @ViewBag.SESCITY بجلستها رقم @ViewBag.TRAGR.SESNO تاريخ @Convert.ToDateTime(@ViewBag.TRAGR.SES_DATE).ToString("dd/MM/yyyy")
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    قررت لجنة تنظيم نقل الركاب المشترك في محافظة  @ViewBag.SESCITY
+                                </p>
+                            }
+
+                            طلب السيد: @ViewBag.fullname للمركبة ذات:
+
+                            ( الرمز @ViewBag.TRAGR.CARNB ورقم اللوحة @ViewBag.TRAGR.TABNB )
+                            <br />
+                            العامل على خط سير : @ViewBag.linename
+                            <br />
+                            الموافقة على فروزه للعمل على خط سير :
+                            <br />
+                            @ViewBag.NEWlinename
+
+                            <br />
+                            @if (ViewBag.PROCED_LINES.DURATIONNB == null)
+                            {
+                                <p>
+                                    وقررت الموافقة على الفرز بشكل دائم.
+                                </p>
+                            }
+
+                            @if (ViewBag.PROCED_LINES.DURATIONNB != null)
+                            {
+                                <p>
+                                    وقررت الموافقة على الفرز لمدة @ViewBag.PROCED_LINES.DURATIONNB شهور من تاريخه فقط.
+                                </p>
+                                <p>
+                                    شريطة التزامه / بالعمل على خط السير المرخص له بعد انتهاء مدة الفرز.
+                                </p>
+                            }
+                            <br />
+
+
+                            للاطلاع و اجراء المقتضى.
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            @ViewBag.SESCITY في :   /
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="text-align:center;">
+                            العضو المقرر
+                            <br />
+                            مدير نقل محافظة @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member3
+                        </p>
+
+                    </td>
+                    <td>
+                        <p style="text-align:center;">
+                            محافظ @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member1
+                            <br />
+                            بالتفويض
+                            <br />
+                            قائد شرطة محافظة @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member2
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            صورة الى:
+                            <br />
+                            قيادة شرطة محافظة @ViewBag.SESCITY
+                            <br />
+                            مكتب السيد المدير
+                            <br />
+                            اضبارة اللجنة
+                            <br />
+                            دائرة نقل الركاب
+                            <br />
+                            الديوان
+                        </p>
+
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    }
+
+    @if (ViewBag.agrtyp == 2008 || ViewBag.agrtyp == 2012 || ViewBag.agrtyp == 2014)
+    {
+        <div>
+            <table width="100%" style="padding:25px">
+                <tr>
+                    <td width="50%">
+                        <p>الجمهورية العربية السورية</p>
+                        <p>وزارة الادارة المحلية</p>
+
+                        <p>محافظة @ViewBag.SESCITY</p>
+                        <p>رقم ?????????</p>
+
+                    </td>
+
+                    <td width="50%">
+                        <p>
+                            @Html.Action("PrintCarQrCode", "Home", new { area = "", carNb = ViewBag.CarNb, carProcedNb = ViewBag.CarProcedNb })
+
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">
+                    </td>
+                    <td width="50%" style="text-align:center !important;">
+                        <p>
+                            نوع الموافقة:
+                            @ViewBag.agrname
+                        </p>
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <div style="text-align:center">
+                            <p>  الى @ViewBag.outact </p>
+
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div>
+                            @if (ViewBag.TRAGR.SESNO != null)
+                            {
+                                <p>
+                                    قررت لجنة تنظيم نقل الركاب المشترك في محافظة  @ViewBag.SESCITY بجلستها رقم @ViewBag.TRAGR.SESNO تاريخ @Convert.ToDateTime(@ViewBag.TRAGR.SES_DATE).ToString("dd/MM/yyyy")
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    قررت لجنة تنظيم نقل الركاب المشترك في محافظة  @ViewBag.SESCITY
+                                </p>
+                            }
+
+                            طلب السيد: @ViewBag.fullname للمركبة ذات:
+
+                            ( الرمز @ViewBag.TRAGR.CARNB ورقم اللوحة @ViewBag.TRAGR.TABNB )
+                            <br />
+                            العامل على خط سير : @ViewBag.linename
+                            <br />
+
+
+
+                            <br />
+
+                            <p>
+                                وقررت الموافقة على  @ViewBag.agrname
+                            </p>
+
+
+
+                            <br />
+
+
+                            للاطلاع و اجراء المقتضى.
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            @ViewBag.SESCITY في :   /
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="text-align:center;">
+                            العضو المقرر
+                            <br />
+                            مدير نقل محافظة @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member3
+                        </p>
+
+                    </td>
+                    <td>
+                        <p style="text-align:center;">
+                            محافظ @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member1
+                            <br />
+                            بالتفويض
+                            <br />
+                            قائد شرطة محافظة @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member2
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            صورة الى:
+                            <br />
+                            قيادة شرطة محافظة @ViewBag.SESCITY
+                            <br />
+                            مكتب السيد المدير
+                            <br />
+                            اضبارة اللجنة
+                            <br />
+                            دائرة نقل الركاب
+                            <br />
+                            الديوان
+                        </p>
+
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    }
+
+    @if (ViewBag.agrtyp == 2000)
+    {
+        <div>
+            <table width="100%" style="padding:25px">
+                <tr>
+                    <td width="50%">
+                        <p>الجمهورية العربية السورية</p>
+                        <p>وزارة الادارة المحلية</p>
+
+                        <p>محافظة @ViewBag.SESCITY</p>
+                        <p>رقم ?????????</p>
+
+                    </td>
+
+                    <td width="50%">
+                        <p>
+                            @Html.Action("PrintCarQrCode", "Home", new { area = "", carNb = ViewBag.CarNb, carProcedNb = ViewBag.CarProcedNb })
+
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">
+                    </td>
+                    <td width="50%" style="text-align:center !important;">
+                        <p>
+                            نوع الموافقة:
+                            @ViewBag.agrname
+                        </p>
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <div style="text-align:center">
+                            <p>  الى @ViewBag.outact </p>
+
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div>
+
+                            درست لجنة تنظيم نقل الركاب المشترك في محافظة  @ViewBag.SESCITY بجلستها رقم @ViewBag.ses_info.SESNO تاريخ @Convert.ToDateTime(ViewBag.ses_info.SESDATE).ToString("dd/MM/yyyy")
+                            <br />
+                            @ViewBag.PROCED_LINES.POSTMAIL
+                            <br />
+                            <br />
+                            <p>
+                                وقررت اللجنة: @ViewBag.ses_pro.NOTES
+                            </p>
+                            <br />
+                            <p>
+                                للاطلاع واجراء اللازم.
+                            </p>
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            @ViewBag.SESCITY في :   /
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="text-align:center;">
+                            العضو المقرر
+                            <br />
+                            مدير نقل محافظة @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member3
+                        </p>
+
+                    </td>
+                    <td>
+                        <p style="text-align:center;">
+                            محافظ @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member1
+                            <br />
+                            بالتفويض
+                            <br />
+                            قائد شرطة محافظة @ViewBag.SESCITY
+                            <br />
+                            @ViewBag.Member2
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            صورة الى:
+                            <br />
+                            قيادة شرطة محافظة @ViewBag.SESCITY
+                            <br />
+                            مكتب السيد المدير
+                            <br />
+                            اضبارة اللجنة
+                            <br />
+                            دائرة نقل الركاب
                             <br />
                             الديوان
                         </p>
@@ -114,7 +701,8 @@
     }
 
 
-    @if (ViewBag.agrtyp == 2023)
+
+    @if (ViewBag.agrtyp == 2020 )
     {
         <div>
             <table width="100%" style="padding:25px">
@@ -123,14 +711,31 @@
                         <p>الجمهورية العربية السورية</p>
                         <p>وزارة الادارة المحلية</p>
 
-                        <p>محافظة دمشق</p>
-                        <p>رقم 12/7</p>
+                        <p>محافظة @ViewBag.SESCITY</p>
+                        <p>رقم ?????????</p>
+
                     </td>
+
                     <td width="50%">
-                        <p>@ViewBag.agrname</p>
+                        <p>
+                            @Html.Action("PrintCarQrCode", "Home", new { area = "", carNb = ViewBag.CarNb, carProcedNb = ViewBag.CarProcedNb })
+
+                        </p>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">
+                    </td>
+                    <td width="50%" style="text-align:center !important;">
+                        <p>
+                            نوع الموافقة:
+                            @ViewBag.agrname
+                        </p>
                     </td>
 
                 </tr>
+
                 <tr>
                     <td colspan="2">
                         <div style="text-align:center">
@@ -143,27 +748,35 @@
                 <tr>
                     <td colspan="2">
                         <div>
-                            قررت لجنة تنظيم نقل الركاب المشترك في محافظة ريف دمشق بجلستها رقم @ViewBag.TRAGR.SESNO تاريخ @Convert.ToDateTime(@ViewBag.TRAGR.SES_DATE).ToString("dd/MM/yyyy")
-                            <br />
-                            طلب السيد : محي مالك الميكروباص ذات
+                            @if (ViewBag.TRAGR.SESNO != null)
+                            {
+                                <p>
+                                    قررت لجنة تنظيم نقل الركاب المشترك في محافظة  @ViewBag.SESCITY بجلستها رقم @ViewBag.TRAGR.SESNO تاريخ @Convert.ToDateTime(@ViewBag.TRAGR.SES_DATE).ToString("dd/MM/yyyy")
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    قررت لجنة تنظيم نقل الركاب المشترك في محافظة  @ViewBag.SESCITY
+                                </p>
+                            }
+
+
+                            طلب السيد: @ViewBag.fullname للمركبة ذات:
+
                             ( الرمز @ViewBag.TRAGR.CARNB ورقم اللوحة @ViewBag.TRAGR.TABNB )
                             <br />
                             العامل على خط سير : @ViewBag.linename
                             <br />
-                            بنقل عاملين : مدرسة الاجيال
+                            الموافقة على تبادل الخطوط مع المركبة:
                             <br />
-                            وفق المسار التالي:
+                            ( الرمز @ViewBag.linnb2.NB ورقم اللوحة @ViewBag.linnb2.TABNB )
                             <br />
-                            لسفرتين يومياً من الساعة 6 صباحً ولغاية 9 صباحاً ومن الساعة 12 ظهراً لغاية الساعة 2 ظهراً
+                            العامل على خط سير : @ViewBag.linename2
                             <br />
-                            مسار الخط:
-                            <br />
-                            جرمانا - مزة غربية
-                            <br />
-                            شريطة التزام الكيطروباص / بالعمل على خط السير المرخص له.
-                            <br />
-                            خارج الاوقات المحددة اعلاه
-                            <br />
+
+
+
                             للاطلاع و اجراء المقتضى.
 
                         </div>
@@ -172,33 +785,33 @@
                 <tr>
                     <td>
                         <p>
-                            دمشق في :   /
+                            @ViewBag.SESCITY في :   /
                         </p>
 
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <p>
+                        <p style="text-align:center;">
                             العضو المقرر
                             <br />
-                            مدير نقل محافظة ريف دمشق
+                            مدير نقل محافظة @ViewBag.SESCITY
                             <br />
-                            محمود زيتون
+                            @ViewBag.Member3
                         </p>
 
                     </td>
                     <td>
-                        <p>
-                            محافظ ريف دمشق
+                        <p style="text-align:center;">
+                            محافظ @ViewBag.SESCITY
                             <br />
-                            المهندس معتز
+                            @ViewBag.Member1
                             <br />
                             بالتفويض
                             <br />
-                            قائد شرطة محافظة ريف دمشق
+                            قائد شرطة محافظة @ViewBag.SESCITY
                             <br />
-                            اللواء نزار محمد حسن
+                            @ViewBag.Member2
                         </p>
 
                     </td>
@@ -208,10 +821,19 @@
                         <p>
                             صورة الى:
                             <br />
+                            قيادة شرطة محافظة @ViewBag.SESCITY
+                            <br />
+                            مكتب السيد المدير
+                            <br />
+                            اضبارة اللجنة
+                            <br />
+                            دائرة نقل الركاب
+                            <br />
                             الديوان
                         </p>
 
                     </td>
+
                 </tr>
 
             </table>

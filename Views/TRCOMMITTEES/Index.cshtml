@@ -16,6 +16,8 @@
     .note-link-popover {
         display: none;
     }
+
+   
 </style>
 <!-- Search  -->
 <script>
@@ -52,6 +54,7 @@
         $("#SComStatus").data("kendoDropDownList").value(-1);
         $("#SComCity").data("kendoDropDownList").value(-1);
         $("#grid").data("kendoGrid").dataSource.data([]);
+        $("#grid").data("kendoGrid").dataSource.page([1]);
     }
 </script>
 @section PartialHeader{
@@ -167,10 +170,12 @@
                     command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
                 }).Width(180);
             })
-            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .HtmlAttributes(new { style = "height: 550px !important;" })
+
+            //.HtmlAttributes(new { style = "height: aotu  !important;" })
             .Scrollable()
             .Sortable()
-            .Filterable()
+            
             .DataSource(dataSource => dataSource
             .Ajax()
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))

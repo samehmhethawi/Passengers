@@ -84,12 +84,17 @@
         <div class="col-lg-12" style="text-align:center;font-size:24px;">
             <span>
                 رصيدك الحالي
-            </span><br />
+            </span>
+            <span>
+                <button class="btn btn-primary" onclick="GeTOCREDITS()"> عرض التفاصيل </button>
+            </span>
+            <br />
             <span style="font-size: 30px; color:red; font-weight:bold;">
                 <span>
                     @ViewBag.amount 
                 </span>
             </span>
+             
         </div>
     </div>
 
@@ -155,7 +160,7 @@
                 success: function (response) {
                     if (response.success) {
                         document.getElementById('AmountUnConfierm').innerHTML = response.TOTVA2L;
-                       
+
                        // toastr.success("تمت عملية الإضافة بنجاح");
                     } else {
 
@@ -164,5 +169,15 @@
 
                 }
             });
+    }
+
+    function GeTOCREDITS()
+    {
+
+
+
+        window.open("@Url.Action("TRPASSENGERS_CREDITS_Index_Detalis", "TRPASSENGERS_CREDITS")?citynb="+@ViewBag.citynb , "_blank");
+
+
     }
 </script>
