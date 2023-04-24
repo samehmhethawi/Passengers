@@ -133,7 +133,7 @@
                 columns.Bound(c => c.CoutnCar).Title("عدد المركبات").Width(150).Visible(false);
                 columns.Template(@<text></text>).ClientTemplate("#=resColTemplate(data)#").Title("النتيجة");
             })
-            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .HtmlAttributes(new { style = "height: 550px !important;" })
             .Scrollable()
             .Sortable()
             //.ClientDetailTemplateId("template")
@@ -300,7 +300,23 @@
     }
 
 
+    function rest_filtters() {
 
+        $("#SlineCity").data("kendoDropDownList").value(-1);
+        $("#Slinetyps").data("kendoDropDownList").value(-1);
+        $("#StrlineStatus").data("kendoDropDownList").value(-1);
+        $("#Scarkind").data("kendoDropDownList").value(-1);
+        $("#Scarreg").data("kendoDropDownList").value(-1);
+        $('#STrline').val("");
+
+
+
+
+
+
+
+        $("#grid").data("kendoGrid").dataSource.data([]);
+    }
 
     function ExportToPdf() {
         var fill = {};

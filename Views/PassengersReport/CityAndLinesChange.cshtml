@@ -80,7 +80,7 @@
 }
 <div>
     @(Html.Kendo().Grid <Passengers.ViewModel.CityAndLinesChangeVM>()
-            .Name("grid")
+            .Name("grid").AutoBind(false)
             .Columns(columns =>
             {
                 columns.Bound(c => c.NB).Title("رمز المعاملة").Width(150);
@@ -99,7 +99,7 @@
                 columns.Bound(c => c.DONE).Title("حالة الخطوة").Visible(false);
                 columns.Bound(c => c.NOTE).Title("ملاحظات").Width(200);
             })
-            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .HtmlAttributes(new { style = "height: 550px !important;" })
             .Scrollable()
             .Sortable()
             //.Filterable()

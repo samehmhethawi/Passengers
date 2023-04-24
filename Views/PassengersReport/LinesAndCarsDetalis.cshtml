@@ -138,7 +138,7 @@
                 columns.Bound(c => c.reg).Title("الفئة").Visible(false);
 
             })
-            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .HtmlAttributes(new { style = "height: 550px !important;" })
             .Scrollable()
             .Sortable()
             //.ClientDetailTemplateId("template")
@@ -226,7 +226,23 @@
         $("#grid").data("kendoGrid").dataSource.read();
     }
 
+    function rest_filtters() {
 
+        $("#SlineCity").data("kendoDropDownList").value(-1);
+        $("#Slinetyps").data("kendoDropDownList").value(-1);
+        $("#StrlineStatus").data("kendoDropDownList").value(-1);
+        $("#Scarkind").data("kendoDropDownList").value(-1);
+        $("#Scarreg").data("kendoDropDownList").value(-1);
+        $('#STrline').val("");
+
+
+
+      
+
+
+
+        $("#grid").data("kendoGrid").dataSource.data([]);
+    }
 
 
     function ExportToPdf() {

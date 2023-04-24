@@ -42,6 +42,7 @@
     var numoftry1 = 1;
     var enumoftry1 = 2;
     iidGetCNbtoRead = 0;
+    var is_ed_rac = false;
 </script>
 @section PartialHeader{
     <div class="panel-heading1 " id="searchPanel">
@@ -560,7 +561,9 @@
         return fillter;
         }
 
-        function setIcons2() {
+    function setIcons2() {
+
+
             setIcons();
             $(".k-grid-Deletear").addClass(" hvr-box-shadow-outset");
             $(".k-grid-Deletear").kendoButton({
@@ -574,7 +577,7 @@
 
 
 
-
+            
 
         }
         function rest_filtters() {
@@ -793,7 +796,8 @@
             $("#AddFROMDATE").val("");
             $("#AddTODATE").val("");
             $("#AddNOTES").val("");
-
+            $('#divResultIsExisting').css('display', 'none');
+            $('#DocumentsFiles').val(null).trigger("change");
 
             $("#Add_comm span.k-tooltip-validation").hide();
 
@@ -881,7 +885,7 @@
                             toastr.error(response.responseText);
                             document.getElementById('ResultIsExisting').innerHTML = "يوجد كتاب تحويل تواريخه متداخلة مع التواريخ المدخلة من أجل المتابعة ابحث مجدداً";
                             $('#divResultIsExisting').css('display', 'block');
-
+                            
                             if (response.numoftry == 1)
                             {
                                 numoftry1 = 2;
@@ -1255,8 +1259,7 @@
                                     .HtmlAttributes(new { style = "height: 700px !important;" })
 
             .Scrollable()
-            .Sortable()
-            .Filterable()
+            
             .DataSource(dataSource => dataSource
             .Ajax()
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
@@ -1386,7 +1389,8 @@
                 success: function (response) {
                     if (response.success) {
 
-                          $("#grid").data("kendoGrid").dataSource.page(1);
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+                        $("#fin").data("kendoWindow").center().close();
 
                         toastr.success(response.responseText);
                     } else {
@@ -2091,7 +2095,9 @@
                                     <br>
                                     <br>
                                     <table id="eemployee-table_ex">
+                                          <tbody>
 
+                                        </tbody>
                                     </table>
                        </div>
                    </div>
@@ -2106,8 +2112,12 @@
                                     <button id="eadd-new-btn_in" class="btn btn-primary">اضافة رمز معاملة</button>
 
                                     <br>
+
                                     <br>
                                     <table id="eemployee-table_in">
+                                        <tbody>
+
+                                        </tbody>
 
                                     </table>
                        </div>
@@ -2125,13 +2135,20 @@
 
                        <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: center; border-top: 1px solid #e5e5e5;margin-top:10px ">
 
-                               <div class="btn-group">
-                        <button type="button" class="btn btn-danger clear-file" style="display: none;"><i class="fa fa-close"></i></button>
-                        <button type="button" class="btn btn-primary upload-btn" id="upload-btn22222">
-                            <i class="fa fa-upload"></i> اختيار ملف <span class="selectedFileName" style="color:white"></span>
-                        </button>
-                           <input hidden accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
-                    </div>
+                               <div class="btn-group ISNOT_AECIVED">
+                                <button type="button" class="btn btn-danger eclear-file" style="display: none;"><i class="fa fa-close"></i></button>
+                                <button type="button" class="btn btn-primary upload-btn" id="eupload-btn22222">
+                                    <i class="fa fa-upload"></i> اختيار ملف <span class="eselectedFileName" style="color:white"></span>
+                                </button>
+                                <input hidden accept=".PDF" id="eDocumentsFiles" name="eDocumentsFiles" type="file">
+                         </div>
+                             <div class="IS_AECIVED">
+                                <label style="text-align:center;color:red;font-size:14px;">
+
+                                    المحضر مؤرشف
+                                    <a class='stepLnk' data-toggle='tooltip' onclick='Edit_showdoc()' href='#'><i title="عرض الارشفة" style="font-size:25px;" class='fa fa-folder'></i></a>
+                                </label>
+                            </div>
 
                              @*   <button class="btn btn-primary" onclick="setvvv()"> حفظ ورفع الملف</button>*@
 
@@ -2152,10 +2169,40 @@
 
 
 <script>
-    function Edit(e) {
+    function Edit_showdoc() {
+
+        var NB = $('#Nb').val();
+        window.open("@Url.Action("GetReport", "PassengersAccount")" + "?NB=" + NB , "_blank");
+
+    
+
+    }
+    ////////فتح النافذة
+    function Edit(e)
+    {
+        var windowWidget = $("#EditTRGET_ORDERS").data("kendoWindow");
+        kendo.ui.progress(windowWidget.element, true);
+        $("#eemployee-table_in tbody").empty();
+        $("#eemployee-table_ex tbody").empty();
+        $('#eDocumentsFiles').val(null).trigger("change");
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
 
+        var is_arc = item.IS_ARCHIVED;
+
+        is_ed_rac = is_arc;
+        if (is_arc == false) {
+            $('.ISNOT_AECIVED').css('display', 'block');
+            $('.IS_AECIVED').css('display', 'none');
+
+        }
+        if (is_arc == true) {
+            $('.ISNOT_AECIVED').css('display', 'none');
+            $('.IS_AECIVED').css('display', 'block');
+
+
+        }
+        //ISNOT_AECIVED
         if (item.STATUS == 1) {
             $('#Nb').val(item.NB);
             var nnnb = $('#Nb').val();
@@ -2167,6 +2214,8 @@
             $("#eAddFROMDATE").data('kendoDateTimePicker').value(item.FROMDATE);
             $("#eAddTODATE").data('kendoDateTimePicker').value(item.TODATE);
             eGetResult();
+            GetEditAllProcednb(nnnb);
+            GetEditAllProcednb2(nnnb);
            // $("#eAddFROMDATE").DateTimePicker({ format: "HH:mm:ss dd/MM/yyyy", value: item.FROMDATE });
            //  $("#eAddTODATE").DateTimePicker({ format: "HH:mm:ss dd/MM/yyyy", value: item.TODATE });
 
@@ -2181,19 +2230,22 @@
             //    $(".IS_ARC").css("display", "block");
 
             //}
-
+            kendo.ui.progress(windowWidget.element, false);
             var wnd = $("#EditTRGET_ORDERS").data("kendoWindow");
             wnd.center().open();
-        } else {
+        } else
+        {
             toastr.error("لا يمكن تعديل هذا الكتاب");
         }
     }
-
+     // جلب القيمة بين تاريخين
       function eGetResult() {
 
-            var windowWidget = $("#EditTRGET_ORDERS").data("kendoWindow");
+
+          var windowWidget = $("#EditTRGET_ORDERS").data("kendoWindow");
 
 
+          kendo.ui.progress(windowWidget.element, true);
                 var CITYNB1 = $('#AddCITYNB').val();
 
 
@@ -2204,38 +2256,40 @@
             var TODATE1 =  $('#eAddTODATE').val();
             if ( FROMDATE1 == "" || TODATE1=="") {
                 toastr.error("يرجى اختيار التواريخ");
-            } else {
-                kendo.ui.progress(windowWidget.element, true);
-                     $.ajax({
-                    type: "POST",
-                         data: { citynb: CITYNB1, FROMDATE: FROMDATE1, TODATE: TODATE1, numoftry: enumoftry1},
-                    url: "@Url.Action("GetResult", "PassengersAccount")",
-                    success: function (response) {
-                        if (response.success) {
-                            totalval = response.TOTVA2L;
-                            document.getElementById('eResult_count').innerHTML = response.CARBILLS_COUNT2;
-                            document.getElementById('eResult_amount').innerHTML = response.TOTVA2L;
-                            $('#eResult').css('display', 'block');
-                            $('#eInclude_Exclude').css('display', 'block');
-                            kendo.ui.progress(windowWidget.element, false);
+            }
+            else
+            {
+
+                    $.ajax({
+                        type: "POST",
+                                data: { citynb: CITYNB1, FROMDATE: FROMDATE1, TODATE: TODATE1, numoftry: enumoftry1},
+                        url: "@Url.Action("GetResult", "PassengersAccount")",
+                                success: function (response) {
+                                    if (response.success) {
+                                        totalval = response.TOTVA2L;
+                                        document.getElementById('eResult_count').innerHTML = response.CARBILLS_COUNT2;
+                                        document.getElementById('eResult_amount').innerHTML = response.TOTVA2L;
+                                        $('#eResult').css('display', 'block');
+                                        $('#eInclude_Exclude').css('display', 'block');
+                                        kendo.ui.progress(windowWidget.element, false);
 
 
 
 
-                        } else {
-                            kendo.ui.progress(windowWidget.element, false);
-                            toastr.error(response.responseText);
-                            document.getElementById('eResultIsExisting').innerHTML = "يوجد كتاب تحويل تواريخه متداخلة مع التواريخ المدخلة من أجل المتابعة ابحث مجدداً";
-                            $('#edivResultIsExisting').css('display', 'block');
+                                    } else {
+                                        kendo.ui.progress(windowWidget.element, false);
+                                        toastr.error(response.responseText);
+                                        document.getElementById('eResultIsExisting').innerHTML = "يوجد كتاب تحويل تواريخه متداخلة مع التواريخ المدخلة من أجل المتابعة ابحث مجدداً";
+                                        $('#edivResultIsExisting').css('display', 'block');
 
-                            if (response.numoftry == 1)
-                            {
-                                enumoftry1 = 2;
-                            }
-                        }
+                                        if (response.numoftry == 1)
+                                        {
+                                            enumoftry1 = 2;
+                                        }
+                                    }
 
-                    }
-                });
+                                }
+                    });
             }
 
 
@@ -2243,18 +2297,18 @@
         }
 </script>
 
-
+@* اضافة اسطر الى الجدوال *@
 <script>
 
     $("#eadd-new-btn_in").on("click", function () {
         //calling method to add new row
-        e_addNewRowin();
+        e_addNewRowin("");
     });
     /* This method will add a new row */
-    function e_addNewRowin() {
+    function e_addNewRowin(edit_vall) {
         var tablein = $('#eemployee-table_in')[0];
         var rowCountin22 = tablein.rows.length;
-        var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input  id="e_inputin' + rowCountin22 + '" class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
+        var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input  id="e_inputin' + rowCountin22 + '" class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" value ="' + edit_vall +'" /></span></td>'
             ////////////////////////////////////
             ///////////////////////////////////
             ///////////////////////////////////
@@ -2293,20 +2347,16 @@
         }
     }
 
-</script>
-
-
-<script>
 
     $("#eadd-new-btn_ex").on("click", function () {
         //calling method to add new row
-        e_addNewRowex();
+        e_addNewRowex("");
     });
     /* This method will add a new row */
-    function e_addNewRowex() {
+    function e_addNewRowex(edit_vall) {
         var tableex = $('#eemployee-table_ex')[0];
         var rowCountin22 = tableex.rows.length;
-        var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input  id="e_inputex' + rowCountin22 + '" class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" /></span></td>'
+        var rowHtml = '<tr><td><span class="k-numeric-wrap k-state-default k-expand-padding"><input  id="e_inputex' + rowCountin22 + '" class="k-formatted-value k-input" placeholder="ادخل رمز المعاملة" type="text" value ="' + edit_vall + '"/></span></td>'
             ////////////////////////////////////
             ///////////////////////////////////
             ///////////////////////////////////
@@ -2344,17 +2394,397 @@
             tablein.deleteRow(rowCountex - 1);
         }
     }
-
 </script>
 
+
+
+@* جلب المعاملات قبل اضافتهن الى الجداول *@
 <script>
     function GetEditAllProcednb(Gnb)
     {
+        var windowWidget = $("#EditTRGET_ORDERS").data("kendoWindow");
+        kendo.ui.progress(windowWidget.element, true);
+
+         $.ajax({
+            type: "GET",
+             data: { nb: Gnb, type : 1},
+            url: "@Url.Action("GetEditAllProcednb", "PassengersAccount")",
+            success: function (response) {
+              
+                if (response.success) {
+                    if (response.data.length != 0)
+                    {
+                        for (var i = 0; i <= response.data.length -1 ; i++)
+                        {
+                           
+                            e_addNewRowex(response.data[i].CARPROCEDNB);
+                        }
+                        kendo.ui.progress(windowWidget.element, false);
+                    }
 
 
+
+                }
+                else {
+                    kendo.ui.progress(windowWidget.element, false);
+                    toastr.error(response.responseText);
+                }
+            }
+         });
 
 
     }
 
+     function GetEditAllProcednb2(Gnb)
+    {
+         var windowWidget = $("#EditTRGET_ORDERS").data("kendoWindow");
+         kendo.ui.progress(windowWidget.element, true);
+
+         $.ajax({
+            type: "GET",
+             data: { nb: Gnb, type : 2},
+            url: "@Url.Action("GetEditAllProcednb", "PassengersAccount")",
+            success: function (response) {
+               
+                if (response.success) {
+                    if (response.data.length != 0)
+                    {
+                        for (var i = 0; i <= response.data.length -1 ; i++)
+                        {
+                          
+                            e_addNewRowin(response.data[i].CARPROCEDNB);
+                        }
+                        kendo.ui.progress(windowWidget.element, false);
+                    }
+
+
+
+                }
+                else {
+                    kendo.ui.progress(windowWidget.element, false);
+                    toastr.error(response.responseText);
+                }
+            }
+         });
+
+
+    }
+</script>
+
+@* التحقق من المعاملات *@
+<script>
+        function e_selectin(idc) {
+            var ccccc = $('#e_inputin' + idc).val();
+
+            $.when(e_CheckAllProced(ccccc)).done(function (s1) {
+
+                if (s1.success) {
+
+                    $('#e_in' + idc).prop("checked", true);
+                }
+                else {
+                    $('#e_in' + idc).prop("checked", false);
+                    toastr.error(s1.responseText, "خطأ");
+                }
+
+            });
+
+
+        }
+        function e_selectex(idc)
+            {
+
+
+                    var fffff = $('#e_inputex' + idc).val();
+
+                    $.when(e_CheckAllProced(fffff)).done(function (s1) {
+
+                        if (s1.success) {
+
+                            $('#e_ex' + idc).prop("checked", true);
+                        }
+                        else {
+                            $('#e_ex' + idc).prop("checked", false);
+                            toastr.error(s1.responseText, "خطأ");
+                        }
+
+                    });
+
+                }
+
+         function e_CheckAllProced(idv)
+        {
+
+
+           // var tableex = $('#employee-table_ex')[0];
+           // var CheckAllProcedrowCountex = tableex.rows.length;
+
+           // var rowIndex = $('#employee tr').index(0);
+           //var xx =  rowIndex.find("td input[type='text']").val();
+           // alert(xx);
+
+             return $.ajax({
+                type: "GET",
+                     data: { procednb: idv },
+                     url: "@Url.Action("CheckAllProced", "PassengersAccount")",
+                     success:  function (response) {
+                        if (response.success) {
+                            // document.getElementById('AmountUnConfierm').innerHTML = response.TOTVA2L;
+
+                           // toastr.success("تمت عملية الإضافة بنجاح");
+                        } else {
+
+                        }
+
+                    }
+            });
+
+
+
+        }
+</script>
+
+
+@* حفظ التعديل *@
+<script>
+    function eSaveAddTRGET_ORDERS()
+    {
+        var eisok = 0;
+        var elistcheckbox = [];
+        $("#eemployee-table_ex").find('tr').each(function () {
+
+            var data2 = $(this).find("td input[type='checkbox']").is(':checked');
+            if (data2 == true) {
+
+
+                elistcheckbox.push("true");
+            } else {
+                elistcheckbox.push("false");
+            }
+
+        });
+
+        $("#eemployee-table_in").find('tr').each(function () {
+
+            var data2 = $(this).find("td input[type='checkbox']").is(':checked');
+            if (data2 == true) {
+
+
+                elistcheckbox.push("true");
+            } else {
+                elistcheckbox.push("false");
+            }
+
+        });
+        for (var i = 0; i < elistcheckbox.length; i++) {
+
+            if (elistcheckbox[i] == "false") {
+                eisok = 1;
+            }
+
+        }
+
+        if (eisok == 0) {
+            var eFROMDATE1 = $('#eAddFROMDATE').val();
+            var eTODATE1 = $('#eAddTODATE').val();
+            var NB = $('#Nb').val();
+            if (eFROMDATE1 != "" || eTODATE1 != "") {
+                if ($("#eDocumentsFiles").val() != "" || is_ed_rac == true) {
+                        var is_pdf = efileValidation($("#eDocumentsFiles").val());
+                    if (is_pdf || is_ed_rac == true) {
+
+                            var is_size = eFilevalidationsize();
+                        if (is_size || is_ed_rac == true) {
+
+
+
+
+
+                                var windowWidget = $("#EditTRGET_ORDERS").data("kendoWindow");
+
+                                if (@ViewBag.citynb == "") {
+                                    toastr.error("يجب اختيار المحافظة");
+                                }
+                                else {
+
+
+                                    var validator = $("#Edit_ORDERS").kendoValidator().data("kendoValidator");
+
+                                    if (validator.validate()) {
+                                        kendo.ui.progress(windowWidget.element, true);
+                                        var listex = [];
+                                        $("#eemployee-table_ex").find('tr').each(function () {
+
+
+                                            var data1 = $(this).find("td input[type='text']").val();
+
+                                            if (data1 != "") {
+                                                listex.push(data1);
+                                            }
+                                        });
+                                        var listin = [];
+
+                                        $("#eemployee-table_in").find('tr').each(function () {
+
+                                            var data2 = $(this).find("td input[type='text']").val();
+                                            if (data2 != "") {
+
+
+                                                listin.push(data2);
+                                            }
+                                        });
+
+                                        var CITYNB = $('#AddCITYNB').val();
+
+
+
+
+
+
+
+                                        var NO = $('#eAddORDERSNo').val();
+                                        var GDATE = $("#eAddGDATEDate").val();
+                                      
+                                        var AddNOTES = $("#eAddNOTES").val();
+                                        // var   FROMDATE: $("#AddFROMDATE").val(),
+                                        //var    TODATE: $("#AddTODATE").val(),
+
+
+
+                                        var fileUpload = $("#eDocumentsFiles").get(0);
+                                        var files = fileUpload.files;
+
+                                        // Create FormData object
+                                        var fileData = new FormData();
+
+                                        // Looping over all files and add it to FormData object
+                                        for (var i = 0; i < files.length; i++) {
+                                            fileData.append("Files", files[i]);
+                                        }
+                                        fileData.append("oldNB", NB);
+                                        fileData.append("NO", NO);
+                                        fileData.append("GDATE", GDATE);
+                                        fileData.append("CITYNB", CITYNB);
+                                        fileData.append("FROMDATE", eFROMDATE1);
+                                        fileData.append("TODATE", eTODATE1);
+                                        fileData.append("EXCLUDES", listex);
+                                        fileData.append("INCLUDES", listin);
+                                        fileData.append("PTOTALVAL", totalval);
+                                        fileData.append("AddNOTES", AddNOTES);
+
+
+                                      
+
+                                        // { Files: files[0], NO: NO, GDATE: GDATE, CITYNB: CITYNB, FROMDATE: FROMDATE1, TODATE: TODATE1, PTOTALVAL: totalval ,EXCLUDES: listex, INCLUDES: listin},
+                                        // { fileData, EXCLUDES: listex, INCLUDES: listin}
+
+                                        $.ajax({
+                                            url: '@Url.Action("TRGET_ORDERS_Update", "PassengersAccount")',
+                                            type: "POST",
+                                            data: fileData,
+                                            contentType: false,
+                                            processData: false,
+                                            success: function (response) {
+                                                if (response.success == true) {
+                                                    $("#grid").data("kendoGrid").dataSource.read();
+                                                    $("#EditTRGET_ORDERS").data("kendoWindow").center().close();
+                                                    toastr.success(response.responseText);
+                                                    kendo.ui.progress(windowWidget.element, false);
+                                                } else {
+                                                    toastr.error(response.responseText);
+                                                    kendo.ui.progress(windowWidget.element, false);
+
+                                                }
+
+
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                            else {
+                                toastr.error("حجم الملف يجب ان لا يتجاوز 4 ميغا");
+                            }
+                        }
+                        else {
+                            toastr.error("يرجى اختيار ملف لاحقته PDF");
+                        }
+                    }
+                    else {
+                        toastr.error("يرجى اختيار الملف اولاً");
+                    }
+                }
+                else {
+                    toastr.error("يرجى ادخال التواريخ");
+                }
+            }
+            else {
+                toastr.error("يوجد معاملات غير محققة");
+            }
+    }
+
+</script>
+<script>
+    $("#eupload-btn22222").click(function (e) {
+        e.preventDefault();
+        $("#eDocumentsFiles").trigger("click");
+    });
+
+    $('#eDocumentsFiles').change(function (e) {
+        try {
+            var fileName = e.target.files[0].name;
+            if (e.target.files && e.target.files.length > 0) {
+                $(".eclear-file").show();
+            } else {
+                $(".eclear-file").hide();
+            }
+            $(".eselectedFileName").text(fileName);
+        } catch (ex) {
+            $(".eselectedFileName").text("");
+            $(".eclear-file").hide();
+        }
+    });
+    $(".eclear-file").kendoTooltip({
+        content: "إلغاء تحديد الملف",
+        position: "bottom",
+        autoHide: true,
+    });
+    $(".eclear-file").click(function () {
+        $('#eDocumentsFiles').val(null).trigger("change");
+    });
+
+ 
+        function efileValidation(filesss) {
+        var fileElement = document.getElementById("eDocumentsFiles");
+        var fileElement = fileElement;
+        var fileExtension = "";
+        if (fileElement.value.lastIndexOf(".") > 0) {
+            fileExtension = fileElement.value.substring(fileElement.value.lastIndexOf(".") + 1, fileElement.value.length);
+        }
+        if (fileExtension.toLowerCase() == "pdf") {
+            return true;
+        }
+        else {
+            /* alert("يجب اختيار ملف PDF فقط.");*/
+            fileElement.value = '';
+        return false;
+        }
+    }
+
+        function eFilevalidationsize() {
+        const fi = document.getElementById('eDocumentsFiles');
+        if (fi.files.length > 0) {
+            const fsize = fi.files.item(0).size;
+        const file = Math.round((fsize / 1024));
+
+            if (fsize > 4194304) {
+
+                    return false;
+            } else {
+
+                    return true;
+                }
+        }
+    }
 
 </script>

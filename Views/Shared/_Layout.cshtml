@@ -257,6 +257,18 @@
         {
             padding-left: 0 !important;
         }
+
+        .k-filter-row th, .k-grid-header th.k-header {
+            border-width: 0 0 0 0 !important;
+            border-style:none !important;
+            text-align:center !important;
+        }
+        .k-grid tbody tr td {
+            text-align:center !important;
+        }
+        .k-grid-header th.k-header > .k-link{
+            text-align:center !important;
+        }
     </style>
     <style>
         .k-button.btn-primary /*,
@@ -426,7 +438,7 @@
             });
 
             $(".k-grid-DetailsMembers").kendoTooltip({
-                content: "الاعضاء",
+                content: "تفاصيل",
                 position: "left",
                 autoHide: true,
             });
@@ -441,7 +453,7 @@
             });
 
             $(".k-grid-Details2").kendoTooltip({
-                content: "طلبات الجلسة",
+                content: "العمليات",
                 position: "left",
                 autoHide: true,
             });

@@ -466,6 +466,32 @@ namespace Passengers.Controllers
 
         }
 
+        
+        public ActionResult GetEditAllProcednb(long nb,int type )
+        {
+            try
+            {
+                if (type == 1)
+                {
+
+                    var data = db.Database.SqlQuery<TRGET_ORDER_EXCLUDES>("SELECT * FROM TRGET_ORDER_EXCLUDES WHERE GNB = " + nb).ToList();
+                    return Json(new { success = true, data = data }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+
+                    var data = db.Database.SqlQuery<TRGET_ORDER_EXCLUDES>("SELECT * FROM TRGET_ORDER_INCLUDES WHERE GNB = " + nb).ToList();
+                    return Json(new { success = true, data = data }, JsonRequestBehavior.AllowGet);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = "حدث خطأ " }, JsonRequestBehavior.AllowGet);
+            }
+           
+          
+        }
         public ActionResult GetResult(int? citynb, string FROMDATE, string TODATE, int numoftry)
         {
             System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("ar-sa");
@@ -674,6 +700,206 @@ namespace Passengers.Controllers
 
         }
 
+
+
+        public ActionResult TRGET_ORDERS_Update(HttpPostedFileBase Files, long oldNB,string NO, DateTime GDATE, int? CITYNB, string FROMDATE, string TODATE, string EXCLUDES, string INCLUDES, long? PTOTALVAL, string AddNOTES)
+        {
+            using (DbContextTransaction transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                   
+                   var Model = db.TRGET_ORDERS.Find(oldNB);
+
+                  
+                    if (Model.NO != NO)
+                    {
+                        Model.NO = NO;
+                    }
+                  
+
+
+
+                    if (Model.GDATE != GDATE)
+                    {
+                        Model.GDATE = GDATE;
+                    }
+                   
+
+                    if (Model.NOTES != AddNOTES)
+                    {
+                        Model.NOTES = AddNOTES;
+                    }
+                  
+
+
+                    Model.CITYNB = CITYNB;
+                
+
+                    long? totalval = 0;
+                    long? EXCLUDESval = 0;
+                    long? INCLUDESval = 0;
+                    System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("ar-sa");
+
+
+                    DateTime FROMDATE2 = DateTime.ParseExact(FROMDATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+                    DateTime TODATE2 = DateTime.ParseExact(TODATE, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+
+
+                    if (Model.FROMDATE != FROMDATE2)
+                    {
+                        Model.FROMDATE = FROMDATE2;
+                    }
+                   
+
+
+                    if (Model.TODATE != TODATE2)
+                    {
+                        Model.TODATE = TODATE2;
+                    }
+                   
+
+                    Model.STATUS = Model.STATUS;
+
+                 
+
+                 
+                   
+                    db.Database.ExecuteSqlCommand(" DELETE FROM TRGET_ORDER_EXCLUDES WHERE GNB = " + oldNB );
+                    db.Database.ExecuteSqlCommand(" DELETE FROM TRGET_ORDER_INCLUDES WHERE GNB =  " + oldNB );
+                    db.Database.ExecuteSqlCommand(" DELETE FROM TRGET_ORDERS_ITEMS WHERE TRGET_ORDERNB =  " + oldNB);
+                  //  db.Database.ExecuteSqlCommand(" DELETE FROM TRGET_ORDERS WHERE NB =  " + oldNB );
+                    db.SaveChanges();
+
+                    db.Entry(Model).State = EntityState.Modified;
+                  //  db.TRGET_ORDERS.Add(Model);
+
+                    db.SaveChanges();
+                    var NB = Model.NB;
+                    if (EXCLUDES != null)
+                    {
+                        var xx = EXCLUDES.Split(',');
+                        foreach (var item in xx)
+                        {
+                            if (item != null && item != "")
+                            {
+                                TRGET_ORDER_EXCLUDES ex = new TRGET_ORDER_EXCLUDES();
+                                ex.NB = 1;
+                                ex.GNB = NB;
+                                ex.CARPROCEDNB = long.Parse(item);
+                                ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + item + " , NULL) FROM DUAL").FirstOrDefault();
+                                db.TRGET_ORDER_EXCLUDES.Add(ex);
+                                db.SaveChanges();
+                                EXCLUDESval += ex.AMOUNT;
+
+                            }
+
+                        }
+                    }
+                    if (INCLUDES != null)
+                    {
+                        var ss = INCLUDES.Split(',');
+                        foreach (var item in ss)
+                        {
+                            if (item != null && item != "")
+                            {
+                                TRGET_ORDER_INCLUDES ex = new TRGET_ORDER_INCLUDES();
+                                ex.NB = 1;
+                                ex.GNB = NB;
+                                ex.CARPROCEDNB = long.Parse(item);
+                                ex.AMOUNT = db.Database.SqlQuery<long>("SELECT VEHICLES.PASSENGERS_PKG.GET_VAL_TAX_PROCED(" + item + " , NULL) FROM DUAL").FirstOrDefault();
+                                db.TRGET_ORDER_INCLUDES.Add(ex);
+                                db.SaveChanges();
+                                INCLUDESval += ex.AMOUNT;
+                            }
+                        }
+                    }
+
+                    if (Files != null)
+                    {
+                       
+                        byte[] fileContent = null;
+                        using (var reader = new System.IO.BinaryReader(Files.InputStream))
+                        {
+                            fileContent = reader.ReadBytes(Files.ContentLength);
+                        }
+
+                        var date = DateTime.Now;
+                        var pathNameYear = date.ToString("yyyy");
+
+                        pathNameYear += "/" + Model.CITYNB + "/";
+
+                        var FTPFullPath = ConfigurationManager.AppSettings["FtpHomeTRGETORDERS"];
+                        FTPFullPath += pathNameYear;
+
+                        var uploadedFullPath = CodesController.UploadFile(fileContent, FTPFullPath, Files.FileName, FTPFullPath, NB);
+
+                        Model.FTP_PATH = uploadedFullPath;
+                        Model.IS_ARCHIVED = true;
+                    }
+                   
+                    totalval = PTOTALVAL + INCLUDESval - EXCLUDESval;
+                    if (totalval >= 0)
+                    {
+                        Model.AMOUNT = (long)totalval;
+                    }
+                    else
+                    {
+                        Model.AMOUNT = 0;
+                    }
+                   
+                    db.SaveChanges();
+
+                    if (CITYNB == null)
+                    {
+                        for (var i = 1; i <= 14; i++)
+                        {
+                            TRGET_ORDERS_ITEMS Model2 = new TRGET_ORDERS_ITEMS();
+                            Model2.NO = NO;
+                            Model2.GDATE = GDATE;
+                            Model2.CITYNB = i;
+                            Model2.TRGET_ORDERNB = Model.NB;
+                            Model2.STATUS = 1;
+                            Model2.FROMDATE = FROMDATE2;
+                            Model2.TODATE = TODATE2;
+                            db.TRGET_ORDERS_ITEMS.Add(Model2);
+                            db.SaveChanges();
+                        }
+
+
+                    }
+                    else
+                    {
+                        TRGET_ORDERS_ITEMS Model2 = new TRGET_ORDERS_ITEMS();
+                        Model2.NO = NO;
+                        Model2.GDATE = GDATE;
+                        Model2.CITYNB = CITYNB;
+                        Model2.TRGET_ORDERNB = Model.NB;
+                        Model2.STATUS = 1;
+                        Model2.FROMDATE = FROMDATE2;
+                        Model2.TODATE = TODATE2;
+                        db.TRGET_ORDERS_ITEMS.Add(Model2);
+                        db.SaveChanges();
+                    }
+
+
+                    transaction.Commit();
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+
+                }
+
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    var ss = validation.OracleExceptionValidation(ex);
+                    return Json(new { success = false, responseText = ss });
+                }
+            }
+
+        }
+
+
+
         public ActionResult GetReport(long NB)
         {
             try
@@ -819,7 +1045,7 @@ namespace Passengers.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, responseText = "حصل خطأ اثناء التنفيث" });
+                return Json(new { success = false, responseText = "حصل خطأ اثناء التنفيذ" });
             }
 
         }
