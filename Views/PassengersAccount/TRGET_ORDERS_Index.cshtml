@@ -168,14 +168,17 @@
                 {
                     //command.Custom("Preview").Click("Preview").Text(" ");
                     command.Custom("Edit").Click("Edit").Text(" ");
+                    command.Custom("").Click("").Text("|");
                     //  command.Custom("Delete").Click("Delete").Text(" ");
                     command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
-
+                    command.Custom("").Click("").Text("|");
                     //command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
                     command.Custom("SHOWCONFIRM").Click("SHOWCONFIRM").Text(" ");
+                    command.Custom("").Click("").Text("|");
                     command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
+                    command.Custom("").Click("").Text("|");
                     command.Custom("Details2").Click("Details").Text(" ");
-                }).Width(180);
+                }).Width(250);
                 columns.Template(t => { }).Title("م.").ClientTemplate(
                  "#= isArchived(data) #"
                ).Width(80);
@@ -200,7 +203,7 @@
 
 
             })
-                                    .HtmlAttributes(new { style = "height: 550px !important;" })
+                                    .HtmlAttributes(new { style = "height: 500px !important;" })
 
             .Scrollable()
             .Sortable()
@@ -546,7 +549,7 @@
         });
 
     function Btn_Search() {
-        $("#grid").data("kendoGrid").dataSource.read();
+        $("#grid").data("kendoGrid").dataSource.page([1]);
     }
     function GetFillters() {
         var fillter = {};

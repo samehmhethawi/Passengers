@@ -409,6 +409,84 @@ namespace Passengers.Controllers
         }
 
         
+
+        public bool HtmlPageCanDoIt(string ccontroller, string caction, string carea)
+        {
+            using (ProcedContext db = new ProcedContext())
+            {
+
+                //return true; //to active filter remove it
+
+                //   string username = HttpContext.Current.Session["UserName"].ToString();
+                var is_admin = IsAdmin();
+                if (is_admin == true)
+                {
+                    return true;
+                }
+
+                var usernb = Utility.MyNB();
+
+               
+
+                USER User = db.USERS.Find(usernb);
+
+              
+               
+
+                if (User.LOCKED == true)
+                {
+
+
+                    return false;
+                }
+                int i = 0;
+                try
+                {
+                    var sql = "select count(*) from appmgr.user_roles  ur,appmgr.ROLE_PROGRAMS rp , appmgr.programs pr where     pr.nb = rp.program_nb and  pr.name='"/* + Resources.Prog_id +*/+ "Passengers" + "' and UR.ROLENB = RP.ROLE_NB and ur.usernb = " + usernb;
+                    i = db.Database.SqlQuery<int>(sql).FirstOrDefault();
+
+                }
+                catch
+                {
+                    return false;
+                }
+                if (i == 0)
+                {
+
+                    return false;
+
+                }
+                string ActionUrl = "";
+                if (carea == "")
+                {
+                    ActionUrl = ccontroller + "/" + caction;
+                }
+                else
+                {
+                    ActionUrl = carea + "/" + ccontroller + "/" + caction;
+                }
+                ACTIONS aCTION = db.ACTIONS.Where(a => a.FULLNAME == ActionUrl).FirstOrDefault();
+                if (aCTION == null)
+                {
+                    return true;
+                }
+                if (aCTION.IS_GRANT == false)
+                {
+
+                    return true;
+                }
+                IList<ROLE_ACTIONS> rOLE_ACTIONS = db.ROLE_ACTIONS.Where(d => d.ACTIONNB == aCTION.NB && d.ROLES.USER_ROLES.Any(x => x.USERNB == User.NB)).ToList();
+                if (rOLE_ACTIONS.Count == 0)
+                {
+
+                    return false;
+                }
+                else
+                { return true; }
+
+
+            }
+        }
     }
     
 }

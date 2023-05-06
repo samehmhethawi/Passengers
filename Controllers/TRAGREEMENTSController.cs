@@ -174,19 +174,16 @@ namespace Passengers.Controllers
 
             if (pro.PROCEDNB == 2000)
             {
-                ViewBag.agrtyp = 2000;
-            
+                ViewBag.agrtyp = 2000;           
                 var PROCED = db.CARPROCEDS.Find(pCarprocedNB);
                 var pro_lin = db.PROCED_LINES.Where(x => x.CARPROCEDNB == pCarprocedNB).FirstOrDefault();
                 var sqll = "select * from TRSESSIONS_PROCEDS where CARPROCEDNB = " + pCarprocedNB;
                 var ses_pro = db.Database.SqlQuery<TRSESSIONS_PROCEDS>(sqll).FirstOrDefault();
                 var ses_info = db.TRSESSIONS.Find(ses_pro.SESSIONNB);
-
                 ViewBag.SESCITY = db.ZCITYS.Find(PROCED.CITYNB).NAME;
                 ViewBag.agrname = db.ZPROCEDTYPS.Find(PROCED.PROCEDNB).NAME;
                 ViewBag.ses_pro = ses_pro;
                 ViewBag.ses_info = ses_info;
-
                 var sql2 = "SELECT MM.*"
                       + " FROM TRCOMMITTEES_MEMBERS  MM "
                       + " JOIN TRSESSIONS_MEMBERS_PRESENT TM ON MM.NB = TM.MEMBERNB WHERE TM.SESSIONNB = " + ses_pro.SESSIONNB + " AND MM.MEMBERSHIPNB IN (1,2,3)";
@@ -194,21 +191,16 @@ namespace Passengers.Controllers
                 ViewBag.Member1 = Members.Where(x => x.MEMBERSHIPNB == 1).Select(y => y.MEMBERNAME).FirstOrDefault();
                 ViewBag.Member2 = Members.Where(x => x.MEMBERSHIPNB == 2).Select(y => y.MEMBERNAME).FirstOrDefault();
                 ViewBag.Member3 = Members.Where(x => x.MEMBERSHIPNB == 3).Select(y => y.MEMBERNAME).FirstOrDefault();
-
                 ViewBag.PROCED_LINES = pro_lin;
                 return View();
             }
 
             if (pro.PROCEDNB == 2006 || pro.PROCEDNB == 2016 || pro.PROCEDNB == 2018 || pro.PROCEDNB == 2023 || pro.PROCEDNB == 2022 || pro.PROCEDNB == 2008 || pro.PROCEDNB == 2012 || pro.PROCEDNB == 2014)
-            {
-               
+            {          
                 var TRAGR = db.TRAGREEMENTS.Where(x=>x.CARPROCEDNB == pCarprocedNB).FirstOrDefault();
-
                 ViewBag.agrtyp = TRAGR.AGREEMENTTYPENB;
                 ViewBag.agrname = db.AGREEMENTTYPES.Where(x => x.NB == TRAGR.AGREEMENTTYPENB).Select(s => s.NAME).FirstOrDefault();
-
                 ViewBag.TRAGR = TRAGR;
-
                 if (TRAGR.SESCITY != null && TRAGR.SESNB != null)
                 {
                     ViewBag.SESCITY = db.ZCITYS.Find(TRAGR.SESCITY).NAME;
@@ -221,12 +213,9 @@ namespace Passengers.Controllers
                     ViewBag.Member1 = Members.Where(x => x.MEMBERSHIPNB == 1).Select(y => y.MEMBERNAME).FirstOrDefault();
                     ViewBag.Member2 = Members.Where(x => x.MEMBERSHIPNB == 2).Select(y => y.MEMBERNAME).FirstOrDefault();
                     ViewBag.Member3 = Members.Where(x => x.MEMBERSHIPNB == 3).Select(y => y.MEMBERNAME).FirstOrDefault();
-
                 }
                 else
-                {
-                   
-
+                {                  
                     var sql2 = "SELECT MM.*"
                          + " FROM TRCOMMITTEES_MEMBERS  MM "
                          + " JOIN TRCOMMITTEES TM ON TM.NB = MM.COMMITTEENB WHERE TM.STATUS = 1 and TM.COMCITYNB = " + pro.CITYNB + " AND MM.MEMBERSHIPNB IN (1,2,3)";
@@ -235,19 +224,14 @@ namespace Passengers.Controllers
                     ViewBag.Member1 = Members.Where(x => x.MEMBERSHIPNB == 1).Select(y => y.MEMBERNAME).FirstOrDefault();
                     ViewBag.Member2 = Members.Where(x => x.MEMBERSHIPNB == 2).Select(y => y.MEMBERNAME).FirstOrDefault();
                     ViewBag.Member3 = Members.Where(x => x.MEMBERSHIPNB == 3).Select(y => y.MEMBERNAME).FirstOrDefault();
-
                     ViewBag.SESCITY = db.ZCITYS.Find(pro.CITYNB).NAME;
                 }
-
-               
+             
                 var sql = " SELECT ow.name || ' ' || ow.lastname || ' بن ' || ow.father || ' الوالدة ' || ow.mother as FULLNAME "
                    + " FROM CARPROCEDS cp JOIN carowners ow ON ow.nb = cp.OWNERNB "
                    + "  WHERE cp.nb = " + TRAGR.CARPROCEDNB;
 
-
                 ViewBag.fullname = db.Database.SqlQuery<string>(sql).FirstOrDefault();
-
-
                 var linnb = db.CARS.Where(x => x.NB == TRAGR.CARNB).Select(s => s.LIN).FirstOrDefault();
                 ViewBag.linename = db.TRLINES.Where(x => x.NB == linnb).Select(x => x.NAME).FirstOrDefault();
 
@@ -261,76 +245,48 @@ namespace Passengers.Controllers
             }
 
             if (pro.PROCEDNB == 2020)
-            {
-               
+            { 
                 var TRAGR = db.TRAGREEMENTS.Where(x=>x.CARPROCEDNB == pCarprocedNB).FirstOrDefault();
-
                 ViewBag.agrtyp = TRAGR.AGREEMENTTYPENB;
                 ViewBag.agrname = db.AGREEMENTTYPES.Where(x => x.NB == TRAGR.AGREEMENTTYPENB).Select(s => s.NAME).FirstOrDefault();
-
                 ViewBag.TRAGR = TRAGR;
-
                 if (TRAGR.SESCITY != null && TRAGR.SESNB != null)
                 {
                     ViewBag.SESCITY = db.ZCITYS.Find(TRAGR.SESCITY).NAME;
-
                     var sql2 = "SELECT MM.*"
                         + " FROM TRCOMMITTEES_MEMBERS  MM "
                         + " JOIN TRSESSIONS_MEMBERS_PRESENT TM ON MM.NB = TM.MEMBERNB WHERE TM.SESSIONNB = " + TRAGR.SESNB + " AND MM.MEMBERSHIPNB IN (1,2,3)";
-
                     var Members = db.Database.SqlQuery<TRCOMMITTEES_MEMBERS>(sql2).ToList();
                     ViewBag.Member1 = Members.Where(x => x.MEMBERSHIPNB == 1).Select(y => y.MEMBERNAME).FirstOrDefault();
                     ViewBag.Member2 = Members.Where(x => x.MEMBERSHIPNB == 2).Select(y => y.MEMBERNAME).FirstOrDefault();
                     ViewBag.Member3 = Members.Where(x => x.MEMBERSHIPNB == 3).Select(y => y.MEMBERNAME).FirstOrDefault();
-
                 }
                 else
                 {
-                   
-
                     var sql2 = "SELECT MM.*"
                          + " FROM TRCOMMITTEES_MEMBERS  MM "
                          + " JOIN TRCOMMITTEES TM ON TM.NB = MM.COMMITTEENB WHERE TM.STATUS = 1 and TM.COMCITYNB = " + pro.CITYNB + " AND MM.MEMBERSHIPNB IN (1,2,3)";
-
                     var Members = db.Database.SqlQuery<TRCOMMITTEES_MEMBERS>(sql2).ToList();
                     ViewBag.Member1 = Members.Where(x => x.MEMBERSHIPNB == 1).Select(y => y.MEMBERNAME).FirstOrDefault();
                     ViewBag.Member2 = Members.Where(x => x.MEMBERSHIPNB == 2).Select(y => y.MEMBERNAME).FirstOrDefault();
                     ViewBag.Member3 = Members.Where(x => x.MEMBERSHIPNB == 3).Select(y => y.MEMBERNAME).FirstOrDefault();
-
                     ViewBag.SESCITY = db.ZCITYS.Find(pro.CITYNB).NAME;
-                }
-
-               
+                }               
                 var sql = " SELECT ow.name || ' ' || ow.lastname || ' بن ' || ow.father || ' الوالدة ' || ow.mother as FULLNAME "
                    + " FROM CARPROCEDS cp JOIN carowners ow ON ow.nb = cp.OWNERNB "
                    + "  WHERE cp.nb = " + TRAGR.CARPROCEDNB;
 
-
                 ViewBag.fullname = db.Database.SqlQuery<string>(sql).FirstOrDefault();
 
-
-
-
                 var linnb = db.CARS.Where(x => x.NB == TRAGR.CARNB).Select(s => s.LIN).FirstOrDefault();
-                ViewBag.linename = db.TRLINES.Where(x => x.NB == linnb).Select(x => x.NAME).FirstOrDefault();
-
-                
+                ViewBag.linename = db.TRLINES.Where(x => x.NB == linnb).Select(x => x.NAME).FirstOrDefault();               
                 var linnb2 = db.CARS.Find(TRAGR.CARNB2);
                 ViewBag.linnb2 = linnb2;
                 ViewBag.linename2 = db.TRLINES.Where(x => x.NB == linnb2.LIN).Select(x => x.NAME).FirstOrDefault();
-
                 var pro_lin = db.PROCED_LINES.Where(x => x.CARPROCEDNB == TRAGR.CARPROCEDNB).FirstOrDefault();
-                    ViewBag.PROCED_LINES = pro_lin;
-
-
-
-                  //  ViewBag.NEWlinename = db.TRLINES.Where(x => x.NB == pro_lin.LINENB).Select(x => x.NAME).FirstOrDefault();
-                
+                    ViewBag.PROCED_LINES = pro_lin;               
                 return View();
             }
-
-
-
             return View();
         }
     

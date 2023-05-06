@@ -1,4 +1,4 @@
-@{if (IsAjax) {
+ï»¿@{if (IsAjax) {
 
 
 
@@ -12,13 +12,13 @@
 
 <script>
 
-    toastr.warning(" <h4>áÇ Êãáß ÕáÇÍíÉ ááÚãáíÉ ÇáÊí ÇÎÊÑÊåÇ</h4>", "", { "positionClass": "toast-top-full-width", "progressBar": true, "timeOut": "3500", });
+    toastr.warning(" <h4></h4>", "", { "positionClass": "toast-top-full-width", "progressBar": true, "timeOut": "3500", });
     try {
         SearchForCarTablueDialog.close();
     } catch { }
 </script>
 @{
-        ViewBag.Title = "ãÚÇáÌ ÇáÃÎØÇÁ";
+        ViewBag.Title = "Ø§Ù„ØªØ¹Ø§Ù…Ù„ Ù…Ø¹ Ø§Ù„Ø§Ø³ØªØ«Ù†Ø§Ø¡Ø§Øª";
         if (!IsAjax)
         {
             Layout = "~/Views/Shared/_Layout.cshtml";
@@ -30,7 +30,7 @@
         <div class="row">
 
             <div class="col-sm-4 pull-left text-left">
-                <a href="@(ViewBag.ReturnUrl)" class="btn btn-default" style="border-radius:0;"><i class="fa fa-refresh"></i> ÅÚÇÏÉ ÇáãÍÇæáÉ</a>
+                <a href="@(ViewBag.ReturnUrl)" class="btn btn-default" style="border-radius:0;"><i class="fa fa-refresh"></i> Ø§Ø¹Ø§Ø¯Ø© Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©</a>
 
             </div>
 
@@ -55,7 +55,7 @@
             <td>
                 <button type="button" class="btn btn-lg btn-primary hvr-box-shadow-outset" onclick="canceldialog();">
                     <i class="fa fa-close"></i>
-                    ÅÛáÇŞ
+                    Ø§ØºÙ„Ø§Ù‚
                 </button>
 
 

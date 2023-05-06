@@ -7,12 +7,12 @@ namespace Passengers.ViewModel
 {
     public class CarsAndProcedsVM
     {
-        public string carnb { get; set; }
+        public long? carnb { get; set; }
         public string tabnu { get; set; }
         public string kind { get; set; }
         public string reg { get; set; }
         public string carcity { get; set; }
-        public string CARPROCEDNB { get; set; }
+        public long? CARPROCEDNB { get; set; }
         public string PROCEDNAME { get; set; }
 
         public DateTime PROCEDDATE { get; set; }

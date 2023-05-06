@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 using System.Configuration;
 using System.Net;
 using System.Text;
-
+using Rotativa;
 
 namespace Passengers.Controllers
 {
@@ -712,6 +712,9 @@ namespace Passengers.Controllers
             ViewBag.SessionNo = ses.SESNO;
             ViewBag.SessionDate = temp;
             ViewBag.SessionStatus = ses.TRSTATUS.NAME;
+           
+            ViewBag.SessionCity = db.ZCITYS.Find(ses.SESCITYNB).NAME; 
+
             //var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + ID;
             // var data = db.Database.SqlQuery<TRSESSIONS_MEMBERS_PRESENT>("select * from TRSESSIONS_MEMBERS_PRESENT where SESSIONNB =" + ID).ToList();
             var data = db.TRSESSIONS_MEMBERS_PRESENT.Where(x => x.SESSIONNB == ID && x.ISPRESENT == 1).OrderBy(x => x.ORDR);
@@ -740,6 +743,7 @@ namespace Passengers.Controllers
 
                 sigMembers.Add(temp4);
             }
+           
             ViewBag.SessionMemers = Members;
             ViewBag.sigSessionMemers = sigMembers;
 
@@ -758,12 +762,19 @@ namespace Passengers.Controllers
                 ofpro.pro = db.Database.SqlQuery<PROCEDS_Print_ALL>(sql).ToList();
                 ListPROCEDS_Print_ALL.Add(ofpro);
             }
+            var flname = "محضر جلسة " + ses.SESNO + " تاريخ " + temp + ".pdf";
+            ViewBag.IMG = Server.MapPath("~/Content/v2/img/decoration-top.png");
+            return new ViewAsPdf(ListPROCEDS_Print_ALL)
+            {
+                //FileName = flname,
+                CustomSwitches = string.Format("--footer-center \" " +
+          "[page] / [toPage]\"" +
+          " --footer-line --footer-font-size \"8\" --page-offset 0 --footer-spacing 1 --footer-font-name \"Segoe UI\""),
+                PageOrientation = Rotativa.Options.Orientation.Landscape,
+                //CustomSwitches = "--page-offset 0 --footer-center [page] / [toPage] --footer-font-size 8"
+            };
 
-
-
-
-
-            return View(ListPROCEDS_Print_ALL);
+           
         }
         public ActionResult GetProcedinfo(long NB, long PRONB)
         {
@@ -783,8 +794,9 @@ namespace Passengers.Controllers
             else if (PRONB == 2001)
             {
                 var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
-                var data = db.Database.SqlQuery<string>("select NAME from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
-                ViewBag.LineName = data;
+                var data = db.Database.SqlQuery<PROCED_LINES>("select * from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.LineName = data.NAME;
+                ViewBag.LinePath = data.LINEPATH;
                 ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
                 ViewBag.ProcedNb = PRONB;
                 ViewBag.LineCity = db.Database.SqlQuery<string>("select zc.name from PROCED_LINES pl join PROCED_LINES_CITY pc on pc.PROCEDLINENB = pl.nb join zcitys zc on zc.nb = pc.CITYNB where pl.CARPROCEDNB =  " + pro).ToList();
@@ -810,8 +822,11 @@ namespace Passengers.Controllers
                 var pro = db.Database.SqlQuery<long>("select CARPROCEDNB from TRSESSIONS_PROCEDS where CARPROCEDSTEPNB = " + NB).FirstOrDefault();
                 var LINENB = db.Database.SqlQuery<long>("select LINENB from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
                 ViewBag.LineName = db.Database.SqlQuery<TRLINE>("select * from TRLINES where nb = " + LINENB).ToList();
-                ViewBag.LineNew = db.Database.SqlQuery<string>("select NAME from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
-                ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
+             
+              var data =      db.Database.SqlQuery<PROCED_LINES>("select * from PROCED_LINES where CARPROCEDNB = " + pro).FirstOrDefault();
+                ViewBag.LineNew = data.NAME;
+                ViewBag.LineNewPath = data.LINEPATH;
+             ViewBag.ProcedName = db.ZPROCEDTYPS.Find(PRONB).NAME;
                 ViewBag.ProcedNb = PRONB;
                 ViewBag.LineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM TRLINES  pl JOIN TRLINE_CITY pc ON pc.LINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.NB = " + LINENB).ToList();
                 ViewBag.NEWLineCity = db.Database.SqlQuery<string>("SELECT zc.name FROM PROCED_LINES  pl JOIN PROCED_LINES_CITY pc ON pc.PROCEDLINENB  = pl.nb JOIN zcitys zc ON zc.nb = pc.CITYNB WHERE pl.CARPROCEDNB = " + pro).ToList();
@@ -1023,7 +1038,7 @@ namespace Passengers.Controllers
                                 + " AND CPS.CITYNB = " + ssess.SESCITYNB + " "
                                 + " AND CPS.DONE = 3"
                                 + " AND(CA.REG != 1 or CA.REG is null) "
-                                + " AND CA.CARREG != 6 ";
+                                + " AND (CA.CARREG != 6 OR CA.REG IS NULL)";
                         var pro_count_notin_ses = db.Database.SqlQuery<int>(sss).FirstOrDefault();
                         if (pro_count_in_ses != pro_count_notin_ses)
                         {

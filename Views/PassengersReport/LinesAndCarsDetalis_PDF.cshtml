@@ -28,8 +28,10 @@
     <table cellpadding="8" cellspacing="0" class="table" DIR="auto">
         <thead>
             <tr>
+                <th style="border: 1px solid; width: auto;">م</th>
                 <th style="border: 1px solid; width: auto;">محافظة الخط</th>
                 <th style="border: 1px solid; width: auto;">اسم الخط</th>
+                <th style="border: 1px solid; width: auto;">رمز الخط</th>
                 <th style="border: 1px solid; width: auto;">نوع الخط</th>
                 <th style="border: 1px solid; width: auto;">حالة الخط</th>
                 <th style="border: 1px solid; width: auto;">رمز المركبة</th>
@@ -37,31 +39,24 @@
                 <th style="border: 1px solid; width: auto;">محافظة المركبة</th>
                 <th style="border: 1px solid; width: auto;">نوع المركبة</th>
                 <th style="border: 1px solid; width: auto;">فئة المركبة</th>
-
-
-
-
-
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
             <tr>
+                
+                <td style="width: auto; border: 1px solid">@item.row_num</td>
                 <td style="width: auto; border: 1px solid">@item.CityName</td>
                 <td style="width: auto; border: 1px solid">@item.trname</td>
+                <td style="width: auto; border: 1px solid">@item.TRNB</td>
                 <td style="width: auto; border: 1px solid">@item.TYPS</td>
                 <td style="width: auto; border: 1px solid">@item.STATUS</td>
                 <td style="width: auto; border: 1px solid">@item.carnb</td>
                 <td style="width: auto; border: 1px solid">@item.tabnu</td>
                 <td style="width: auto; border: 1px solid">@item.carcity</td>
-
                 <td style="width: auto; border: 1px solid">@item.kind</td>
                 <td style="width: auto; border: 1px solid">@item.reg</td>
-
-
-
-
             </tr>
             }
         </tbody>

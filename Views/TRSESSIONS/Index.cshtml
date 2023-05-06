@@ -135,13 +135,16 @@
                 {
                     //command.Custom("Preview").Click("Preview").Text(" ");
                     command.Custom("Edit").Click("Edit").Text(" ");
+                    command.Custom("").Click("").Text("|");
                     //  command.Custom("Delete").Click("Delete").Text(" ");
                     command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
+                    command.Custom("").Click("").Text("|");
                     command.Custom("Details2").Click("Details2").Text(" ");
+                    command.Custom("").Click("").Text("|");
                     command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
                 }).Width(180);
             })
-            .HtmlAttributes(new { style = "height: 550px !important;" })
+            .HtmlAttributes(new { style = "height: 500px !important;" })
             .Scrollable()
             .Sortable()
             //.Filterable()
@@ -253,7 +256,7 @@
         return fillter;
     }
     function Btn_Search() {
-        $("#grid").data("kendoGrid").dataSource.read();
+        $("#grid").data("kendoGrid").dataSource.page([1]);
     }
 
     function rest_filtters() {
@@ -290,15 +293,31 @@
         else
             $("#" + Id).data("kendoWindow").center().open().maximize();
     }
+
     $("#AddNew").click(function () {
-        var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
-        $("#AddSesDate").data("kendoDatePicker").value(todayDate);
-       var pagewidth = document.body.offsetWidth;
-        $('#AddSesNo').val("");
-      //  $('#AddSesDate').val("");
-        $("#AddSesCity").data("kendoDropDownList").value(1)
-        $("#Add_Session span.k-tooltip-validation").hide();
-        openWindow('AddSession');
+
+
+
+        $.when(HtmlPageCanDoIt("TRSESSIONS", "Create", "")).done(function (s1) {
+            if (s1 == "False") {
+
+
+            }
+            else {
+                var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
+                $("#AddSesDate").data("kendoDatePicker").value(todayDate);
+                var pagewidth = document.body.offsetWidth;
+                $('#AddSesNo').val("");
+                //  $('#AddSesDate').val("");
+                $("#AddSesCity").data("kendoDropDownList").value(1)
+                $("#Add_Session span.k-tooltip-validation").hide();
+                openWindow('AddSession');
+            }
+
+        });
+
+
+
     });
 
 
@@ -307,18 +326,32 @@
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         var id = item.NB;
+        $.when(HtmlPageCanDoIt("TRSESSIONS", "EditSession", "")).done(function (s1) {
 
-        if (item.STATUS == 1) {
-            $('#SesNb').val(item.NB);
-            $('#EditSesNo').val(item.SESNO);
-            $("#EditSesDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.SESDATE });
-            //$("#EditSesCity").data("kendoDropDownList").value(item.SESCITYNB);
-            var wnd = $("#EditSession").data("kendoWindow");
-            wnd.center().open();
-        }
-        else {
-            toastr.error("لا يمكن تعديل الجلسة لانها ليست قعالة");
-        }
+            if (s1 == "False") {
+
+
+            }
+            else {
+
+
+                if (item.STATUS == 1) {
+                    $('#SesNb').val(item.NB);
+                    $('#EditSesNo').val(item.SESNO);
+                    $("#EditSesDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.SESDATE });
+                    //$("#EditSesCity").data("kendoDropDownList").value(item.SESCITYNB);
+                    var wnd = $("#EditSession").data("kendoWindow");
+                    wnd.center().open();
+                }
+                else {
+                    toastr.error("لا يمكن تعديل الجلسة لانها ليست فعالة");
+                }
+            }
+
+        });
+
+
+
 
     }
     function DeleteARCHIVED(e) {
@@ -326,27 +359,41 @@
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         var id = item.NB;
-        if (item.IS_ARCHIVED == false)
-        {
-            toastr.error("لا يوجد ارشفة للجلسة");
-        } else
-        {
-            $('#DeleteArcSesNb').val(item.NB);
-            $("#DeleteArc").data("kendoWindow").center().open();
-        }
-        
+
+
+        $.when(HtmlPageCanDoIt("TRSESSIONS", "DeleteDocument", "")).done(function (s1) {
+
+            if (s1 == "False") {
+
+
+            }
+            else {
+
+                if (item.IS_ARCHIVED == false) {
+                    toastr.error("لا يوجد ارشفة للجلسة");
+                } else {
+                    $('#DeleteArcSesNb').val(item.NB);
+                    $("#DeleteArc").data("kendoWindow").center().open();
+                }
+            }
+
+        });
+
+
+
+
     }
 
     function DeleteArcSession() {
-       
+
         var delarcses = $('#DeleteArcSesNb').val();
-      
+
         $("#DeleteArc").data("kendoWindow").center().close();
          $.ajax({
             url: '@Url.Action("DeleteDocument", "TRSESSIONS")',
-            
+
              data: { sesnb: delarcses},
-            
+
             success: function (response) {
                 if (response.success == true) {
                     toastr.success(response.responseText);
@@ -360,7 +407,7 @@
             }
          });
     }
-    
+
     function DetailsMembers(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
@@ -373,7 +420,20 @@
     function Details2(e) {
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
-        window.open("@Url.Action("TRSESSIONSPROCEDS", "TRSESSIONS")" + "?id=" + item.NB , "_blank");
+
+        $.when(HtmlPageCanDoIt("TRSESSIONS", "TRSESSIONSPROCEDS", "")).done(function (s1) {
+
+            if (s1 == "False") {
+
+
+            }
+            else {
+
+             window.open("@Url.Action("TRSESSIONSPROCEDS", "TRSESSIONS")" + "?id=" + item.NB, "_blank");
+            }
+
+        });
+
     }
 
 

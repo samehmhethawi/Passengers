@@ -133,7 +133,7 @@
                 columns.Bound(c => c.CoutnCar).Title("عدد المركبات").Width(150).Visible(false);
                 columns.Template(@<text></text>).ClientTemplate("#=resColTemplate(data)#").Title("النتيجة");
             })
-            .HtmlAttributes(new { style = "height: 550px !important;" })
+            .HtmlAttributes(new { style = "height: 500px !important;" })
             .Scrollable()
             .Sortable()
             //.ClientDetailTemplateId("template")
@@ -296,7 +296,8 @@
     function Btn_Search()
     {
       
-        $("#grid").data("kendoGrid").dataSource.read();
+       // $("#grid").data("kendoGrid").dataSource.read();
+        $("#grid").data("kendoGrid").dataSource.page([1]);
     }
 
 

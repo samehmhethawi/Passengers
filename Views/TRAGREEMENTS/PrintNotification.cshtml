@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Proced.DataAccess.Models.CF.TRAGREEMENTS>
+﻿
 @{
     Layout = null;
 }
@@ -16,7 +16,24 @@
     <link href="~/Content/toastr.min.css" rel="stylesheet" />
     <script src="~/Scripts/toastr.min.js"></script>
 </head>
+2
+
 <body style="margin-top:0px !important;">
+    <script>
+        $(function () {
+            window.focus();
+            window.print();
+
+            try {
+                setTimeout(function () {
+                    window.close();
+                }, 2000);
+            } catch (e) {
+            }
+        });
+
+
+    </script>
 
     @if (ViewBag.agrtyp == 2023)
     {
@@ -31,19 +48,17 @@
                         <p>رقم ?????????</p>
 
                     </td>
-                    
+
                     <td width="50%">
                         <p>
                             @Html.Action("PrintCarQrCode", "Home", new { area = "", carNb = ViewBag.CarNb, carProcedNb = ViewBag.CarProcedNb })
 
                         </p>
-                    
+
                     </td>
                 </tr>
                 <tr>
                     <td width="50%">
-                        
-
                     </td>
                     <td width="50%" style="text-align:center !important;">
                         <p>
@@ -144,7 +159,7 @@
                         </p>
 
                     </td>
-                   
+
                 </tr>
 
             </table>
@@ -284,7 +299,7 @@
     {
         <div>
             <table width="100%" style="padding:25px">
-              
+
                 <tr>
                     <td width="50%">
                         <p>الجمهورية العربية السورية</p>
@@ -702,7 +717,7 @@
 
 
 
-    @if (ViewBag.agrtyp == 2020 )
+    @if (ViewBag.agrtyp == 2020)
     {
         <div>
             <table width="100%" style="padding:25px">

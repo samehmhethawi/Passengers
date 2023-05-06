@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "تغيرات الخوطو على مركبة";
+    ViewBag.Title = "تغيرات الخطوط على مركبة";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -103,7 +103,7 @@
                 columns.Bound(c => c.LINE_TYPE).Title("نوع الخط").Visible(false);
                 columns.Bound(c => c.UDATE).Format("{0:dd/MM/yyyy}").Title("تاريخ التغير").Width(110);
             })
-            .HtmlAttributes(new { style = "height: 550px !important;" })
+            .HtmlAttributes(new { style = "height: 500px !important;" })
             .Scrollable()
             .Sortable()
             //.Filterable()
@@ -182,7 +182,8 @@
     }
     function Btn_Search()
     {
-        $("#grid").data("kendoGrid").dataSource.read();
+      //  $("#grid").data("kendoGrid").dataSource.read();
+        $("#grid").data("kendoGrid").dataSource.page([1]);
     }
 
     function rest_filtters()
@@ -207,15 +208,13 @@
 
 
 
-        window.open("SessionsAndProceds_PDF?pNB=" + fill.NB
-            + "&psNB=" + fill.sNB
-            + "&psNO=" + fill.sNO
-            + "&psDATESTART=" + fill.sDATESTART
-            + "&psDATEEND=" + fill.sDATEEND
-            + "&psSTATUS=" + fill.sSTATUS
-            + "&SPstatus=" + fill.SPstatus
-            + "&SProcedtyps=" + fill.SProcedtyps
-            + "&pCOMCITYNB=" + fill.COMCITYNB, "_blank"
+        window.open("TRCHANGECARLINES_PDF?pCarnb=" + fill.Carnb
+            + "&pStabNO=" + fill.StabNO
+            + "&pSComDateStart=" + fill.SComDateStart
+            + "&pSComDateEnd=" + fill.SComDateEnd
+            + "&pScarCity=" + fill.ScarCity
+            + "&pSTrline=" + fill.STrline
+            , "_blank"
         );
     }
     function ExportToExcel()

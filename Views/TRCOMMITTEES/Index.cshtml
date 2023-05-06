@@ -43,7 +43,8 @@
 
 
     function Btn_Search() {
-        $("#grid").data("kendoGrid").dataSource.read();
+        $("#grid").data("kendoGrid").dataSource.page([1]);
+        //$("#grid").data("kendoGrid").dataSource.read();
        
     }
 
@@ -53,8 +54,10 @@
         $('#SComDateEnd').val("");
         $("#SComStatus").data("kendoDropDownList").value(-1);
         $("#SComCity").data("kendoDropDownList").value(-1);
-        $("#grid").data("kendoGrid").dataSource.data([]);
         $("#grid").data("kendoGrid").dataSource.page([1]);
+        $("#grid").data("kendoGrid").dataSource.data([]);
+       // $("#grid").data("kendoGrid").dataSource.page([1]);
+      
     }
 </script>
 @section PartialHeader{
@@ -164,13 +167,15 @@
                 {
                     //command.Custom("Preview").Click("Preview").Text(" ");
                     command.Custom("Edit").Click("Edit").Text(" ");
+                    command.Custom("").Click("").Text("|");
                     //command.Custom("Delete").Click("Delete").Text(" ");
                     command.Custom("Details").Click("Details").Text(" ");
+                    command.Custom("").Click("").Text("|");
                     // command.Custom("Finish").Click("Finish").Text(" ");
                     command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
                 }).Width(180);
             })
-            .HtmlAttributes(new { style = "height: 550px !important;" })
+            .HtmlAttributes(new { style = "height: 500px !important;" })
 
             //.HtmlAttributes(new { style = "height: aotu  !important;" })
             .Scrollable()
@@ -179,7 +184,7 @@
             .DataSource(dataSource => dataSource
             .Ajax()
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
-            .PageSize(15)
+            .PageSize(8)
             .Model(model => model.Id(p => p.NB))
             .Read(read => read.Action("Read", "TRCOMMITTEES").Data("GetFillters")))
             .Resizable(resize => resize
@@ -265,15 +270,29 @@
 <script>
 
     $("#AddNew").click(function () {
-        var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
-        $("#AddComDate").data("kendoDatePicker").value(todayDate);
-        $('#AddComNo').val("");
-        // $('#AddComDate').val("");
-        $("#AddComCity").data("kendoDropDownList").value(1)
-        $("#Add_comm span.k-tooltip-validation").hide();
 
-        var wnd = $("#AddCOMMITTEE").data("kendoWindow");
-        wnd.center().open();
+        $.when(HtmlPageCanDoIt("TRCOMMITTEES", "Create", "")).done(function (s1) {
+
+            if (s1 == "False") {
+
+
+            }
+            else {
+
+             var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
+            $("#AddComDate").data("kendoDatePicker").value(todayDate);
+            $('#AddComNo').val("");
+            // $('#AddComDate').val("");
+            $("#AddComCity").data("kendoDropDownList").value(1)
+            $("#Add_comm span.k-tooltip-validation").hide();
+
+            var wnd = $("#AddCOMMITTEE").data("kendoWindow");
+            wnd.center().open();
+            }
+
+        });
+
+
     });
 
 
@@ -282,16 +301,30 @@
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         var id = item.NB;
-        $('#ComNb').val(item.NB);
-        $('#EditComNo').val(item.COMNO);
-        $("#EditComDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.COMDATE });
-        $("#EditComCity").data("kendoDropDownList").value(item.COMCITYNB);
-        $("#EditComStatus").data("kendoDropDownList").value(item.STATUS);
+
+        $.when(HtmlPageCanDoIt("TRCOMMITTEES", "Update", "")).done(function (s1) {
+
+            if (s1 == "False") {
+
+
+            }
+            else {
+
+                $('#ComNb').val(item.NB);
+                $('#EditComNo').val(item.COMNO);
+                $("#EditComDate").kendoDatePicker({ format: "dd/MM/yyyy", value: item.COMDATE });
+                $("#EditComCity").data("kendoDropDownList").value(item.COMCITYNB);
+                $("#EditComStatus").data("kendoDropDownList").value(item.STATUS);
 
 
 
-        var wnd = $("#EditCOMMITTEE").data("kendoWindow");
-        wnd.center().open();
+                var wnd = $("#EditCOMMITTEE").data("kendoWindow");
+                wnd.center().open();
+            }
+
+        });
+
+       
 
     }
 
@@ -301,26 +334,41 @@
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         iid = item.NB;
-        $('#OwnerNB').val("");
-        $("#Detailsgrid").data("kendoGrid").dataSource.read();
-        $('#ComMebmerNb').val(item.NB);
-        $("#DocumentsFiles").val("");
-        $('#Comstatus').val(item.STATUS);
-        var isarc = item.IS_ARCHIVED;
 
-        if (isarc == true) {
-            $(".IS_ARC").css("display", "none");
-            $(".ISNO_ARC").css("display", "block");
+        $.when(HtmlPageCanDoIt("TRCOMMITTEES", "Read_MEMBERS", "")).done(function (s1) {
 
-        }
-        if (isarc == false) {
-            $(".IS_ARC").css("display", "block");
-            $(".ISNO_ARC").css("display", "none");
-        }
+            if (s1 == "False") {
 
 
-        var wnd = $("#DetailsCOMMITTEE").data("kendoWindow");
-        wnd.center().open();
+            }
+            else {
+                $('#OwnerNB').val("");
+                $("#Detailsgrid").data("kendoGrid").dataSource.read();
+                $('#ComMebmerNb').val(item.NB);
+                $("#DocumentsFiles").val("");
+                $('#Comstatus').val(item.STATUS);
+                var isarc = item.IS_ARCHIVED;
+
+                if (isarc == true) {
+                    $(".IS_ARC").css("display", "none");
+                    $(".ISNO_ARC").css("display", "block");
+
+                }
+                if (isarc == false) {
+                    $(".IS_ARC").css("display", "block");
+                    $(".ISNO_ARC").css("display", "none");
+                }
+
+
+                var wnd = $("#DetailsCOMMITTEE").data("kendoWindow");
+                wnd.center().open();
+            }
+
+        });
+
+
+
+       
     }
 
 
@@ -411,12 +459,25 @@
         var tr = $(e.target).closest("tr");    // get the current table row (tr)
         var item = this.dataItem(tr);          // get the date of this row
         var id = item.NB;
-        if (item.IS_ARCHIVED == false) {
-            toastr.error("لا يوجد ارشفة ");
-        } else {
-            $('#DeleteArcSesNb').val(item.NB);
-            $("#DeleteArc").data("kendoWindow").center().open();
-        }
+
+        $.when(HtmlPageCanDoIt("TRCOMMITTEES", "DeleteDocument", "")).done(function (s1) {
+
+            if (s1 == "False") {
+
+
+            }
+            else {
+                if (item.IS_ARCHIVED == false) {
+                    toastr.error("لا يوجد ارشفة ");
+                } else {
+                    $('#DeleteArcSesNb').val(item.NB);
+                    $("#DeleteArc").data("kendoWindow").center().open();
+                }
+            }
+
+        });
+
+       
 
     }
 

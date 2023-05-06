@@ -45,11 +45,11 @@ namespace Passengers.ViewModel
 
 
         [Display(Name = "رمز الجلسة")]
-        public string SESSIONNB { get; set; }
+        public long? SESSIONNB { get; set; }
 
 
         [Display(Name = "رمز نوع المعاملة")]
-        public string PROCEDNB { get; set; }
+        public long? PROCEDNB { get; set; }
 
 
         [Display(Name = "اسم المعاملة")]
@@ -108,7 +108,7 @@ namespace Passengers.ViewModel
 
 
         [Display(Name = "سنة الصنع")]
-        public string FACTYY { get; set; }
+        public long? FACTYY { get; set; }
 
 
         [Display(Name = "نوع الوقود")]
@@ -140,11 +140,11 @@ namespace Passengers.ViewModel
 
 
         [Display(Name = "عدد مركبات الخط")]
-        public string COUNTCARLINE1 { get; set; }
+        public long? COUNTCARLINE1 { get; set; }
 
 
         [Display(Name = "عدد مركبات الخط")]
-        public string COUNTCARLINE2 { get; set; }
+        public long? COUNTCARLINE2 { get; set; }
 
 
 

@@ -61,6 +61,8 @@ namespace Passengers.Controllers
             var StrlineStatus = Request.Form["StrlineStatus"].Trim();
             var StrlineCANCELD = Request.Form["StrlineCANCELD"].Trim();
             var STrnb = Request.Form["STrnb"].Trim();
+            
+            var STrlinepath = Request.Form["STrlinepath"].Trim();
 
 
             if (STrnb != "")
@@ -71,6 +73,11 @@ namespace Passengers.Controllers
             if (STrline != "") 
             {
                 sql += " and name like '" + STrline + "'";
+            }
+
+            if (STrlinepath != "")
+            {
+                sql += " and LINEPATH like '" + STrlinepath + "'";
             }
             if (StrlineStatus != "")
             {
@@ -110,6 +117,8 @@ namespace Passengers.Controllers
                 MINCARS = commm.MINCARS,
                 MAXCARS = commm.MAXCARS,
                 SESNB = commm.SESNB,
+                LINEPATH = commm.LINEPATH,
+
                 Seq = (request.Page - 1) * request.PageSize + (++index)
             });
             return Json(result);
@@ -277,7 +286,7 @@ namespace Passengers.Controllers
             }
         }
 
-        public ActionResult update(long? Nb, string Name, int? city, int? typ, long? min, long? max,int? STATUS, int? ISCANCELD)
+        public ActionResult update(long? Nb, string Name, int? city, int? typ, long? min, long? max,int? STATUS, int? ISCANCELD ,string eLINEPATH)
         {
             try
             {
@@ -297,6 +306,12 @@ namespace Passengers.Controllers
                 {
                     return Json(new { success = false, responseText = "الاسم فارغ" });
                 }
+                if (eLINEPATH == "")
+                {
+                    return Json(new { success = false, responseText = "المسار فارغ" });
+                }
+                
+             
                 if (!city.HasValue)
                 {
                     return Json(new { success = false, responseText = "يجب تحديد محافظة الخط" });
@@ -323,6 +338,13 @@ namespace Passengers.Controllers
                 {
                     data.NAME = Name;
                 }
+
+                if (data.LINEPATH != eLINEPATH)
+                {
+                    data.LINEPATH = eLINEPATH;
+                }
+
+                
                 if (data.CITYNB != city)
                 {
                     data.CITYNB = city;

@@ -167,11 +167,13 @@
                 columns.Command(command =>
                 {
                     //command.Custom("Preview").Click("Preview").Text(" ");
-                      command.Custom("Edit").Click("Edit").Text(" ");
+                    command.Custom("Edit").Click("Edit").Text(" ");
+                    command.Custom("").Click("").Text("|");
                     //  command.Custom("Delete").Click("Delete").Text(" ");
                     //    command.Custom("DetailsMembers").Click("DetailsMembers").Text(" ");
                     //  command.Custom("Details2").Click("Details2").Text(" ");
                     command.Custom("SHOWCONFIRM").Click("SHOWCONFIRM").Text(" ");
+                    command.Custom("").Click("").Text("|");
                     command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
                 }).Width(150);
                 columns.Template(t => { }).Title("م.").ClientTemplate(
@@ -201,11 +203,11 @@
 
 
             })
-                        .HtmlAttributes(new { style = "height: 550px !important;" })
+                        .HtmlAttributes(new { style = "height: 500px !important;" })
 
             .Scrollable()
-            .Sortable()
-            .Filterable()
+            //.Sortable()
+            //.Filterable()
             .DataSource(dataSource => dataSource
             .Ajax()
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
@@ -251,7 +253,7 @@
 
 <script>
     function Btn_Search() {
-        $("#grid").data("kendoGrid").dataSource.read();
+        $("#grid").data("kendoGrid").dataSource.page([1]);
     }
     function GetFillters() {
         var fillter = {};

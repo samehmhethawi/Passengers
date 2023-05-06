@@ -176,7 +176,7 @@
                 //   // command.Custom("Finish").Click("Finish").Text(" ");
                 //}).Width(180);
             })
-            .HtmlAttributes(new { style = "height: 550px !important;" })
+            .HtmlAttributes(new { style = "height: 500px !important;" })
             .Scrollable()
             .Sortable()
             //.Filterable()
@@ -261,8 +261,8 @@
 
 
     function Btn_Search() {
-        $("#grid").data("kendoGrid").dataSource.read();
-
+     //   $("#grid").data("kendoGrid").dataSource.read();
+        $("#grid").data("kendoGrid").dataSource.page([1]);
     }
 
     function rest_filtters() {

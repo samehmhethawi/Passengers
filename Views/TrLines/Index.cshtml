@@ -22,12 +22,15 @@
 
                 </div>
             </div>
-
-            <div class="row">
+            <div class="row" style="padding-bottom:10px">
                 <div class="col-lg-1 col-md-2">
-                    <label for="template_name"> المحافظة</label>
+                    <label for="template_name"> المسار</label>
+                    <label>(<i id="namepercentpath" class="fa fa-percent"></i>)</label>
                 </div>
-                <div class="col-lg-2 col-md-4">
+                <div class="col-lg-8 col-md-8">
+                    @Html.Kendo().TextBox().Name("STrlinepath").HtmlAttributes(new { placeholder = " مسار الخط" })
+                </div>
+                <div class="col-lg-2 col-md-2">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر محافظة الخط")
                                     .Name("SlineCity")
@@ -43,6 +46,9 @@
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
                                     )
                 </div>
+            </div>
+            <div class="row">
+               
                 <div class="col-lg-1 col-md-2">
                     <label for="template_name"> هل متاح</label>
                 </div>
@@ -90,10 +96,10 @@
 
                 </div>
 
-             
 
 
-               
+
+
                 <div class="col-lg-2 col-md-4">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
 
@@ -133,6 +139,9 @@
           columns.Bound(c => c.NB).Title("رمز الخط").Width(150);
 
           columns.Bound(c => c.NAME).Title("اسم خط السير").Width(500);
+          columns.Bound(c => c.LINEPATH).Title("مسار الخط").Width(500);
+
+          
           columns.ForeignKey(c => c.TYP, (System.Collections.IEnumerable)ViewData["ZTRLINETYPES"], "ID", "NAME").Title("النوع").Width(150);
           //columns.Bound(c => c.TYP).Title("نوع خط السير");
           columns.Bound(c => c.CITYNB).Title("المحافظة").Visible(false);
@@ -151,23 +160,23 @@
   {
       toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
   })
-            .HtmlAttributes(new { style = "height: 550px !important;" })
+            .HtmlAttributes(new { style = "height: 450px !important;" })
 
-.ColumnMenu(c =>
-c.Messages(m =>
-     m.Columns(HelperLib.ControlLabelsAR.KendoGridColumns)
-     .Done(HelperLib.ControlLabelsAR.Done)
-     .Filter(HelperLib.ControlLabelsAR.Filter)
-     .SortAscending(HelperLib.ControlLabelsAR.SortAscending)
-     .SortDescending(HelperLib.ControlLabelsAR.SortDescending)
- )
-)
-.Editable(editable => editable.Mode(GridEditMode.PopUp).Window(w => w.Width(450).Title("إضافة/تعديل")).TemplateName("ZCarRegsTemplate").DisplayDeleteConfirmation("هل أنت متأكد من الحذف")
-         .Window(w => w.Draggable()
-                     .Modal(true)
+//.ColumnMenu(c =>
+//c.Messages(m =>
+//     m.Columns(HelperLib.ControlLabelsAR.KendoGridColumns)
+//     .Done(HelperLib.ControlLabelsAR.Done)
+//     .Filter(HelperLib.ControlLabelsAR.Filter)
+//     .SortAscending(HelperLib.ControlLabelsAR.SortAscending)
+//     .SortDescending(HelperLib.ControlLabelsAR.SortDescending)
+// )
+//)
+//.Editable(editable => editable.Mode(GridEditMode.PopUp).Window(w => w.Width(450).Title("إضافة/تعديل")).TemplateName("ZCarRegsTemplate").DisplayDeleteConfirmation("هل أنت متأكد من الحذف")
+//         .Window(w => w.Draggable()
+//                     .Modal(true)
 
-                     .Resizable()
-                     ))
+//                     .Resizable()
+//                     ))
 .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
            .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
            .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
@@ -192,12 +201,12 @@ c.Messages(m =>
 //    selectable.Mode(GridSelectionMode.Single);
 //    selectable.Type(GridSelectionType.Row);
 //})
-.Sortable(sortable =>
-{
-    sortable.SortMode(GridSortMode.SingleColumn);
-})
+//.Sortable(sortable =>
+//{
+//    sortable.SortMode(GridSortMode.SingleColumn);
+//})
 //arabic to here
-.Filterable()
+//.Filterable()
 .Scrollable()
 .DataSource(dataSource => dataSource
 .Ajax()
@@ -389,7 +398,7 @@ c.Messages(m =>
                 //    command.Custom("Delete").Click("Deletecity").Text(" ");
                 //}).Width(100);
             })
-            .HtmlAttributes(new { style = "height: aotu  !important;" })
+            .HtmlAttributes(new { style = "height: auto  !important;" })
             .Scrollable()
             .Sortable()
             .Filterable()
@@ -513,7 +522,14 @@ c.Messages(m =>
                                 @Html.Kendo().TextBox().Name("ETrline").HtmlAttributes(new { placeholder = " اسم الخط" })
                             </div>
                     </div>
-
+                     <div class="row" style="padding-bottom:10px">
+                            <div class="col-md-1">
+                                <label for="template_name"> المسار</label>
+                            </div>
+                            <div class="col-md-9">
+                                @Html.Kendo().TextBox().Name("ETrlinepath").HtmlAttributes(new { placeholder = " مسار الخط" })
+                            </div>
+                    </div>
                     <div class="row" style="padding-bottom:10px">
                             <div class="col-md-1">
                                 <label for="template_name"> المحافظة</label>
@@ -642,7 +658,7 @@ c.Messages(m =>
             .Draggable(true)
             .Resizable()
             .Width(800)
-            .Height(350)
+            .Height(450)
             .Pinned()
             .HtmlAttributes(new { style = "Width: 100%  !important;" })
             )
@@ -672,6 +688,7 @@ c.Messages(m =>
         fillter.StrlineStatus = $('#StrlineStatus').val();
         fillter.StrlineCANCELD = $('#StrlineCANCELD').val();
         fillter.STrnb = $('#STrnb').val();
+        fillter.STrlinepath = $('#STrlinepath').val();
 
         
         return fillter;
@@ -679,15 +696,18 @@ c.Messages(m =>
 
     function Btn_Search() {
         $("#grid").data("kendoGrid").dataSource.page([1]);
-        $("#grid").data("kendoGrid").dataSource.read();
+  
     }
     function rest_filtters() {
         $('#STrline').val("");
+        $('#STrlinepath').val("");
+
+        
         $("#StrlineCANCELD").data("kendoDropDownList").value(-1);
         $("#SlineCity").data("kendoDropDownList").value(-1);
         $("#StrlineStatus").data("kendoDropDownList").value(-1);
         $("#STrnb").data("kendoNumericTextBox").value("");
-        $("#grid").data("kendoGrid").dataSource.page([1]);
+        //$("#grid").data("kendoGrid").dataSource.page([1]);
         $("#grid").data("kendoGrid").dataSource.data([]);
     }
 
@@ -713,7 +733,11 @@ c.Messages(m =>
         $('#STrline').val("%" + perbane +"%");
     });
 
+    $("#namepercentpath").click(function () {
 
+        var perbanepath = $('#STrlinepath').val();
+        $('#STrlinepath').val("%" + perbanepath + "%");
+    });
     function SaveAdd() {
 
         var validator = $("#Add_TRline").kendoValidator().data("kendoValidator");
@@ -858,6 +882,9 @@ var name = $('#addTrline').val();
         $("#Elinetyp").data("kendoDropDownList").value(item.TYP);
         $("#EtrlineMINCARS").data("kendoNumericTextBox").value(item.MINCARS);
         $("#EtrlinemaxCARS").data("kendoNumericTextBox").value(item.MAXCARS);
+        $('#ETrlinepath').val(item.LINEPATH);
+
+        
         if (item.STATUS == true) {
 
             $("#EtrlineStatus").data("kendoDropDownList").value(1);
@@ -884,10 +911,13 @@ var name = $('#addTrline').val();
         var eMax = $("#EtrlinemaxCARS").val();
         var eSTATUS = $("#EtrlineStatus").val();
         var eISCANCELD = $("#EtrlineCANCELD").val();
+        var eETrlinepath = $("#ETrlinepath").val();
+
+        
         kendo.ui.progress(windowWidget.element, true);
         $.ajax({
             type: "POST",
-            data: { Nb: enb, Name: ename, city: eCity, typ: eTyp, min: eMin, max: eMax, STATUS: eSTATUS, ISCANCELD: eISCANCELD},
+            data: { Nb: enb, Name: ename, city: eCity, typ: eTyp, min: eMin, max: eMax, STATUS: eSTATUS, ISCANCELD: eISCANCELD, eLINEPATH : eETrlinepath},
                 url: "@Url.Action("update", "TrLines")",
                 success: function (response) {
                     if (response.success) {

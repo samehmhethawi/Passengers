@@ -169,7 +169,9 @@ namespace Passengers
         }
         public static bool IsAdmin()
         {
-            return Utility.IsAdminUser();
+            var ss = Utility.MyNB();
+            return Utility.IsAdmin((int)ss);
+
         }
         public static string MyName()
         {

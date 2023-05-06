@@ -10,6 +10,7 @@ namespace Passengers.ViewModel
         public long rr { get; set; }
         public string CityName { get; set; }      
         public string LINENAME { get; set; }
+        public long? TRNB { get; set; }
         public string TPYS { get; set; }
         public string STATUS { get; set; }
         public string ISCANCELD { get; set; }

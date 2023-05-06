@@ -129,6 +129,7 @@ namespace Passengers.Controllers
                 {
                     model.IUSER = Utility.MyName();
                     model.IDATE = DateTime.Now;
+                    model.IS_ARCHIVED = false;
                     db.TRCOMMITTEES.Add(model);
                     db.SaveChanges();
                     return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);

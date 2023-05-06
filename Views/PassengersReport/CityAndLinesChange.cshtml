@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "التغيرات التي طرأت على الخط";
+    ViewBag.Title = "المحافظة والتغيرات على خطوطها";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -87,7 +87,7 @@
                 columns.Bound(c => c.PROCEDNB).Title("رمز نوع المعاملة").Visible(false);
                 columns.Bound(c => c.PROCEDNAME).Title("المعاملة").Width(150);
                 columns.Bound(c => c.CITYNB).Title("رمز محافظة المعاملة").Visible(false);
-                 columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("محافظة المعاملة").Width(110);
+                columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("محافظة المعاملة").Width(110);
 
 
 
@@ -99,7 +99,7 @@
                 columns.Bound(c => c.DONE).Title("حالة الخطوة").Visible(false);
                 columns.Bound(c => c.NOTE).Title("ملاحظات").Width(200);
             })
-            .HtmlAttributes(new { style = "height: 550px !important;" })
+            .HtmlAttributes(new { style = "height: 500px !important;" })
             .Scrollable()
             .Sortable()
             //.Filterable()
@@ -180,7 +180,7 @@
 
     function Btn_Search()
     {
-        $("#grid").data("kendoGrid").dataSource.read();
+        $("#grid").data("kendoGrid").dataSource.page([1]);
     }
     function rest_filtters()
     {
@@ -205,11 +205,11 @@
 
 
 
-        window.open("CityAndLines_PDF?pSTrName=" + fill.STrline
-            + "&pStrlineStatus=" + fill.StrlineStatus
-            + "&pStrlineCANCELD=" + fill.StrlineCANCELD
-            + "&pSlinetyps=" + fill.Slinetyps
-            + "&pSlineCity=" + fill.SlineCity
+        window.open("CityAndLinesChange_PDF?plineCity=" + fill.SlineCity
+            + "&pProcedtyps=" + fill.SProcedtyps
+            + "&pSesDateStart=" + fill.SSesDateStart
+            + "&pSesDateEnd=" + fill.SSesDateEnd
+           
             , "_blank"
         );
     }

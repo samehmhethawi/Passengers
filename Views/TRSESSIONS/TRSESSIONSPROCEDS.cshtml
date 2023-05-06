@@ -154,8 +154,8 @@
                                                     </div>
 
                                                     <div class="btn-group">
-                                                        <button type="button" class="btn btn-danger clear-file" style="display: none;"><i class="fa fa-close"></i></button>
-                                                        <button type="button" class="btn btn-primary upload-btn" id="upload-btn22222">
+                                                        <button  type="button" class="btn btn-danger clear-file" style="display: none; font-size:10px;"><i class="fa fa-close"></i></button>
+                                                        <button style="font-size:10px;" type="button" class="btn btn-primary upload-btn" id="upload-btn22222">
                                                             <i class="fa fa-upload"></i> اختيار ملف <span class="selectedFileName" style="color:white"></span>
                                                         </button>
                                                     </div>
@@ -166,7 +166,7 @@
                 اختر ملف . . <i class="fa fa-upload"></i> <input accept=".PDF" id="DocumentsFiles" name="DocumentsFiles" type="file">
             </span>*@
                                          
-                                                <button class="btn btn-primary upload-btn" onclick="setvvv()"> حفظ ورفع الملف</button>
+                                                <button style="font-size:10px;" class="btn btn-primary upload-btn" onclick="setvvv()"> حفظ ورفع الملف</button>
                                            
                                                         }
                                                         @if (ViewBag.IS_ARCHIVED == true)
@@ -420,7 +420,7 @@
                 columns.Bound(c => c.TYPSNAMEAGR).Width(100).Title("الموافقة");
                 columns.Bound(c => c.SESSIONNB).Title("رمز الجلسة").Visible(false);
                 columns.Bound(c => c.RECDAT).Format("{0:dd/MM/yyyy}").Title("تاريخ المعاملة").Width(150);
-                columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة").ClientTemplate("#= renderCarProcedLink_ToProced(data) #").Width(150);
+                columns.Bound(c => c.CARPROCEDNB).Title("رمز المعاملة").ClientTemplate("#= renderCarProcedLink_ToProced(data) #").Width(170);
                 columns.Bound(c => c.CARPROCEDSTEPNB).Title("رمز الخطوة").Visible(false);
                 columns.Bound(c => c.ISDONE).Title("منفذة").Visible(false);
                 columns.Bound(c => c.NOTES).ClientTemplate("#= GETNOTES(data) #").Width(300).Title("ملاحظات");
@@ -505,7 +505,7 @@
 
 
                <div class="window-footer">
-                   <button class="btn btn-primary" onclick="FinishSession()" style="font-size:30px">نعم</button>
+                   <button class="btn btn-primary" onclick="FinishSession()" style="font-size:30px;">نعم</button>
                    <button class="btn btn-danger" onclick="ColseWindow()" style="font-size:30px"> لا    </button>
 
                </div>
@@ -904,7 +904,7 @@
 <script>
 
     function renderCarLink1(data) {
-        return "<button style='Width:88%; text-algin:center;' onclick='GetPartialProcedinfo(" + data.CARPROCEDSTEPNB + "," + data.PROCEDNB + ")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button> ";
+        return "<button style='Width:88%; font-size:10px; font-weight:bold; text-algin:center;' onclick='GetPartialProcedinfo(" + data.CARPROCEDSTEPNB + "," + data.PROCEDNB + ")'  class='btn btn-sucsses' >" + data.PROCEDNAME + "</button> ";
     }
     function renderCarLink_ToProced(data) {
         if (data.CARNB != null) {

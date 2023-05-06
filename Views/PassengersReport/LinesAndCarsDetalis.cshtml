@@ -126,6 +126,9 @@
             {
                 columns.Bound(c => c.CityName).Title("المحافظة");
                 columns.Bound(c => c.trname).Title("اسم الخط");
+                columns.Bound(c => c.TRNB).Title("رمز الخط");
+
+                
                 columns.Bound(c => c.TYPS).Title("نوع الخط");
                 columns.Bound(c => c.STATUS).Title("حالة الخط").Width(100); 
                 columns.Bound(c => c.carnb).Title("رمز المركبة");
@@ -138,7 +141,7 @@
                 columns.Bound(c => c.reg).Title("الفئة").Visible(false);
 
             })
-            .HtmlAttributes(new { style = "height: 550px !important;" })
+            .HtmlAttributes(new { style = "height: 500px !important;" })
             .Scrollable()
             .Sortable()
             //.ClientDetailTemplateId("template")
@@ -223,7 +226,8 @@
     function Btn_Search()
     {
 
-        $("#grid").data("kendoGrid").dataSource.read();
+       // $("#grid").data("kendoGrid").dataSource.read();
+        $("#grid").data("kendoGrid").dataSource.page([1]);
     }
 
     function rest_filtters() {
