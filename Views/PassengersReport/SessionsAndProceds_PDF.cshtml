@@ -34,10 +34,12 @@
                 <th style="border: 1px solid; width: auto;">رقم الجلسة</th>
                 <th style="border: 1px solid; width: auto;">تاريخ الجلسة</th>
                 <th style="border: 1px solid; width: auto;">حالة الجلسة</th>
-           
+
                 <th style="border: 1px solid; width: auto;">نوع الطلب</th>
+                <th style="border: 1px solid; width: auto;">ملاحظات</th>
+
                 <th style="border: 1px solid; width: auto;">نتيجة الطلب</th>
-             
+
 
 
 
@@ -46,19 +48,21 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td style="width: auto; border: 1px solid">@item.CityName</td>
-                    <td style="width: auto; border: 1px solid">@item.CommNb</td>
-                    <td style="width: auto; border: 1px solid">@item.SessNb</td>
-                    <td style="width: auto; border: 1px solid">@item.SessNo</td>
-                    <td style="width: auto; border: 1px solid">@Convert.ToDateTime(item.SessDate).ToString("dd/MM/yyyy")</td>
-                    <td style="width: auto; border: 1px solid">@item.SessStatus</td>
-                    <td style="width: auto; border: 1px solid">@item.ProcedName</td>
-                    <td style="width: auto; border: 1px solid">@item.ProcedRes</td>
+            <tr>
+                <td style="width: auto; border: 1px solid">@item.CityName</td>
+                <td style="width: auto; border: 1px solid">@item.CommNb</td>
+                <td style="width: auto; border: 1px solid">@item.SessNb</td>
+                <td style="width: auto; border: 1px solid">@item.SessNo</td>
+                <td style="width: auto; border: 1px solid">@Convert.ToDateTime(item.SessDate).ToString("dd/MM/yyyy")</td>
+                <td style="width: auto; border: 1px solid">@item.SessStatus</td>
+                <td style="width: auto; border: 1px solid">@item.ProcedName</td>
+                <td style="width: auto; border: 1px solid">@item.NOTES</td>
 
-                 
+                <td style="width: auto; border: 1px solid">@item.ProcedRes</td>
 
-                </tr>
+
+
+            </tr>
             }
         </tbody>
     </table>

@@ -14,6 +14,9 @@ namespace Passengers.ViewModel
         public DateTime SessDate { get; set; }
         public string SessStatus { get; set; }
 
+        public string NOTES { get; set; }
+        
+
         public string ProcedName { get; set; }
         public string ProcedRes { get; set; }
 

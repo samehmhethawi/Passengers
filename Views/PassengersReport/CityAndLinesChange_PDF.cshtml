@@ -28,7 +28,7 @@
     <table cellpadding="8" cellspacing="0" class="table" DIR="auto">
         <thead>
             <tr>
-                
+
                 <th style="border: 1px solid; width: auto;">م</th>
 
                 <th style="border: 1px solid; width: auto;">رمز المعاملة</th>
@@ -38,6 +38,8 @@
                 <th style="border: 1px solid; width: auto;">حالة المعاملة</th>
                 <th style="border: 1px solid; width: auto;">اسم الخط الجديد</th>
                 <th style="border: 1px solid; width: auto;">اسم الخط المراد الغائه او تغييره</th>
+                <th style="border: 1px solid; width: auto;">ملاحظات</th>
+
 
             </tr>
         </thead>
@@ -45,7 +47,7 @@
             @foreach (var item in Model)
             {
             <tr>
-                
+
                 <td style="width: auto; border: 1px solid">@item.ROW_NUM</td>
 
                 <td style="width: auto; border: 1px solid">@item.NB</td>
@@ -57,6 +59,8 @@
                 <td style="width: auto; border: 1px solid">@item.NEWLINENAME</td>
 
                 <td style="width: auto; border: 1px solid">@item.LINENAME</td>
+                <td style="width: auto; border: 1px solid">@item.NOTE</td>
+
 
             </tr>
             }

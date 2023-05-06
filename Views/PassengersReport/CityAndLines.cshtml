@@ -152,14 +152,14 @@
             toolbar.Template(@<text>
             <div >
                 <div>
-                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
-                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    <button title="تصدير الى ملف PDF"  style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToPdf()">
+                         <i class="fa fa-file-pdf-o fa-2x"></i>
                     </button>
                     @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
                     <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
-                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
-                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
-                    </button>*@
+                    <button title="تصدير الى ملف اكسل" style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>
                 </div>
             </div>
 </text>);
@@ -199,7 +199,7 @@
 
 
 <script>
-   
+
     function GetFillters()
     {
         var fillter = {};
@@ -209,7 +209,7 @@
         fillter.StrlineCANCELD = $('#StrlineCANCELD').val();
         fillter.Slinetyps = $('#Slinetyps').val();
 
-        
+
         return fillter;
     }
 
@@ -230,7 +230,7 @@
 
     function ExportToPdf()
     {
-        alert('ss');
+        
         var fill = {};
         fill.STrline = $('#STrline').val();
         fill.StrlineStatus = $('#StrlineStatus').val();
@@ -238,7 +238,7 @@
         fill.Slinetyps = $('#Slinetyps').val();
         fill.SlineCity = $('#SlineCity').val();
 
-       
+
 
         window.open("CityAndLines_PDF?pSTrName=" + fill.STrline
             + "&pStrlineStatus=" + fill.StrlineStatus
@@ -247,6 +247,26 @@
             + "&pSlineCity=" + fill.SlineCity
             , "_blank"
         );
+    }
+
+    function ExportToExcel() {
+
+        var fillEX = {};
+        fillEX.STrline = $('#STrline').val();
+        fillEX.StrlineStatus = $('#StrlineStatus').val();
+        fillEX.StrlineCANCELD = $('#StrlineCANCELD').val();
+        fillEX.Slinetyps = $('#Slinetyps').val();
+        fillEX.SlineCity = $('#SlineCity').val();
+
+
+        window.location = '@Url.Action("CityAndLines_ex", "PassengersReport")?EpSTrName=' + fillEX.STrline
+            + '&EpStrlineStatus=' + fillEX.StrlineStatus
+            + '&EpStrlineCANCELD=' + fillEX.StrlineCANCELD
+            + '&EpSlinetyps=' + fillEX.Slinetyps
+            + '&EpSlineCity=' + fillEX.SlineCity;
+
+
+            return false;
     }
 </script>
 

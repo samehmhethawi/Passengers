@@ -163,6 +163,8 @@
                 columns.Bound(c => c.SessStatus).Title("حالة الجلسة").Width(150);
                 //columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150);
                 columns.Bound(c => c.ProcedName).Title("نوع الطلب");
+                columns.Bound(c => c.NOTES).Title("ملاحظات");
+
                 columns.Bound(c => c.ProcedRes).Title("نتيجة الطلب").Width(150);
      
 
@@ -195,14 +197,14 @@
             toolbar.Template(@<text>
             <div >
                 <div>
-                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
-                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    <button title="تصدير الى ملف PDF"  style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToPdf()">
+                         <i class="fa fa-file-pdf-o fa-2x"></i>
                     </button>
                     @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
                     <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
-                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
-                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
-                    </button>*@
+                    <button  title="تصدير الى ملف اكسل" style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>
                 </div>
             </div>
 </text>);
@@ -310,23 +312,30 @@
     function ExportToExcel()
 
     {
+        var fillEX = {};
+        fillEX.NB = $('#SCommNb').val();
+        fillEX.COMNO = $('#SCommNO').val();
+        fillEX.sNB = $('#SSessNb').val();
+        fillEX.sNO = $('#SSesNO').val();
+        fillEX.sDATESTART = $('#SSesDateStart').val();
+        fillEX.sDATEEND = $('#SSesDateEnd').val();
+        fillEX.sSTATUS = $('#SSesStatus').val();
+        fillEX.COMCITYNB = $('#SComCity').val();
+        fillEX.SPstatus = $('#SPstatus').val();
+        fillEX.SProcedtyps = $('#SProcedtyps').val();
 
-            $.ajax({
-                type: "POST",
+        window.location = '@Url.Action("SessionsAndProceds_ex", "PassengersReport")?EpNB=' + fillEX.NB
+            + '&EpsNB=' + fillEX.sNB
+            + '&EpsNO=' + fillEX.sNO
+            + '&EpsDATESTART=' + fillEX.sDATESTART
+            + '&EpsDATEEND=' + fillEX.sDATEEND
+            + '&EpsSTATUS=' + fillEX.sSTATUS
+            + '&ESPstatus=' + fillEX.SPstatus
+            + '&ESProcedtyps=' + fillEX.SProcedtyps
+            + '&EpCOMCITYNB=' + fillEX.COMCITYNB;
 
-                url: "@Url.Action("CommittesAndSessions_ex", "PassengersReport")",
-                success: function (response) {
-                    if (response.success) {
 
-
-                        toastr.success("تمت عملية الإضافة بنجاح");
-                    } else {
-
-                    }
-
-                }
-            });
-
+            return false;
 
     }
 </script>

@@ -189,14 +189,14 @@
            toolbar.Template(@<text>
             <div >
                 <div>
-                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
-                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    <button title="تصدير الى ملف PDF"  style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToPdf()">
+                        <i class="fa fa-file-pdf-o fa-2x"></i>
                     </button>
                     @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
                     <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
-                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
-                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
-                    </button>*@
+                    <button  title="تصدير الى ملف اكسل" style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>
                 </div>
             </div>
 </text>);
@@ -298,11 +298,36 @@
         fill.MEMBERSHIPNB = $('#SMeberShip').val();
 
         fill.COMCITYNB = $('#SComCity').val();
-        
+
         window.open("CommittesAndMembers_PDF?sNB=" + fill.NB + "&sCOMNO=" + fill.COMNO
             + "&sCOMDATESTART=" + fill.COMDATESTART + "&sCOMDATEEND=" + fill.COMDATEEND
             + "&sSTATUS=" + fill.STATUS + "&sMEMBERNAME=" + fill.MEMBERNAME + "&sMEMBERPOSITIONNB=" + fill.MEMBERPOSITIONNB + "&sMEMBERSHIPNB=" + fill.MEMBERSHIPNB + "&sCOMCITYNB=" + fill.COMCITYNB , "_blank");
-    
+
     }
-    function ExportToExcel() {}
+    function ExportToExcel() {
+
+        var fillEX = {};
+
+        fillEX.NB = $('#SCommNb').val();
+        fillEX.COMNO = $('#SCommNO').val();
+        fillEX.COMDATESTART = $('#SComDateStart').val();
+        fillEX.COMDATEEND = $('#SComDateEnd').val();
+
+        fillEX.STATUS = $('#SComStatus').val();
+
+        fillEX.MEMBERNAME = $('#SMemerName').val();
+
+        fillEX.MEMBERPOSITIONNB = $('#SMemberPos').val();
+        fillEX.MEMBERSHIPNB = $('#SMeberShip').val();
+
+        fillEX.COMCITYNB = $('#SComCity').val();
+
+            //window.location = 'Url.Action("CommittesAndSessions_ex", "PassengersReport")?tes=' + $("#test").val() + '&test1=' + $("#test1").val();
+        window.location = '@Url.Action("CommittesAndMembers_ex", "PassengersReport")?EsNB=' + fillEX.NB + '&EsCOMNO=' + fillEX.COMNO
+            + '&EsCOMDATESTART=' + fillEX.COMDATESTART + '&EsCOMDATEEND=' + fillEX.COMDATEEND
+            + '&EsSTATUS=' + fillEX.STATUS + '&EsMEMBERNAME=' + fillEX.MEMBERNAME + '&EsMEMBERPOSITIONNB=' + fillEX.MEMBERPOSITIONNB + '&EsMEMBERSHIPNB=' + fillEX.MEMBERSHIPNB + '&EsCOMCITYNB=' + fillEX.COMCITYNB;
+
+
+            return false;
+    }
 </script>

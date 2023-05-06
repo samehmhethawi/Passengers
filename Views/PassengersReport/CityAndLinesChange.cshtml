@@ -10,7 +10,7 @@
             <div class="row" style="padding-bottom:10px">
                 <div class="col-md-2">
                     @(Html.Kendo().DropDownList()
-                                    .OptionLabel("اختر محافظة الخط")
+                                    .OptionLabel("اختر محافظة الطلب")
                                     .Name("SlineCity")
                                     .DataTextField("NAME")
                                     .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
@@ -118,14 +118,14 @@
             toolbar.Template(@<text>
             <div >
                 <div>
-                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
-                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    <button title="تصدير الى ملف PDF"  style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToPdf()">
+                         <i class="fa fa-file-pdf-o fa-2x"></i>
                     </button>
                     @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
                     <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
-                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
-                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
-                    </button>*@
+                    <button  title="تصدير الى ملف اكسل" style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>
                 </div>
             </div>
 </text>);
@@ -173,7 +173,7 @@
         fillter.SProcedtyps = $('#SProcedtyps').val();
         fillter.SSesDateStart = $('#SSesDateStart').val();
         fillter.SSesDateEnd = $('#SSesDateEnd').val();
-        
+
 
         return fillter;
     }
@@ -189,14 +189,14 @@
 
         $("#SlineCity").data("kendoDropDownList").value(-1);
         $("#SProcedtyps").data("kendoDropDownList").value(-1);
-      
+
 
         $("#grid").data("kendoGrid").dataSource.data([]);
     }
 
     function ExportToPdf()
     {
-        alert('ss');
+      
         var fill = {};
         fill.SlineCity = $('#SlineCity').val();
         fill.SProcedtyps = $('#SProcedtyps').val();
@@ -209,9 +209,25 @@
             + "&pProcedtyps=" + fill.SProcedtyps
             + "&pSesDateStart=" + fill.SSesDateStart
             + "&pSesDateEnd=" + fill.SSesDateEnd
-           
+
             , "_blank"
         );
+    }
+    function ExportToExcel() {
+
+        var fillEX = {};
+        fillEX.SlineCity = $('#SlineCity').val();
+        fillEX.SProcedtyps = $('#SProcedtyps').val();
+        fillEX.SSesDateStart = $('#SSesDateStart').val();
+        fillEX.SSesDateEnd = $('#SSesDateEnd').val();
+
+        window.location = '@Url.Action("CityAndLinesChange_ex", "PassengersReport")?EplineCity=' + fillEX.SlineCity
+            + '&EpProcedtyps=' + fillEX.SProcedtyps
+            + '&EpSesDateStart=' + fillEX.SSesDateStart
+            + '&EpSesDateEnd=' + fillEX.SSesDateEnd;
+
+
+            return false;
     }
 </script>
 

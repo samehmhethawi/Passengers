@@ -23,7 +23,7 @@ namespace Passengers.ViewModel
     
         public string LINENAME { get; set; }
 
-        public int? LINE_TYPE { get; set; }
+        public string LINE_TYPE { get; set; }
 
         public DateTime? UDATE { get; set; }
 

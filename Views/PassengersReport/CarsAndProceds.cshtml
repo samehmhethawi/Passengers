@@ -172,14 +172,14 @@
             toolbar.Template(@<text>
             <div >
                 <div>
-                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
-                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    <button title="تصدير الى ملف PDF"  style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToPdf()">
+                         <i class="fa fa-file-pdf-o fa-2x"></i>
                     </button>
                     @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
                     <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
-                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
-                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
-                    </button>*@
+                    <button  title="تصدير الى ملف اكسل" style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>
                 </div>
             </div>
 </text>);
@@ -275,7 +275,7 @@
          );
      }
      function rest_filtters() {
-       
+
          $("#Carnb").data("kendoNumericTextBox").value("");
          $("#Carprocednb").data("kendoNumericTextBox").value("");
          $('#SCarprocedDateStart').val("");
@@ -289,6 +289,42 @@
          $("#SProcedtyps").data("kendoDropDownList").value(-1);
 
          $("#grid").data("kendoGrid").dataSource.data([]);
+     }
+
+     function ExportToExcel() {
+
+         var fillEX = {};
+
+         fillEX.pCarnb = $('#Carnb').val();
+         fillEX.pTabnu = $('#Tabnu').val();
+         fillEX.pCarcity = $('#Carcity').val();
+
+         fillEX.pScarkind = $('#Scarkind').val();
+         fillEX.pScarreg = $('#Scarreg').val();
+         fillEX.pSProcedtyps = $('#SProcedtyps').val();
+
+         fillEX.pCarprocednb = $('#Carprocednb').val();
+         fillEX.pSCarprocedDateStart = $('#SCarprocedDateStart').val();
+         fillEX.pSCarprocedDateEnd = $('#SCarprocedDateEnd').val();
+
+
+         window.location = '@Url.Action("CarsAndProceds_ex", "PassengersReport")?'
+
+             + '&EpCarnb=' + fillEX.pCarnb
+             + '&EpTabnu=' + fillEX.pTabnu
+             + '&EpCarcity=' + fillEX.pCarcity
+
+             + '&EpScarkind=' + fillEX.pScarkind
+             + '&EpScarreg=' + fillEX.pScarreg
+
+             + '&EpCarprocednb=' + fillEX.pCarprocednb
+             + '&EpSCarprocedDateStart=' + fillEX.pSCarprocedDateStart
+             + '&EpSCarprocedDateEnd=' + fillEX.pSCarprocedDateEnd
+
+             + '&EpSProcedtyps=' + fillEX.pSProcedtyps;
+
+
+            return false;
      }
  </script>
 

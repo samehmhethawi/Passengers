@@ -161,14 +161,14 @@
             toolbar.Template(@<text>
             <div >
                 <div>
-                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
-                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    <button title="تصدير الى ملف PDF"  style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToPdf()">
+                        <i class="fa fa-file-pdf-o fa-2x"></i>
                     </button>
                     @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
                     <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
-                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
-                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
-                    </button>*@
+                   <button  title="تصدير الى ملف اكسل" style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>
                 </div>
             </div>
 </text>);
@@ -214,7 +214,7 @@
 
 <script>
     function GetFillters() {
-        var fillter = {};     
+        var fillter = {};
         fillter.SlineCity = $('#SlineCity').val();
         fillter.Slinetyps = $('#Slinetyps').val();
         fillter.StrlineStatus = $('#StrlineStatus').val();
@@ -241,7 +241,7 @@
 
 
 
-      
+
 
 
 
@@ -262,7 +262,7 @@
 
 
         window.open("LinesAndCarsDetalis_PDF?"
-       
+
             + "&pSlinetyps=" + fill.Slinetyps
             + "&pStrlineStatus=" + fill.StrlineStatus
             + "&pScarkind=" + fill.Scarkind
@@ -273,5 +273,28 @@
     }
 
 
+    function ExportToExcel() {
 
+        var fillEX = {};
+
+        fillEX.SlineCity = $('#SlineCity').val();
+        fillEX.Slinetyps = $('#Slinetyps').val();
+        fillEX.StrlineStatus = $('#StrlineStatus').val();
+        fillEX.Scarkind = $('#Scarkind').val();
+        fillEX.Scarreg = $('#Scarreg').val();
+        fillEX.STrline = $('#STrline').val();
+
+
+        window.location = '@Url.Action("LinesAndCarsDetalis_ex", "PassengersReport")?'
+
+            + '&EpSlinetyps=' + fillEX.Slinetyps
+            + '&EpStrlineStatus=' + fillEX.StrlineStatus
+            + '&EpScarkind=' + fillEX.Scarkind
+            + '&EpScarreg=' + fillEX.Scarreg
+            + '&EpSTrline=' + fillEX.STrline
+            + '&EpSlineCity=' + fillEX.SlineCity;
+
+
+            return false;
+    }
 </script>

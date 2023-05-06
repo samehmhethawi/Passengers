@@ -181,14 +181,14 @@
             toolbar.Template(@<text>
             <div >
                 <div>
-                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
-                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    <button title="تصدير الى ملف PDF"   style="font-size:8px"  class="btn btn-green" href="#" onclick="ExportToPdf()">
+                          <i class="fa fa-file-pdf-o fa-2x"></i>
                     </button>
                     @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
                     <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
-                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
-                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
-                    </button>*@
+                    <button   title="تصدير الى ملف اكسل" style="font-size:8px"  class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>
                 </div>
             </div>
 </text>);
@@ -231,7 +231,7 @@
     function GetFillters() {
         var fillter = {};
 
-        fillter.NB = $('#SCommNb').val();  
+        fillter.NB = $('#SCommNb').val();
         fillter.sNB = $('#SSessNb').val();
         fillter.sNO = $('#SSesNO').val();
         fillter.sDATESTART = $('#SSesDateStart').val();
@@ -280,7 +280,7 @@
         fill.COMCITYNB = $('#SComCity').val();
         fill.MemberSH = $('#SMemberSH').val();
 
-   
+
 
         window.open("SessionsAndMembers_PDF?pNB=" + fill.NB
             + "&psNB=" + fill.sNB
@@ -296,22 +296,30 @@
     function ExportToExcel()
 
     {
+        var fillEX = {};
+        fillEX.NB = $('#SCommNb').val();
+        fillEX.COMNO = $('#SCommNO').val();
+        fillEX.sNB = $('#SSessNb').val();
+        fillEX.sNO = $('#SSesNO').val();
+        fillEX.sDATESTART = $('#SSesDateStart').val();
+        fillEX.sDATEEND = $('#SSesDateEnd').val();
+        fillEX.sSTATUS = $('#SSesStatus').val();
+        fillEX.COMCITYNB = $('#SComCity').val();
+        fillEX.MemberSH = $('#SMemberSH').val();
 
-            $.ajax({
-                type: "POST",
 
-                url: "@Url.Action("CommittesAndSessions_ex", "PassengersReport")",
-                success: function (response) {
-                    if (response.success) {
+        window.location = '@Url.Action("SessionsAndMembers_ex", "PassengersReport")?EpNB=' + fillEX.NB
+            + '&EpsNB=' + fillEX.sNB
+            + '&EpsNO=' + fillEX.sNO
+            + '&EpsDATESTART=' + fillEX.sDATESTART
+            + '&EpsDATEEND=' + fillEX.sDATEEND
+            + '&EpsSTATUS=' + fillEX.sSTATUS
+            + '&EpMemberSH=' + fillEX.MemberSH
+
+            + '&EpCOMCITYNB=' + fillEX.COMCITYNB;
 
 
-                        toastr.success("تمت عملية الإضافة بنجاح");
-                    } else {
-
-                    }
-
-                }
-            });
+            return false;
 
 
     }

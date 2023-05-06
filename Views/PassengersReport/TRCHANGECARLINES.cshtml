@@ -122,14 +122,14 @@
             toolbar.Template(@<text>
             <div >
                 <div>
-                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
-                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    <button title="تصدير الى ملف PDF"  style="font-size:8px"  class="btn btn-green" href="#" onclick="ExportToPdf()">
+                       <i class="fa fa-file-pdf-o fa-2x"></i>
                     </button>
                     @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
                     <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
-                    @*<button class="btn btn-green" href="#" onclick="ExportToExcel()">
-                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
-                    </button>*@
+                    <button  title="تصدير الى ملف اكسل" style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToExcel()">
+                         <i class="fa fa-file-excel-o fa-2x"></i>
+                    </button>
                 </div>
             </div>
 </text>);
@@ -177,7 +177,7 @@
         fillter.SComDateStart = $('#SComDateStart').val();
         fillter.SComDateEnd = $('#SComDateEnd').val();
         fillter.ScarCity = $('#ScarCity').val();
-        fillter.STrline = $('#STrline').val();       
+        fillter.STrline = $('#STrline').val();
         return fillter;
     }
     function Btn_Search()
@@ -192,8 +192,8 @@
         $('#StabNO').val("");
         $('#STrline').val("");
         $('#SComDateStart').val("");
-        $('#SComDateEnd').val("");      
-        $("#ScarCity").data("kendoDropDownList").value(-1);       
+        $('#SComDateEnd').val("");
+        $("#ScarCity").data("kendoDropDownList").value(-1);
         $("#grid").data("kendoGrid").dataSource.data([]);
     }
 
@@ -221,21 +221,23 @@
 
     {
 
-            $.ajax({
-                type: "POST",
+        var fillEX = {};
+        fillEX.Carnb = $('#Carnb').val();
+        fillEX.StabNO = $('#StabNO').val();
+        fillEX.SComDateStart = $('#SComDateStart').val();
+        fillEX.SComDateEnd = $('#SComDateEnd').val();
+        fillEX.ScarCity = $('#ScarCity').val();;
+        fillEX.STrline = $('#STrline').val();
 
-                url: "@Url.Action("CommittesAndSessions_ex", "PassengersReport")",
-                success: function (response) {
-                    if (response.success) {
+        window.location = '@Url.Action("TRCHANGECARLINES_ex", "PassengersReport")?EpCarnb=' + fillEX.Carnb
+            + '&EpStabNO=' + fillEX.StabNO
+            + '&EpSComDateStart=' + fillEX.SComDateStart
+            + '&EpSComDateEnd=' + fillEX.SComDateEnd
+            + '&EpScarCity=' + fillEX.ScarCity
+            + '&EpSTrline=' + fillEX.STrline;
 
 
-                        toastr.success("تمت عملية الإضافة بنجاح");
-                    } else {
-
-                    }
-
-                }
-            });
+            return false;
 
 
     }

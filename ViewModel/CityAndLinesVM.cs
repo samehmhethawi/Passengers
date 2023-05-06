@@ -14,7 +14,7 @@ namespace Passengers.ViewModel
         public string TPYS { get; set; }
         public string STATUS { get; set; }
         public string ISCANCELD { get; set; }
-        public string MINCARS { get; set; }
-        public string MAXCARS { get; set; }
+        public long? MINCARS { get; set; }
+        public long? MAXCARS { get; set; }
     }
 }

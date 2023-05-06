@@ -202,13 +202,13 @@
             toolbar.Template(@<text>
             <div >
                 <div>
-                    <button class="btn btn-green" href="#" onclick="ExportToPdf()">
-                         تصدير الى PDF <i class="fa fa-file-pdf-o fa-2x"></i>
+                    <button title="تصدير الى ملف PDF" style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToPdf()">
+                         <i class="fa fa-file-pdf-o fa-2x"></i>
                     </button>
                     @*<label id="ROWSCOUNTLABEL" style="font-size: 20px;margin-right: 400px;"> </label>
                     <label id="ROWSCOUNT" style="font-size: 20px;"></label>*@
-                   <button class="btn btn-green" href="#" onclick="ExportToExcel()">
-                         تصدير الى Excel <i class="fa fa-file-excel-o fa-2x"></i>
+                   <button title="تصدير الى ملف اكسل" style="font-size:8px" class="btn btn-green" href="#" onclick="ExportToExcel()">
+                        <i class="fa fa-file-excel-o fa-2x"></i>
                     </button>
                 </div>
             </div>
@@ -323,8 +323,32 @@
     }
 
     function ExportToExcel() {
+
+        var fillEX = {};
+        fillEX.NB = $('#SCommNb').val();
+        fillEX.COMNO = $('#SCommNO').val();
+        fillEX.COMDATESTART = $('#SComDateStart').val();
+        fillEX.COMDATEEND = $('#SComDateEnd').val();
+        fillEX.COMSTATUS = $('#SComStatus').val();
+        fillEX.sNB = $('#SSessNb').val();
+        fillEX.sNO = $('#SSesNO').val();
+        fillEX.sDATESTART = $('#SSesDateStart').val();
+        fillEX.sDATEEND = $('#SSesDateEnd').val();
+        fillEX.sSTATUS = $('#SSesStatus').val();
+        fillEX.COMCITYNB = $('#SComCity').val();
+
             //window.location = 'Url.Action("CommittesAndSessions_ex", "PassengersReport")?tes=' + $("#test").val() + '&test1=' + $("#test1").val();
-                    window.location = '@Url.Action("CommittesAndSessions_ex", "PassengersReport")';
+        window.location = '@Url.Action("CommittesAndSessions_ex", "PassengersReport")?ENB=' + fillEX.NB
+            + '&ECOMNO=' + fillEX.COMNO
+            + '&ECOMDATESTART=' + fillEX.COMDATESTART
+            + '&ECOMDATEEND=' + fillEX.COMDATEEND
+            + '&ESTATUS=' + fillEX.COMSTATUS
+            + '&EsNB=' + fillEX.sNB
+            + '&EsNO=' + fillEX.sNO
+            + '&EsDATESTART=' + fillEX.sDATESTART
+            + '&EsDATEEND=' + fillEX.sDATEEND
+            + '&EsSTATUS=' + fillEX.sSTATUS
+            + '&ECOMCITYNB=' + fillEX.COMCITYNB;
 
 
             return false;
