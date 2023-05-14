@@ -298,7 +298,15 @@ namespace Passengers
                 {
                     return true;
                 }
+
                 if (username == "دعم فني")
+                {
+                    return true;
+                }
+
+
+                var is_admin = MyOwnData.IsAdmin();
+                if (is_admin == true)
                 {
                     return true;
                 }

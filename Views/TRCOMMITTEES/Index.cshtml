@@ -278,16 +278,36 @@
 
             }
             else {
+                  $.ajax({
+            url: '@Url.Action("Get_TimeAndNoToSession", "TRSESSIONS")',
 
-             var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
-            $("#AddComDate").data("kendoDatePicker").value(todayDate);
-            $('#AddComNo').val("");
-            // $('#AddComDate').val("");
-            $("#AddComCity").data("kendoDropDownList").value(1)
-            $("#Add_comm span.k-tooltip-validation").hide();
 
-            var wnd = $("#AddCOMMITTEE").data("kendoWindow");
-            wnd.center().open();
+
+                    success: function (response) {
+                        if (response.success == true)
+                        {
+                            var todayDate = response.sesTime ;
+
+                            //var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
+                            $("#AddComDate").data("kendoDatePicker").value(todayDate);
+                            $('#AddComNo').val("");
+                            // $('#AddComDate').val("");
+                            $("#AddComCity").data("kendoDropDownList").value(1)
+                            $("#Add_comm span.k-tooltip-validation").hide();
+
+                            var wnd = $("#AddCOMMITTEE").data("kendoWindow");
+                            wnd.center().open();
+
+
+                        } else {
+
+                        }
+
+
+                    }
+                 });
+
+            
             }
 
         });
@@ -324,7 +344,7 @@
 
         });
 
-       
+
 
     }
 
@@ -368,7 +388,7 @@
 
 
 
-       
+
     }
 
 

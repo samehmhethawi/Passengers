@@ -1,5 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
+using Newtonsoft.Json;
 using Proced.DataAccess.Models.CF;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Web.Mvc;
 namespace Passengers.Controllers
 {
-    [checksession, Authorize, RedirectOnError,CanDoIt]
+    [checksession, Authorize, RedirectOnError, CanDoIt]
     public class TrLinesController : Controller
     {
         private ProcedContext db = new ProcedContext();
@@ -53,7 +54,7 @@ namespace Passengers.Controllers
 
         }
 
-        public ActionResult TrLines_Read([DataSourceRequest]DataSourceRequest request)
+        public ActionResult TrLines_Read([DataSourceRequest] DataSourceRequest request)
         {
             var sql = "select * from TRLINES where 1 = 1 ";
             var STrline = Request.Form["STrline"].Trim();
@@ -61,16 +62,16 @@ namespace Passengers.Controllers
             var StrlineStatus = Request.Form["StrlineStatus"].Trim();
             var StrlineCANCELD = Request.Form["StrlineCANCELD"].Trim();
             var STrnb = Request.Form["STrnb"].Trim();
-            
+
             var STrlinepath = Request.Form["STrlinepath"].Trim();
 
 
             if (STrnb != "")
             {
-                sql += " and nb = " + STrnb ;
+                sql += " and nb = " + STrnb;
             }
 
-            if (STrline != "") 
+            if (STrline != "")
             {
                 sql += " and name like '" + STrline + "'";
             }
@@ -81,12 +82,12 @@ namespace Passengers.Controllers
             }
             if (StrlineStatus != "")
             {
-                sql += " and STATUS = " + StrlineStatus ;
+                sql += " and STATUS = " + StrlineStatus;
             }
 
             if (StrlineCANCELD != "")
             {
-                sql += " and ISCANCELD = " + StrlineCANCELD  ;
+                sql += " and ISCANCELD = " + StrlineCANCELD;
             }
             CodesController bb = new CodesController();
 
@@ -102,8 +103,8 @@ namespace Passengers.Controllers
             {
                 sql += " and CITYNB =" + ci;
             }
-           
-            var data = db.Database.SqlQuery<TRLINE>(sql).ToList();     
+
+            var data = db.Database.SqlQuery<TRLINE>(sql).ToList();
             int index = 0;
             DataSourceResult result = data.ToDataSourceResult(request, commm => new
             {
@@ -122,13 +123,13 @@ namespace Passengers.Controllers
                 Seq = (request.Page - 1) * request.PageSize + (++index)
             });
             return Json(result);
-           
+
         }
 
-        
+
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Create(string Name , int? city , int? typ ,long? min,long? max, List<int> allcity)
+        public ActionResult Create(string Name, int? city, int? typ, long? min, long? max, List<int> allcity)
         {
             try
             {
@@ -145,8 +146,8 @@ namespace Passengers.Controllers
                     return Json(new { success = false, responseText = "يجب تحديد نوع الخط" });
                 }
 
-                var Isexis = db.Database.SqlQuery<int>("select count(*) from TRLINES where Name ='" + Name+"'").FirstOrDefault();
-                if(Isexis > 0)
+                var Isexis = db.Database.SqlQuery<int>("select count(*) from TRLINES where Name ='" + Name + "'").FirstOrDefault();
+                if (Isexis > 0)
                 {
                     return Json(new { success = false, responseText = "اسم الخط موجود مسبقاً" });
                 }
@@ -186,21 +187,22 @@ namespace Passengers.Controllers
                         db.SaveChanges();
                     }
                 }
-                
+
 
                 db.SaveChanges();
                 return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 var ss = validation.OracleExceptionValidation(ex);
-                return Json(new { success = false, responseText = ss});
+                return Json(new { success = false, responseText = ss });
             }
 
         }
 
-        public ActionResult Read_city([DataSourceRequest] DataSourceRequest request,long? Nb)
+        public ActionResult Read_city([DataSourceRequest] DataSourceRequest request, long? Nb)
         {
-            var sql = "select * from TRLINE_CITY where 1 = 1 and LINENB = "+ Nb+" order by ordr";
+            var sql = "select * from TRLINE_CITY where 1 = 1 and LINENB = " + Nb + " order by ordr";
 
             //var STrline = Request.Form["STrline"].Trim();
             //var SlineCity = Request.Form["SlineCity"].Trim();
@@ -208,19 +210,19 @@ namespace Passengers.Controllers
             //var StrlineCANCELD = Request.Form["StrlineCANCELD"].Trim();
 
             var data = db.Database.SqlQuery<TRLINE_CITY>(sql).ToList();
-            int index = 0;
+
             DataSourceResult result = data.ToDataSourceResult(request, commm => new
             {
-                NB = commm.NB,          
-                ORDR = commm.ORDR,              
+                NB = commm.NB,
+                ORDR = commm.ORDR,
                 CITYNB = commm.CITYNB,
-                LINENB = commm.LINENB,
-                Seq = (request.Page - 1) * request.PageSize + (++index)
+                LINENB = commm.LINENB
+
             });
             return Json(result);
         }
-       
-        
+
+
         public ActionResult Deletecity(long? nb)
         {
             try
@@ -262,11 +264,11 @@ namespace Passengers.Controllers
             }
         }
 
-        public ActionResult addcitytoline(long? linb ,long? city)
+        public ActionResult addcitytoline(long? linb, long? city)
         {
             try
             {
-                var isexis = db.Database.SqlQuery<int>("select count(*) from TRLINE_CITY where LINENB = " + linb + " and CITYNB = "+ city).FirstOrDefault();
+                var isexis = db.Database.SqlQuery<int>("select count(*) from TRLINE_CITY where LINENB = " + linb + " and CITYNB = " + city).FirstOrDefault();
                 if (isexis > 0)
                 {
                     return Json(new { success = false, responseText = "المحافظة المختارة موجودة على الخط" });
@@ -286,112 +288,167 @@ namespace Passengers.Controllers
             }
         }
 
-        public ActionResult update(long? Nb, string Name, int? city, int? typ, long? min, long? max,int? STATUS, int? ISCANCELD ,string eLINEPATH)
+        public ActionResult update(long? Nb, string Name, int? city, int? typ, long? min, long? max, int? STATUS, int? ISCANCELD, string eLINEPATH, string mod)
         {
-            try
+            using (var transaction = db.Database.BeginTransaction())
             {
-                if (!Nb.HasValue)
+                try
                 {
-                    return Json(new { success = false, responseText = "الرمز فارغ" });
-                }
-                if (!STATUS.HasValue)
-                {
-                    return Json(new { success = false, responseText = "يجب اختيار هل هو فعال او لا" });
-                }
-                if (!ISCANCELD.HasValue)
-                {
-                    return Json(new { success = false, responseText = "يجب اختيار هل هو ملغى او لا" });
-                }
-                if (Name == "")
-                {
-                    return Json(new { success = false, responseText = "الاسم فارغ" });
-                }
-                if (eLINEPATH == "")
-                {
-                    return Json(new { success = false, responseText = "المسار فارغ" });
-                }
-                
-             
-                if (!city.HasValue)
-                {
-                    return Json(new { success = false, responseText = "يجب تحديد محافظة الخط" });
-                }
-                if (!typ.HasValue)
-                {
-                    return Json(new { success = false, responseText = "يجب تحديد نوع الخط" });
-                }
-                //if (!min.HasValue || !max.HasValue)
-                //{
-                //    return Json(new { success = false, responseText = "يجب تحديد العدد الادنى و الاعلى" });
-                //}
+                    if (!Nb.HasValue)
+                    {
+                        return Json(new { success = false, responseText = "الرمز فارغ" });
+                    }
+                    if (!STATUS.HasValue)
+                    {
+                        return Json(new { success = false, responseText = "يجب اختيار هل هو فعال او لا" });
+                    }
+                    if (!ISCANCELD.HasValue)
+                    {
+                        return Json(new { success = false, responseText = "يجب اختيار هل هو ملغى او لا" });
+                    }
+                    if (Name == "")
+                    {
+                        return Json(new { success = false, responseText = "الاسم فارغ" });
+                    }
+                    if (eLINEPATH == "")
+                    {
+                        return Json(new { success = false, responseText = "المسار فارغ" });
+                    }
 
-                var data = db.TRLINES.Find(Nb);
 
-                if (data == null)
-                {
+                    if (!city.HasValue)
+                    {
+                        return Json(new { success = false, responseText = "يجب تحديد محافظة الخط" });
+                    }
+                    if (!typ.HasValue)
+                    {
+                        return Json(new { success = false, responseText = "يجب تحديد نوع الخط" });
+                    }
+                    //if (!min.HasValue || !max.HasValue)
+                    //{
+                    //    return Json(new { success = false, responseText = "يجب تحديد العدد الادنى و الاعلى" });
+                    //}
 
-                    return Json(new { success = false, responseText = "لا يوجد سجل موافق" });
+
+
+                    var subjects = JsonConvert.DeserializeObject<List<TRLINE_CITY>>(mod);
+                    if (subjects.Count() == 0)
+                    {
+                        return Json(new { success = false, responseText = "يجب اضافة محافظة على الاقل" });
+                    }
+
+
+
+                    var data = db.TRLINES.Find(Nb);
+
+                    if (data == null)
+                    {
+
+                        return Json(new { success = false, responseText = "لا يوجد سجل موافق" });
+
+                    }
+
+                    if (data.NAME != Name)
+                    {
+                        data.NAME = Name;
+                    }
+
+                    if (data.LINEPATH != eLINEPATH)
+                    {
+                        data.LINEPATH = eLINEPATH;
+                    }
+
+
+                    if (data.CITYNB != city)
+                    {
+                        data.CITYNB = city;
+                    }
+                    if (data.TYP != typ)
+                    {
+                        data.TYP = typ;
+                    }
+                    if (data.MINCARS != min)
+                    {
+                        data.MINCARS = min;
+                    }
+                    if (data.MAXCARS != max)
+                    {
+                        data.MAXCARS = max;
+                    }
+                    if (data.ISCANCELD != ISCANCELD)
+                    {
+                        data.ISCANCELD = ISCANCELD;
+                    }
+                    bool? dSTATUS = true;
+                    if (STATUS == 1)
+                    {
+                        dSTATUS = true;
+                    }
+                    if (STATUS == 0)
+                    {
+                        dSTATUS = false;
+                    }
+                    if (data.STATUS != dSTATUS)
+                    {
+                        data.STATUS = dSTATUS;
+                    }
+
+
+
+                    var all_city_line = db.Database.SqlQuery<TRLINE_CITY>("select * from TRLINE_CITY where LINENB = " + Nb).ToList();
+                    foreach (var item in all_city_line)
+                    {
+
+                        var ddd = db.TRLINE_CITY.Find(item.NB);
+
+
+                        try
+                        {
+                            if (ddd != null)
+                            {
+                                db.TRLINE_CITY.Attach(ddd);
+                                db.TRLINE_CITY.Remove(ddd);
+
+                                db.SaveChanges();
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            transaction.Rollback();
+
+                        }
+
+
+
+                    }
+
+
+                    foreach (var item in subjects)
+                    {
+
+                        db.TRLINE_CITY.Add(item);
+                     
+
+                    }
+
+
+
+                    db.Entry(data).State = EntityState.Modified;
+                    db.SaveChanges();
+                    transaction.Commit();
+                    return Json(new { success = true, responseText = "ok" });
+
 
                 }
 
-                if (data.NAME != Name)
+                catch (Exception ex)
                 {
-                    data.NAME = Name;
-                }
+                    transaction.Rollback();
+                    var ss = validation.OracleExceptionValidation(ex);
+                    return Json(new { success = false, responseText = ss });
 
-                if (data.LINEPATH != eLINEPATH)
-                {
-                    data.LINEPATH = eLINEPATH;
                 }
-
-                
-                if (data.CITYNB != city)
-                {
-                    data.CITYNB = city;
-                }
-                if (data.TYP != typ)
-                {
-                    data.TYP = typ;
-                }
-                if (data.MINCARS != min)
-                {
-                    data.MINCARS = min;
-                }
-                if (data.MAXCARS != max)
-                {
-                    data.MAXCARS = max;
-                }
-                if (data.ISCANCELD != ISCANCELD)
-                {
-                    data.ISCANCELD = ISCANCELD;
-                }
-                bool? dSTATUS=true;
-                if (STATUS == 1)
-                {
-                    dSTATUS = true;
-                }
-                if (STATUS == 0)
-                {
-                    dSTATUS = false;
-                }
-                if (data.STATUS != dSTATUS)
-                {
-                    data.STATUS = dSTATUS;
-                }
-               
-                db.Entry(data).State = EntityState.Modified;
-                db.SaveChanges();
-
-                return Json(new { success = true, responseText = "ok" });
             }
-
-            catch (Exception ex)
-            {
-                var ss = validation.OracleExceptionValidation(ex);
-                return Json(new { success = false, responseText =ss });
-
-            }
-
 
         }
 
@@ -401,7 +458,7 @@ namespace Passengers.Controllers
 
 
 
-            public ActionResult Edit(long? id)
+        public ActionResult Edit(long? id)
         {
             var trLine = db.TRLINES.Find(id);
             if (trLine == null)
@@ -448,7 +505,7 @@ namespace Passengers.Controllers
                     //{
                     //    ModelState.AddModelError("", "لايمكن التعديل,الترتيب مكرر");
                     //}
-                     if (model.TYP == null)
+                    if (model.TYP == null)
                     {
                         ModelState.AddModelError("", "لايمكن التعديل,يجب تحديد نوع الخط");
                         ModelState.AddModelError("TYP", "لايمكن التعديل,يجب تحديد نوع الخط");
@@ -546,7 +603,7 @@ namespace Passengers.Controllers
             return PartialView("_TrLineDeletePartial", model);
         }
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult ZCARREGS_Create([DataSourceRequest]DataSourceRequest request, ZCARREG zCARREG)
+        public ActionResult ZCARREGS_Create([DataSourceRequest] DataSourceRequest request, ZCARREG zCARREG)
         {
             using (var dbx = new ProcedContext())
             {
@@ -586,7 +643,7 @@ namespace Passengers.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult ZCARREGS_Update([DataSourceRequest]DataSourceRequest request, ZCARREG zCARREG)
+        public ActionResult ZCARREGS_Update([DataSourceRequest] DataSourceRequest request, ZCARREG zCARREG)
         {
             if (ModelState.IsValid)
             {
@@ -622,7 +679,7 @@ namespace Passengers.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult ZCARREGS_Destroy([DataSourceRequest]DataSourceRequest request, ZCARREG zCARREG)
+        public ActionResult ZCARREGS_Destroy([DataSourceRequest] DataSourceRequest request, ZCARREG zCARREG)
         {
             if (ModelState.IsValid)
             {

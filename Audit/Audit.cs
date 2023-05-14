@@ -248,15 +248,17 @@ public class Audit : ActionFilterAttribute
 
     public static OracleConnection getConnectionDetain()
     {
+  
         OracleConnection con = new OracleConnection();
         con.ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["DetainEntities"].ConnectionString;
         return con;
     }
     public static OracleConnection getConnection()
     {
-        OracleConnection con = new OracleConnection();
-        con.ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["AuditEntities"].ConnectionString;
-        return con;
+        return null;
+        //OracleConnection con = new OracleConnection();
+        //con.ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["AuditEntities"].ConnectionString;
+        //return con;
     }
     public static XmlDocument GetXmlTable(string TableName, string KeyValue)
     {
@@ -407,7 +409,7 @@ public class Audit : ActionFilterAttribute
         string sql = "INSERT INTO APPMGR.LOG_ACTION (nb , ldate ,USER_NB, USER_NAME, CONTROLLER, ACTION, PARAMS, PARAMS_old , APPLICATION, CLIENTIP)";
         sql += " VALUES (APPMGR.MAIN_SEQUENCE.nextval , sysdate  , ";
         sql += "'" + audit.User_NB + "', '" + audit.User_Name + "', '" + audit.ControllerName + "', '" + audit.ActionName + "' ,'" + audit.AuditedFields_New + "' , '" + audit.AuditedFields_Old + "' , '" + audit.Application + "' , '" + audit.IP + "')";
-        OracleConnection conn = getConnection();
+        OracleConnection conn = getConnectionlicense();
         try
         {
             conn.Open();

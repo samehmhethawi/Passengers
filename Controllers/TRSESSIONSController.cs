@@ -146,6 +146,15 @@ namespace Passengers.Controllers
 
 
         }
+
+        public  ActionResult Get_TimeAndNoToSession()
+        {
+            //  var data = db.Database.SqlQuery<int>("select NVL(MAX(SESNO),0) from TRSESSIONS where SESCITYNB ="+ citynb).FirstOrDefault();
+            //var ti = db.Database.SqlQuery<string>("select TO_CHAR(SYSDATE ,'DD/MM/YYYY')  from DUAL ").FirstOrDefault();
+            var ti = DateTime.Now;
+            return Json(new { success = true, sesTime = ti }, JsonRequestBehavior.AllowGet);
+
+        }
         public ActionResult Create(TRSESSIONS model)
         {
             try
@@ -170,23 +179,32 @@ namespace Passengers.Controllers
                     }
                     else
                     {
-                        var comnb = db.Database.SqlQuery<int>("select nb from TRCOMMITTEES where COMCITYNB = " + model.SESCITYNB + " and STATUS = 1").FirstOrDefault();
-                        var mem = db.TRCOMMITTEES_MEMBERS.Where(x => x.COMMITTEENB == comnb && x.MEMBERSHIPNB == 1).Select(s => s.MEMBERNAME).FirstOrDefault();
+                        var is_num_exists = db.Database.SqlQuery<int>("select 1 from TRSESSIONS where SESCITYNB = " + model.SESCITYNB + " and SESNO = " + model.SESNO).FirstOrDefault();
 
-                        if (mem == null)
+                        //if (is_num_exists == 1)
+                        //{
+                        //    return Json(new { success = false, responseText = "يوجد جلسة تحمل نفس الرقم " });
+                        //}
+                        //else
+                        //{
+                            var comnb = db.Database.SqlQuery<int>("select nb from TRCOMMITTEES where COMCITYNB = " + model.SESCITYNB + " and STATUS = 1").FirstOrDefault();
+                            var mem = db.TRCOMMITTEES_MEMBERS.Where(x => x.COMMITTEENB == comnb && x.MEMBERSHIPNB == 1).Select(s => s.MEMBERNAME).FirstOrDefault();
 
-                        {
-                            return Json(new { success = false, responseText = "يجب اضافة رئيس لجنة على الاقل" }, JsonRequestBehavior.AllowGet);
-                        }
-                        model.COMMITTEENB = comnb;
-                        model.COMBOSSNAME = mem;
-                        model.IUSER = Utility.MyName();
-                        model.IDATE = DateTime.Now;
-                        model.IS_ARCHIVED = false;
-                        model.FINISH_PRINT = 0;
-                        db.TRSESSIONS.Add(model);
-                        db.SaveChanges();
-                        return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                            if (mem == null)
+
+                            {
+                                return Json(new { success = false, responseText = "يجب اضافة رئيس لجنة على الاقل" }, JsonRequestBehavior.AllowGet);
+                            }
+                            model.COMMITTEENB = comnb;
+                            model.COMBOSSNAME = mem;
+                            model.IUSER = Utility.MyName();
+                            model.IDATE = DateTime.Now;
+                            model.IS_ARCHIVED = false;
+                            model.FINISH_PRINT = 0;
+                            db.TRSESSIONS.Add(model);
+                            db.SaveChanges();
+                            return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                      //  }
                     }
                 }
 
@@ -447,9 +465,9 @@ namespace Passengers.Controllers
         {
             try
             {
-               // var data = db.TRSESSIONS_PROCEDS.Find(nb);
+                // var data = db.TRSESSIONS_PROCEDS.Find(nb);
 
-                var data = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("select * from TRSESSIONS_PROCEDS where nb ="+ nb).FirstOrDefault();
+                var data = db.TRSESSIONS_PROCEDS.Find(nb);
                 var setp = db.CARPROCEDSTEPS.Find(data.CARPROCEDSTEPNB);
                 var proced = db.CARPROCEDS.Find(data.CARPROCEDNB);
                 if (proced.RESULT != "جارية")
@@ -538,7 +556,9 @@ namespace Passengers.Controllers
         {
             try
             {
-                var data = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("select * from TRSESSIONS_PROCEDS where nb =" + nb).FirstOrDefault();
+                var data = db.TRSESSIONS_PROCEDS.Find(nb);
+
+                //var data = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("select * from TRSESSIONS_PROCEDS where nb =" + nb).FirstOrDefault();
                 var setp = db.CARPROCEDSTEPS.Find(data.CARPROCEDSTEPNB);
                 var proced = db.CARPROCEDS.Find(data.CARPROCEDNB);
                 if (proced.RESULT != "جارية")
@@ -567,8 +587,8 @@ namespace Passengers.Controllers
         {
             try
             {
-              
-                var data = db.Database.SqlQuery<TRSESSIONS_PROCEDS>("select * from TRSESSIONS_PROCEDS where nb =" + nb).FirstOrDefault();
+
+                var data = db.TRSESSIONS_PROCEDS.Find(nb);
                 var setp = db.CARPROCEDSTEPS.Find(data.CARPROCEDSTEPNB);
                 var proced = db.CARPROCEDS.Find(data.CARPROCEDNB);
                 if (proced.RESULT != "جارية")

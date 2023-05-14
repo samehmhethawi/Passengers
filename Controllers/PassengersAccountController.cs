@@ -46,7 +46,7 @@ namespace Passengers.Controllers
             long? totalamount = 0;
             for (var i = 1; i <= 14; i++)
             {
-                var sql = "SELECT * FROM( SELECT  TP.NB, TP.CITYNB, ZC.NAME     AS CITYNAME, TP.AMOUNT, TP.CDATE FROM TRPASSENGERS_CREDITS TP JOIN ZCITYS ZC ON TP.CITYNB = ZC.NB WHERE CITYNB = " + i + " ORDER BY FIXDATE DESC) WHERE ROWNUM =1 ";
+                var sql = "SELECT * FROM( SELECT  TP.NB, TP.CITYNB, ZC.NAME     AS CITYNAME, TO_CHAR(TP.AMOUNT) AS AMOUNT, TP.CDATE FROM TRPASSENGERS_CREDITS TP JOIN ZCITYS ZC ON TP.CITYNB = ZC.NB WHERE CITYNB = " + i + " ORDER BY FIXDATE DESC) WHERE ROWNUM =1 ";
 
                 var data = db.Database.SqlQuery<TRPASSENGERS_CREDITSVM>(sql).FirstOrDefault();
 

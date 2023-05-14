@@ -41,9 +41,26 @@ namespace Passengers.Controllers
         }
 
          public ActionResult Create(TRZMEMBERSHIP model)
-         {
-                db.TRZMEMBERSHIP.Add(model);
-                db.SaveChanges();
+        {
+            using (DbContextTransaction transaction = db.Database.BeginTransaction())
+            {
+               
+                    try
+                    {
+                        _ = db.TRZMEMBERSHIP.Add(model);
+                        
+                        _ = db.SaveChanges();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = validation.OracleExceptionValidation(ex);
+                        transaction.Rollback();
+                        return Json(new { success = false, responseText = message }, JsonRequestBehavior.AllowGet);
+                    }
+               
+            }
+           
                 return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
          }
 

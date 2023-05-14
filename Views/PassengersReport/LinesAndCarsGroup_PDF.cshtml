@@ -20,86 +20,93 @@
         tr {
             page-break-inside: avoid;
         }
-        td
-        {
-            margin:5px;
+
+        td {
+            margin: 5px;
         }
     </style>
 </head>
 
 <body>
     <h1 style="text-align:center;">تقرير الخطوط والمركبات العاملة على الخط بشكل تجميعي</h1>
-   
-
-    <table  cellspacing="0" class="table" DIR="auto" width="100%">
-           
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr style="border:dashed;border-color:black;border-width:1px;" >
-                        <td style="width: 10%; ">
-                            @if (item.CityName != null)
-                            {
-                                <strong>المحافظة:</strong><br />
-
-                                <label>@item.CityName</label>
-                            }
-                            </td>
-                        <td style="width: 30%; ">
-                            @if (item.trname != null)
-                            {
-                                <strong>الخط:</strong><br />
-                                <label>@item.trname</label>
-                             }
-                            </td>
-                        <td style="width: 15%; ">
-                            @if (item.TYPS != null)
-                            {
-                                <strong>نوع الخط:</strong><br />
-                                <label>@item.TYPS</label>
-                            }
-                            </td>
-                        <td style="width: 5%; ">
-                            @if (item.STATUS != null)
-                            {
-
-                                <strong>الحالة:</strong><br />
-
-                                <label>@item.STATUS</label>
-                            }
-                            </td>
-                        <td style="width: 20%; ">
-                            @if (item.kind != null)
-                            {
-                                <strong>نوع المركبة:</strong><br />
-                                <label>@item.kind</label>
-                            }
-                            </td>
-                        <td style="width: 10%;">
-                            @if (item.reg != null)
-                            {
-                                <strong>الفئة:</strong><br />
-                                <label>@item.reg</label>
-                            }
-                            </td>
-                        <td style="width: 10%; ">
-
-                            <strong>العدد:</strong><br />
-                            <label>@item.CoutnCar</label>
-                        </td>
-                        
 
 
+    <table cellspacing="0" class="table" DIR="auto" width="100%">
 
-                    </tr>
-                    <tr>
-                        <td colspan="7">
-                            <div style="width:100%;height:1px;background-color:black;margin:2px;"></div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr style="border:dashed;border-color:black;border-width:1px;">
+                    <td style="width: 10%; ">
+                        @if (item.CityName != null)
+                        {
+                            <strong>المحافظة:</strong><br />
+
+                            <label>@item.CityName</label>
+                        }
+                    </td>
+                    <td style="width: 10%; ">
+                        @if (item.trname != null)
+                        {
+                            <strong>رمز الخط:</strong><br />
+                            <label>@item.trnb</label>
+                        }
+                    </td>
+                    <td style="width: 30%; ">
+                        @if (item.trname != null)
+                        {
+                            <strong>الخط:</strong><br />
+                            <label>@item.trname</label>
+                        }
+                    </td>
+                    <td style="width: 15%; ">
+                        @if (item.TYPS != null)
+                        {
+                            <strong>نوع الخط:</strong><br />
+                            <label>@item.TYPS</label>
+                        }
+                    </td>
+                    <td style="width: 5%; ">
+                        @if (item.STATUS != null)
+                        {
+
+                            <strong>الحالة:</strong><br />
+
+                            <label>@item.STATUS</label>
+                        }
+                    </td>
+                    <td style="width: 20%; ">
+                        @if (item.kind != null)
+                        {
+                            <strong>نوع المركبة:</strong><br />
+                            <label>@item.kind</label>
+                        }
+                    </td>
+                    <td style="width: 10%;">
+                        @if (item.reg != null)
+                        {
+                            <strong>الفئة:</strong><br />
+                            <label>@item.reg</label>
+                        }
+                    </td>
+                    <td style="width: 10%; ">
+
+                        <strong>العدد:</strong><br />
+                        <label>@item.CoutnCar</label>
+                    </td>
+
+
+
+
+                </tr>
+                <tr>
+                    <td colspan="7">
+                        <div style="width:100%;height:1px;background-color:black;"></div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </body>
 <script>
 

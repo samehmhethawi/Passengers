@@ -109,6 +109,15 @@
                 <div class="col-md-7">
                     @Html.Kendo().TextBox().Name("STrline").HtmlAttributes(new { placeholder = "%.. اسم الخط ..%" })
                 </div>
+                <div class="col-lg-2 col-md-2">
+                    @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("STrnb").Min(0)
+                                .HtmlAttributes(new { placeholder = "رمز الخط", style = "width: 100%;" }))
+
+                </div>
                 <div class="col-md-2">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
 
@@ -221,6 +230,7 @@
         fillter.Scarkind = $('#Scarkind').val();
         fillter.Scarreg = $('#Scarreg').val();
         fillter.STrline = $('#STrline').val();
+        fillter.STrnb = $('#STrnb').val();
        return fillter;
     }
     function Btn_Search()
@@ -238,6 +248,8 @@
         $("#Scarkind").data("kendoDropDownList").value(-1);
         $("#Scarreg").data("kendoDropDownList").value(-1);
         $('#STrline').val("");
+        $("#STrnb").data("kendoNumericTextBox").value("");
+
 
 
 
@@ -258,9 +270,12 @@
         fill.Scarkind = $('#Scarkind').val();
         fill.Scarreg = $('#Scarreg').val();
         fill.STrline = $('#STrline').val();
+        fill.STrnb = $('#STrnb').val();
 
+        alert(fill.STrnb);
+        alert(fill.Scarreg);
 
-
+        
         window.open("LinesAndCarsDetalis_PDF?"
 
             + "&pSlinetyps=" + fill.Slinetyps
@@ -268,7 +283,8 @@
             + "&pScarkind=" + fill.Scarkind
             + "&pScarreg=" + fill.Scarreg
             + "&pSTrline=" + fill.STrline
-            + "&pSlineCity=" + fill.SlineCity, "_blank"
+            + "&pSlineCity=" + fill.SlineCity
+            + "&pSTrnb=" + fill.STrnb, "_blank"
         );
     }
 
@@ -283,7 +299,7 @@
         fillEX.Scarkind = $('#Scarkind').val();
         fillEX.Scarreg = $('#Scarreg').val();
         fillEX.STrline = $('#STrline').val();
-
+        fillEX.STrnb = $('#STrnb').val();
 
         window.location = '@Url.Action("LinesAndCarsDetalis_ex", "PassengersReport")?'
 
@@ -292,7 +308,8 @@
             + '&EpScarkind=' + fillEX.Scarkind
             + '&EpScarreg=' + fillEX.Scarreg
             + '&EpSTrline=' + fillEX.STrline
-            + '&EpSlineCity=' + fillEX.SlineCity;
+            + '&EpSlineCity=' + fillEX.SlineCity
+            + "&ESTrnb=" + fillEX.STrnb;
 
 
             return false;

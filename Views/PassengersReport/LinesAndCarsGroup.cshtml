@@ -108,6 +108,16 @@
                 <div class="col-md-7">
                     @Html.Kendo().TextBox().Name("STrline").HtmlAttributes(new { placeholder = "%.. اسم الخط ..%" })
                 </div>
+                <input type="checkbox" id="Strnbheckbox" />
+                <div class="col-lg-2 col-md-2">
+                    @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("STrnb").Min(0)
+                                .HtmlAttributes(new { placeholder = "رمز الخط", style = "width: 100%;" }))
+
+                </div>
                 <div class="col-md-2">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
 
@@ -129,6 +139,7 @@
                 columns.Bound(c => c.kind).Title("المحافظة").Visible(false);
                 columns.Bound(c => c.reg).Title("المحافظة").Visible(false);
                 columns.Bound(c => c.trname).Title("المحافظة").Visible(false);
+                columns.Bound(c => c.trnb).Title("المحافظة").Visible(false);
 
                 columns.Bound(c => c.CoutnCar).Title("عدد المركبات").Width(150).Visible(false);
                 columns.Template(@<text></text>).ClientTemplate("#=resColTemplate(data)#").Title("النتيجة");
@@ -205,7 +216,10 @@
     <strong>المحافظة:</strong><br>
     <label class="col-template-val">#=data.CityName#</label>
     </div>
-
+    <div class="col-md-1">
+     <strong>رمز الخط:</strong>
+    <label  class="col-template-val TYPSisnull">#=data.trnb#</label>
+    </div>
      <div class="col-md-3" >
     <strong>الخط:</strong><br>
     <label class="col-template-val">#=data.trname#</label>
@@ -279,6 +293,7 @@
         fillter.Scarkind_checkbox = $('#Scarkindcheckbox').is(':checked');
         fillter.Scarreg_checkbox = $('#Scarregcheckbox').is(':checked');
         fillter.Strname_checkbox = $('#Strnameheckbox').is(':checked');
+        fillter.Strnb_checkbox = $('#Strnbheckbox').is(':checked');
 
         
         
@@ -289,7 +304,7 @@
         fillter.Scarreg = $('#Scarreg').val();
         fillter.STrline = $('#STrline').val();
         
-
+        fillter.STrnb = $('#STrnb').val();
 
         return fillter;
     }
@@ -311,7 +326,7 @@
         $('#STrline').val("");
 
 
-
+        $("#STrnb").data("kendoNumericTextBox").value("");
 
 
 
@@ -327,15 +342,16 @@
         fill.Scarkind_checkbox = $('#Scarkindcheckbox').is(':checked');
         fill.Scarreg_checkbox = $('#Scarregcheckbox').is(':checked');
         fill.Strname_checkbox = $('#Strnameheckbox').is(':checked');
+        fill.Strnb_checkbox = $('#Strnbheckbox').is(':checked');
         fill.SlineCity = $('#SlineCity').val();
         fill.Slinetyps = $('#Slinetyps').val();
         fill.StrlineStatus = $('#StrlineStatus').val();
         fill.Scarkind = $('#Scarkind').val();
         fill.Scarreg = $('#Scarreg').val();
         fill.STrline = $('#STrline').val();
+        fill.STrnb = $('#STrnb').val();
 
-
-      
+        
         window.open("LinesAndCarsGroup_PDF?"
             + "SlineCitycheckbox=" + fill.SlineCity_checkbox
             + "&Slinetypscheckbox=" + fill.Slinetyps_checkbox
@@ -343,12 +359,15 @@
             + "&Scarkindcheckbox=" + fill.Scarkind_checkbox
             + "&Scarregcheckbox=" + fill.Scarreg_checkbox
             + "&Strnamecheckbox=" + fill.Strname_checkbox
+            + "&Strnbcheckbox=" + fill.Strnb_checkbox
+
             + "&pSlinetyps=" + fill.Slinetyps
             + "&pStrlineStatus=" + fill.StrlineStatus
             + "&pScarkind=" + fill.Scarkind
             + "&pScarreg=" + fill.Scarreg
             + "&pSTrline=" + fill.STrline
-            + "&pSlineCity=" + fill.SlineCity, "_blank"
+            + "&pSlineCity=" + fill.SlineCity
+            + "&pSTrnb=" + fill.STrnb, "_blank"
         );
     }
 

@@ -1381,8 +1381,12 @@ namespace Passengers.Controllers
             var StrlineCANCELD = Request.Form["StrlineCANCELD"].Trim();
             var Slinetyps = Request.Form["Slinetyps"].Trim();
             var SlineCity = Request.Form["SlineCity"].Trim();
+            var STrnb = Request.Form["STrnb"].Trim();
 
-
+            if (STrnb != "")
+            {
+                sql += " and TR.NB =" + STrnb;
+            }
             if (STrName != "")
             {
                 sql += " and TR.NAME like '%" + STrName + "%' ";
@@ -1420,7 +1424,7 @@ namespace Passengers.Controllers
             return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult CityAndLines_PDF(string pSTrName, string pStrlineStatus, string pStrlineCANCELD, string pSlinetyps, string pSlineCity)
+        public ActionResult CityAndLines_PDF(string pSTrName, string pStrlineStatus, string pStrlineCANCELD, string pSlinetyps, string pSlineCity ,string STrnb)
         {
             var sql = " SELECT rownum as rr,  ZC.NAME AS CITYNAME, "
                  + " TR.NAME AS LINENAME, "
@@ -1440,7 +1444,12 @@ namespace Passengers.Controllers
             var Slinetyps = pSlinetyps;
             var SlineCity = pSlineCity;
 
+            var PSTrnb = STrnb;
 
+            if (STrnb!= "")
+            {
+                sql += " and TR.NB =" + PSTrnb;
+            }
             if (STrName != "")
             {
                 sql += " and TR.NAME like '%" + STrName + "%' ";
@@ -1480,7 +1489,7 @@ namespace Passengers.Controllers
             };
         }
 
-        public ActionResult CityAndLines_ex(string EpSTrName, string EpStrlineStatus, string EpStrlineCANCELD, string EpSlinetyps, string EpSlineCity)
+        public ActionResult CityAndLines_ex(string EpSTrName, string EpStrlineStatus, string EpStrlineCANCELD, string EpSlinetyps, string EpSlineCity,string STrnb)
         {
 
 
@@ -1501,7 +1510,12 @@ namespace Passengers.Controllers
             var StrlineCANCELD = EpStrlineCANCELD;
             var Slinetyps = EpSlinetyps;
             var SlineCity = EpSlineCity;
+            var PSTrnb = STrnb;
 
+            if (STrnb != "")
+            {
+                sql += " and TR.NB =" + PSTrnb;
+            }
 
             if (STrName != "")
             {
@@ -1865,6 +1879,9 @@ namespace Passengers.Controllers
             var Scarkind_checkbox = Request.Form["Scarkind_checkbox"].Trim();
             var Scarreg_checkbox = Request.Form["Scarreg_checkbox"].Trim();
             var Strname_checkbox = Request.Form["Strname_checkbox"].Trim();
+            var Strnb_checkbox = Request.Form["Strnb_checkbox"].Trim();
+
+            
 
             var Slinetyps = Request.Form["Slinetyps"].Trim();
             var StrlineStatus = Request.Form["StrlineStatus"].Trim();
@@ -1873,14 +1890,19 @@ namespace Passengers.Controllers
 
             var STrline = Request.Form["STrline"].Trim();
             var SlineCity = Request.Form["SlineCity"].Trim();
-
-
+            var STrnb = Request.Form["STrnb"].Trim();
+            
 
 
             List<string> grossupby = new List<string>();
 
             var sql1 = " select ";
+            if (Strnb_checkbox == "true")
+            {
+                sql1 += " to_char(TR.nb) as trnb ,";
+                grossupby.Add(" TR.nb");
 
+            }
             if (SlineCity_checkbox == "true")
             {
                 sql1 += " ZC.NAME AS CityName ,";
@@ -1916,6 +1938,7 @@ namespace Passengers.Controllers
                 grossupby.Add("TR.NAME");
 
             }
+           
 
 
             sql1 += " COUNT (CA.NB) AS CoutnCar ";
@@ -1927,6 +1950,11 @@ namespace Passengers.Controllers
              + "  left join zcarkinds zk on zk.nb = ca.reg "
              + "  left join ZCARREGS zg on ca.CARREGNB = zg.nb where 1=1  AND TR.NB NOT IN (-1, 0)";
 
+
+            if (STrnb != "")
+            {
+                sql1 += " and tr.nb = " + STrnb;
+            }
             if (Slinetyps != "")
             {
                 sql1 += " and tr.TYP = " + Slinetyps;
@@ -1974,7 +2002,8 @@ namespace Passengers.Controllers
                 StrlineStatus_checkbox == "true" ||
                 Scarkind_checkbox == "true" ||
                 Scarreg_checkbox == "true" ||
-                Strname_checkbox == "true"
+                Strname_checkbox == "true" ||
+                Strnb_checkbox == "true"
                 )
             {
                 sql1 += " GROUP BY ";
@@ -1994,7 +2023,8 @@ namespace Passengers.Controllers
                StrlineStatus_checkbox == "true" ||
                Scarkind_checkbox == "true" ||
                Scarreg_checkbox == "true" ||
-               Strname_checkbox == "true"
+               Strname_checkbox == "true" ||
+                Strnb_checkbox == "true"
                )
             {
                 sql1 += " ORDER BY ";
@@ -2015,7 +2045,7 @@ namespace Passengers.Controllers
         }
 
         public ActionResult LinesAndCarsGroup_PDF
-            (string SlineCitycheckbox, string Slinetypscheckbox, string StrlineStatuscheckbox, string Scarkindcheckbox, string Scarregcheckbox, string Strnamecheckbox, string pSlinetyps, string pStrlineStatus, string pScarkind, string pScarreg, string pSTrline, string pSlineCity)
+            (string SlineCitycheckbox, string Slinetypscheckbox, string StrlineStatuscheckbox, string Scarkindcheckbox, string Scarregcheckbox, string Strnamecheckbox,string Strnbcheckbox, string pSlinetyps, string pStrlineStatus, string pScarkind, string pScarreg, string pSTrline, string pSlineCity,string pSTrnb)
         {
             var SlineCity_checkbox = SlineCitycheckbox;
             var Slinetyps_checkbox = Slinetypscheckbox;
@@ -2024,7 +2054,7 @@ namespace Passengers.Controllers
             var Scarkind_checkbox = Scarkindcheckbox;
             var Scarreg_checkbox = Scarregcheckbox;
             var Strname_checkbox = Strnamecheckbox;
-
+            var Strnb_checkbox = Strnbcheckbox;
             var Slinetyps = pSlinetyps;
             var StrlineStatus = pStrlineStatus;
             var Scarkind = pScarkind;
@@ -2032,13 +2062,20 @@ namespace Passengers.Controllers
 
             var STrline = pSTrline;
             var SlineCity = pSlineCity;
+            var STrnb = pSTrnb;
 
-
-
+            
 
             List<string> grossupby = new List<string>();
 
             var sql1 = " select ";
+
+            if (Strnb_checkbox == "true")
+            {
+                sql1 += " to_char (TR.nb) as trnb ,";
+                grossupby.Add("TR.nb");
+
+            }
 
             if (SlineCity_checkbox == "true")
             {
@@ -2085,7 +2122,10 @@ namespace Passengers.Controllers
              + "  left JOIN cars ca ON tr.nb = ca.lin  "
              + "  left join zcarkinds zk on zk.nb = ca.reg "
              + "  left join ZCARREGS zg on ca.CARREGNB = zg.nb where 1=1 AND TR.NB NOT IN (-1, 0) ";
-
+            if (STrnb != "")
+            {
+                sql1 += " and tr.nb = " + STrnb;
+            }
             if (Slinetyps != "")
             {
                 sql1 += " and tr.TYP = " + Slinetyps;
@@ -2133,8 +2173,9 @@ namespace Passengers.Controllers
                 StrlineStatus_checkbox == "true" ||
                 Scarkind_checkbox == "true" ||
                 Scarreg_checkbox == "true" ||
-                Strname_checkbox == "true"
-                )
+                Strname_checkbox == "true" ||
+                Strnb_checkbox == "true"
+                ) 
             {
                 sql1 += " GROUP BY ";
             }
@@ -2153,8 +2194,9 @@ namespace Passengers.Controllers
                StrlineStatus_checkbox == "true" ||
                Scarkind_checkbox == "true" ||
                Scarreg_checkbox == "true" ||
-               Strname_checkbox == "true"
-               )
+               Strname_checkbox == "true" ||
+               Strnb_checkbox == "true"
+               ) 
             {
                 sql1 += " ORDER BY ";
             }
@@ -2207,8 +2249,8 @@ namespace Passengers.Controllers
 
                 var STrline = Request.Form["STrline"].Trim();
                 var SlineCity = Request.Form["SlineCity"].Trim();
-
-
+                var STrnb = Request.Form["STrnb"].Trim();
+                
 
 
 
@@ -2233,6 +2275,12 @@ namespace Passengers.Controllers
           + " WHERE 1 = 1 AND  TR.NB NOT IN (-1,0)";
 
                 var sql_where = "  ";
+
+                if (STrnb != "")
+                {
+                    sql_where += " and TR.nb = " + STrnb;
+                }
+
 
                 if (Slinetyps != "")
                 {
@@ -2307,7 +2355,7 @@ namespace Passengers.Controllers
 
         }
 
-        public ActionResult LinesAndCarsDetalis_PDF(string pSlinetyps, string pStrlineStatus, string pScarkind, string pScarreg, string pSTrline, string pSlineCity)
+        public ActionResult LinesAndCarsDetalis_PDF(string pSlinetyps, string pStrlineStatus, string pScarkind, string pScarreg, string pSTrline, string pSlineCity,string pSTrnb)
         {
             var Slinetyps = pSlinetyps;
             var StrlineStatus = pStrlineStatus;
@@ -2315,7 +2363,7 @@ namespace Passengers.Controllers
             var Scarreg = pScarreg;
             var STrline = pSTrline;
             var SlineCity = pSlineCity;
-
+            var STrnb = pSTrnb;
             var sql1 = " SELECT ZC.NAME AS CityName,"
       + " TR.NAME AS trname,"
        + " TR.NB AS TRNB,"
@@ -2335,6 +2383,11 @@ namespace Passengers.Controllers
        + " LEFT JOIN ZCITYS ZC2 ON ZC2.NB = CA.CITYNB"
       + " WHERE 1 = 1  AND  TR.NB NOT IN (-1,0)";
 
+
+            if (!string.IsNullOrEmpty(STrnb)  )
+            {
+                sql1 += " and TR.nb = " + STrnb;
+            }
             if (Slinetyps != "")
             {
                 sql1 += " and tr.TYP = " + Slinetyps;
@@ -2395,7 +2448,7 @@ namespace Passengers.Controllers
 
 
 
-        public ActionResult LinesAndCarsDetalis_ex(string EpSlinetyps, string EpStrlineStatus, string EpScarkind, string EpScarreg, string EpSTrline, string EpSlineCity)
+        public ActionResult LinesAndCarsDetalis_ex(string EpSlinetyps, string EpStrlineStatus, string EpScarkind, string EpScarreg, string EpSTrline, string EpSlineCity, string ESTrnb)
         {
 
 
@@ -2405,6 +2458,7 @@ namespace Passengers.Controllers
             var Scarreg = EpScarreg;
             var STrline = EpSTrline;
             var SlineCity = EpSlineCity;
+            var STrnb = ESTrnb;
 
             var sql1 = " SELECT rownum as row_num ,ZC.NAME AS CityName,"
       + " TR.NAME AS trname,"
@@ -2424,6 +2478,12 @@ namespace Passengers.Controllers
       + "  LEFT JOIN ZCARREGS zg ON ca.CARREGNB = zg.nb"
        + " LEFT JOIN ZCITYS ZC2 ON ZC2.NB = CA.CITYNB"
       + " WHERE 1 = 1  AND  TR.NB NOT IN (-1,0)";
+
+
+            if (STrnb != "")
+            {
+                sql1 += " and TR.nb = " + STrnb;
+            }
 
             if (Slinetyps != "")
             {
@@ -3017,19 +3077,19 @@ namespace Passengers.Controllers
             }
 
            
-            CodesController bb = new CodesController();
+            //CodesController bb = new CodesController();
 
-            var ci = bb.GetCityForRead();
+            //var ci = bb.GetCityForRead();
 
-            if (ci == "0")
-            {
+            //if (ci == "0")
+            //{
               
 
-            }
-            else
-            {
-                sql_where += " and CA.CITYNB =" + ci;
-            }
+            //}
+            //else
+            //{
+            //    sql_where += " and CA.CITYNB =" + ci;
+            //}
            
 
 
@@ -3099,19 +3159,19 @@ namespace Passengers.Controllers
             }
 
 
-            CodesController bb = new CodesController();
+            //CodesController bb = new CodesController();
 
-            var ci = bb.GetCityForRead();
+            //var ci = bb.GetCityForRead();
 
-            if (ci == "0")
-            {
+            //if (ci == "0")
+            //{
 
 
-            }
-            else
-            {
-                sql += " and CA.CITYNB =" + ci;
-            }
+            //}
+            //else
+            //{
+            //    sql += " and CA.CITYNB =" + ci;
+            //}
 
             sql += " ORDER BY CH.UDATE ASC";
             //CodesController bb = new CodesController();
@@ -3192,19 +3252,19 @@ namespace Passengers.Controllers
                 sql += " and CH.LINENAME LIKE '%" + STrline + "%'";
             }
 
-            CodesController bb = new CodesController();
+            //CodesController bb = new CodesController();
 
-            var ci = bb.GetCityForRead();
+            //var ci = bb.GetCityForRead();
 
-            if (ci == "0")
-            {
+            //if (ci == "0")
+            //{
 
 
-            }
-            else
-            {
-                sql += " and CA.CITYNB =" + ci;
-            }
+            //}
+            //else
+            //{
+            //    sql += " and CA.CITYNB =" + ci;
+            //}
             sql += " ORDER BY CH.UDATE ASC";
             //CodesController bb = new CodesController();
 

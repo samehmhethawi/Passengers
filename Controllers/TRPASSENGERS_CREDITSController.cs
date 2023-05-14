@@ -14,6 +14,7 @@ using System.Web.Mvc;
 
 namespace Passengers.Controllers
 {
+    [checksession, Authorize, RedirectOnError, CanDoIt]
     public class TRPASSENGERS_CREDITSController : Controller
     {
         private ProcedContext db = new ProcedContext();

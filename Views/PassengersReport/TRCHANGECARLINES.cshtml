@@ -99,7 +99,7 @@
                 columns.Bound(c => c.CARKIND).Title("نوع المركبة").Visible(false);
                 columns.Bound(c => c.LINENB).Title("رمز الخط الحالي القديم").Width(150).Visible(false);
                 columns.Bound(c => c.LINENAME).Title("اسم الخط").Width(250);
-                columns.Bound(c => c.LINE_TYPE).Title("نوع الخط").ClientTemplate("#=LINE_TYPE ? 'حالي':'اساسي' #").Width(100);
+                columns.Bound(c => c.LINE_TYPE).Title("نوع الخط").ClientTemplate("#=GetCtype(data.LINE_TYPE)#").Width(100);
                 columns.Bound(c => c.LINE_TYPE).Title("نوع الخط").Visible(false);
                 columns.Bound(c => c.UDATE).Format("{0:dd/MM/yyyy}").Title("تاريخ التغير").Width(110);
             })
@@ -168,7 +168,13 @@
 </div>
 
 <script>
-
+    function GetCtype(data) {
+        if (data == 1) {
+            return "حالي";
+        } if (data == 2) {
+            return "اساسي";
+        }
+    }
     function GetFillters()
     {
         var fillter = {};

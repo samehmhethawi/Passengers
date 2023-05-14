@@ -12,6 +12,9 @@ namespace Passengers.ViewModel
         public string STATUS { get; set; }
         public string kind { get; set; }
         public string trname { get; set; }
+        public string trnb { get; set; }
+
+        
         public string reg { get; set; }
         public long CoutnCar { get; set; }
     }

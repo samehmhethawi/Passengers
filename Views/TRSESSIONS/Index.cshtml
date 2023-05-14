@@ -304,14 +304,38 @@
 
             }
             else {
-                var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
-                $("#AddSesDate").data("kendoDatePicker").value(todayDate);
-                var pagewidth = document.body.offsetWidth;
-                $('#AddSesNo').val("");
-                //  $('#AddSesDate').val("");
-                $("#AddSesCity").data("kendoDropDownList").value(1)
-                $("#Add_Session span.k-tooltip-validation").hide();
-                openWindow('AddSession');
+                 $.ajax({
+            url: '@Url.Action("Get_TimeAndNoToSession", "TRSESSIONS")',
+
+                     
+
+                    success: function (response) {
+                        if (response.success == true)
+                        {
+                            var todayDate = response.sesTime ;
+
+                            //var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd/MM/yyyy');
+                            $("#AddSesDate").data("kendoDatePicker").value(todayDate);
+                            var pagewidth = document.body.offsetWidth;
+                            $('#AddSesNo').val("");
+                            //  $('#AddSesDate').val("");
+                            $("#AddSesCity").data("kendoDropDownList").value(1)
+                            $("#Add_Session span.k-tooltip-validation").hide();
+                            openWindow('AddSession');
+
+
+
+                        } else {
+                       
+                        }
+
+
+                    }
+                 });
+
+
+                
+                
             }
 
         });

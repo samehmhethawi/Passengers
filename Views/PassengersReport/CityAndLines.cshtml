@@ -12,6 +12,15 @@
                 <div class="col-md-8">
                     @Html.Kendo().TextBox().Name("STrline").HtmlAttributes(new { placeholder = "%.. اسم الخط ..%" })
                 </div>
+                <div class="col-lg-2 col-md-2">
+                    @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("STrnb").Min(0)
+                                .HtmlAttributes(new { placeholder = "رمز الخط", style = "width: 100%;" }))
+
+                </div>
                 <div class="col-md-2">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر الحالة فعال")
@@ -33,6 +42,11 @@
 
                 </div>
 
+               
+            </div>
+           
+          
+            <div class="row">
                 <div class="col-md-2">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر الحالة ملغى")
@@ -53,11 +67,6 @@
                                     )
 
                 </div>
-            </div>
-           
-          
-            <div class="row">
-
                 <div class="col-md-2">
                     @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر محافظة الخط")
@@ -91,21 +100,21 @@
                                     )
                 </div>
                 @*<div class="col-md-2">
-                    @(Html.Kendo().DropDownList()
-                                    .OptionLabel("نوع الخط حسب المدة")
-                                    .Name("Slinedura")
-                                    .DataTextField("NAME")
-                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
-                                    .DataSource(source =>
-                                    {
-                                        source.Read(read =>
-                                        {
-                                            read.Action("GetCity", "Codes");
-                                        });
-                                    })
-                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
-                                    )
-                </div>*@
+            @(Html.Kendo().DropDownList()
+                            .OptionLabel("نوع الخط حسب المدة")
+                            .Name("Slinedura")
+                            .DataTextField("NAME")
+                            .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                            .DataSource(source =>
+                            {
+                                source.Read(read =>
+                                {
+                                    read.Action("GetCity", "Codes");
+                                });
+                            })
+                            .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                            )
+        </div>*@
 
                 <div class="col-md-2">
                     <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
@@ -122,8 +131,9 @@
             .Name("grid").AutoBind(false)
             .Columns(columns =>
             {
-                columns.Bound(c => c.CityName).Title("المحافظة");
-
+                columns.Bound(c => c.CityName).Title("المحافظة").Width(150);
+                columns.Bound(c => c.TRNB).Title("رمز الخط").Width(150);
+                
                 columns.Bound(c => c.LINENAME).Title("اسم خط السير").Width(500);
                 columns.Bound(c => c.TPYS).Title("نوع الخط").Width(150);
                 columns.Bound(c => c.STATUS).Title("حالة الخط").Width(150);
@@ -131,7 +141,7 @@
 
                 columns.Bound(c => c.MINCARS).Title("عدد الادنى").Width(150);
                 columns.Bound(c => c.MAXCARS).Title("عدد الاعلى").Width(150);
-             
+
             })
             .HtmlAttributes(new { style = "height: 500px !important;" })
             .Scrollable()
@@ -208,8 +218,9 @@
         fillter.StrlineStatus = $('#StrlineStatus').val();
         fillter.StrlineCANCELD = $('#StrlineCANCELD').val();
         fillter.Slinetyps = $('#Slinetyps').val();
+        fillter.STrnb = $('#STrnb').val();
 
-
+        
         return fillter;
     }
 
@@ -224,6 +235,7 @@
         $("#SlineCity").data("kendoDropDownList").value(-1);
         $("#StrlineStatus").data("kendoDropDownList").value(-1);
         $("#Slinetyps").data("kendoDropDownList").value(-1);
+        $("#STrnb").data("kendoNumericTextBox").value("");
 
         $("#grid").data("kendoGrid").dataSource.data([]);
     }
@@ -237,7 +249,7 @@
         fill.StrlineCANCELD = $('#StrlineCANCELD').val();
         fill.Slinetyps = $('#Slinetyps').val();
         fill.SlineCity = $('#SlineCity').val();
-
+        fill.STrnb = $('#STrnb').val();
 
 
         window.open("CityAndLines_PDF?pSTrName=" + fill.STrline
@@ -245,6 +257,7 @@
             + "&pStrlineCANCELD=" + fill.StrlineCANCELD
             + "&pSlinetyps=" + fill.Slinetyps
             + "&pSlineCity=" + fill.SlineCity
+            + "&STrnb=" + fill.STrnb
             , "_blank"
         );
     }
@@ -257,13 +270,14 @@
         fillEX.StrlineCANCELD = $('#StrlineCANCELD').val();
         fillEX.Slinetyps = $('#Slinetyps').val();
         fillEX.SlineCity = $('#SlineCity').val();
-
+        fillEX.STrnb = $('#STrnb').val();
 
         window.location = '@Url.Action("CityAndLines_ex", "PassengersReport")?EpSTrName=' + fillEX.STrline
             + '&EpStrlineStatus=' + fillEX.StrlineStatus
             + '&EpStrlineCANCELD=' + fillEX.StrlineCANCELD
             + '&EpSlinetyps=' + fillEX.Slinetyps
-            + '&EpSlineCity=' + fillEX.SlineCity;
+            + '&EpSlineCity=' + fillEX.SlineCity
+            + "&STrnb=" + fillEX.STrnb;
 
 
             return false;
