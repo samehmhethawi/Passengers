@@ -1,0 +1,169 @@
+﻿
+@{
+    ViewBag.Title = "الخطوط المضمنة بالدمج";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section PartialHeader{
+    <div class="panel-heading1 " id="searchPanel" style="font-size: 15px">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> اسم الخط</label>
+                </div>
+                <div class="col-lg-8 col-md-8">
+                    @Html.Kendo().TextBox().Name("STrline").HtmlAttributes(new { placeholder = " اسم الخط" })
+                </div>
+                <div class="col-lg-2 col-md-2">
+                    @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("STrnb").Min(0)
+                                .HtmlAttributes(new { placeholder = "رمز الخط", style = "width: 100%;" }))
+                </div>
+                <div class="col-lg-1 col-md-1">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+                </div>
+            </div>
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> اسم الخط الاب</label>
+                </div>
+                <div class="col-lg-8 col-md-8">
+                    @Html.Kendo().TextBox().Name("STrlineParent").HtmlAttributes(new { placeholder = "اسم الخط الاب" })
+                </div>
+                <div class="col-lg-2 col-md-2">
+                    @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("STrnbParent").Min(0)
+                                .HtmlAttributes(new { placeholder = "رمز الخط الاب", style = "width: 100%;" }))
+                </div>
+                <div class="col-lg-1 col-md-1">
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<div>
+    @(Html.Kendo().Grid<Proced.DataAccess.Models.CF.TRLINES_TO_MERGE>()
+      .Name("grid").AutoBind(false)
+
+      .Columns(columns =>
+      {
+          columns.Bound(c => c.NB).ClientTemplate
+                  (" # if (1 == 1) " +
+                  "{"+
+                "#<button id=''  class='k-button k-button-icontext k-grid-minus hvr-box-shadow-outset' onclick='DeleteFromMerge(#=NB#)'></button> #"
+                  + "} #")
+                .Sortable(false).Title(" ").Width(60).Filterable(false);
+          columns.Bound(c => c.NB).Title("رمز الخط").Visible(false);
+          columns.Bound(c => c.TRLINENB).Title("رمز الخط").Width(150);
+          columns.Bound(c => c.TRLINENAME).Title("اسم الخط").Width(500);
+          columns.Bound(c => c.PARENT_TRLINENB).Title("رمز الخط الاب").Width(150);
+          columns.Bound(c => c.PARENT_TRLINENAME).Title("اسم الخط الاب").Width(500);
+          columns.Bound(c => c.IUSER).Title("المدخل").Width(150);
+          columns.Bound(c => c.IDATE).Title("تاريخ الانشاء").Format("{0:dd/MM/yyyy}").Width(150);
+
+      })
+            //arabic from here
+            //.ToolBar(toolbar =>
+            //{
+            //    toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            //})
+            .HtmlAttributes(new { style = "height: 450px !important;" })
+.Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+           .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+           .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+           .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+            .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+           .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+           .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+           .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+           .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+           .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+           .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+           .Display("العدد الكلي للسجلات :  {2}")
+           )
+         .Refresh(true)
+         .Input(true)
+         .Info(true)
+
+
+)
+.Scrollable()
+.DataSource(dataSource => dataSource
+.Ajax().PageSize(25)
+.Model(model => model.Id(p => p.NB))
+.Read(read => read.Action("TRLINES_TO_MERGE_Read", "TrLines").Data("GetFillters"))
+).Events(events => events
+.Change("getcolor")
+.DataBound("getcolor")
+.Sort("getcolor")
+.Filter("getcolor")
+.Group("getcolor")
+.Page("getcolor")
+.Cancel("getcolor")
+//.Edit("hideIdField")
+)
+)
+</div>
+
+
+<script>
+    function GetFillters()
+    {
+        var fillter = {};
+        fillter.STrline = $('#STrline').val();
+        fillter.STrnb = $('#STrnb').val();
+        fillter.STrlineParent = $('#STrlineParent').val();
+        fillter.STrnbParent = $('#STrnbParent').val();
+        return fillter;
+    }
+
+    function Btn_Search()
+    {
+        $("#grid").data("kendoGrid").dataSource.page([1]);
+    }
+
+    function rest_filtters()
+    {
+        $('#STrline').val("");
+        $('#STrlineParent').val("");
+        $("#STrnb").data("kendoNumericTextBox").value("");
+        $("#STrnbParent").data("kendoNumericTextBox").value("");
+        $("#grid").data("kendoGrid").dataSource.data([]);
+    }
+
+    function getcolor()
+    {
+        setIcons();
+    }
+
+    function DeleteFromMerge(nb)
+    {
+        alert(nb);
+         $.ajax({
+                type: "POST",
+                data: { NB: nb },
+                url: "@Url.Action("DeleteNbFromMerge", "TrLines")",
+                success: function (response) {
+                    if (response.success) {
+                        $("#grid").data("kendoGrid").dataSource.page([1]);
+                        // GetPartial();
+
+                        //toastr.success("تمت العملية  بنجاح");
+
+                    } else {
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
+    }
+</script>

@@ -215,6 +215,9 @@ namespace Passengers.ViewModel
         [Display(Name = "ملاحظات")]
         public string NOTES { get; set; }
 
+        [Display(Name = "سبب السفرة")]
+        public string CAUSES { get; set; }
+
 
 
 

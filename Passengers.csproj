@@ -1314,6 +1314,8 @@
     <Content Include="Views\Shared\DisplayTemplates\CanonicalHelperModel.cshtml" />
     <Content Include="Views\PassengersReport\CityAndLinesChange_PDF.cshtml" />
     <Content Include="Views\PassengersReport\TRCHANGECARLINES_PDF.cshtml" />
+    <Content Include="Views\TrLines\MergeTrLines.cshtml" />
+    <Content Include="Views\TrLines\TRLINES_TO_MERGE.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -344,6 +344,47 @@
     <script>
 
         function setIcons() {
+            $(".k-grid-CanEdit").addClass("hvr-box-shadow-outset");
+
+            $(".k-grid-CanEdit").kendoButton({
+                icon: " fa fa-undo  text-success"
+
+            });
+
+            $(".k-grid-CanEdit").kendoTooltip({
+                content: "اعادة فتح التعديل",
+                position: "left",
+                autoHide: true,
+            });
+
+
+            $(".k-grid-plus").addClass("hvr-box-shadow-outset");
+
+            $(".k-grid-plus").kendoButton({
+                icon: " fa fa-plus-square  text-success"
+
+            });
+
+            $(".k-grid-plus").kendoTooltip({
+                content: "ضافة",
+                position: "left",
+                autoHide: true,
+            });
+
+            $(".k-grid-minus").addClass("hvr-box-shadow-outset");
+
+            $(".k-grid-minus").kendoButton({
+                icon: " fa fa-minus-square-o  text-success"
+
+            });
+
+            $(".k-grid-minus").kendoTooltip({
+                content: "ازالة",
+                position: "left",
+                autoHide: true,
+            });
+
+
             $(".k-grid-Edit").addClass("hvr-box-shadow-outset");
 
             $(".k-grid-Edit").kendoButton({
@@ -356,8 +397,6 @@
                 position: "left",
                 autoHide: true,
             });
-
-
             //------------------------------------------------------------------------------
 
 

@@ -119,6 +119,8 @@ namespace Passengers.Controllers
                 MAXCARS = commm.MAXCARS,
                 SESNB = commm.SESNB,
                 LINEPATH = commm.LINEPATH,
+                CANEDIT = commm.CANEDIT,
+
 
                 Seq = (request.Page - 1) * request.PageSize + (++index)
             });
@@ -287,6 +289,24 @@ namespace Passengers.Controllers
                 return Json(new { success = false, responseText = e.Message });
             }
         }
+        public ActionResult SetCanEditTrue(long? linb)
+        {
+            try
+            {
+                var data = db.TRLINES.Find(linb);
+
+                data.CANEDIT = true;
+                db.Entry(data).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                return Json(new { success = true, responseText = "تم التعديل بنجاح" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { success = false, responseText = e.Message });
+            }
+        }
 
         public ActionResult update(long? Nb, string Name, int? city, int? typ, long? min, long? max, int? STATUS, int? ISCANCELD, string eLINEPATH, string mod)
         {
@@ -346,6 +366,10 @@ namespace Passengers.Controllers
 
                         return Json(new { success = false, responseText = "لا يوجد سجل موافق" });
 
+                    }
+                    if (data.CANEDIT == false)
+                    {
+                        return Json(new { success = false, responseText = "عذراً لا يمكن تعديل هذا الخط " });
                     }
 
                     if (data.NAME != Name)
@@ -427,11 +451,11 @@ namespace Passengers.Controllers
                     {
 
                         db.TRLINE_CITY.Add(item);
-                     
+
 
                     }
 
-
+                    data.CANEDIT = false;
 
                     db.Entry(data).State = EntityState.Modified;
                     db.SaveChanges();
@@ -454,10 +478,290 @@ namespace Passengers.Controllers
 
 
 
+        public ActionResult MergeTrLines()
+        {
+            ViewData["ZTRLINETYPES"] = db.ZTRLINETYPES.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            ViewData["zcities"] = db.ZCITYS.Select(x => new
+            {
+                ID = x.NB,
+                NAME = x.NAME
+            });
+            return View();
+        }
+
+        public ActionResult TrLines_Read_toMerge([DataSourceRequest] DataSourceRequest request)
+        {
+            var sql = "select * from TRLINES where 1 = 1 ";
+            var STrline = Request.Form["STrline"].Trim();
+            var SlineCity = Request.Form["SlineCity"].Trim();
+            var StrlineStatus = Request.Form["StrlineStatus"].Trim();
+            var StrlineCANCELD = Request.Form["StrlineCANCELD"].Trim();
+            var STrnb = Request.Form["STrnb"].Trim();
+
+            var STrlinepath = Request.Form["STrlinepath"].Trim();
+
+            var mod = Request.Form["sbjstosc"].Trim();
+
+            var subjects = JsonConvert.DeserializeObject<List<TRLINE>>(mod);
+
+            if (STrnb != "")
+            {
+                sql += " and nb = " + STrnb;
+            }
+
+            if (subjects.Count != 0)
+            {
+                sql += " and nb not in (";
+                foreach (var subject in subjects)
+                {
+                    sql += " " + subject.NB + " , ";
+                }
+                sql += " 0 )";
+            }
+
+            if (STrline != "")
+            {
+                sql += " and name like '" + STrline + "'";
+            }
+
+            if (STrlinepath != "")
+            {
+                sql += " and LINEPATH like '" + STrlinepath + "'";
+            }
+            if (StrlineStatus != "")
+            {
+                sql += " and STATUS = " + StrlineStatus;
+            }
+
+            if (StrlineCANCELD != "")
+            {
+                sql += " and ISCANCELD = " + StrlineCANCELD;
+            }
+            CodesController bb = new CodesController();
+
+            var ci = bb.GetCityForRead();
+            if (ci == "0")
+            {
+                if (SlineCity != "")
+                {
+                    sql += " and CITYNB =" + SlineCity;
+                }
+            }
+            else
+            {
+                sql += " and CITYNB =" + ci;
+            }
+
+            sql += " and nb not in (SELECT TRLINENB FROM TRLINES_TO_MERGE) ";
+
+            var data = db.Database.SqlQuery<TRLINE>(sql).ToList();
+            int index = 0;
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,
+                NAME = commm.NAME,
+                TYP = commm.TYP,
+                ORDR = commm.ORDR,
+                STATUS = commm.STATUS,
+                CITYNB = commm.CITYNB,
+                ISCANCELD = commm.ISCANCELD,
+                MINCARS = commm.MINCARS,
+                MAXCARS = commm.MAXCARS,
+                SESNB = commm.SESNB,
+                LINEPATH = commm.LINEPATH,
+                CANEDIT = commm.CANEDIT,
+
+
+                Seq = (request.Page - 1) * request.PageSize + (++index)
+            });
+            return Json(result);
+
+        }
+
+
+        public ActionResult AddNbToMerge(string mod, long? ParentNb, string ParentName)
+        {
+
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var subjects = JsonConvert.DeserializeObject<List<TRLINE>>(mod);
+                    var username = Utility.MyName();
+
+                    foreach (var item in subjects)
+                    {
+                        if (item.NB != ParentNb)
+                        {
+                            var sql = "INSERT INTO TRLINES_TO_MERGE (NB,"
+                                                                + " TRLINENB, "
+                                                              + " PARENT_TRLINENB, "
+                                                              + " PARENT_TRLINENAME, "
+                                                              + " TRLINENAME, "
+                                                              + " IUSER, "
+                                                              + " IDATE," 
+                                                              + "ISMERGE) "
+                                                              + " VALUES"
+                                                              + "(1, "
+                                                              + "  " + item.NB + ", "
+                                                              + "  " + ParentNb + ", "
+                                                              + "  '" + ParentName + "', "
+                                                              + "  '" + item.NAME + "', "
+                                                              + "  '"+ username + "', "
+                                                              + "  SYSDATE,"
+                                                              + " 0) ";
+                            db.Database.ExecuteSqlCommand(sql);
+                        }
+
+
+                    }
+                    transaction.Commit();
+                    return Json(new { success = true, responseText = "ok" });
+
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    var ss = validation.OracleExceptionValidation(ex);
+                    return Json(new { success = false, responseText = ss });
+
+                }
+
+            }
+
+        }
 
 
 
 
+        public ActionResult TRLINES_TO_MERGE()
+        {
+
+            return View();
+        }
+
+        public ActionResult TRLINES_TO_MERGE_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            var sql = "select * from TRLINES_TO_MERGE where 1 = 1 ";
+            var STrline = Request.Form["STrline"].Trim();
+            var STrnb = Request.Form["STrnb"].Trim();
+            var STrlineParent = Request.Form["STrlineParent"].Trim();
+            var STrnbParent = Request.Form["STrnbParent"].Trim();
+
+
+            if (STrnb != "")
+            {
+                sql += " and TRLINENB = " + STrnb;
+            }
+            if (STrnbParent != "")
+            {
+                sql += " and PARENT_TRLINENB = " + STrnbParent;
+            }
+
+
+            if (STrline != "")
+            {
+                sql += " and TRLINENAME like '" + STrline + "'";
+            }
+
+            if (STrlineParent != "")
+            {
+                sql += " and PARENT_TRLINENAME like '" + STrlineParent + "'";
+            }
+            //if (STrlinepath != "")
+            //{
+            //    sql += " and LINEPATH like '" + STrlinepath + "'";
+            //}
+            //if (StrlineStatus != "")
+            //{
+            //    sql += " and STATUS = " + StrlineStatus;
+            //}
+
+            //if (StrlineCANCELD != "")
+            //{
+            //    sql += " and ISCANCELD = " + StrlineCANCELD;
+            //}
+            //CodesController bb = new CodesController();
+
+            //var ci = bb.GetCityForRead();
+            //if (ci == "0")
+            //{
+            //    if (SlineCity != "")
+            //    {
+            //        sql += " and CITYNB =" + SlineCity;
+            //    }
+            //}
+            //else
+            //{
+            //    sql += " and CITYNB =" + ci;
+            //}
+
+            var data = db.Database.SqlQuery<TRLINES_TO_MERGE>(sql).ToList();
+            int index = 0;
+            DataSourceResult result = data.ToDataSourceResult(request, commm => new
+            {
+                NB = commm.NB,
+                TRLINENB = commm.TRLINENB,
+                PARENT_TRLINENB = commm.PARENT_TRLINENB,
+                PARENT_TRLINENAME = commm.PARENT_TRLINENAME,
+                TRLINENAME = commm.TRLINENAME,
+                IUSER = commm.IUSER,
+                IDATE = commm.IDATE,
+
+
+
+                Seq = (request.Page - 1) * request.PageSize + (++index)
+            });
+            return Json(result);
+        }
+        public ActionResult DeleteNbFromMerge(long NB)
+        {
+            try
+            {
+                var dd = db.TRLINES_TO_MERGE.Find(NB);
+                if (dd == null)
+                {
+                    return Json(new { success = false, responseText = " لا يوجد سجل" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    if (dd.ISMERGE == true)
+                    {
+                        return Json(new { success = false, responseText = "لا يمكن الحذف لانه تم الدمج" }, JsonRequestBehavior.AllowGet);
+                    }
+                    using (var transaction = db.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            if (dd != null)
+                            {
+                                db.TRLINES_TO_MERGE.Attach(dd);
+                                db.TRLINES_TO_MERGE.Remove(dd);
+                                db.SaveChanges();
+                                transaction.Commit();
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            transaction.Rollback();
+
+                        }
+                    }
+                }
+
+
+                return Json(new { success = true, responseText = "تم الحذف" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, responseText = ex }, JsonRequestBehavior.AllowGet);
+            }
+        }
         public ActionResult Edit(long? id)
         {
             var trLine = db.TRLINES.Find(id);

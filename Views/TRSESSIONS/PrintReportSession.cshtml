@@ -746,7 +746,9 @@
                         <th>@Html.DisplayNameFor(model => model.pro[0].NIGHT_TRIP_FROM)</th>
                         <th>@Html.DisplayNameFor(model => model.pro[0].NIGHT_TRIP_TO)</th>
                         <th>@Html.DisplayNameFor(model => model.pro[0].TRIP_PATH)</th>
-                        <th>@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
+                        <th>@Html.DisplayNameFor(model => model.pro[0].CAUSES)</th>
+
+                        
                         <th>@Html.DisplayNameFor(model => model.pro[0].NOTES)</th>
 
                         <th>@Html.DisplayNameFor(model => model.pro[0].PSTATUS)</th>
@@ -755,30 +757,32 @@
                 <tbody>
                     @foreach (var item2 in item.pro)
                     {
-                        <tr>
-                            <td>@item2.ORDR</td>
-                            <td>@item2.CARNB</td>
-                            <td>@item2.TABNB</td>
-                            <td>@item2.ENGINEFEUL</td>
-                            <td>@item2.FACCOMPNAME</td>
-                            <td>@item2.FACTYY</td>
-                            <td>@item2.CARLINENAME</td>
-                            <td>@item2.CARLINETYP</td>
-                            <td>@item2.CARLINECITY</td>
-                            <td>@item2.CONTRACT_PERIOD</td>
-                            <td>@item2.DAY_TRIP_FROM</td>
-                            <td>@item2.DAY_TRIP_TO</td>
-                            <td>@item2.NIGHT_TRIP_FROM</td>
-                            <td>@item2.NIGHT_TRIP_TO</td>
-                            <td>@item2.TRIP_PATH</td>
-                            <td>@item2.AGREEMENTINPROCED</td>
-                            <td>@item2.NOTES</td>
+                    <tr>
+                        <td>@item2.ORDR</td>
+                        <td>@item2.CARNB</td>
+                        <td>@item2.TABNB</td>
+                        <td>@item2.ENGINEFEUL</td>
+                        <td>@item2.FACCOMPNAME</td>
+                        <td>@item2.FACTYY</td>
+                        <td>@item2.CARLINENAME</td>
+                        <td>@item2.CARLINETYP</td>
+                        <td>@item2.CARLINECITY</td>
+                        <td>@item2.CONTRACT_PERIOD</td>
+                        <td>@item2.DAY_TRIP_FROM</td>
+                        <td>@item2.DAY_TRIP_TO</td>
+                        <td>@item2.NIGHT_TRIP_FROM</td>
+                        <td>@item2.NIGHT_TRIP_TO</td>
+                        <td>@item2.TRIP_PATH</td>
+                        <td>@item2.CAUSES</td>
 
-                            <td>@item2.PSTATUS</td>
-                        </tr>
+                       
+                        <td>@item2.NOTES</td>
+
+                        <td>@item2.PSTATUS</td>
+                    </tr>
                     }
                     <tr>
-                        <td colspan="17" style="padding:5px">
+                        <td colspan="18" style="padding:5px">
                             العدد الكلي لهذه المعاملة : @item.pro.Count
                         </td>
                     </tr>

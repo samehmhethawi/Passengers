@@ -1,0 +1,469 @@
+﻿
+@{
+    ViewBag.Title = "دمج الخطوط";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section PartialHeader{
+    <div class="panel-heading1 " id="searchPanel" style="font-size: 15px">
+        <div style="padding:10px">
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> الاسم</label>
+                    <label>(<i id="namepercent" class="fa fa-percent"></i>)</label>
+                </div>
+                <div class="col-lg-8 col-md-8">
+                    @Html.Kendo().TextBox().Name("STrline").HtmlAttributes(new { placeholder = " اسم الخط" })
+                </div>
+                <div class="col-lg-2 col-md-2">
+                    @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("STrnb").Min(0)
+                                .HtmlAttributes(new { placeholder = "رمز الخط", style = "width: 100%;" }))
+
+                </div>
+            </div>
+            <div class="row" style="padding-bottom:10px">
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> المسار</label>
+                    <label>(<i id="namepercentpath" class="fa fa-percent"></i>)</label>
+                </div>
+                <div class="col-lg-8 col-md-8">
+                    @Html.Kendo().TextBox().Name("STrlinepath").HtmlAttributes(new { placeholder = " مسار الخط" })
+                </div>
+                <div class="col-lg-2 col-md-2">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر محافظة الخط")
+                                    .Name("SlineCity")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetCity", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> هل متاح</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر")
+                                    .Name("StrlineStatus")
+                                    .DataTextField("Text")
+                                    .DataValueField("Value").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .BindTo(new List<SelectListItem>() {
+                                          new SelectListItem() {
+                                              Text = "نعم",
+                                              Value = "1"
+                                          },
+                                          new SelectListItem() {
+                                              Text = "لا",
+                                              Value = "0"
+                                          }
+                                      })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                <div class="col-lg-1 col-md-2">
+                    <label for="template_name"> هل ملغى</label>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر")
+                                    .Name("StrlineCANCELD")
+                                    .DataTextField("Text")
+                                    .DataValueField("Value").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                    .BindTo(new List<SelectListItem>() {
+                                          new SelectListItem() {
+                                              Text = "نعم",
+                                              Value = "1"
+                                          },
+                                          new SelectListItem() {
+                                              Text = "لا",
+                                              Value = "0"
+                                          }
+                                      })
+                                    .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                    )
+
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <button id="" class="btn btn-primary mybuttonsearch" onclick="Btn_Search()"> <i class="fa fa-search"></i> </button>
+
+                    <button id="" class="btn btn-danger mybuttonsearchreset" onclick="rest_filtters()"> <i class="fa fa-close"></i> </button>
+
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <button id="" class="btn btn-primary" onclick="GoToTRLINES_TO_MERGE()"> الانتقال الى صفحة المضافين الى الدمج </button>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @(Html.Kendo().Grid<Proced.DataAccess.Models.CF.TRLINE>()
+      .Name("grid").AutoBind(false)
+      .Columns(columns =>
+      {
+          columns.Bound(c => c.NB).ClientTemplate
+                  (" # if (1 == 1) " +
+                  "{"+
+                "#<button id='' title='تعديل' class='k-button k-button-icontext k-grid-plus hvr-box-shadow-outset' onclick='AddToMerge(#=NB#)'></button> #"
+                  + "} #")
+                .Sortable(false).Title(" ").Width(150).Filterable(false);
+          columns.Bound(c => c.NB).Title("رمز الخط").Width(150);
+          columns.Bound(c => c.NAME).Title("اسم خط السير").Width(500);
+          columns.Bound(c => c.LINEPATH).Title("مسار الخط").Width(500);
+          columns.ForeignKey(c => c.TYP, (System.Collections.IEnumerable)ViewData["ZTRLINETYPES"], "ID", "NAME").Title("النوع").Width(150);
+          columns.Bound(c => c.CITYNB).Title("المحافظة").Visible(false);
+          columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
+          columns.Bound(c => c.STATUS).Title("متاح؟").ClientTemplate("#=STATUS ? 'نعم':'لا' #").Width(100);
+          columns.Bound(c => c.ISCANCELD).Title("ملغى؟").ClientTemplate("#=ISCANCELD ? 'نعم':'لا' #").Width(100);
+          columns.Bound(c => c.MINCARS).Title("عدد الادنى").Width(150);
+          columns.Bound(c => c.MAXCARS).Title("عدد الاعلى").Width(150);
+          columns.Bound(c => c.SESNB).Title("رمز الجلسة").Width(150).Visible(false);
+          columns.Bound(c => c.CANEDIT).Title("متاح للتعديل").ClientTemplate("#=CANEDIT ? 'نعم':'لا' #").Width(150);
+      })
+            //arabic from here
+            //.ToolBar(toolbar =>
+            //{
+            //    toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            //})
+            .HtmlAttributes(new { style = "height: 450px !important;" })
+.Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+           .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+           .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+           .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+            .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+           .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+           .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+           .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+           .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+           .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+           .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+           .Display("العدد الكلي للسجلات :  {2}")
+           )
+         .Refresh(true)
+         .Input(true)
+         .Info(true)
+
+
+)
+.Scrollable()
+.DataSource(dataSource => dataSource
+.Ajax().PageSize(1000)
+.Model(model => model.Id(p => p.NB))
+.Read(read => read.Action("TrLines_Read_toMerge", "TrLines").Data("GetFillters"))
+).Events(events => events
+.Change("getcolor")
+.DataBound("getcolor")
+.Sort("getcolor")
+.Filter("getcolor")
+.Group("getcolor")
+.Page("getcolor")
+.Cancel("getcolor")
+//.Edit("hideIdField")
+)
+)
+</div>
+<br />
+<br />
+
+
+<div>
+    @(Html.Kendo().Grid<Proced.DataAccess.Models.CF.TRLINE>()
+      .Name("grid2").AutoBind(false)
+
+      .Columns(columns =>
+      {
+          columns.Bound(c => c.NB).ClientTemplate
+                  (" # if (1 == 1) " +
+                  "{"+
+                "#<button id=''  class='k-button k-button-icontext k-grid-minus hvr-box-shadow-outset' onclick='DeleteFromMerge(#=NB#)'></button> #"
+                + "#<button id=''  class='k-button k-button-icontext k-grid-SHOWCONFIRM hvr-box-shadow-outset' onclick='SelectFromMerge(#=NB#)'></button> #"
+                  + "} #")
+                .Sortable(false).Title(" ").Width(150).Filterable(false);
+
+          columns.Bound(c => c.NB).Title("رمز الخط").Width(150);
+          columns.Bound(c => c.NAME).Title("اسم خط السير").Width(500);
+          columns.Bound(c => c.LINEPATH).Title("مسار الخط").Width(500);
+          columns.ForeignKey(c => c.TYP, (System.Collections.IEnumerable)ViewData["ZTRLINETYPES"], "ID", "NAME").Title("النوع").Width(150);
+          columns.Bound(c => c.CITYNB).Title("المحافظة").Visible(false);
+          columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
+          columns.Bound(c => c.STATUS).Title("متاح؟").ClientTemplate("#=STATUS ? 'نعم':'لا' #").Width(100);
+          columns.Bound(c => c.ISCANCELD).Title("ملغى؟").ClientTemplate("#=ISCANCELD ? 'نعم':'لا' #").Width(100);
+          columns.Bound(c => c.MINCARS).Title("عدد الادنى").Width(150);
+          columns.Bound(c => c.MAXCARS).Title("عدد الاعلى").Width(150);
+          columns.Bound(c => c.SESNB).Title("رمز الجلسة").Width(150).Visible(false);
+          columns.Bound(c => c.CANEDIT).Title("متاح للتعديل").ClientTemplate("#=CANEDIT ? 'نعم':'لا' #").Width(150);
+      })
+            //arabic from here
+
+            .ToolBar(toolbar =>
+            {toolbar.Template(@<text>
+                                <div >
+                                    <div>
+                                        <span class = "btn btn-primary hvr-box-shadow-outset" id="SaveAddToMerge"><i class='fa fa-save' style='font-size:30px;'></i></span>
+
+                                         <label  style="font-size: 20px;">رمز الخط الرئيسي:  </label>
+                                        <label id="MlineNB" style="font-size: 20px;"> </label>
+                                        <label  style="font-size: 20px;">اسم الخط الرئيسي:  </label>
+                                        <label id="MlineName" style="font-size: 20px;"></label>
+                                         <span style="text-align:end;" class = "btn btn-danger hvr-box-shadow-outset" id="DeleteAllAddToMerge"><i class='fa fa-close' style='font-size:30px;'></i></span>
+
+                                    </div>
+
+
+                                </div>
+
+                            </text>);
+
+               // toolbar.Custom().Name("SaveAddToMerge").Text("<span><i class='fa fa-save' style='font-size:30px;'></i></span>").Url("#").HtmlAttributes(new { id = "SaveAddToMerge", @class = "btn btn-primary hvr-box-shadow-outset" });
+
+               // toolbar.Custom().Name("AddNew").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNew", @class = "btn btn-primary hvr-box-shadow-outset" });
+            })
+            .HtmlAttributes(new { style = "height: 450px !important;" })
+.Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
+           .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
+           .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
+           .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
+            .Empty(("  العدد الكلي للسجلات :" + Convert.ToString(ViewBag.total_records_OWN)))
+           .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
+           .Next(HelperLib.ControlLabelsAR.KendoGridNext)
+           .Of(HelperLib.ControlLabelsAR.KendoGridOf)
+           .Page(HelperLib.ControlLabelsAR.KendoGridPage)
+           .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
+           .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
+           .Display("العدد الكلي للسجلات :  {2}")
+           )
+         .Refresh(true)
+         .Input(true)
+         .Info(true)
+
+
+)
+.Scrollable()
+.DataSource(dataSource => dataSource
+.Ajax().PageSize(1000)
+.Model(model => model.Id(p => p.NB))
+//.Read(read => read.Action("TrLines_Read", "TrLines").Data("GetFillters"))
+).Events(events => events
+.Change("getcolor")
+.DataBound("getcolor")
+.Sort("getcolor")
+.Filter("getcolor")
+.Group("getcolor")
+.Page("getcolor")
+.Cancel("getcolor")
+//.Edit("hideIdField")
+)
+)
+</div>
+
+
+
+@Html.Hidden("INPUTMlineNB")
+@Html.Hidden("INPUTMlineName")
+<script>
+
+    function GetFillters()
+    {
+        var gridtosc = $("#grid2").data("kendoGrid");
+        var dataSourcetosc = gridtosc.dataSource;
+        var sbjstosc = JSON.stringify(dataSourcetosc.data().toJSON());
+
+        var fillter = {};
+        fillter.STrline = $('#STrline').val();
+        fillter.SlineCity = $('#SlineCity').val();
+        fillter.StrlineStatus = $('#StrlineStatus').val();
+        fillter.StrlineCANCELD = $('#StrlineCANCELD').val();
+        fillter.STrnb = $('#STrnb').val();
+        fillter.STrlinepath = $('#STrlinepath').val();
+        fillter.STrlinepath = $('#STrlinepath').val();
+        fillter.sbjstosc = sbjstosc;
+
+        return fillter;
+
+    }
+
+    function Btn_Search()
+    {
+        $("#grid").data("kendoGrid").dataSource.page([1]);
+
+    }
+
+    function rest_filtters()
+    {
+        $('#STrline').val("");
+        $('#STrlinepath').val("");
+        $("#StrlineCANCELD").data("kendoDropDownList").value(-1);
+        $("#SlineCity").data("kendoDropDownList").value(-1);
+        $("#StrlineStatus").data("kendoDropDownList").value(-1);
+        $("#STrnb").data("kendoNumericTextBox").value("");
+        //$("#grid").data("kendoGrid").dataSource.page([1]);
+        $("#grid").data("kendoGrid").dataSource.data([]);
+    }
+
+    $("#namepercent").click(function ()
+    {
+
+        var perbane = $('#STrline').val();
+        $('#STrline').val("%" + perbane + "%");
+    });
+
+    $("#namepercentpath").click(function ()
+    {
+
+        var perbanepath = $('#STrlinepath').val();
+        $('#STrlinepath').val("%" + perbanepath + "%");
+    });
+
+    function GetCommNbRead()
+    {
+        return {
+            Nb: iid
+        }
+    }
+
+    function getcolor()
+    {
+
+        setIcons();
+    }
+
+    function GetRow(nb)
+    {
+        var item = $("#grid2").data("kendoGrid").dataSource.get(nb);
+        if (item != null) {
+            return false;
+        }
+        if (item == null) {
+            return true;
+        }
+    }
+
+    function renderNumber(data)
+    {
+        return data.Seq;
+    }
+</script>
+
+<script>
+    function AddToMerge(nb)
+    {
+        var item = $("#grid").data("kendoGrid").dataSource.get(nb);
+
+
+        $("#grid2").data("kendoGrid").dataSource.add(item);
+        $("#grid").data("kendoGrid").dataSource.remove(item);
+
+    }
+
+    function DeleteFromMerge(nb)
+    {
+        var item = $("#grid2").data("kendoGrid").dataSource.get(nb);
+
+        var isparent = $('#INPUTMlineNB').val();
+        if (isparent != nb) {
+            $("#grid").data("kendoGrid").dataSource.add(item);
+            $("#grid2").data("kendoGrid").dataSource.remove(item);
+        } else {
+            toastr.error("لا يمكن حذفه لان تم اختياره كخط رئيسي");
+        }
+
+
+    }
+
+</script>
+
+
+
+<script>
+
+    function SelectFromMerge(nb)
+    {
+        var item = $("#grid2").data("kendoGrid").dataSource.get(nb);
+
+        document.getElementById('MlineNB').innerHTML = item.NB;
+        $('#INPUTMlineNB').val(item.NB);
+
+        document.getElementById('MlineName').innerHTML = item.NAME;
+        $('#INPUTMlineName').val(item.NAME);
+    }
+
+    $("#SaveAddToMerge").click(function ()
+    {
+
+         var gridtosc = $("#grid2").data("kendoGrid");
+         var dataSourcetosc = gridtosc.dataSource;
+         var sbjstosc = JSON.stringify(dataSourcetosc.data().toJSON());
+
+         var parentnb = $('#INPUTMlineNB').val();
+         var parentname = $('#INPUTMlineName').val();
+
+         if (parentnb == "" || parentname == "") {
+             toastr.error("يرجى اختيار الخط الرئيسي");
+         } else {
+                $.ajax({
+                type: "POST",
+             data: { mod: sbjstosc, ParentNb: parentnb, ParentName: parentname },
+                url: "@Url.Action("AddNbToMerge", "TrLines")",
+                success: function (response) {
+                    if (response.success) {
+
+                        $("#grid2").data("kendoGrid").dataSource.data([]);
+                        document.getElementById('MlineNB').innerHTML = "";
+                        $('#INPUTMlineNB').val("");
+
+                        document.getElementById('MlineName').innerHTML = "";
+                        $('#INPUTMlineName').val("");
+                        $("#grid").data("kendoGrid").dataSource.page([1]);
+                       // GetPartial();
+
+                        //toastr.success("تمت العملية  بنجاح");
+
+                    } else {
+
+                    }
+
+                }
+            });
+         }
+
+     });
+
+    $("#DeleteAllAddToMerge").click(function ()
+    {
+        $("#grid2").data("kendoGrid").dataSource.data([]);
+        document.getElementById('MlineNB').innerHTML = "";
+        $('#INPUTMlineNB').val("");
+
+        document.getElementById('MlineName').innerHTML = "";
+        $('#INPUTMlineName').val("");
+        
+
+     });
+    
+
+
+    function GoToTRLINES_TO_MERGE()
+    {
+         window.open("@Url.Action("TRLINES_TO_MERGE", "TrLines")", "_blank");
+    }
+</script>
+

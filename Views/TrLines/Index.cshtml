@@ -48,7 +48,7 @@
                 </div>
             </div>
             <div class="row">
-               
+
                 <div class="col-lg-1 col-md-2">
                     <label for="template_name"> هل متاح</label>
                 </div>
@@ -118,14 +118,10 @@
       .Columns(columns =>
       {
           columns.Bound(c => c.NB).ClientTemplate
-                  (" # if (1 == 1) if " +
-                  "(SESNB == null)" +
+                  (" # if (1 == 1) " +
                   "{"+
                 "#<button id='' title='تعديل' class='k-button k-button-icontext k-grid-Edit hvr-box-shadow-outset' onclick='Edit(#=NB#)'></button> #"
-               +"#<button id='' title='محافظات الخط' class='k-button k-button-icontext k-grid-Details hvr-box-shadow-outset'onclick='Preview(#=NB#)'></button>  # "
-                  +"} else{"
-                 // +"#<button id='' title='تعديل' class='k-button k-button-icontext k-grid-Edit hvr-box-shadow-outset' onclick='Edit(#=NB#)'></button> #" +
-                 + "#<button id='' title='محافظات الخط' class='k-button k-button-icontext k-grid-Details hvr-box-shadow-outset'onclick='Preview(#=NB#)'></button>  # "
+               + "#<button id=''  class='k-button k-button-icontext k-grid-CanEdit hvr-box-shadow-outset'onclick='ShowCanEdit(#=NB#)'></button>  # "
                   + "} #")
                 .Sortable(false).Title(" ").Width(150).Filterable(false);
           //columns.Command(command =>
@@ -141,7 +137,7 @@
           columns.Bound(c => c.NAME).Title("اسم خط السير").Width(500);
           columns.Bound(c => c.LINEPATH).Title("مسار الخط").Width(500);
 
-          
+
           columns.ForeignKey(c => c.TYP, (System.Collections.IEnumerable)ViewData["ZTRLINETYPES"], "ID", "NAME").Title("النوع").Width(150);
           //columns.Bound(c => c.TYP).Title("نوع خط السير");
           columns.Bound(c => c.CITYNB).Title("المحافظة").Visible(false);
@@ -151,6 +147,8 @@
           columns.Bound(c => c.MINCARS).Title("عدد الادنى").Width(150);
           columns.Bound(c => c.MAXCARS).Title("عدد الاعلى").Width(150);
           columns.Bound(c => c.SESNB).Title("رمز الجلسة").Width(150).Visible(false);
+          columns.Bound(c => c.CANEDIT).Title("متاح للتعديل").ClientTemplate("#=CANEDIT ? 'نعم':'لا' #").Width(150);
+
 
 
 
@@ -356,97 +354,23 @@
 </div>
 
 <div class="k-rtl">
-    @(Html.Kendo().Window().Name("TRlinecitys")
-            .Title("محافظات خط سير")
+    @(Html.Kendo().Window().Name("CanEditTRline")
+            .Title(" ")
             .Visible(false)
             .Modal(true)
             .Content(@<text>
-    @*<div>
-          @Html.Hidden("isedite")
-       
-        <button id="btnAddNewcity" class="btn btn-primary hvr-box-shadow-outset" >
-                        إضافة جديد
-        </button>
-        
+    <div style="text-align:center;">
+          @Html.Hidden("caneditlinenb")
 
-    @(Html.Kendo().Grid <Proced.DataAccess.Models.CF.TRLINE_CITY>()
-            .Name("gridcity").AutoBind(false)
-            .Columns(columns =>
-            {
-                columns.Template(t => { }).Title("م.").ClientTemplate(
-                 "#= renderNumber(data) #"
-               ).Width(80);
-                columns.Bound(c => c.NB).Visible(false);
-                columns.Bound(c => c.LINENB).Visible(false);
+        <span style="text-align:center; font-size:20px;" >
+            هل انت متاكد من اعادة فتح التعديل لهذا الخط؟
+        </span>
+        <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveCanEdit()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+               </div>
 
-                columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
-                //columns.Bound(c => c.CITYNB).Width(150);
-                columns.Bound(c => c.ORDR).Width(150).Title("الترتيب");
-                // columns.Bound(c => c.NOTES).Width(150);
-
-                columns.Bound(c => c.LINENB).ClientTemplate
-                  (" # if (getisedite() == '') if " +
-                  "(1 == 1)" +
-                  "{#<button id='' title='حذف' class='k-button k-button-icontext k-grid-Delete hvr-box-shadow-outset k-state-border-down' onclick='Deletecity(#=NB#)'> </button> #" +
-                  "} #")
-                .Sortable(false).Title(" ").Width(100).Filterable(false);
-
-                //columns.Command(command =>
-                //{
-
-
-                //    command.Custom("Delete").Click("Deletecity").Text(" ");
-                //}).Width(100);
-            })
-            .HtmlAttributes(new { style = "height: auto  !important;" })
-            .Scrollable()
-            .Sortable()
-            .Filterable()
-            .DataSource(dataSource => dataSource
-            .Ajax()
-            //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
-            .PageSize(15)
-            .Model(model => model.Id(p => p.NB))
-            .Read(read => read.Action("Read_city", "TrLines").Data("GetCommNbRead")))
-            .Resizable(resize => resize
-            .Columns(true)
-            )
-            .ToolBar(toolbar =>
-            {
-
-                //  toolbar.Custom().Name("AddNewcity").Text(" إضافة جديد ").Url("#").HtmlAttributes(new { id = "AddNewcity", @class = "btn btn-primary hvr-box-shadow-outset" });
-            })
-                .Pageable(pa => pa.Messages(m => m.First(HelperLib.ControlLabelsAR.KendoGridFirstPage)
-                                      .Last(HelperLib.ControlLabelsAR.KendoGridLastPage)
-                                      .MorePages(HelperLib.ControlLabelsAR.KendoGridMorePages)
-                                      .ItemsPerPage(HelperLib.ControlLabelsAR.KendoGridItemsPerPage)
-                                       .Empty(("  " + Convert.ToString(ViewBag.total_records_OWN)))
-                                      .AllPages(HelperLib.ControlLabelsAR.KendoGridAllPages)
-                                      .Next(HelperLib.ControlLabelsAR.KendoGridNext)
-                                      .Of(HelperLib.ControlLabelsAR.KendoGridOf)
-                                      .Page(HelperLib.ControlLabelsAR.KendoGridPage)
-                                      .Previous(HelperLib.ControlLabelsAR.KendoGridPrevious)
-                                      .Refresh(HelperLib.ControlLabelsAR.KendoGridRefresh)
-                                      .Display("العدد الكلي للسجلات :  {2}")
-                                      )
-                                    .Refresh(true)
-                                    .Input(true)
-                                    .Info(true)
-          ).Events(events => events
-            .Change("setIcons")
-            .DataBound("setIcons")
-            .Sort("setIcons")
-            .Filter("setIcons")
-            .Group("setIcons")
-            .Page("setIcons")
-            .Cancel("setIcons")
-        //.Edit("hideIdField")
-
-
-        )
-)
-
-</div>*@
+    </div>
              </text>)
             .Draggable(true)
             .Resizable()
@@ -490,7 +414,7 @@
                </div>
                <div class="window-footer">
                    <button class="btn btn-primary" onclick="SaveAddcity()">حفظ</button>
-                   <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
+                   <button class="btn btn-danger" onclick="ColseWindowaddcity()">اغلاق</button>
                </div>
         </div>
             </text>)
@@ -623,7 +547,7 @@
 
                             </div>
 
-                            <div class="col-md-1">
+                            <div class="col-md-1" >
                                 <label for="template_name"> هل ملغى</label>
                             </div>
                             <div class="col-md-3">
@@ -651,7 +575,7 @@
                  <div>
           @Html.Hidden("isedite")
 
-        <button id="btnAddNewcity" class="btn btn-primary hvr-box-shadow-outset" >
+        <button id="btnAddNewcity" class="btn btn-primary hvr-box-shadow-outset savecanedit" >
                         إضافة جديد
         </button>
 
@@ -694,7 +618,7 @@
             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
             .PageSize(15)
             .Model(model => model.Id(p => p.NB))
-            
+
             .Read(read => read.Action("Read_city", "TrLines").Data("GetCommNbRead")))
             .Resizable(resize => resize
             .Columns(true)
@@ -735,7 +659,7 @@
 )
 
 </div>
-               <div class="window-footer">
+               <div class="savecanedit" style="text-align:center;">
                    <button class="btn btn-primary" onclick="SaveEidt()">حفظ</button>
                    <button class="btn btn-danger" onclick="ColseWindow()">اغلاق</button>
 
@@ -744,8 +668,8 @@
             </text>)
             .Draggable(true)
             .Resizable()
-            .Width(800)
-            .Height(750)
+            .Width(1200)
+            .Height(675)
             .Pinned()
             .HtmlAttributes(new { style = "Width: 100%  !important;" })
             )
@@ -754,10 +678,11 @@
 
 <script>
 
+
     function onsele()
     {
         var Typ = $("#addlinetyp").val();
-       
+
         if (Typ == "1") {
             $("#addlineallCity").data("kendoMultiSelect").value("")
 
@@ -767,7 +692,9 @@
             $('#divaddlineallCity').css('display', 'block');
         }
     }
+
     var nb = 0;
+
     function GetFillters() {
         var fillter = {};
         fillter.STrline = $('#STrline').val();
@@ -777,19 +704,21 @@
         fillter.STrnb = $('#STrnb').val();
         fillter.STrlinepath = $('#STrlinepath').val();
 
-        
+
         return fillter;
     }
 
+
     function Btn_Search() {
         $("#grid").data("kendoGrid").dataSource.page([1]);
-  
+
     }
+
     function rest_filtters() {
         $('#STrline').val("");
         $('#STrlinepath').val("");
 
-        
+
         $("#StrlineCANCELD").data("kendoDropDownList").value(-1);
         $("#SlineCity").data("kendoDropDownList").value(-1);
         $("#StrlineStatus").data("kendoDropDownList").value(-1);
@@ -808,12 +737,14 @@
         var wnd = $("#AddTRline").data("kendoWindow");
         wnd.center().open();
     });
+
     $("#btnAddNewcity").click(function () {
 
         $("#addlineCity2").data("kendoDropDownList").value(-1)
         $("#AddNewtrcity").data("kendoWindow").center().open();
 
     });
+
     $("#namepercent").click(function () {
 
         var perbane = $('#STrline').val();
@@ -825,6 +756,7 @@
         var perbanepath = $('#STrlinepath').val();
         $('#STrlinepath').val("%" + perbanepath + "%");
     });
+
     function SaveAdd() {
 
         var validator = $("#Add_TRline").kendoValidator().data("kendoValidator");
@@ -836,13 +768,13 @@ var name = $('#addTrline').val();
         var Min = $("#AddtrlineMINCARS").val();
         var Max = $("#AddtrlinemaxCARS").val();
         var addlineallCity = $("#addlineallCity").data("kendoMultiSelect").value();
-       
+
         var windowWidget = $("#AddTRline").data("kendoWindow");
 
 
 
         if (Typ == "3" && addlineallCity == "") {
-          
+
             toastr.error("يجب اختيار محافظات الخط");
         } else {
             kendo.ui.progress(windowWidget.element, true);
@@ -872,6 +804,7 @@ var name = $('#addTrline').val();
 
     }
 
+
     function Deletecity(NB)
     {
         var item = $("#gridcity").data("kendoGrid").dataSource.get(NB);
@@ -896,32 +829,38 @@ var name = $('#addTrline').val();
                 }
             });*@
     }
-    //function Preview(nb)
-    //{
-    //    var item = $("#grid").data("kendoGrid").dataSource.get(nb);
-    //    //e.preventDefault();
-    //    //var tr = $(e.target).closest("tr");    // get the current table row (tr)
-    //    //var item = this.dataItem(tr);          // get the date of this row
 
-    //    iid = item.NB;
+    function ShowCanEdit(nb)
+    {
+        var item = $("#grid").data("kendoGrid").dataSource.get(nb);
+        //e.preventDefault();
+        //var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        //var item = this.dataItem(tr);          // get the date of this row
 
-    //    $('#isedite').val(item.SESNB);
-    //    $('#trnb').val(item.NB);
-    //    $("#gridcity").data("kendoGrid").dataSource.read();
-    //    if (getisedite() > 0) {
-    //        $("#btnAddNewcity").css("display", "none");
+        iid = item.NB;
 
-    //    }
+   
+        $('#caneditlinenb').val(item.NB);
 
-    //    if (getisedite() == "") {
+        $.when(HtmlPageCanDoIt("TrLines", "SetCanEditTrue", "")).done(function (s1) {
 
-    //        $("#btnAddNewcity").css("display", "block");
+            if (s1 == "False") {
 
-    //    }
-    //    var wnd = $("#TRlinecitys").data("kendoWindow");
-    //    wnd.center().open();
 
-    //}
+            }
+            else {
+
+
+                var wnd = $("#CanEditTRline").data("kendoWindow");
+                wnd.center().open();
+            }
+
+        });
+      
+        
+
+    }
+
     function getisedite() {
         return $('#isedite').val();
     }
@@ -943,9 +882,9 @@ var name = $('#addTrline').val();
         var grid22 = $("#gridcity").data("kendoGrid");
         var dataSource22 = grid22.dataSource;
 
-        //records on current view / page   
+        //records on current view / page
         var recordsOnCurrentView = dataSource22.view().length;
-        alert(recordsOnCurrentView);
+       
 
         var model = {
             NB : 1,
@@ -955,26 +894,9 @@ var name = $('#addTrline').val();
         }
 
         $("#gridcity").data("kendoGrid").dataSource.add(model);
+        ColseWindowaddcity();
 
-        @*kendo.ui.progress(windowWidget.element, true);
-         $.ajax({
-            type: "POST",
-             data: { linb: tt, city: fff},
-                url: "@Url.Action("addcitytoline", "TrLines")",
-                success: function (response) {
-                    if (response.success) {
-                        $("#gridcity").data("kendoGrid").dataSource.page(1);
-                        toastr.success("تمت عملية الإضافة بنجاح");
-                        kendo.ui.progress(windowWidget.element, false);
-                        $("#AddNewtrcity").data("kendoWindow").center().close();
-
-                    } else {
-                        kendo.ui.progress(windowWidget.element, false);
-                        toastr.error(response.responseText);
-                    }
-
-                }
-            });*@
+     
     }
 
     function Edit(nb)
@@ -989,7 +911,7 @@ var name = $('#addTrline').val();
         $("#EtrlinemaxCARS").data("kendoNumericTextBox").value(item.MAXCARS);
         $('#ETrlinepath').val(item.LINEPATH);
 
-        
+
         if (item.STATUS == true) {
 
             $("#EtrlineStatus").data("kendoDropDownList").value(1);
@@ -1012,7 +934,11 @@ var name = $('#addTrline').val();
         iid = item.NB;
 
         $('#isedite').val(item.SESNB);
+
+        var IsCanEdit = item.CANEDIT;
+
         $('#trnb').val(item.NB);
+
         $("#gridcity").data("kendoGrid").dataSource.read();
         if (getisedite() > 0) {
             $("#btnAddNewcity").css("display", "none");
@@ -1024,15 +950,38 @@ var name = $('#addTrline').val();
             $("#btnAddNewcity").css("display", "block");
 
         }
+       
+
+        if (IsCanEdit == true)
+        {
+            $(".savecanedit").css("display", "block");
+            
+        }
+        if (IsCanEdit == false) {
+            $(".savecanedit").css("display", "none");
+
+        }
+        $.when(HtmlPageCanDoIt("TrLines", "update", "")).done(function (s1) {
+
+            if (s1 == "False") {
 
 
-        $("#EidtTRline").data("kendoWindow").center().open();
+            }
+            else {
+
+                $("#EidtTRline").data("kendoWindow").center().open();
+            }
+
+        });
+
+       
 
     }
+
     function SaveEidt()
     {
         var windowWidget = $("#EidtTRline").data("kendoWindow");
-        
+
         var enb = $('#Etrnb').val();
         var ename = $('#ETrline').val();
         var eCity = $("#ElineCity").val();
@@ -1047,7 +996,7 @@ var name = $('#addTrline').val();
         var gridgridcity = $("#gridcity").data("kendoGrid");
         var dataSourcegridcity = gridgridcity.dataSource;
         var sbjs = JSON.stringify(dataSourcegridcity.data().toJSON());
-        
+
         kendo.ui.progress(windowWidget.element, true);
         $.ajax({
             type: "POST",
@@ -1057,7 +1006,7 @@ var name = $('#addTrline').val();
                     if (response.success) {
 
                         //$("#grid").data("kendoGrid").dataSource.read();
-                        //$("#grid").data("kendoGrid").dataSource.page(1);
+                        $("#grid").data("kendoGrid").dataSource.page(1);
                         $("#EidtTRline").data("kendoWindow").center().close();
 
                         toastr.success("تمت عملية الإضافة بنجاح");
@@ -1072,6 +1021,13 @@ var name = $('#addTrline').val();
     }
 
 
+    function ColseWindowaddcity() {
+
+        $("#AddNewtrcity").data("kendoWindow").center().close();
+
+
+    }
+
     function ColseWindow() {
         $("#EidtTRline").data("kendoWindow").center().close();
         $("#AddTRline").data("kendoWindow").center().close();
@@ -1079,16 +1035,18 @@ var name = $('#addTrline').val();
 
 
     }
-
-
     function getcolor() {
 
         var grid = $("#grid").data("kendoGrid");
         var data = grid.dataSource.data();
         $.each(data, function (i, row) {
             if (row.SESNB != null)
-                $('tr[data-uid="' + row.uid + '"] ').css("color", "green");
-
+            {
+                $('tr[data-uid="' + row.uid + '"] ').css("color", "#228B22");
+                $('tr[data-uid="' + row.uid + '"] ').css("font-weight", "bold");
+            }
+               
+          
         })
         setIcons();
 
@@ -1101,6 +1059,30 @@ var name = $('#addTrline').val();
     function renderNumber(data) {
 
         return data.Seq;
+    }
+
+
+    function SaveCanEdit() {
+        var linenb = $('#caneditlinenb').val();
+
+    $.ajax({
+            type: "POST",
+        data: { linb: linenb},
+                url: "@Url.Action("SetCanEditTrue", "TrLines")",
+                success: function (response) {
+                    if (response.success) {
+                        $("#grid").data("kendoGrid").dataSource.page(1);
+                        toastr.success("تمت العملية  بنجاح");
+                     
+                        $("#CanEditTRline").data("kendoWindow").center().close();
+
+                    } else {
+                      
+                        toastr.error(response.responseText);
+                    }
+
+                }
+            });
     }
 </script>
 

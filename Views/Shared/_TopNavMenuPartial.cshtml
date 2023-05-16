@@ -3,13 +3,13 @@
         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" style="text-align: center !important;">فهارس نقل الركاب</a>
 
         <div class="dropdown-menu">
-          
+
 
             <a href="@Url.Action("Index", "TRZMEMBERPOSITION")" class="dropdown-item"><i class="fa fa-book"></i>المناصب</a>
             <a href="@Url.Action("Index", "TRZMEMBERSHIP")" class="dropdown-item"><i class="fa fa-book"></i>العضوية</a>
             @*<a href="@Url.Action("Index", "TRZPROCEDTYPSALLOW")" class="dropdown-item"><i class="fa fa-book"></i>المعاملات المرتبطة بمعاملة</a>*@
             @*<a href="@Url.Action("Index", "TRZPROCEDSCARCAT")" class="dropdown-item"><i class="fa fa-book"></i>الأنواع المرتبطة بمعاملة</a>*@
-          
+
             <a href="@Url.Action("Index", "TRZEXPENSE_TYPES")" class="dropdown-item"><i class="fa fa-book"></i>انواع النفقات</a>
             <a href="@Url.Action("Index", "TRZPAY_OWNER_TYPES")" class="dropdown-item"><i class="fa fa-book"></i>الجهات المصدرة للنفقات</a>
             <a href="@Url.Action("Index", "TRPASSENGERS_CREDITS")" class="dropdown-item"><i class="fa fa-book"></i>قيمة الحساب المبدئية</a>
@@ -37,21 +37,23 @@
 
 
 
-    <!--<div class="nav-item" style="text-align: center !important;">
-        <a href="Url.Action("Index", "TRCOMMITTEES")" class="nav-link" style="text-align: center !important;">-->
-            @* <i class="fa fa-book"></i> *@     <!--اللجان
+    <div class="nav-item" style="text-align: center !important;">
+        <a href="@Url.Action("mergetrlines", "TrLines" )" class="nav-link" style="text-align: center !important;">
+
+            <i class="fa fa-book"></i>
+            دمج الخطوط
         </a>
     </div>
-    <div class="nav-item">
-        <a href="Url.Action("Index", "TRSESSIONS")" class="nav-link" style="text-align: center !important;">
-            الجلسات
-        </a>
-    </div>
-    <div class="nav-item">
-        <a href="Url.Action("Index", "PassengersAccount")" class="nav-link" style="text-align: center !important;">
-            المحاسبة
-        </a>
-    </div>-->
+    <!-- <div class="nav-item">
+         <a href="Url.Action("Index", "TRSESSIONS")" class="nav-link" style="text-align: center !important;">
+             الجلسات
+         </a>
+     </div>
+     <div class="nav-item">
+         <a href="Url.Action("Index", "PassengersAccount")" class="nav-link" style="text-align: center !important;">
+             المحاسبة
+         </a>
+     </div>-->
 </div>
 
 
