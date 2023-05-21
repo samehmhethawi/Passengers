@@ -133,6 +133,7 @@
           //    //  command.Custom("Delete").Click("Delete").Text(" ");
           //}).Width(150);
           columns.Bound(c => c.NB).Title("رمز الخط").Width(150);
+          columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
 
           columns.Bound(c => c.NAME).Title("اسم خط السير").Width(500);
           columns.Bound(c => c.LINEPATH).Title("مسار الخط").Width(500);
@@ -141,7 +142,6 @@
           columns.ForeignKey(c => c.TYP, (System.Collections.IEnumerable)ViewData["ZTRLINETYPES"], "ID", "NAME").Title("النوع").Width(150);
           //columns.Bound(c => c.TYP).Title("نوع خط السير");
           columns.Bound(c => c.CITYNB).Title("المحافظة").Visible(false);
-          columns.ForeignKey(c => c.CITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
           columns.Bound(c => c.STATUS).Title("متاح؟").ClientTemplate("#=STATUS ? 'نعم':'لا' #").Width(100);
           columns.Bound(c => c.ISCANCELD).Title("ملغى؟").ClientTemplate("#=ISCANCELD ? 'نعم':'لا' #").Width(100);
           columns.Bound(c => c.MINCARS).Title("عدد الادنى").Width(150);
@@ -439,26 +439,16 @@
                <div style="padding:10px">
                     @Html.Hidden("Etrnb")
                     <div class="row" style="padding-bottom:10px">
-                            <div class="col-md-1">
+                            <div class="col-lg-0.5 col-md-0.5">
                                 <label for="template_name"> الاسم</label>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-lg-7 col-md-7">
                                 @Html.Kendo().TextBox().Name("ETrline").HtmlAttributes(new { placeholder = " اسم الخط" })
                             </div>
-                    </div>
-                     <div class="row" style="padding-bottom:10px">
-                            <div class="col-md-1">
-                                <label for="template_name"> المسار</label>
-                            </div>
-                            <div class="col-md-9">
-                                @Html.Kendo().TextBox().Name("ETrlinepath").HtmlAttributes(new { placeholder = " مسار الخط" })
-                            </div>
-                    </div>
-                    <div class="row" style="padding-bottom:10px">
-                            <div class="col-md-1">
+                         <div class="col-lg-0.5 col-md-0.5">
                                 <label for="template_name"> المحافظة</label>
                             </div>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
                                 @(Html.Kendo().DropDownList()
                                                 .OptionLabel("اختر محافظة الخط")
                                                 .Name("ElineCity")
@@ -475,10 +465,19 @@
                                                 )
                             </div>
 
-                             <div class="col-md-1">
+                    </div>
+                     <div class="row" style="padding-bottom:10px">
+                            <div class="col-lg-0.5 col-md-0.5">
+                                <label for="template_name"> المسار</label>
+                            </div>
+                            <div class="col-md-7">
+                                @Html.Kendo().TextBox().Name("ETrlinepath").HtmlAttributes(new { placeholder = " مسار الخط" })
+                            </div>
+
+                          <div class="col-lg-0.5 col-md-0.5">
                                 <label for="template_name"> نوع الخط</label>
                             </div>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
                                 @(Html.Kendo().DropDownList()
                                                 .OptionLabel("اختر نوع الخط")
                                                 .Name("Elinetyp")
@@ -494,22 +493,23 @@
                                                 .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
                                                 )
                             </div>
-                        </div>
+                    </div>
+
                    <div class="row" style="padding-bottom:10px">
-                        <div class="col-md-1">
+                        <div class="col-lg-1 col-md-1">
                                 <label for="template_name"> عدد الادنى</label>
                             </div>
-                         <div class="col-md-3" >
+                         <div class="col-lg-2 col-md-2" >
 
                        @Html.Kendo().NumericTextBox().Spinners(false).Format("0").Name("EtrlineMINCARS").HtmlAttributes(new { placeholder = "عدد المركبات الادنى"@*, required = "required", data_required_msg = "هذا الحقل مطلوب"*@})
 
 
 
                        </div>
-                          <div class="col-md-1">
+                          <div class="col-lg-1 col-md-1">
                                 <label for="template_name"> عدد الاعلى</label>
                             </div>
-                         <div class="col-md-3" >
+                         <div class="col-lg-2 col-md-2" >
 
                                @(Html.Kendo()
                                 .NumericTextBox()
@@ -521,12 +521,10 @@
 
 
                        </div>
-                    </div>
-                     <div class="row">
-                       <div class="col-md-1">
+                        <div class="col-lg-0.5 col-md-0.5">
                         <label for="template_name"> هل متاح</label>
                     </div>
-                            <div class="col-md-3">
+                            <div class="col-md-1">
                                 @(Html.Kendo().DropDownList()
                                                 .OptionLabel("اختر")
                                                 .Name("EtrlineStatus")
@@ -542,15 +540,15 @@
                                                           Value = "0"
                                                       }
                                                   })
-                                                .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                .HtmlAttributes(new { style = "text-align:center;" })
                                                 )
 
                             </div>
 
-                            <div class="col-md-1" >
+                            <div class="col-lg-0.5 col-md-0.5" >
                                 <label for="template_name"> هل ملغى</label>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-1">
                                 @(Html.Kendo().DropDownList()
                                                 .OptionLabel("اختر")
                                                 .Name("EtrlineCANCELD")
@@ -566,17 +564,18 @@
                                                           Value = "0"
                                                       }
                                                   })
-                                                .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
+                                                .HtmlAttributes(new { style = " text-align:center;" })
                                                 )
 
                             </div>
-                       </div>
+                    </div>
+                  
                </div>
                  <div>
           @Html.Hidden("isedite")
 
         <button id="btnAddNewcity" class="btn btn-primary hvr-box-shadow-outset savecanedit" >
-                        إضافة جديد
+                        إضافة محافظة الى الخط
         </button>
 
 
@@ -669,7 +668,7 @@
             .Draggable(true)
             .Resizable()
             .Width(1200)
-            .Height(675)
+            .Height(550)
             .Pinned()
             .HtmlAttributes(new { style = "Width: 100%  !important;" })
             )

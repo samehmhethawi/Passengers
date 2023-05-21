@@ -399,6 +399,14 @@
                         <th>@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
                         <th>@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
                         <th>@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
+
+                        <th>@Html.DisplayNameFor(model => model.pro[0].MAXCARLINE1)</th>
+                        <th>@Html.DisplayNameFor(model => model.pro[0].MINCARLINE1)</th>
+
+                        <th>@Html.DisplayNameFor(model => model.pro[0].DURATIONNB)</th>
+                        <th>@Html.DisplayNameFor(model => model.pro[0].DURATIONMONTHS)</th>
+
+
                         <th>@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
                         <th>@Html.DisplayNameFor(model => model.pro[0].TABNB)</th>
                         <th>@Html.DisplayNameFor(model => model.pro[0].ENGINEFEUL)</th>
@@ -413,25 +421,33 @@
                 <tbody>
                     @foreach (var item2 in item.pro)
                     {
-                        <tr>
-                            <td>@item2.ORDR</td>
-                            <td>@item2.CARNB</td>
-                            <td>@item2.LINENAME1</td>
-                            <td>@item2.LINETYP1</td>
-                            <td>@item2.LINE1CITY</td>
-                            <td>@item2.COUNTCARLINE1</td>
-                            <td>@item2.TABNB</td>
-                            <td>@item2.ENGINEFEUL</td>
-                            <td>@item2.FACCOMPNAME</td>
-                            <td>@item2.FACTYY</td>
-                            <td>@item2.AGREEMENTINPROCED</td>
-                            <td>@item2.NOTES</td>
+                    <tr>
+                        <td>@item2.ORDR</td>
+                        <td>@item2.CARNB</td>
+                        <td>@item2.LINENAME1</td>
+                        <td>@item2.LINETYP1</td>
+                        <td>@item2.LINE1CITY</td>
 
-                            <td>@item2.PSTATUS</td>
-                        </tr>
+                        <td>@item2.MAXCARLINE1</td>
+                        <td>@item2.MINCARLINE1</td>
+
+                        <td>@item2.DURATIONNB</td>
+                        <td>@item2.DURATIONMONTHS</td>
+
+
+                        <td>@item2.COUNTCARLINE1</td>
+                        <td>@item2.TABNB</td>
+                        <td>@item2.ENGINEFEUL</td>
+                        <td>@item2.FACCOMPNAME</td>
+                        <td>@item2.FACTYY</td>
+                        <td>@item2.AGREEMENTINPROCED</td>
+                        <td>@item2.NOTES</td>
+
+                        <td>@item2.PSTATUS</td>
+                    </tr>
                     }
                     <tr>
-                        <td colspan="13" style="padding:5px">
+                        <td colspan="17" style="padding:5px">
                             العدد الكلي لهذه المعاملة : @item.pro.Count
                         </td>
                     </tr>
@@ -682,6 +698,15 @@
                         <th>@Html.DisplayNameFor(model => model.pro[0].LINENAME1)</th>
                         <th>@Html.DisplayNameFor(model => model.pro[0].LINETYP1)</th>
                         <th>@Html.DisplayNameFor(model => model.pro[0].LINE1CITY)</th>
+
+                        <th>@Html.DisplayNameFor(model => model.pro[0].DURATIONNB)</th>
+                        <th>@Html.DisplayNameFor(model => model.pro[0].DURATIONMONTHS)</th>
+
+
+
+                        <th>@Html.DisplayNameFor(model => model.pro[0].MAXCARLINE1)</th>
+                        <th>@Html.DisplayNameFor(model => model.pro[0].MINCARLINE1)</th>
+
                         <th>@Html.DisplayNameFor(model => model.pro[0].COUNTCARLINE1)</th>
                         <th>@Html.DisplayNameFor(model => model.pro[0].AGREEMENTINPROCED)</th>
                         <th>@Html.DisplayNameFor(model => model.pro[0].NOTES)</th>
@@ -692,28 +717,36 @@
                 <tbody>
                     @foreach (var item2 in item.pro)
                     {
-                        <tr>
-                            <td>@item2.ORDR</td>
-                            <td>@item2.CARNB</td>
-                            <td>@item2.CARLINENAME</td>
-                            <td>@item2.CARLINETYP</td>
-                            <td>@item2.CARLINECITY</td>
-                            <td>@item2.TABNB</td>
-                            <td>@item2.ENGINEFEUL</td>
-                            <td>@item2.FACCOMPNAME</td>
-                            <td>@item2.FACTYY</td>
-                            <td>@item2.LINENAME1</td>
-                            <td>@item2.LINETYP1</td>
-                            <td>@item2.LINE1CITY</td>
-                            <td>@item2.COUNTCARLINE1</td>
-                            <td>@item2.AGREEMENTINPROCED</td>
-                            <td>@item2.NOTES</td>
+                    <tr>
+                        <td>@item2.ORDR</td>
+                        <td>@item2.CARNB</td>
+                        <td>@item2.CARLINENAME</td>
+                        <td>@item2.CARLINETYP</td>
+                        <td>@item2.CARLINECITY</td>
+                        <td>@item2.TABNB</td>
+                        <td>@item2.ENGINEFEUL</td>
+                        <td>@item2.FACCOMPNAME</td>
+                        <td>@item2.FACTYY</td>
+                        <td>@item2.LINENAME1</td>
+                        <td>@item2.LINETYP1</td>
+                        <td>@item2.LINE1CITY</td>
 
-                            <td>@item2.PSTATUS</td>
-                        </tr>
+                        <td>@item2.DURATIONNB</td>
+                        <td>@item2.DURATIONMONTHS</td>
+
+
+                        <td>@item2.MAXCARLINE1</td>
+                        <td>@item2.MINCARLINE1</td>
+
+                        <td>@item2.COUNTCARLINE1</td>
+                        <td>@item2.AGREEMENTINPROCED</td>
+                        <td>@item2.NOTES</td>
+
+                        <td>@item2.PSTATUS</td>
+                    </tr>
                     }
                     <tr>
-                        <td colspan="16" style="padding:5px">
+                        <td colspan="20" style="padding:5px">
                             العدد الكلي لهذه المعاملة : @item.pro.Count
                         </td>
                     </tr>
@@ -993,29 +1026,20 @@
 
 
 
-   
-</body>
-<table  style="text-align:center" width="100%" dir="rtl">
-    
+<table style="text-align:center" width="100%" dir="rtl">
     <tr>
-
-        
-       
-            <td class="container222">
-                @foreach (var item in ViewBag.sigSessionMemers)
-                {
-
-                    <div class="column22" style="text-align:center; width:20%;">
-                        @Html.Raw(@item.Replace(Environment.NewLine, "<br/>"))
-                    </div>
-
-                }
-            </td>
-        
-       
-        
-        </tr>
+        <td class="container222">
+            @foreach (var item in ViewBag.sigSessionMemers)
+            {
+                <div class="column22" style="text-align:center; width:20%;">
+                    @Html.Raw(@item.Replace(Environment.NewLine, "<br/>"))
+                </div>
+            }
+        </td>
+    </tr>
 </table>
+</body>
+
 
 
 <style>

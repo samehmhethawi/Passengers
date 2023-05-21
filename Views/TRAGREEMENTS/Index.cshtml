@@ -254,14 +254,14 @@
                 columns.Bound(c => c.EDITDATE).Format("{0:dd/MM/yyyy}").Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
                 columns.Bound(c => c.EDITUSER).Width(150).HeaderHtmlAttributes(new { style = "white-space: normal" });
 
-                columns.Command(command =>
-                {
-                    //command.Custom("Preview").Click("Preview").Text(" ");
-                    //    //command.Custom("Edit").Click("Edit").Text(" ");
-                    //    //command.Custom("Delete").Click("Delete").Text(" ");
-                    //    //  command.Custom("Details").Click("Details").Text(" ");
-                    command.Custom("Notification").Click("Notification").Text("اعلام");
-                }).Width(180);
+                //columns.Command(command =>
+                //{
+                //    //command.Custom("Preview").Click("Preview").Text(" ");
+                //    //    //command.Custom("Edit").Click("Edit").Text(" ");
+                //    //    //command.Custom("Delete").Click("Delete").Text(" ");
+                //    //    //  command.Custom("Details").Click("Details").Text(" ");
+                //    command.Custom("Notification").Click("Notification").Text("اعلام");
+                //}).Width(180);
             })
             .HtmlAttributes(new { style = "height: 450px !important;" })
             //.HtmlAttributes(new { style = "height: 300px  !important;" })

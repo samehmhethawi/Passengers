@@ -115,11 +115,18 @@ namespace Passengers.Controllers
             return Json(status, JsonRequestBehavior.AllowGet);
         }
 
-        public int GetMaxOrdr(string TableName)
+        public int GetMaxOrdr2(long PCOMMITTEENB)
         {
-           var sql = "SELECT NVL(MAX(ORDR),0) FROM " + TableName;
+           var sql = "SELECT NVL(MAX(ORDR),0) FROM TRCOMMITTEES_MEMBERS where COMMITTEENB = " + PCOMMITTEENB + " AND STATUS = 1";
             var data = db.Database.SqlQuery<int>(sql).FirstOrDefault();  
             return data +1;
+        }
+
+        public int GetMaxOrdr(string TableName)
+        {
+            var sql = "SELECT NVL(MAX(ORDR),0) FROM  " + TableName;
+            var data = db.Database.SqlQuery<int>(sql).FirstOrDefault();
+            return data + 1;
         }
 
         public ActionResult GetProced()

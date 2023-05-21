@@ -121,16 +121,16 @@
                 columns.Bound(c => c.FTP_PATH).Visible(false);
                 columns.Bound(c => c.IS_ARCHIVED).Visible(false);
                 columns.Bound(c => c.NB).Visible(false);
-                columns.Bound(c => c.SESNO).Width(150);
-                columns.Bound(c => c.SESDATE).Format("{0:dd/MM/yyyy}").Width(150);
-                columns.ForeignKey(c => c.SESCITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(150);
+                columns.Bound(c => c.SESNO).Width(100);
+                columns.Bound(c => c.SESDATE).Format("{0:dd/MM/yyyy}").Width(120);
+                columns.ForeignKey(c => c.SESCITYNB, (System.Collections.IEnumerable)ViewData["zcities"], "ID", "NAME").Title("المحافظة").Width(100);
                 columns.Bound(c => c.COMMITTEENB).Visible(false);
                 columns.Bound(c => c.STATUS).Visible(false);
-                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(150);
+                columns.ForeignKey(c => c.STATUS, (System.Collections.IEnumerable)ViewData["STATUS"], "ID", "NAME").Title("الحالة").Width(80);
                 columns.Bound(c => c.ORDR).Visible(false);
-                columns.Bound(c => c.COMBOSSNAME).Width(400);
+                columns.Bound(c => c.COMBOSSNAME).Width(250);
                 columns.Bound(c => c.IUSER).Visible(false);
-                columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}").Width(150);
+                columns.Bound(c => c.IDATE).Format("{0:dd/MM/yyyy}").Width(120);
                 columns.Command(command =>
                 {
                     //command.Custom("Preview").Click("Preview").Text(" ");
@@ -144,7 +144,7 @@
                     command.Custom("Deletear").Click("DeleteARCHIVED").Text(" ");
                 }).Width(180);
             })
-            .HtmlAttributes(new { style = "height: 500px !important;" })
+            .HtmlAttributes(new { style = "height: 450px !important;" })
             .Scrollable()
             .Sortable()
             //.Filterable()

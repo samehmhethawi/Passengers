@@ -146,7 +146,6 @@ namespace Passengers.Controllers
 
 
         }
-
         public  ActionResult Get_TimeAndNoToSession()
         {
             //  var data = db.Database.SqlQuery<int>("select NVL(MAX(SESNO),0) from TRSESSIONS where SESCITYNB ="+ citynb).FirstOrDefault();
@@ -249,6 +248,7 @@ namespace Passengers.Controllers
         {
             var sql = "SELECT TSM.NB ,TSM.SESSIONNB , TSM.MEMBERNB , TSM.ISPRESENT ,TM.MEMBERNAME ,TSM.MEMBERSHIPNB , TM.MEMBERPOSITIONNB ,TS.STATUS AS SESSIONSTATUS FROM TRSESSIONS_MEMBERS_PRESENT  TSM JOIN TRCOMMITTEES_MEMBERS TM ON TM.NB = TSM.MEMBERNB JOIN TRSESSIONS TS ON TS.NB = TSM.SESSIONNB  WHERE TSM.SESSIONNB  =  " + NB;
 
+            sql += " ORDER BY TSM.ORDR ";
             var data = db.Database.SqlQuery<TRSESSIONS_MEMBERS_PRESENTVM>(sql);
 
 
@@ -755,7 +755,7 @@ namespace Passengers.Controllers
                     ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRZMEMBERSHIP.NAME;
                 }
             }
-            var data1 = data.OrderByDescending(x => x.ORDR).ToList();
+            var data1 = data.OrderBy(x => x.ORDR).ToList();
             foreach (var member in data1)
             {
                 var temp4 = "";
@@ -1057,8 +1057,8 @@ namespace Passengers.Controllers
                                 + " AND(CPS.STEPNB = 453 OR CPS.STEPNB = 454) "
                                 + " AND CPS.CITYNB = " + ssess.SESCITYNB + " "
                                 + " AND CPS.DONE = 3"
-                                + " AND(CA.REG != 1 or CA.REG is null) "
-                                + " AND (CA.CARREG != 6 OR CA.REG IS NULL)";
+                                + " AND ((CA.REG != 1 OR CA.REG IS NULL) or zp.nb = 2000 )"
+                                + " AND ((CA.CARREG != 6 OR CA.REG IS NULL)  or zp.nb = 2000 )";
                         var pro_count_notin_ses = db.Database.SqlQuery<int>(sss).FirstOrDefault();
                         if (pro_count_in_ses != pro_count_notin_ses)
                         {
@@ -1122,8 +1122,8 @@ namespace Passengers.Controllers
                      + " AND(CPS.STEPNB = 453 OR CPS.STEPNB = 454) "
                      + " AND CPS.CITYNB = " + ses.SESCITYNB + " "
                      + " AND CPS.DONE = 3 "
-                   + " AND(CA.REG != 1 or CA.REG is null) "
-                    + "  AND(CA.CARREG != 6 OR CA.CARREG IS NULL) "
+                   + " AND ((CA.REG != 1 OR CA.REG IS NULL) OR zp.nb = 2000)"
+                    + "  AND ((CA.CARREG != 6 OR CA.REG IS NULL) OR zp.nb = 2000) "
 
                      + " GROUP BY CP.PROCEDNB,zp.name ";
             }

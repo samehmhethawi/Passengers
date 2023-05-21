@@ -429,7 +429,7 @@
 
         @ViewBag.POSTNO
         <label> تاريخ البريد: </label>
-        @ViewBag.POSTDATE
+        @Convert.ToDateTime(ViewBag.POSTDATE).ToString("dd/MM/yyyy")
 
         <br />
         <label>المرسل: </label>

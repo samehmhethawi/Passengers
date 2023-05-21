@@ -63,12 +63,12 @@ namespace Passengers.Controllers
             }
             if (STATUS != "")
             {
-                sql += " and STATUS =" + STATUS ;
+                sql += " and STATUS =" + STATUS;
             }
 
             if (COMDATESTART != "")
             {
-                sql += " and TRUNC(COMDATE) >= TO_DATE('" + COMDATESTART+"','DD/MM/YYYY') ";
+                sql += " and TRUNC(COMDATE) >= TO_DATE('" + COMDATESTART + "','DD/MM/YYYY') ";
             }
 
             if (COMDATEEND != "")
@@ -110,12 +110,12 @@ namespace Passengers.Controllers
                 IDATE = commm.IDATE,
                 IS_ARCHIVED = commm.IS_ARCHIVED,
                 FTP_PATH = commm.FTP_PATH,
-                Seq = (request.Page -1) * request.PageSize + (++index)
+                Seq = (request.Page - 1) * request.PageSize + (++index)
             });
             return Json(result);
-           
+
         }
-     
+
         public ActionResult Create(TRCOMMITTEES model)
         {
             try
@@ -123,7 +123,7 @@ namespace Passengers.Controllers
                 var is_com_exists = db.Database.SqlQuery<int>("select 1 from TRCOMMITTEES where COMCITYNB = " + model.COMCITYNB + " and STATUS = 1").FirstOrDefault();
                 if (is_com_exists == 1)
                 {
-                    return Json(new { success = false, responseText ="يوجد لجنة فعالة لهذه المحافظة " });
+                    return Json(new { success = false, responseText = "يوجد لجنة فعالة لهذه المحافظة " });
                 }
                 else
                 {
@@ -134,14 +134,14 @@ namespace Passengers.Controllers
                     db.SaveChanges();
                     return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
                 }
-             
+
             }
             catch (Exception ex)
             {
                 var SS = validation.OracleExceptionValidation(ex);
-                return Json(new { success = false, responseText =  SS });
+                return Json(new { success = false, responseText = SS });
             }
-           
+
         }
 
         public ActionResult Update(TRCOMMITTEES model)
@@ -183,7 +183,8 @@ namespace Passengers.Controllers
                     db.Entry(dd).State = EntityState.Modified;
                     db.SaveChanges();
                     return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
-                }else
+                }
+                else
                 {
                     var is_com_exists = db.Database.SqlQuery<int>("select 1 from TRCOMMITTEES where COMCITYNB = " + dd.COMCITYNB + " and STATUS = 1").FirstOrDefault();
 
@@ -212,8 +213,8 @@ namespace Passengers.Controllers
                         return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
                     }
                 }
-   
-             
+
+
             }
             catch (Exception ex)
             {
@@ -223,10 +224,10 @@ namespace Passengers.Controllers
 
         }
 
-        public ActionResult Read_MEMBERS([DataSourceRequest] DataSourceRequest request ,int Nb)
+        public ActionResult Read_MEMBERS([DataSourceRequest] DataSourceRequest request, int Nb)
         {
-            var sql = "select * from TRCOMMITTEES_MEMBERS where 1 = 1 and STATUS = 1 and  COMMITTEENB = " + Nb ;
-           
+            var sql = "select * from TRCOMMITTEES_MEMBERS where 1 = 1 and STATUS = 1 and  COMMITTEENB = " + Nb;
+
 
             sql += " order by ORDR";
             var data = db.Database.SqlQuery<TRCOMMITTEES_MEMBERS>(sql).ToList();
@@ -252,31 +253,43 @@ namespace Passengers.Controllers
         {
             try
             {
-                var ssss = "select zh.ORDR from TRZMEMBERSHIP zh where zh.nb = " + model.MEMBERSHIPNB;
-                if (model.MEMBERSHIPNB == 1 || model.MEMBERSHIPNB == 2 || model.MEMBERSHIPNB == 3) 
+
+                if (model.ORDR == null)
                 {
-                    var countship = db.Database.SqlQuery<int>("select count(*) from TRCOMMITTEES_MEMBERS where STATUS = 1 and COMMITTEENB =" + model .COMMITTEENB + " and MEMBERSHIPNB ="+ model.MEMBERSHIPNB).FirstOrDefault();
-                    if (countship > 0) 
+                    return Json(new { success = false, responseText = "الترتيب فارغ" });
+
+                }
+                if (model.MEMBERSHIPNB == 1 || model.MEMBERSHIPNB == 2 || model.MEMBERSHIPNB == 3)
+                {
+                    var countship = db.Database.SqlQuery<int>("select count(*) from TRCOMMITTEES_MEMBERS where STATUS = 1 and COMMITTEENB =" + model.COMMITTEENB + " and MEMBERSHIPNB =" + model.MEMBERSHIPNB).FirstOrDefault();
+                    if (countship > 0)
                     {
                         return Json(new { success = false, responseText = "لا يمكن اضافة هذه العضوية مرتين الى اللجنة" });
 
                     }
                     else
                     {
-                        model.ORDR = db.Database.SqlQuery<long?>(ssss).FirstOrDefault();
+                        var ssss = "select count(*) from TRCOMMITTEES_MEMBERS  where COMMITTEENB = " + model.COMMITTEENB + " and ORDR = " + model.ORDR;
+                        var countmem = db.Database.SqlQuery<int>(ssss).FirstOrDefault();
+                        if (countmem > 0)
+                        {
+                            return Json(new { success = false, responseText = "لا يمكن تكرار الترتيب " });
+
+                        }
+                        //  model.ORDR = db.Database.SqlQuery<long?>(ssss).FirstOrDefault();
                         db.TRCOMMITTEES_MEMBERS.Add(model);
                         db.SaveChanges();
                         return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
                     }
 
                 }
-              
 
-                  model.ORDR = db.Database.SqlQuery<long?>(ssss).FirstOrDefault();
-                    db.TRCOMMITTEES_MEMBERS.Add(model);
-                    db.SaveChanges();
-                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
-                
+
+                //   model.ORDR = db.Database.SqlQuery<long?>(ssss).FirstOrDefault();
+                db.TRCOMMITTEES_MEMBERS.Add(model);
+                db.SaveChanges();
+                return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+
 
             }
             catch (Exception ex)
@@ -286,29 +299,29 @@ namespace Passengers.Controllers
             }
 
         }
-        
+
         public ActionResult Read_Carowners([DataSourceRequest] DataSourceRequest request)
         {
             string sql = "select * from carowners where  1 = 1 ";
 
 
-       
-           var NB = Request.Form["SOWNERNB"].Trim();
+
+            var NB = Request.Form["SOWNERNB"].Trim();
             var NAME = Request.Form["NAME"].Trim();
             var LASTNAME = Request.Form["LASTNAME"].Trim();
             var FATHER = Request.Form["FATHER"].Trim();
             var MOTHER = Request.Form["MOTHER"].Trim();
             var NATIONNO = Request.Form["NATIONNO"].Trim();
-           
+
 
             if (NB != "")
             {
-               long NNB = long.Parse(NB); 
+                long NNB = long.Parse(NB);
                 sql += " and nb = " + NNB;
             }
             if (NATIONNO != "")
             {
-                
+
                 sql += " and NATIONNO  ='" + NATIONNO + "'";
             }
             if (NAME != "")
@@ -330,7 +343,7 @@ namespace Passengers.Controllers
 
 
             var data = db.Database.SqlQuery<CAROWNER>(sql).ToList();
-           // int index = 0;
+            // int index = 0;
             //DataSourceResult result = data.ToDataSourceResult(request, commm => new
             //{
             //    NB = commm.NB,
@@ -339,17 +352,17 @@ namespace Passengers.Controllers
             //    FATHER = commm.FATHER,
             //    MOTHER = commm.MOTHER,
             //    NATIONNO = commm.NATIONNO,
-              
+
             //    Seq = (request.Page - 1) * request.PageSize + (++index)
             //});
-            return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet );
+            return Json(data.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
 
         }
 
 
-        public ActionResult UpdateMemberStatus( long nb )
+        public ActionResult UpdateMemberStatus(long nb)
         {
-            try 
+            try
             {
 
 
@@ -358,6 +371,8 @@ namespace Passengers.Controllers
                 var comdate = db.TRCOMMITTEES.Find(data.COMMITTEENB);
                 if (comdate.STATUS == 1)
                 {
+                    //db.TRCOMMITTEES_MEMBERS.Attach(data);
+                    //db.TRCOMMITTEES_MEMBERS.Remove(data);
                     data.STATUS = 3;
                     db.Entry(data).State = EntityState.Modified;
                     db.SaveChanges();
@@ -367,17 +382,68 @@ namespace Passengers.Controllers
                 {
                     return Json(new { success = false, responseText = "لا يمكن تعديل الاعضاء لان اللجنة غير فعالة" }, JsonRequestBehavior.AllowGet);
                 }
-                
+
             }
             catch (Exception ex)
             {
                 var SS = validation.OracleExceptionValidation(ex);
                 return Json(new { success = false, responseText = SS });
             }
-            
+
         }
 
+        public ActionResult UpdateMember(TRCOMMITTEES_MEMBERS model)
+        {
+            try
+            {
 
+
+                var data = db.TRCOMMITTEES_MEMBERS.Find(model.NB);
+
+                var comdate = db.TRCOMMITTEES.Find(data.COMMITTEENB);
+                if (comdate.STATUS == 1)
+                {
+                    if (data.MEMBERNAME != model.MEMBERNAME)
+                    {
+                        data.MEMBERNAME = model.MEMBERNAME;
+                    }
+                    if (data.MEMBERSHIPNB != model.MEMBERSHIPNB)
+                    {
+                        data.MEMBERSHIPNB = model.MEMBERSHIPNB;
+                    }
+
+
+                    if (data.MEMBERPOSITIONNB != model.MEMBERPOSITIONNB)
+                    {
+                        data.MEMBERPOSITIONNB = model.MEMBERPOSITIONNB;
+                    }
+
+
+                    if (data.ORDR != model.ORDR)
+                    {
+                        data.ORDR = model.ORDR;
+                    }
+
+                    if (data.NOTES != model.NOTES)
+                    {
+                        data.NOTES = model.NOTES;
+                    }
+                    db.Entry(data).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return Json(new { success = true, responseText = "ok" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, responseText = "لا يمكن تعديل الاعضاء لان اللجنة غير فعالة" }, JsonRequestBehavior.AllowGet);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var SS = validation.OracleExceptionValidation(ex);
+                return Json(new { success = false, responseText = SS });
+            }
+        }
         public ActionResult SaveSingleDocument(HttpPostedFileBase Files, long comnb)
         {
             try

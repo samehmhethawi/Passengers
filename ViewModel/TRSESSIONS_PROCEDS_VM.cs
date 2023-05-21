@@ -218,8 +218,23 @@ namespace Passengers.ViewModel
         [Display(Name = "سبب السفرة")]
         public string CAUSES { get; set; }
 
+        [Display(Name = "الاعظمي")]
+        public long? MAXCARLINE1 { get; set; }
+        [Display(Name = "الادنى")]
+        public long? MINCARLINE1 { get; set; }
+        [Display(Name = "الاعظمي")]
+        public long? MAXCARLINE2 { get; set; }
+        [Display(Name = "الادنى")]
+
+        public long? MINCARLINE2 { get; set; }
 
 
+
+
+        [Display(Name = "نوع الموافقة")]
+        public string DURATIONNB { get; set; }
+        [Display(Name = "مدة المؤقتة")]
+        public string DURATIONMONTHS { get; set; }
 
 
 

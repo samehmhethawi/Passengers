@@ -14,12 +14,22 @@
                    @*<div class="col-md-3" >
                        <button class="btn btn-primary" onclick="GetNameFromCarowners()">البحث عن اسم </button>
                        </div>*@
-                   <div class="col-md-7" >
-                   <span>   @Html.Kendo().TextBox().Name("AddComMemberName").HtmlAttributes(new { placeholder = " اسم العضو", required = "required", data_required_msg = "هذا الحقل مطلوب"})</span>
+                   <div class="col-lg-7 col-md-7" >
+                   <span> اسم العضو  @Html.Kendo().TextBox().Name("AddComMemberName").HtmlAttributes(new { placeholder = " اسم العضو", required = "required", data_required_msg = "هذا الحقل مطلوب"})</span>
+                       </div>
+                    <div class="col-lg-3 col-md-3" >
+                        الترتيب
+                         @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("AddComMemberOrder").Min(0)
+                                .HtmlAttributes(new { placeholder = "الترتيب" }))
+
                        </div>
                </div>
                <div class="row col-11">
-                      <div class="col-md-4" >
+                      <div class="col-lg-5 col-md-5" >
                             <span>  العضوية
                                @(Html.Kendo().DropDownList()
                                     .OptionLabel("اختر نوع العضوية")
@@ -38,7 +48,7 @@
                                     )
                              </span>
                        </div>
-                      <div class="col-md-4" >
+                      <div class="col-lg-5 col-md-5" >
                              <span>  المنصب
                                @(Html.Kendo().DropDownList()
                                         .Name("AddComMemberPostion")
@@ -60,10 +70,8 @@
                        </div>
                </div>
                 <div class="row col-11">
-                      @*<div class="col-md-4" >
-                             <span>  الدور @Html.Kendo().TextBox().Name("AddComMemberOrder").HtmlAttributes(new { placeholder = "الدور"})</span>
-                       </div>*@
-                      <div class="col-md-4" >
+
+                      <div class="col-lg-10 col-md-10" >
                              <span>  ملاحظات @Html.Kendo().TextBox().Name("AddComMemberNotes").HtmlAttributes(new { placeholder = "ملاحظات"})</span>
                        </div>
                </div>
@@ -96,7 +104,7 @@
                 COMMITTEENB: $('#ComMebmerNb').val(),
                 MEMBERSHIPNB: $('#AddComMemberShip').val(),
                 MEMBERNAME: $("#AddComMemberName").val(),
-                ORDR: "",
+                ORDR: $("#AddComMemberOrder").val(),
                 NOTES: $("#AddComMemberNotes").val(),
                 MEMBERPOSITIONNB: $("#AddComMemberPostion").val(),
                 OWNERNB: $("#OwnerNB").val(),

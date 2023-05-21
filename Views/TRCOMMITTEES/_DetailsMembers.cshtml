@@ -42,29 +42,30 @@
                                 columns.Bound(c => c.NB).Visible(false);
                                 columns.Bound(c => c.COMMITTEENB).Visible(false);
                                 columns.Bound(c => c.MEMBERNAME).Width(500);
+                                columns.Bound(c => c.ORDR).Width(100).Sortable(false);
                                 columns.ForeignKey(c => c.MEMBERSHIPNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERSHIP"], "ID", "NAME").Title("العضوية").Width(150);
                                 columns.Bound(c => c.MEMBERSHIPNB).Visible(false).Title("العضوية");
                                 // columns.Bound(c => c.STATUS).Visible(false);
                                 columns.ForeignKey(c => c.MEMBERPOSITIONNB, (System.Collections.IEnumerable)ViewData["TRZMEMBERPOSITION"], "ID", "NAME").Title("المنصب").Width(150);
-                                //columns.Bound(c => c.ORDR);
+
                                 //columns.Bound(c => c.NOTES);
                                 columns.Bound(c => c.MEMBERPOSITIONNB).Visible(false).Title("المنصب");
                                 columns.Command(command =>
                                 {
+                                    command.Custom("Edit").Click("EditMember").Text(" ");
 
                                     command.Custom("Delete").Click("Delete").Text(" ");
 
-                                }).Width(50);
+                                }).Width(100);
 
                             })
-                            .HtmlAttributes(new { style = "height: aotu  !important;" })
+                            .HtmlAttributes(new { style = "height: 400px  !important;" })
                             .Scrollable()
-                            .Sortable()
-                            .Filterable()
+
                             .DataSource(dataSource => dataSource
                             .Ajax()
                             //.Events(events => events.Error("error_handler").Sync("sync_handler").RequestEnd("OnRequestEnd"))
-                            .PageSize(7)
+                            .PageSize(30)
                             .Model(model => model.Id(p => p.NB))
                             .Read(read => read.Action("Read_MEMBERS", "TRCOMMITTEES").Data("GetCommNbRead")))
                             .Resizable(resize => resize
@@ -131,7 +132,7 @@
             </text>)
             .Draggable(true)
             .Resizable()
-            .Width(1000)
+            .Width(1300)
             .Height(500)
             .Pinned()
             )
@@ -172,8 +173,25 @@
         if (ssts == "1")
         {
             $("#Add_comm_Member span.k-tooltip-validation").hide();
-            var wnd = $("#AddCOMMITTEEMEMBER").data("kendoWindow");
-            wnd.center().open();
+
+
+            $.ajax({
+                type: "GET",
+                data: { PCOMMITTEENB: $('#ComMebmerNb').val() },
+                url: "@Url.Action("GetMaxOrdr2", "Codes")",
+                success: function (response) {
+
+                    $("#AddComMemberOrder").data("kendoNumericTextBox").value(response);
+                    var wnd = $("#AddCOMMITTEEMEMBER").data("kendoWindow");
+                    wnd.center().open();
+
+                }
+            });
+
+
+
+
+
         } else
         {
             toastr.error("لا يمكن اضافة الاعضاء لان اللجنة غير فعالة");
@@ -309,5 +327,146 @@
                 return true;
             }
         }
+    }
+</script>
+
+<div class="k-rtl">
+    @(Html.Kendo().Window().Name("EditCOMMITTEEMEMBER")
+            .Title("تعديل عضو للجنة")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text>
+           <div id="Edit_comm_Member">
+                 @Html.Hidden("EMebmerNb")
+               <div class="row col-11">
+                   @*<div class="col-md-3" >
+                       <button class="btn btn-primary" onclick="GetNameFromCarowners()">البحث عن اسم </button>
+                       </div>*@
+                   <div class="col-lg-7 col-md-7" >
+                   <span> اسم العضو  @Html.Kendo().TextBox().Name("EditComMemberName").HtmlAttributes(new { placeholder = " اسم العضو", required = "required", data_required_msg = "هذا الحقل مطلوب"})</span>
+                       </div>
+                    <div class="col-lg-3 col-md-3" >
+                        الترتيب
+                         @(Html.Kendo()
+                                .NumericTextBox()
+                                .Spinners(false)
+                                .Format("0")
+                                .Name("EditComMemberOrder").Min(0)
+                                .HtmlAttributes(new { placeholder = "الترتيب" }))
+
+                       </div>
+               </div>
+               <div class="row col-11">
+                      <div class="col-lg-5 col-md-5" >
+                            <span>  العضوية
+                               @(Html.Kendo().DropDownList()
+                                    .OptionLabel("اختر نوع العضوية")
+                                    .Name("EditComMemberShip")
+                                    .DataTextField("NAME")
+                                    .DataValueField("ID")
+
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetMemberShip", "Codes");
+                                        });
+                                    })
+                                    .HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب", style = "width: 100%; text-align:center;" })
+                                    )
+                             </span>
+                       </div>
+                      <div class="col-lg-5 col-md-5" >
+                             <span>  المنصب
+                               @(Html.Kendo().DropDownList()
+                                        .Name("EditComMemberPostion")
+                                        .OptionLabel("اختر المنصب")
+
+                                        .DataTextField("NAME")
+                                        .DataValueField("ID")
+                                        .DataSource(source =>
+                                        {
+                                            source.Read(read =>
+                                            {
+                                                read.Action("GetMemberPostion", "Codes");
+                                            });
+                                        })
+                                        .HtmlAttributes(new { required = "required", data_required_msg = "هذا الحقل مطلوب", style = "width: 100%; text-align:center;" })
+
+                                        )
+                              </span>
+                       </div>
+               </div>
+                <div class="row col-11">
+
+                      <div class="col-lg-10 col-md-10" >
+                             <span>  ملاحظات @Html.Kendo().TextBox().Name("EditComMemberNotes").HtmlAttributes(new { placeholder = "ملاحظات"})</span>
+                       </div>
+               </div>
+               <div class="window-footer">
+                   <button class="btn btn-primary" onclick="SaveEditCommitteMember()">حفظ</button>
+                   <button class="btn btn-danger" onclick="ColseWindowEditMember()">اغلاق</button>
+               </div>
+           </div>
+            </text>)
+            .Draggable(true)
+            .Resizable()
+            .Width(800)
+            .Height(400)
+            .Pinned()
+            )
+</div>
+<script>
+    function EditMember(e)
+    {
+        e.preventDefault();
+        var tr = $(e.target).closest("tr");    // get the current table row (tr)
+        var item = this.dataItem(tr);
+
+
+        $('#EMebmerNb').val(item.NB);
+        
+        $('#EditComMemberName').val(item.MEMBERNAME);
+        $('#EditComMemberNotes').val(item.MEMBERNAME);
+        $("#EditComMemberOrder").data("kendoNumericTextBox").value(item.ORDR);
+
+
+        $("#EditComMemberPostion").data("kendoDropDownList").value(item.MEMBERPOSITIONNB);
+        $("#EditComMemberShip").data("kendoDropDownList").value(item.MEMBERSHIPNB);
+
+
+        var wnd = $("#EditCOMMITTEEMEMBER").data("kendoWindow");
+        wnd.center().open();
+    }
+
+    function SaveEditCommitteMember(item) {
+
+        var Moled = {
+            NB: $('#EMebmerNb').val(),
+            MEMBERNAME: $('#EditComMemberName').val(),
+            ORDR: $("#EditComMemberOrder").val(),
+            MEMBERSHIPNB: $("#EditComMemberShip").val(),
+            MEMBERPOSITIONNB: $("#EditComMemberPostion").val(),
+            NOTES: $('#EditComMemberNotes').val(),
+        }
+          $.ajax({
+                type: "POST",
+              data: { model: Moled },
+                url: "@Url.Action("UpdateMember", "TRCOMMITTEES")",
+                success: function (response) {
+                    if (response.success) {
+                        $("#Detailsgrid").data("kendoGrid").dataSource.read();
+                        toastr.success("تمت عملية التعديل بنجاح");
+                        ColseWindowEditMember();
+                    } else {
+                        toastr.error(response.responseText);
+                    }
+                }
+            });
+    }
+
+    function ColseWindowEditMember() {
+        var wnd = $("#EditCOMMITTEEMEMBER").data("kendoWindow");
+        wnd.center().close();
     }
 </script>
