@@ -333,8 +333,24 @@
                       حالة الموافقة
                     </div>
                       <div class="col-md-6" >
-
-                          @(Html.Kendo().DropDownList()
+                              @(Html.Kendo().DropDownList()
+                                                
+                                                .Name("EditAgrStatus")
+                                                .DataTextField("Text")
+                                                .DataValueField("Value").HtmlAttributes(new { required = "required", validationmessage = "*"})
+                                                .BindTo(new List<SelectListItem>() {
+                                                      new SelectListItem() {
+                                                          Text = "فعالة",
+                                                          Value = "1"
+                                                      },
+                                                      new SelectListItem() {
+                                                          Text = "ملغاة",
+                                                          Value = "0"
+                                                      }
+                                                  })
+                                                .HtmlAttributes(new { style = " text-align:center;" })
+                                                )
+                          @*@(Html.Kendo().DropDownList()
                                     .Name("EditAgrStatus")
 
                                     .DataTextField("NAME")
@@ -347,7 +363,7 @@
                                         });
                                     })
                                     .HtmlAttributes(new { style = "width: 100%; text-align:center;" })
-                                    )
+                                    )*@
 
 
                        </div>
@@ -445,7 +461,7 @@
     }
         function Btn_Search() {
             $("#grid").data("kendoGrid").dataSource.page([1]);
-      
+
     }
 
     function rest_filtters() {
@@ -489,7 +505,7 @@
            // agrnb = 0;
             window.open("@Url.Action("PrintNotification", "TRAGREEMENTS")?&OUTACTSNB=" + OUTACTSNB + "&pCarprocedNB=" + pCarprocedNB, "_blank");
 
-        } 
+        }
 
 
 
@@ -514,9 +530,14 @@
         $('#causes').val(item.EDITCAUSES);
         $("#EditAgrStatus").data("kendoDropDownList").value(item.ASTATUS);
 
-
+        if (item.ASTATUS == 2)
+        {
+            toastr.error("لا يمكن تعديل الموافقة لانها منتهية");
+        } else {
             var wnd = $("#EditAgr").data("kendoWindow");
             wnd.center().open();
+        }
+           
     }
 
     function SaveEditAgr()
@@ -524,7 +545,7 @@
         var Agrnb = $('#AgrNb').val();
         var status = $('#EditAgrStatus').val();
         var EDITCAUSE = $('#causes').val();
-        
+
         if (EDITCAUSE == "") {
             toastr.error("يجب اضافة السبب اولاً");
         } else

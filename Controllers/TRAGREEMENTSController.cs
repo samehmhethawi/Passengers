@@ -301,6 +301,10 @@ namespace Passengers.Controllers
                 }
                 else
                 {
+                    if (data.ASTATUS == 2)
+                    {
+                        return Json(new { success = false, responseText = "لا يمكن تعديل الموافقة لانها منتهية" }, JsonRequestBehavior.AllowGet);
+                    }
                     if(data.ASTATUS != AgrStatus)
                     {
                         data.ASTATUS = AgrStatus;

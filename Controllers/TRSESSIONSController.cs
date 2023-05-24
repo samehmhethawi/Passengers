@@ -755,7 +755,7 @@ namespace Passengers.Controllers
                     ViewBag.SessionBossName = "السيد " + member.TRCOMMITTEES_MEMBERS.MEMBERNAME + " / " + member.TRCOMMITTEES_MEMBERS.TRZMEMBERPOSITION.NAME + " / " + member.TRZMEMBERSHIP.NAME;
                 }
             }
-            var data1 = data.OrderBy(x => x.ORDR).ToList();
+            var data1 = data.OrderByDescending(x => x.ORDR).ToList();
             foreach (var member in data1)
             {
                 var temp4 = "";
@@ -779,6 +779,7 @@ namespace Passengers.Controllers
                 ofpro.pronb = item;
                 ofpro.proname = db.ZPROCEDTYPS.Where(x => x.NB == item).Select(x => x.NAME).FirstOrDefault();
                 var sql = "SELECT * FROM TRSESSIONS_REPORTS WHERE RYEAR = " + sesdatayear + " and SESSIONNB = " + ses.NB + "and PROCEDNB = " + item;
+                sql += " ORDER BY ORDR";
                 ofpro.pro = db.Database.SqlQuery<PROCEDS_Print_ALL>(sql).ToList();
                 ListPROCEDS_Print_ALL.Add(ofpro);
             }

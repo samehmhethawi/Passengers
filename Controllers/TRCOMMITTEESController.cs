@@ -261,7 +261,7 @@ namespace Passengers.Controllers
                 }
                 if (model.MEMBERSHIPNB == 1 || model.MEMBERSHIPNB == 2 || model.MEMBERSHIPNB == 3)
                 {
-                    var countship = db.Database.SqlQuery<int>("select count(*) from TRCOMMITTEES_MEMBERS where STATUS = 1 and COMMITTEENB =" + model.COMMITTEENB + " and MEMBERSHIPNB =" + model.MEMBERSHIPNB).FirstOrDefault();
+                    var countship = db.Database.SqlQuery<int>("select count(*) from TRCOMMITTEES_MEMBERS where STATUS = 1 and COMMITTEENB =" + model.COMMITTEENB + " and MEMBERSHIPNB =" + model.MEMBERSHIPNB + " and STATUS = 1").FirstOrDefault();
                     if (countship > 0)
                     {
                         return Json(new { success = false, responseText = "لا يمكن اضافة هذه العضوية مرتين الى اللجنة" });
